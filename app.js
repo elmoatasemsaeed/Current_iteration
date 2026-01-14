@@ -420,29 +420,71 @@ renderActiveCards() {
 }
     ,
 
-    renderDelivery() {
+renderDelivery() {
         const container = document.getElementById('delivery-grid');
         const tested = currentData.filter(s => s.state === 'Tested');
 
-        container.innerHTML = tested.map(s => {
-            const isLogged = db.deliveryLogs.find(l => l.storyId === s.id);
-            return `
-                <div class="bg-white p-4 rounded-xl border-2 ${isLogged ? 'border-green-500 opacity-60' : 'border-blue-200'}">
-                    <div class="font-bold">${s.title}</div>
-                    <div class="text-xs text-gray-500 mb-4">ID: ${s.id} | Area: ${s.area}</div>
-                    ${isLogged ? `
-                        <div class="text-xs bg-green-100 p-2 rounded">
-                            ✅ تم التسليم لـ ${isLogged.to}
-                        </div>
-                    ` : `
-                        <div class="flex gap-2">
-                            <input id="to-${s.id}" placeholder="المستلم" class="text-xs border p-1 rounded flex-1">
-                            <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs">تأكيد</button>
-                        </div>
-                    `}
+        if (tested.length === 0) {
+            container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">لا توجد عناصر جاهزة للتسليم حالياً.</div>`;
+            return;
+        }
+
+        // 1. تجميع البيانات حسب Business Area
+        const grouped = tested.reduce((acc, story) => {
+            const area = story.area || "General";
+            if (!acc[area]) acc[area] = [];
+            acc[area].push(story);
+            return acc;
+        }, {});
+
+        let html = '';
+
+        // 2. المرور على كل منطقة (Area)
+        Object.keys(grouped).forEach(area => {
+            // 3. ترتيب القصص داخل المنطقة: غير المستلم أولاً
+            const sortedStories = grouped[area].sort((a, b) => {
+                const aLogged = db.deliveryLogs.some(l => l.storyId === a.id);
+                const bLogged = db.deliveryLogs.some(l => l.storyId === b.id);
+                return aLogged - bLogged; // false (0) قبل true (1)
+            });
+
+            html += `
+                <div class="col-span-full mt-6 mb-2">
+                    <h3 class="text-lg font-bold text-slate-700 border-r-4 border-blue-500 pr-2">${area}</h3>
                 </div>
             `;
-        }).join('');
+
+            html += sortedStories.map(s => {
+                const log = db.deliveryLogs.find(l => l.storyId === s.id);
+                const isLogged = !!log;
+
+                return `
+                    <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 opacity-60 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] font-mono text-gray-400">#${s.id}</span>
+                            ${isLogged ? '<span class="text-green-500 text-xs font-bold">✓ تم التسليم</span>' : '<span class="text-blue-500 text-xs font-bold italic text-animate-pulse">بانتظار التسليم</span>'}
+                        </div>
+                        <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
+                        
+                        ${isLogged ? `
+                            <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
+                                <b>المستلم:</b> ${log.to}<br>
+                                <b>التاريخ:</b> ${log.date}
+                            </div>
+                        ` : `
+                            <div class="flex gap-2 mt-auto">
+                                <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
+                                <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+                                    تأكيد
+                                </button>
+                            </div>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        });
+
+        container.innerHTML = html;
     },
 
     markDelivered(id) {
