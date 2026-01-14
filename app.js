@@ -69,16 +69,20 @@ const dataProcessor = {
                 
                 // إذا كان هناك بيانات مخزنة مسبقاً، قم بتحميلها في التطبيق
                 if (db.currentStories && db.currentStories.length > 0) {
-                    currentData = db.currentStories;
-                }
-                
-                ui.renderAll();
-            } else {
-                console.log("File not found, creating new DB...");
-                this.saveToGitHub();
+
+                this.calculateTimelines(db.currentStories);
             }
-        } catch (e) { alert("خطأ في المزامنة مع GitHub"); }
-    },
+            
+            ui.renderAll();
+        } else {
+            console.log("File not found, creating new DB...");
+            this.saveToGitHub();
+        }
+    } catch (e) { 
+        console.error(e);
+        alert("خطأ في المزامنة مع GitHub"); 
+    }
+},
 
     async saveToGitHub() {
         const token = sessionStorage.getItem('gh_token');
