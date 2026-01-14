@@ -352,7 +352,7 @@ renderActiveCards() {
             </div>
         `;
     }).join('');
-}
+},
 
     renderDelivery() {
         const container = document.getElementById('delivery-grid');
