@@ -234,7 +234,7 @@ const ui = {
 
     renderAll() {
         this.renderStats();
-        this.renderActiveTable();
+        this.renderActiveCards();
         this.renderDelivery();
         this.renderAvailability();
         this.renderSettings();
@@ -282,44 +282,77 @@ const ui = {
         `).join('') || '<div class="text-gray-400 text-center">لا يوجد شيء مخطط له اليوم</div>';
     },
 
-    renderActiveTable() {
-        const tbody = document.getElementById('active-table-body');
-        const activeStories = currentData.filter(s => s.state !== 'Tested');
+renderActiveCards() {
+    const container = document.getElementById('active-cards-container');
+    const activeStories = currentData.filter(s => s.state !== 'Tested');
+    
+    if (activeStories.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No active stories found.</div>`;
+        return;
+    }
+
+    container.innerHTML = activeStories.map(s => {
+        const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
+        const hasError = s.calc.error;
         
-        // Grouping logic
-        const grouped = activeStories.reduce((acc, s) => {
-            acc[s.area] = acc[s.area] || [];
-            acc[s.area].push(s);
-            return acc;
-        }, {});
+        // تحديد لون الحالة
+        let statusColor = "bg-blue-100 text-blue-700";
+        if(isLate) statusColor = "bg-red-100 text-red-700";
+        if(hasError) statusColor = "bg-amber-100 text-amber-700";
 
-        let html = '';
-        for (const area in grouped) {
-            grouped[area].forEach((s, index) => {
-                const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
-                const hasError = s.calc.error;
+        return `
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
+                <div class="p-5 flex-1">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
+                            ${hasError ? 'Action Required' : (isLate ? 'Overdue' : s.state)}
+                        </span>
+                        <span class="text-xs font-mono text-gray-400">#${s.id}</span>
+                    </div>
+                    
+                    <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
+                    <div class="text-sm text-indigo-600 font-semibold mb-4 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        ${s.area}
+                    </div>
 
-                html += `
-                    <tr class="${isLate ? 'bg-red-50' : ''} ${hasError ? 'bg-yellow-50' : ''} hover:bg-gray-50">
-                        ${index === 0 ? `<td class="p-3 border font-bold" rowspan="${grouped[area].length}">${area}</td>` : ''}
-                        <td class="p-3 border text-sm">${s.title}</td>
-                        <td class="p-3 border text-xs">🛠 ${s.assignedTo}<br>🔍 ${s.tester}</td>
-                        <td class="p-3 border text-xs ${hasError ? 'text-orange-600 font-bold' : ''}">
-                            ${hasError ? s.calc.devEnd : s.calc.devEnd.toLocaleString()}
-                        </td>
-                        <td class="p-3 border text-xs">
-                            ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleString() : s.calc.testEnd}
-                        </td>
-                        <td class="p-3 border text-xs font-bold">
-                            ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString() : s.calc.finalEnd}
-                        </td>
-                        <td class="p-3 border text-xs">${s.state}</td>
-                    </tr>
-                `;
-            });
-        }
-        tbody.innerHTML = html;
-    },
+                    <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50">
+                        <div>
+                            <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Development</p>
+                            <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
+                                ${s.assignedTo}
+                            </p>
+                            <p class="text-[10px] text-gray-500 mt-1 italic">
+                                Ends: ${hasError ? 'Pending' : new Date(s.calc.devEnd).toLocaleDateString('en-GB')}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Quality Assurance</p>
+                            <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
+                                ${s.tester}
+                            </p>
+                            <p class="text-[10px] text-gray-500 mt-1 italic">
+                                Ends: ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleDateString('en-GB') : 'TBD'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] uppercase font-bold text-gray-400">Final Delivery</span>
+                        <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
+                            ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting for Data'}
+                        </span>
+                    </div>
+                    ${isLate ? '<span class="text-xl">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
 
     renderDelivery() {
         const container = document.getElementById('delivery-grid');
