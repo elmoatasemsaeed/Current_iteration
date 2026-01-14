@@ -136,18 +136,31 @@ const dataProcessor = {
         this.calculateTimelines(stories);
     },
 
-    calculateTimelines(stories) {
-        stories.forEach(story => {
-            // 1. حساب الـ Dev
-            const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-            const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-            
-            // تاريخ البداية من أول تاسك اتعمل لها أكتيف
-            let devStart = new Date();
-            const activatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
-            if(activatedDates.length > 0) devStart = new Date(activatedDates[0]);
+calculateTimelines(stories) {
+    stories.forEach(story => {
+        // 1. حساب الـ Dev
+        const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+        const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        
+        // تغيير المنطق هنا: البحث عن تواريخ التفعيل
+        let devStart = null;
+        const activatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
+        
+        if (activatedDates.length > 0) {
+            devStart = new Date(activatedDates[0]);
+        }
 
-            story.calc.devEnd = dateEngine.addWorkingHours(devStart, devHours, story.assignedTo);
+        // إذا لم يوجد تاريخ تفعيل، لا تقم بالحسابات وضع تنبيه
+        if (!devStart) {
+            story.calc.error = "لم يتم بدء العمل (No Activated Tasks)";
+            story.calc.devEnd = "بانتظار البدء";
+            story.calc.testEnd = "---";
+            story.calc.finalEnd = "---";
+            return; // تخطي الحساب لهذه القصة
+        }
+
+        story.calc.devEnd = dateEngine.addWorkingHours(devStart, devHours, story.assignedTo);
+
 
             // 2. حساب الـ Test
             const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
@@ -282,34 +295,37 @@ const ui = {
         `).join('') || '<div class="text-gray-400 text-center">لا يوجد شيء مخطط له اليوم</div>';
     },
 
-    renderActiveTable() {
-        const tbody = document.getElementById('active-table-body');
-        const activeStories = currentData.filter(s => s.state !== 'Tested');
-        
-        // تجميع حسب الـ Area
-        const grouped = activeStories.reduce((acc, s) => {
-            acc[s.area] = acc[s.area] || [];
-            acc[s.area].push(s);
-            return acc;
-        }, {});
+renderActiveTable() {
+    const tbody = document.getElementById('active-table-body');
+    const activeStories = currentData.filter(s => s.state !== 'Tested');
+    
+    // ... منطق الـ Grouping كما هو ...
 
-        let html = '';
-        for (const area in grouped) {
-            grouped[area].forEach((s, index) => {
-                const isLate = new Date() > s.calc.finalEnd;
-                html += `
-                    <tr class="${isLate ? 'status-delayed' : ''} hover:bg-gray-50">
-                        ${index === 0 ? `<td class="p-3 border font-bold" rowspan="${grouped[area].length}">${area}</td>` : ''}
-                        <td class="p-3 border text-sm">${s.title}</td>
-                        <td class="p-3 border text-xs">🛠 ${s.assignedTo}<br>🔍 ${s.tester}</td>
-                        <td class="p-3 border text-xs">${s.calc.devEnd.toLocaleString()}</td>
-                        <td class="p-3 border text-xs">${s.calc.testEnd.toLocaleString()}</td>
-                        <td class="p-3 border text-xs font-bold">${s.calc.finalEnd.toLocaleString()}</td>
-                        <td class="p-3 border text-xs">${s.state}</td>
-                    </tr>
-                `;
-            });
-        }
+    let html = '';
+    for (const area in grouped) {
+        grouped[area].forEach((s, index) => {
+            const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
+            const hasError = s.calc.error; // التنبيه الجديد
+
+            html += `
+                <tr class="${isLate ? 'status-delayed' : ''} ${hasError ? 'bg-yellow-50' : ''} hover:bg-gray-50">
+                    ${index === 0 ? `<td class="p-3 border font-bold" rowspan="${grouped[area].length}">${area}</td>` : ''}
+                    <td class="p-3 border text-sm">${s.title}</td>
+                    <td class="p-3 border text-xs">🛠 ${s.assignedTo}<br>🔍 ${s.tester}</td>
+                    <td class="p-3 border text-xs ${hasError ? 'text-orange-600 font-bold' : ''}">
+                        ${hasError ? s.calc.devEnd : s.calc.devEnd.toLocaleString()}
+                    </td>
+                    <td class="p-3 border text-xs">
+                        ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleString() : s.calc.testEnd}
+                    </td>
+                    <td class="p-3 border text-xs font-bold">
+                        ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString() : s.calc.finalEnd}
+                    </td>
+                    <td class="p-3 border text-xs">${s.state}</td>
+                </tr>
+            `;
+        });
+    }
         tbody.innerHTML = html;
     },
 
