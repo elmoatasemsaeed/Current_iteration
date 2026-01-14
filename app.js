@@ -106,6 +106,9 @@ const dataProcessor = {
         rows.forEach(row => {
             if (row['Work Item Type'] === 'User Story') {
                 let area = row['Business Area'];
+                if (area && area.trim().toLowerCase() === "integration") {
+        area = "LDM Integration";
+    }
                 if (!area || area.trim() === "") {
                     const path = row['Iteration Path'] || "";
                     area = path.includes('\\') ? path.split('\\')[0] : path;
