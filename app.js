@@ -257,7 +257,7 @@ const ui = {
     renderStats() {
         const active = currentData.filter(s => s.state !== 'Tested');
         const tested = currentData.filter(s => s.state === 'Tested');
-        const delayed = active.filter(s => new Date() > s.calc.finalEnd);
+        const delayed = active.filter(s => s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd);
 
         const statsHtml = `
             <div class="bg-blue-600 text-white p-4 rounded-xl shadow">
@@ -288,12 +288,16 @@ const ui = {
             </div>
         `).join('');
 
-        document.getElementById('today-container').innerHTML = active.filter(s => s.calc.finalEnd.toISOString().split('T')[0] === today).map(s => `
-            <div class="p-2 border-b text-sm">
-                <span class="font-bold">[${s.area}]</span> ${s.title} - <span class="text-blue-500">${s.assignedTo}</span>
-            </div>
-        `).join('') || '<div class="text-gray-400 text-center">لا يوجد شيء مخطط له اليوم</div>';
-    },
+// Replace the existing filter line for today-container with this:
+document.getElementById('today-container').innerHTML = active.filter(s => {
+    // Check if finalEnd is a valid Date object before calling toISOString
+    return s.calc.finalEnd instanceof Date && 
+           s.calc.finalEnd.toISOString().split('T')[0] === today;
+}).map(s => `
+    <div class="p-2 border-b text-sm">
+        <span class="font-bold">[${s.area}]</span> ${s.title} - <span class="text-blue-500">${s.assignedTo}</span>
+    </div>
+`).join('') || '<div class="text-gray-400 text-center">لا يوجد شيء مخطط له اليوم</div>';
 
 renderActiveTable() {
     const tbody = document.getElementById('active-table-body');
