@@ -291,68 +291,90 @@ renderActiveCards() {
         return;
     }
 
-    container.innerHTML = activeStories.map(s => {
-        const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
-        const hasError = s.calc.error;
-        
-        // تحديد لون الحالة
-        let statusColor = "bg-blue-100 text-blue-700";
-        if(isLate) statusColor = "bg-red-100 text-red-700";
-        if(hasError) statusColor = "bg-amber-100 text-amber-700";
+    // 1. تجميع البيانات حسب Business Area وترتيبها داخلياً (المتأخر أولاً)
+    const groupedStories = activeStories.reduce((groups, story) => {
+        const area = story.area || "General";
+        if (!groups[area]) groups[area] = [];
+        groups[area].push(story);
+        return groups;
+    }, {});
+
+    // تحويل الكائن إلى مصفوفة للتمكن من عرضها وترتيب القصص داخل كل مجموعة
+    container.innerHTML = Object.keys(groupedStories).map(area => {
+        const storiesInArea = groupedStories[area].sort((a, b) => {
+            const isALate = a.calc.finalEnd instanceof Date && new Date() > a.calc.finalEnd;
+            const isBLate = b.calc.finalEnd instanceof Date && new Date() > b.calc.finalEnd;
+            return isBLate - isALate; // المتأخر (true) يظهر أولاً
+        });
 
         return `
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
-                <div class="p-5 flex-1">
-                    <div class="flex justify-between items-start mb-4">
-                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
-                            ${hasError ? 'Action Required' : (isLate ? 'Overdue' : s.state)}
-                        </span>
-                        <span class="text-xs font-mono text-gray-400">#${s.id}</span>
-                    </div>
-                    
-                    <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
-                    <div class="text-sm text-indigo-600 font-semibold mb-4 flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                        ${s.area}
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50">
-                        <div>
-                            <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Development</p>
-                            <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
-                                ${s.assignedTo}
-                            </p>
-                            <p class="text-[10px] text-gray-500 mt-1 italic">
-                                Ends: ${hasError ? 'Pending' : new Date(s.calc.devEnd).toLocaleDateString('en-GB')}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Quality Assurance</p>
-                            <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
-                                ${s.tester}
-                            </p>
-                            <p class="text-[10px] text-gray-500 mt-1 italic">
-                                Ends: ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleDateString('en-GB') : 'TBD'}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
-                    <div class="flex flex-col">
-                        <span class="text-[10px] uppercase font-bold text-gray-400">Final Delivery</span>
-                        <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
-                            ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting for Data'}
-                        </span>
-                    </div>
-                    ${isLate ? '<span class="text-xl">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
-                </div>
+            <div class="col-span-full mt-8 mb-4">
+                <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
+                    <span class="w-2 h-6 bg-indigo-600 rounded-full"></span>
+                    ${area} 
+                    <span class="text-sm font-normal text-gray-400">(${storiesInArea.length})</span>
+                </h2>
             </div>
+            ${storiesInArea.map(s => {
+                const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
+                const hasError = s.calc.error;
+                
+                let statusColor = "bg-blue-100 text-blue-700";
+                if(isLate) statusColor = "bg-red-100 text-red-700";
+                if(hasError) statusColor = "bg-amber-100 text-amber-700";
+
+                return `
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
+                        <div class="p-5 flex-1">
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
+                                    ${hasError ? 'Action Required' : (isLate ? 'Overdue ⚠️' : s.state)}
+                                </span>
+                                <span class="text-xs font-mono text-gray-400">#${s.id}</span>
+                            </div>
+                            
+                            <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
+
+                            <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
+                                <div>
+                                    <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Development</p>
+                                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
+                                        ${s.assignedTo}
+                                    </p>
+                                    <p class="text-[10px] text-gray-500 mt-1 italic">
+                                        Ends: ${hasError ? 'Pending' : new Date(s.calc.devEnd).toLocaleDateString('en-GB')}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Quality Assurance</p>
+                                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
+                                        ${s.tester}
+                                    </p>
+                                    <p class="text-[10px] text-gray-500 mt-1 italic">
+                                        Ends: ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleDateString('en-GB') : 'TBD'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] uppercase font-bold text-gray-400">Final Delivery</span>
+                                <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
+                                    ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting for Data'}
+                                </span>
+                            </div>
+                            ${isLate ? '<span class="text-xl">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
+                        </div>
+                    </div>
+                `;
+            }).join('')}
         `;
     }).join('');
-},
+}
+    ,
 
     renderDelivery() {
         const container = document.getElementById('delivery-grid');
