@@ -2,7 +2,7 @@
  * Configuration & Global State
  */
 const CONFIG = {
-    REPO_NAME: "YOUR_USERNAME/YOUR_REPO", // يجب تغيير هذا لاسم حسابك والمستودع
+    REPO_NAME: "elmoatasemsaeed/Current_iteration", // يجب تغيير هذا لاسم حسابك والمستودع
     FILE_PATH: "data/db.json",
     WORKING_HOURS: 5,
     START_HOUR: 9,
