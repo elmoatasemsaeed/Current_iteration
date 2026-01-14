@@ -118,9 +118,9 @@ const dataProcessor = {
                     title: row['Title'],
                     state: row['State'],
                     assignedTo: row['Assigned To'] || "Unassigned",
-                    tester: row['Tester Assigned To'] || "Unassigned",
+                    tester: row['Assigned To Tester'] || "Unassigned",
                     area: area || "General",
-                    expectedDate: row['Release expected date'],
+                    expectedDate: row['Release Expected Date'],
                     tasks: [],
                     bugs: [],
                     calc: {}
@@ -140,7 +140,7 @@ const dataProcessor = {
         stories.forEach(story => {
             // 1. حساب الـ Dev
             const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-            const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimate'] || 0), 0);
+            const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
             
             // تاريخ البداية من أول تاسك اتعمل لها أكتيف
             let devStart = new Date();
@@ -151,14 +151,16 @@ const dataProcessor = {
 
             // 2. حساب الـ Test
             const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
-            const prepTask = story.tasks.find(t => t['Title'].toLowerCase().includes('preparation'));
-            let testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimate'] || 0), 0);
+            const prepTask = story.tasks.find(t => 
+    t['Title'].toLowerCase().includes('preparation') || 
+    t['Title'].toLowerCase().includes('prepration'));
+            let testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
             // منطق الـ Preparation Overlap
             if (prepTask && prepTask['Activated Date']) {
                 const prepStart = new Date(prepTask['Activated Date']);
                 if (prepStart < story.calc.devEnd) {
-                    testHours -= parseFloat(prepTask['Original Estimate'] || 0);
+                    testHours -= parseFloat(prepTask['Original Estimation'] || 0);
                 }
             }
 
@@ -170,7 +172,7 @@ const dataProcessor = {
             story.calc.testEnd = dateEngine.addWorkingHours(testStart, Math.max(0, testHours), story.tester);
 
             // 3. حساب الـ Rework (Bugs)
-            const bugHours = story.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimate'] || 0), 0);
+            const bugHours = story.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0);
             story.calc.finalEnd = dateEngine.addWorkingHours(story.calc.testEnd, bugHours, story.assignedTo);
         });
 
