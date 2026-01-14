@@ -64,7 +64,8 @@ const dataProcessor = {
             });
             if (response.ok) {
                 const data = await response.json();
-                db = JSON.parse(atob(data.content));
+               const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+db = JSON.parse(decodedContent);
                 db.sha = data.sha; 
                 
                 // إذا كان هناك بيانات مخزنة مسبقاً، قم بتحميلها في التطبيق
@@ -84,20 +85,23 @@ const dataProcessor = {
     }
 },
 
-    async saveToGitHub() {
+async saveToGitHub() {
     const token = sessionStorage.getItem('gh_token');
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2))));
     
-    try {
-        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-            method: 'PUT',
-            headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                message: "Update Database",
-                content: content,
-                sha: db.sha || undefined
-            })
-        });
+    // التعديل هنا: استخدام Unicode safe base64 encoding
+    const jsonString = JSON.stringify(db, null, 2);
+    const content = btoa(unescape(encodeURIComponent(jsonString)));
+    
+    await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            message: "Update Database",
+            content: content,
+            sha: db.sha || undefined
+        })
+    });
+},
 
         if (response.ok) {
             const result = await response.json();
