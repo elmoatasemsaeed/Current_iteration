@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,11 +39,11 @@
                 <div class="flex items-center gap-8">
                     <span class="text-xl font-bold text-blue-700 italic underline">IterationSync</span>
                     <nav class="hidden lg:flex gap-1">
-                        <button onclick="ui.switchTab('dashboard')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">الداشبورد</button>
-                        <button onclick="ui.switchTab('active')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">الحالة الحالية</button>
-                        <button onclick="ui.switchTab('delivery')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">التسليم (Tested)</button>
-                        <button onclick="ui.switchTab('availability')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">التوافر</button>
-                        <button onclick="ui.switchTab('settings')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">الإعدادات</button>
+                        <button onclick="ui.switchTab('dashboard')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Dashboard</button>
+                        <button onclick="ui.switchTab('active')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Current Status</button>
+                        <button onclick="ui.switchTab('delivery')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Delivery (Tested)</button>
+                        <button onclick="ui.switchTab('availability')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Availability</button>
+                        <button onclick="ui.switchTab('settings')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Setting</button>
                     </nav>
                 </div>
                 
@@ -66,11 +66,11 @@
                     </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-xl shadow-sm border h-96 overflow-y-auto" id="overdue-list">
-                        <h3 class="font-bold text-red-600 mb-4 flex items-center gap-2">⚠️ القصص المتأخرة</h3>
+                        <h3 class="font-bold text-red-600 mb-4 flex items-center gap-2">⚠️ Delyed User Storis</h3>
                         <div class="space-y-3" id="overdue-container"></div>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border h-96 overflow-y-auto" id="today-expected">
-                        <h3 class="font-bold text-blue-600 mb-4 flex items-center gap-2">📅 متوقع انتهاؤها اليوم</h3>
+                        <h3 class="font-bold text-blue-600 mb-4 flex items-center gap-2">📅 Expected Tody</h3>
                         <div class="space-y-3" id="today-container"></div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
 
             <section id="tab-delivery" class="tab-content space-y-4">
                 <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <h2 class="font-bold text-green-800">العناصر الجاهزة للتسليم (Tested)</h2>
+                    <h2 class="font-bold text-green-800">Ready To deliver (Tested)</h2>
                 </div>
                 <div id="delivery-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </section>
@@ -103,7 +103,7 @@
             <section id="tab-settings" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-white p-6 rounded-xl border">
-                        <h3 class="font-bold mb-4">إضافة إجازة موظف</h3>
+                        <h3 class="font-bold mb-4">Add Vacation For Employee</h3>
                         <div class="space-y-3">
                             <select id="staff-select" class="w-full border p-2 rounded"></select>
                             <input type="date" id="vacation-date" class="w-full border p-2 rounded">
