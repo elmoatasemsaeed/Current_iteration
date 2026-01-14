@@ -14,7 +14,8 @@ let db = {
     users: [],
     vacations: [], 
     holidays: [],  
-    deliveryLogs: [] 
+    deliveryLogs: [],
+    currentStories: []
 };
 
 let currentData = []; 
@@ -65,6 +66,12 @@ const dataProcessor = {
                 const data = await response.json();
                 db = JSON.parse(atob(data.content));
                 db.sha = data.sha; 
+                
+                // إذا كان هناك بيانات مخزنة مسبقاً، قم بتحميلها في التطبيق
+                if (db.currentStories && db.currentStories.length > 0) {
+                    currentData = db.currentStories;
+                }
+                
                 ui.renderAll();
             } else {
                 console.log("File not found, creating new DB...");
@@ -107,8 +114,8 @@ const dataProcessor = {
             if (row['Work Item Type'] === 'User Story') {
                 let area = row['Business Area'];
                 if (area && area.trim().toLowerCase() === "integration") {
-        area = "LDM Integration";
-    }
+                    area = "LDM Integration";
+                }
                 if (!area || area.trim() === "") {
                     const path = row['Iteration Path'] || "";
                     area = path.includes('\\') ? path.split('\\')[0] : path;
@@ -134,7 +141,17 @@ const dataProcessor = {
             }
         });
 
+        // 1. حساب التواريخ أولاً
         this.calculateTimelines(stories);
+
+        // 2. تحديث الـ DB بالبيانات الجديدة (تمسح القديم وتضع الجديد)
+        // ملاحظة: deliveryLogs و vacations و holidays لن تتاثر لأننا نحدث مفتاح stories فقط
+        db.currentStories = stories;
+
+        // 3. حفظ النسخة الجديدة كاملة على جيت هب
+        this.saveToGitHub().then(() => {
+            alert("تم تحديث البيانات وحفظها بنجاح على GitHub");
+        });
     },
 
     calculateTimelines(stories) {
