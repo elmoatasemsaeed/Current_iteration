@@ -298,7 +298,7 @@ document.getElementById('today-container').innerHTML = active.filter(s => {
         <span class="font-bold">[${s.area}]</span> ${s.title} - <span class="text-blue-500">${s.assignedTo}</span>
     </div>
 `).join('') || '<div class="text-gray-400 text-center">لا يوجد شيء مخطط له اليوم</div>';
-
+}
 renderActiveTable() {
     const tbody = document.getElementById('active-table-body');
     const activeStories = currentData.filter(s => s.state !== 'Tested');
