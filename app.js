@@ -85,10 +85,11 @@ const dataProcessor = {
 },
 
     async saveToGitHub() {
-        const token = sessionStorage.getItem('gh_token');
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2))));
-        
-        await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+    const token = sessionStorage.getItem('gh_token');
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2))));
+    
+    try {
+        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
             method: 'PUT',
             headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -97,8 +98,20 @@ const dataProcessor = {
                 sha: db.sha || undefined
             })
         });
-    },
 
+        if (response.ok) {
+            const result = await response.json();
+            // تحديث الـ sha فوراً بعد نجاح الحفظ
+            db.sha = result.content.sha; 
+            console.log("تم تحديث الملف بنجاح، SHA الجديد:", db.sha);
+        } else if (response.status === 409) {
+            alert("حدث تعارض في البيانات! سيتم إعادة تحميل الصفحة لمزامنة أحدث نسخة.");
+            location.reload(); // إعادة التحميل تجبر التطبيق على جلب الـ sha الجديد
+        }
+    } catch (error) {
+        console.error("Error saving to GitHub:", error);
+    }
+},
     handleCSV(event) {
         const file = event.target.files[0];
         Papa.parse(file, {
