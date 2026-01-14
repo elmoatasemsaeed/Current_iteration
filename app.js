@@ -88,29 +88,32 @@ db = JSON.parse(decodedContent);
 async saveToGitHub() {
     const token = sessionStorage.getItem('gh_token');
     
-    // التعديل هنا: استخدام Unicode safe base64 encoding
+    // تحويل البيانات لـ Base64 بشكل يدعم اللغة العربية
     const jsonString = JSON.stringify(db, null, 2);
     const content = btoa(unescape(encodeURIComponent(jsonString)));
     
-    await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-        method: 'PUT',
-        headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            message: "Update Database",
-            content: content,
-            sha: db.sha || undefined
-        })
-    });
-},
+    try {
+        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': `token ${token}`, 
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({
+                message: "Update Database",
+                content: content,
+                sha: db.sha || undefined
+            })
+        });
 
         if (response.ok) {
             const result = await response.json();
-            // تحديث الـ sha فوراً بعد نجاح الحفظ
+            // تحديث الـ sha فوراً بعد نجاح الحفظ لمنع تعارض الـ 409
             db.sha = result.content.sha; 
             console.log("تم تحديث الملف بنجاح، SHA الجديد:", db.sha);
         } else if (response.status === 409) {
             alert("حدث تعارض في البيانات! سيتم إعادة تحميل الصفحة لمزامنة أحدث نسخة.");
-            location.reload(); // إعادة التحميل تجبر التطبيق على جلب الـ sha الجديد
+            location.reload(); 
         }
     } catch (error) {
         console.error("Error saving to GitHub:", error);
