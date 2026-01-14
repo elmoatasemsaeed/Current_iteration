@@ -76,29 +76,18 @@
                 </div>
             </section>
 
-            <section id="tab-active" class="tab-content">
-                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-                    <div class="p-4 border-b bg-gray-50 flex justify-between">
-                        <h2 class="font-bold">متابعة القصص النشطة (حسب الـ Business Area)</h2>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right border-collapse">
-                            <thead class="bg-gray-100 text-gray-600 text-sm">
-                                <tr>
-                                    <th class="p-3 border">Area</th>
-                                    <th class="p-3 border">User Story</th>
-                                    <th class="p-3 border">Dev / Tester</th>
-                                    <th class="p-3 border">Dev End</th>
-                                    <th class="p-3 border">Test End</th>
-                                    <th class="p-3 border">Expected Final</th>
-                                    <th class="p-3 border">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="active-table-body"></tbody>
-                        </table>
-                    </div>
+           <section id="tab-active" class="tab-content">
+    <div class="flex flex-col gap-6">
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-slate-800">Active Workstreams</h2>
+            <div id="active-filters" class="flex gap-2">
                 </div>
-            </section>
+        </div>
+        
+        <div id="active-cards-container" class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            </div>
+    </div>
+</section>
 
             <section id="tab-delivery" class="tab-content space-y-4">
                 <div class="bg-green-50 p-4 rounded-lg border border-green-200">
