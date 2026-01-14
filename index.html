@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iteration Tracker Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .status-delayed { background-color: #fee2e2; border-right: 4px solid #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
+            <h1 class="text-3xl font-bold text-center mb-8 text-blue-900">تسجيل الدخول</h1>
+            <div class="space-y-4">
+                <input type="text" id="username" placeholder="اسم المستخدم" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="password" id="password" placeholder="كلمة المرور" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="password" id="gh-token" placeholder="GitHub Personal Access Token" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="remember-me" class="w-4 h-4">
+                    <label for="remember-me" class="text-sm text-gray-600">تذكر بياناتي</label>
+                </div>
+                <button onclick="auth.handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">دخول</button>
+            </div>
+            <p class="text-[10px] text-gray-400 mt-4 text-center italic">تأكد من صلاحيات الـ Token (repo scope)</p>
+        </div>
+    </div>
+
+    <div id="app-container" class="hidden">
+        <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+            <div class="max-w-full mx-auto px-4 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-8">
+                    <span class="text-xl font-bold text-blue-700 italic underline">IterationSync</span>
+                    <nav class="hidden lg:flex gap-1">
+                        <button onclick="ui.switchTab('dashboard')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">الداشبورد</button>
+                        <button onclick="ui.switchTab('active')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">الحالة الحالية</button>
+                        <button onclick="ui.switchTab('delivery')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">التسليم (Tested)</button>
+                        <button onclick="ui.switchTab('availability')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">التوافر</button>
+                        <button onclick="ui.switchTab('settings')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">الإعدادات</button>
+                    </nav>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <button onclick="dataProcessor.sync()" class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">
+                        <span>🔄</span> مزامنة البيانات
+                    </button>
+                    <input type="file" id="csv-input" class="hidden" accept=".csv" onchange="dataProcessor.handleCSV(event)">
+                    <button onclick="document.getElementById('csv-input').click()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition">
+                        📤 رفع CSV
+                    </button>
+                    <button onclick="auth.logout()" class="text-red-500 text-sm font-bold p-2 hover:bg-red-50 rounded">خروج</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-6">
+            <section id="tab-dashboard" class="tab-content space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="stats-cards">
+                    </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border h-96 overflow-y-auto" id="overdue-list">
+                        <h3 class="font-bold text-red-600 mb-4 flex items-center gap-2">⚠️ القصص المتأخرة</h3>
+                        <div class="space-y-3" id="overdue-container"></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border h-96 overflow-y-auto" id="today-expected">
+                        <h3 class="font-bold text-blue-600 mb-4 flex items-center gap-2">📅 متوقع انتهاؤها اليوم</h3>
+                        <div class="space-y-3" id="today-container"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-active" class="tab-content">
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div class="p-4 border-b bg-gray-50 flex justify-between">
+                        <h2 class="font-bold">متابعة القصص النشطة (حسب الـ Business Area)</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead class="bg-gray-100 text-gray-600 text-sm">
+                                <tr>
+                                    <th class="p-3 border">Area</th>
+                                    <th class="p-3 border">User Story</th>
+                                    <th class="p-3 border">Dev / Tester</th>
+                                    <th class="p-3 border">Dev End</th>
+                                    <th class="p-3 border">Test End</th>
+                                    <th class="p-3 border">Expected Final</th>
+                                    <th class="p-3 border">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="active-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-delivery" class="tab-content space-y-4">
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <h2 class="font-bold text-green-800">العناصر الجاهزة للتسليم (Tested)</h2>
+                </div>
+                <div id="delivery-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </section>
+
+            <section id="tab-availability" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="availability-container"></div>
+            </section>
+
+            <section id="tab-settings" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl border">
+                        <h3 class="font-bold mb-4">إضافة إجازة موظف</h3>
+                        <div class="space-y-3">
+                            <select id="staff-select" class="w-full border p-2 rounded"></select>
+                            <input type="date" id="vacation-date" class="w-full border p-2 rounded">
+                            <button onclick="settings.addVacation()" class="bg-blue-600 text-white px-4 py-2 rounded shadow">إضافة</button>
+                        </div>
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="text-sm font-bold text-gray-500 mb-2">الإجازات الحالية:</h4>
+                            <div id="vacations-list" class="space-y-1 text-xs max-h-40 overflow-y-auto"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border">
+                        <h3 class="font-bold mb-4">العطلات الرسمية</h3>
+                        <div class="flex gap-2">
+                            <input type="date" id="holiday-date" class="border p-2 rounded flex-1">
+                            <button onclick="settings.addHoliday()" class="bg-gray-800 text-white px-4 py-2 rounded">إضافة</button>
+                        </div>
+                        <div id="holidays-list" class="mt-6 flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
