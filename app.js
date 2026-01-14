@@ -2,7 +2,7 @@
  * Configuration & Global State
  */
 const CONFIG = {
-    REPO_NAME: "elmoatasemsaeed/Current_iteration", // يجب تغيير هذا لاسم حسابك والمستودع
+    REPO_NAME: "elmoatasemsaeed/Current_iteration",
     FILE_PATH: "db.json",
     WORKING_HOURS: 5,
     START_HOUR: 9,
@@ -12,12 +12,12 @@ const CONFIG = {
 
 let db = {
     users: [],
-    vacations: [], // { name, date }
-    holidays: [],  // ["YYYY-MM-DD"]
-    deliveryLogs: [] // { storyId, to, method, date, timestamp }
+    vacations: [], 
+    holidays: [],  
+    deliveryLogs: [] 
 };
 
-let currentData = []; // البيانات القادمة من CSV بعد المعالجة
+let currentData = []; 
 let currentUser = null;
 
 /**
@@ -32,7 +32,6 @@ const auth = {
 
         if(!u || !p || !t) return alert("برجاء ملء جميع البيانات");
 
-        // تخزين مؤقت للتوكن للعمليات الحالية
         sessionStorage.setItem('gh_token', t);
         if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
 
@@ -43,7 +42,7 @@ const auth = {
     startApp() {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('app-container').classList.remove('hidden');
-        dataProcessor.sync(); // جلب البيانات من جيت هب عند البداية
+        dataProcessor.sync(); 
     },
 
     logout() {
@@ -65,7 +64,7 @@ const dataProcessor = {
             if (response.ok) {
                 const data = await response.json();
                 db = JSON.parse(atob(data.content));
-                db.sha = data.sha; // نحتاجه للتحديث اللاحق
+                db.sha = data.sha; 
                 ui.renderAll();
             } else {
                 console.log("File not found, creating new DB...");
@@ -106,7 +105,6 @@ const dataProcessor = {
 
         rows.forEach(row => {
             if (row['Work Item Type'] === 'User Story') {
-                // استخراج الـ Business Area حسب المنطق المطلوب
                 let area = row['Business Area'];
                 if (!area || area.trim() === "") {
                     const path = row['Iteration Path'] || "";
@@ -136,40 +134,34 @@ const dataProcessor = {
         this.calculateTimelines(stories);
     },
 
-calculateTimelines(stories) {
-    stories.forEach(story => {
-        // 1. حساب الـ Dev
-        const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-        const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        
-        // تغيير المنطق هنا: البحث عن تواريخ التفعيل
-        let devStart = null;
-        const activatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
-        
-        if (activatedDates.length > 0) {
-            devStart = new Date(activatedDates[0]);
-        }
+    calculateTimelines(stories) {
+        stories.forEach(story => {
+            const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+            const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+            
+            let devStart = null;
+            const activatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
+            
+            if (activatedDates.length > 0) {
+                devStart = new Date(activatedDates[0]);
+            }
 
-        // إذا لم يوجد تاريخ تفعيل، لا تقم بالحسابات وضع تنبيه
-        if (!devStart) {
-            story.calc.error = "لم يتم بدء العمل (No Activated Tasks)";
-            story.calc.devEnd = "بانتظار البدء";
-            story.calc.testEnd = "---";
-            story.calc.finalEnd = "---";
-            return; // تخطي الحساب لهذه القصة
-        }
+            if (!devStart) {
+                story.calc.error = "لم يتم بدء العمل (No Activated Tasks)";
+                story.calc.devEnd = "بانتظار البدء";
+                story.calc.testEnd = "---";
+                story.calc.finalEnd = "---";
+                return; 
+            }
 
-        story.calc.devEnd = dateEngine.addWorkingHours(devStart, devHours, story.assignedTo);
+            story.calc.devEnd = dateEngine.addWorkingHours(devStart, devHours, story.assignedTo);
 
-
-            // 2. حساب الـ Test
             const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
             const prepTask = story.tasks.find(t => 
-    t['Title'].toLowerCase().includes('preparation') || 
-    t['Title'].toLowerCase().includes('prepration'));
+                t['Title'].toLowerCase().includes('preparation') || 
+                t['Title'].toLowerCase().includes('prepration'));
             let testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
-            // منطق الـ Preparation Overlap
             if (prepTask && prepTask['Activated Date']) {
                 const prepStart = new Date(prepTask['Activated Date']);
                 if (prepStart < story.calc.devEnd) {
@@ -177,14 +169,12 @@ calculateTimelines(stories) {
                 }
             }
 
-            // بداية التيست: اليوم التالي 9 صباحاً
             let testStart = new Date(story.calc.devEnd);
             testStart.setDate(testStart.getDate() + 1);
             testStart.setHours(9, 0, 0, 0);
 
             story.calc.testEnd = dateEngine.addWorkingHours(testStart, Math.max(0, testHours), story.tester);
 
-            // 3. حساب الـ Rework (Bugs)
             const bugHours = story.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0);
             story.calc.finalEnd = dateEngine.addWorkingHours(story.calc.testEnd, bugHours, story.assignedTo);
         });
@@ -214,10 +204,7 @@ const dateEngine = {
         let remainingHours = hours;
 
         while (remainingHours > 0) {
-            // التحقق من اليوم
             if (this.isWorkDay(result, person)) {
-                // الساعات المتاحة في هذا اليوم (من 9 لـ 5 هي 8 ساعات، لكننا نعمل 5)
-                // للتبسيط: كل ساعة عمل تاخد (8/5) من وقت اليوم الفعلي
                 let currentHour = result.getHours();
                 if (currentHour >= CONFIG.START_HOUR && currentHour < CONFIG.END_HOUR) {
                     remainingHours -= (CONFIG.WORKING_HOURS / (CONFIG.END_HOUR - CONFIG.START_HOUR));
@@ -226,7 +213,6 @@ const dateEngine = {
             
             result.setHours(result.getHours() + 1);
             
-            // لو اليوم خلص (بعد الساعة 5 مساءً) ننتقل لليوم التالي 9 صباحاً
             if (result.getHours() >= CONFIG.END_HOUR) {
                 result.setDate(result.getDate() + 1);
                 result.setHours(CONFIG.START_HOUR, 0, 0, 0);
@@ -273,13 +259,12 @@ const ui = {
                 <div class="text-2xl font-bold">${delayed.length}</div>
             </div>
             <div class="bg-purple-600 text-white p-4 rounded-xl shadow">
-                <div class="text-sm opacity-80">تم تسليمها (3 شهور)</div>
+                <div class="text-sm opacity-80">تم تسليمها</div>
                 <div class="text-2xl font-bold">${db.deliveryLogs.length}</div>
             </div>
         `;
         document.getElementById('stats-cards').innerHTML = statsHtml;
 
-        // القائمة المتأخرة واليومية
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('overdue-container').innerHTML = delayed.map(s => `
             <div class="p-2 border-b text-sm">
@@ -288,48 +273,51 @@ const ui = {
             </div>
         `).join('');
 
-// Replace the existing filter line for today-container with this:
-document.getElementById('today-container').innerHTML = active.filter(s => {
-    // Check if finalEnd is a valid Date object before calling toISOString
-    return s.calc.finalEnd instanceof Date && 
-           s.calc.finalEnd.toISOString().split('T')[0] === today;
-}).map(s => `
-    <div class="p-2 border-b text-sm">
-        <span class="font-bold">[${s.area}]</span> ${s.title} - <span class="text-blue-500">${s.assignedTo}</span>
-    </div>
-`).join('') || '<div class="text-gray-400 text-center">لا يوجد شيء مخطط له اليوم</div>';
-}
-renderActiveTable() {
-    const tbody = document.getElementById('active-table-body');
-    const activeStories = currentData.filter(s => s.state !== 'Tested');
-    
-    // ... منطق الـ Grouping كما هو ...
+        document.getElementById('today-container').innerHTML = active.filter(s => {
+            return s.calc.finalEnd instanceof Date && s.calc.finalEnd.toISOString().split('T')[0] === today;
+        }).map(s => `
+            <div class="p-2 border-b text-sm">
+                <span class="font-bold">[${s.area}]</span> ${s.title} - <span class="text-blue-500">${s.assignedTo}</span>
+            </div>
+        `).join('') || '<div class="text-gray-400 text-center">لا يوجد شيء مخطط له اليوم</div>';
+    },
 
-    let html = '';
-    for (const area in grouped) {
-        grouped[area].forEach((s, index) => {
-            const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
-            const hasError = s.calc.error; // التنبيه الجديد
+    renderActiveTable() {
+        const tbody = document.getElementById('active-table-body');
+        const activeStories = currentData.filter(s => s.state !== 'Tested');
+        
+        // Grouping logic
+        const grouped = activeStories.reduce((acc, s) => {
+            acc[s.area] = acc[s.area] || [];
+            acc[s.area].push(s);
+            return acc;
+        }, {});
 
-            html += `
-                <tr class="${isLate ? 'status-delayed' : ''} ${hasError ? 'bg-yellow-50' : ''} hover:bg-gray-50">
-                    ${index === 0 ? `<td class="p-3 border font-bold" rowspan="${grouped[area].length}">${area}</td>` : ''}
-                    <td class="p-3 border text-sm">${s.title}</td>
-                    <td class="p-3 border text-xs">🛠 ${s.assignedTo}<br>🔍 ${s.tester}</td>
-                    <td class="p-3 border text-xs ${hasError ? 'text-orange-600 font-bold' : ''}">
-                        ${hasError ? s.calc.devEnd : s.calc.devEnd.toLocaleString()}
-                    </td>
-                    <td class="p-3 border text-xs">
-                        ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleString() : s.calc.testEnd}
-                    </td>
-                    <td class="p-3 border text-xs font-bold">
-                        ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString() : s.calc.finalEnd}
-                    </td>
-                    <td class="p-3 border text-xs">${s.state}</td>
-                </tr>
-            `;
-        });
-    }
+        let html = '';
+        for (const area in grouped) {
+            grouped[area].forEach((s, index) => {
+                const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
+                const hasError = s.calc.error;
+
+                html += `
+                    <tr class="${isLate ? 'bg-red-50' : ''} ${hasError ? 'bg-yellow-50' : ''} hover:bg-gray-50">
+                        ${index === 0 ? `<td class="p-3 border font-bold" rowspan="${grouped[area].length}">${area}</td>` : ''}
+                        <td class="p-3 border text-sm">${s.title}</td>
+                        <td class="p-3 border text-xs">🛠 ${s.assignedTo}<br>🔍 ${s.tester}</td>
+                        <td class="p-3 border text-xs ${hasError ? 'text-orange-600 font-bold' : ''}">
+                            ${hasError ? s.calc.devEnd : s.calc.devEnd.toLocaleString()}
+                        </td>
+                        <td class="p-3 border text-xs">
+                            ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleString() : s.calc.testEnd}
+                        </td>
+                        <td class="p-3 border text-xs font-bold">
+                            ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString() : s.calc.finalEnd}
+                        </td>
+                        <td class="p-3 border text-xs">${s.state}</td>
+                    </tr>
+                `;
+            });
+        }
         tbody.innerHTML = html;
     },
 
@@ -340,20 +328,17 @@ renderActiveTable() {
         container.innerHTML = tested.map(s => {
             const isLogged = db.deliveryLogs.find(l => l.storyId === s.id);
             return `
-                <div class="bg-white p-4 rounded-xl border-2 ${isLogged ? 'border-green-500 shadow-inner opacity-60' : 'border-blue-200'}">
+                <div class="bg-white p-4 rounded-xl border-2 ${isLogged ? 'border-green-500 opacity-60' : 'border-blue-200'}">
                     <div class="font-bold">${s.title}</div>
                     <div class="text-xs text-gray-500 mb-4">ID: ${s.id} | Area: ${s.area}</div>
                     ${isLogged ? `
                         <div class="text-xs bg-green-100 p-2 rounded">
-                            ✅ تم التسليم لـ ${isLogged.to} عبر ${isLogged.method} بتاريخ ${isLogged.date}
+                            ✅ تم التسليم لـ ${isLogged.to}
                         </div>
                     ` : `
                         <div class="flex gap-2">
-                            <input id="to-${s.id}" placeholder="إلى من؟" class="text-xs border p-1 rounded flex-1">
-                            <select id="how-${s.id}" class="text-xs border p-1 rounded">
-                                <option>إيميل</option><option>واتساب</option><option>شخصي</option>
-                            </select>
-                            <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 text-white px-3 py-1 rounded text-xs">تأكيد تسليم</button>
+                            <input id="to-${s.id}" placeholder="المستلم" class="text-xs border p-1 rounded flex-1">
+                            <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs">تأكيد</button>
                         </div>
                     `}
                 </div>
@@ -363,21 +348,10 @@ renderActiveTable() {
 
     markDelivered(id) {
         const to = document.getElementById(`to-${id}`).value;
-        const method = document.getElementById(`how-${id}`).value;
-        if(!to) return alert("اكتب المستلم أولاً");
-
+        if(!to) return alert("اكتب المستلم");
         db.deliveryLogs.push({
-            storyId: id,
-            to: to,
-            method: method,
-            date: new Date().toLocaleDateString(),
-            timestamp: Date.now()
+            storyId: id, to, date: new Date().toLocaleDateString(), timestamp: Date.now()
         });
-
-        // تنظيف البيانات التي مر عليها أكثر من 3 أشهر
-        const threeMonthsAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
-        db.deliveryLogs = db.deliveryLogs.filter(l => l.timestamp > threeMonthsAgo);
-
         dataProcessor.saveToGitHub();
         this.renderDelivery();
     },
@@ -389,12 +363,11 @@ renderActiveTable() {
         container.innerHTML = staff.map(person => {
             const tasks = currentData.filter(s => (s.assignedTo === person || s.tester === person) && s.state !== 'Tested');
             const sorted = tasks.sort((a, b) => b.calc.finalEnd - a.calc.finalEnd);
-            const freeDate = sorted.length > 0 ? sorted[0].calc.finalEnd.toLocaleString() : "متاح الآن";
+            const freeDate = (sorted.length > 0 && sorted[0].calc.finalEnd instanceof Date) ? sorted[0].calc.finalEnd.toLocaleString() : "متاح الآن";
             
             return `
                 <div class="bg-white p-4 rounded-lg shadow-sm border-t-4 border-indigo-500">
                     <div class="font-bold text-lg">${person}</div>
-                    <div class="text-sm text-gray-500 mt-1">سيكون متاحاً في:</div>
                     <div class="text-blue-700 font-bold">${freeDate}</div>
                 </div>
             `;
@@ -404,17 +377,17 @@ renderActiveTable() {
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
         const staffSelect = document.getElementById('staff-select');
-        staffSelect.innerHTML = staff.map(s => `<option value="${s}">${s}</option>`).join('');
+        if(staffSelect) staffSelect.innerHTML = staff.map(s => `<option value="${s}">${s}</option>`).join('');
 
         document.getElementById('vacations-list').innerHTML = db.vacations.map((v, i) => `
-            <div class="flex justify-between bg-gray-50 p-1 px-2 rounded">
+            <div class="flex justify-between bg-gray-50 p-1 px-2 rounded mb-1">
                 <span>${v.name} - ${v.date}</span>
-                <button onclick="settings.removeVacation(${i})" class="text-red-500 font-bold">×</button>
+                <button onclick="settings.removeVacation(${i})" class="text-red-500">×</button>
             </div>
         `).join('');
 
         document.getElementById('holidays-list').innerHTML = db.holidays.map((h, i) => `
-            <span class="bg-gray-200 px-2 py-1 rounded text-xs flex items-center gap-1">
+            <span class="bg-gray-200 px-2 py-1 rounded text-xs inline-flex items-center gap-1 m-1">
                 ${h} <button onclick="settings.removeHoliday(${i})" class="text-red-500">×</button>
             </span>
         `).join('');
@@ -452,7 +425,9 @@ const settings = {
     }
 };
 
-// تشغيل تلقائي إذا كانت البيانات محفوظة
+/**
+ * Initialize
+ */
 window.onload = () => {
     const saved = localStorage.getItem('saved_creds');
     if(saved) {
