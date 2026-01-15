@@ -178,17 +178,15 @@ async saveToGitHub() {
         });
     },
 
-    calculateTimelines(stories) {
+   calculateTimelines(stories) {
         stories.forEach(story => {
+            // 1. حساب تطوير القصة (Development Tasks)
             const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
             const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
             
             let devStart = null;
             const activatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
-            
-            if (activatedDates.length > 0) {
-                devStart = new Date(activatedDates[0]);
-            }
+            if (activatedDates.length > 0) devStart = new Date(activatedDates[0]);
 
             if (!devStart) {
                 story.calc.error = "لم يتم بدء العمل (No Activated Tasks)";
@@ -200,18 +198,9 @@ async saveToGitHub() {
 
             story.calc.devEnd = dateEngine.addWorkingHours(devStart, devHours, story.assignedTo);
 
+            // 2. حساب الاختبار (Testing Tasks)
             const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
-            const prepTask = story.tasks.find(t => 
-                t['Title'].toLowerCase().includes('preparation') || 
-                t['Title'].toLowerCase().includes('prepration'));
             let testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-
-            if (prepTask && prepTask['Activated Date']) {
-                const prepStart = new Date(prepTask['Activated Date']);
-                if (prepStart < story.calc.devEnd) {
-                    testHours -= parseFloat(prepTask['Original Estimation'] || 0);
-                }
-            }
 
             let testStart = new Date(story.calc.devEnd);
             testStart.setDate(testStart.getDate() + 1);
@@ -219,8 +208,27 @@ async saveToGitHub() {
 
             story.calc.testEnd = dateEngine.addWorkingHours(testStart, Math.max(0, testHours), story.tester);
 
-            const bugHours = story.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0);
-            story.calc.finalEnd = dateEngine.addWorkingHours(story.calc.testEnd, bugHours, story.assignedTo);
+            // 3. حساب الريورك (Bugs Rework) - المنطق الجديد
+            let lastBugEndDate = new Date(story.calc.testEnd);
+
+            if (story.bugs && story.bugs.length > 0) {
+                story.bugs.forEach(bug => {
+                    const bugEffort = parseFloat(bug['Original Estimation'] || 0);
+                    const bugActivatedDate = bug['Activated Date'] ? new Date(bug['Activated Date']) : null;
+
+                    if (bugActivatedDate && bugEffort > 0) {
+                        // نحسب وقت انتهاء البج بناءً على تاريخ تفعيلها هي شخصياً
+                        const bugFinish = dateEngine.addWorkingHours(bugActivatedDate, bugEffort, story.assignedTo);
+                        
+                        // وقت التسليم النهائي يتأثر بأقصى تاريخ انتهاء (سواء التستر أو آخر بج خلصت)
+                        if (bugFinish > lastBugEndDate) {
+                            lastBugEndDate = bugFinish;
+                        }
+                    }
+                });
+            }
+
+            story.calc.finalEnd = lastBugEndDate;
         });
 
         currentData = stories;
