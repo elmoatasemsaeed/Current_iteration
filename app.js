@@ -136,7 +136,16 @@ async saveToGitHub() {
 
     rows.forEach(row => {
         if (row['Work Item Type'] === 'User Story') {
-            // ... (الكود الموجود مسبقاً) ...
+            // --- استعادة الكود من نسخة app (23).js ---
+            let area = row['Business Area'];
+            if (area && area.trim().toLowerCase() === "integration") {
+                area = "LDM Integration";
+            }
+            if (!area || area.trim() === "") {
+                const path = row['Iteration Path'] || "";
+                area = path.includes('\\') ? path.split('\\')[0] : path;
+            }
+            // ------------------------------------------
 
             currentStory = {
                 id: row['ID'],
@@ -144,20 +153,20 @@ async saveToGitHub() {
                 state: row['State'],
                 assignedTo: row['Assigned To'] || "Unassigned",
                 tester: row['Assigned To Tester'] || "Unassigned",
-                area: area || "General",
-                priority: parseInt(row['Business Priority']) || 999, // إضافة هذا السطر (999 للقيم الفارغة لتظهر في الآخر)
+                area: area || "General", // الآن لن يظهر خطأ
+                priority: parseInt(row['Business Priority']) || 999,
                 expectedDate: row['Release Expected Date'],
                 tasks: [],
                 bugs: [],
                 calc: {}
             };
             stories.push(currentStory);
-            } else if (row['Work Item Type'] === 'Task' && currentStory) {
-                currentStory.tasks.push(row);
-            } else if (row['Work Item Type'] === 'Bug' && currentStory) {
-                currentStory.bugs.push(row);
-            }
-        });
+        } else if (row['Work Item Type'] === 'Task' && currentStory) {
+            currentStory.tasks.push(row);
+        } else if (row['Work Item Type'] === 'Bug' && currentStory) {
+            currentStory.bugs.push(row);
+        }
+    });
 
         // 1. حساب التواريخ أولاً
         this.calculateTimelines(stories);
