@@ -530,24 +530,38 @@ return `
 
 renderDelivery() {
     const container = document.getElementById('delivery-grid');
-    const tested = currentData.filter(s => s.state === 'Tested');
+    
+    // 1. جلب كل الستوريز التي حالتها المختبرة
+    const allTested = currentData.filter(s => s.state === 'Tested');
 
-    if (tested.length === 0) {
+    if (allTested.length === 0 && db.deliveryLogs.length === 0) {
         container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">لا توجد عناصر جاهزة للتسليم حالياً.</div>`;
         return;
     }
 
-    // 1. فصل البيانات إلى مصفوفات (بانتظار التسليم و تم التسليم)
-    const pendingStories = tested.filter(s => !db.deliveryLogs.some(l => l.storyId === s.id));
-    const completedStories = tested.filter(s => db.deliveryLogs.some(l => l.storyId === s.id));
+    // 2. الفلترة الصحيحة:
+    // "بانتظار التسليم": هي التي حالتها Tested ولكن لم يتم تسجيلها في الـ Logs
+    const pendingStories = allTested.filter(s => !db.deliveryLogs.some(l => l.storyId === s.id.toString()));
+    
+    // "تم التسليم": هي الستوريز الموجودة في الـ Logs
+    // نقوم بمطابقة بيانات الـ Log مع بيانات الستوري الأصلية لعرض الاسم والتفاصيل
+    const completedStories = db.deliveryLogs.map(log => {
+        const story = currentData.find(s => s.id.toString() === log.storyId.toString());
+        return { 
+            ...story, 
+            logData: log,
+            // إذا لم يتم العثور على الستوري في ملف الـ CSV الحالي (تم حذفها مثلاً)، نعرض بيانات اللوج فقط
+            title: story ? story.title : "Story not in current CSV",
+            area: story ? story.area : "N/A"
+        };
+    }).reverse(); // لعرض الأحدث أولاً
 
     // وظيفة مساعدة لإنشاء HTML لكل كارت
     const createCardHtml = (s, isLogged) => {
-        const log = isLogged ? db.deliveryLogs.find(l => l.storyId === s.id) : null;
         return `
             <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 opacity-60 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
                 <div class="flex justify-between items-start mb-2">
-                    <span class="text-[10px] font-mono text-gray-400">#${s.id}</span>
+                    <span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span>
                     <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">
                         ${isLogged ? '✓ تم التسليم' : 'بانتظار التسليم'}
                     </span>
@@ -557,8 +571,8 @@ renderDelivery() {
                 
                 ${isLogged ? `
                     <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
-                        <b>المستلم:</b> ${log.to}<br>
-                        <b>التاريخ:</b> ${log.date}
+                        <b>المستلم:</b> ${s.logData.to}<br>
+                        <b>التاريخ:</b> ${s.logData.date}
                     </div>
                 ` : `
                     <div class="flex gap-2 mt-auto">
@@ -572,7 +586,6 @@ renderDelivery() {
         `;
     };
 
-    // 2. بناء الهيكل النهائي للسيكشنز
     let html = `
         <div class="col-span-full mb-4">
             <h3 class="text-lg font-bold text-blue-700 flex items-center gap-2">
