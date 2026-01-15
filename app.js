@@ -514,71 +514,70 @@ return `
     ,
 
 renderDelivery() {
-        const container = document.getElementById('delivery-grid');
-        const tested = currentData.filter(s => s.state === 'Tested');
+    const container = document.getElementById('delivery-grid');
+    const tested = currentData.filter(s => s.state === 'Tested');
 
-        if (tested.length === 0) {
-            container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">لا توجد عناصر جاهزة للتسليم حالياً.</div>`;
-            return;
-        }
+    if (tested.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">لا توجد عناصر جاهزة للتسليم حالياً.</div>`;
+        return;
+    }
 
-        // 1. تجميع البيانات حسب Business Area
-        const grouped = tested.reduce((acc, story) => {
-            const area = story.area || "General";
-            if (!acc[area]) acc[area] = [];
-            acc[area].push(story);
-            return acc;
-        }, {});
+    // 1. فصل البيانات إلى مصفوفات (بانتظار التسليم و تم التسليم)
+    const pendingStories = tested.filter(s => !db.deliveryLogs.some(l => l.storyId === s.id));
+    const completedStories = tested.filter(s => db.deliveryLogs.some(l => l.storyId === s.id));
 
-        let html = '';
-
-        // 2. المرور على كل منطقة (Area)
-        Object.keys(grouped).forEach(area => {
-            // 3. ترتيب القصص داخل المنطقة: غير المستلم أولاً
-            const sortedStories = grouped[area].sort((a, b) => {
-                const aLogged = db.deliveryLogs.some(l => l.storyId === a.id);
-                const bLogged = db.deliveryLogs.some(l => l.storyId === b.id);
-                return aLogged - bLogged; // false (0) قبل true (1)
-            });
-
-            html += `
-                <div class="col-span-full mt-6 mb-2">
-                    <h3 class="text-lg font-bold text-slate-700 border-r-4 border-blue-500 pr-2">${area}</h3>
+    // وظيفة مساعدة لإنشاء HTML لكل كارت
+    const createCardHtml = (s, isLogged) => {
+        const log = isLogged ? db.deliveryLogs.find(l => l.storyId === s.id) : null;
+        return `
+            <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 opacity-60 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[10px] font-mono text-gray-400">#${s.id}</span>
+                    <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">
+                        ${isLogged ? '✓ تم التسليم' : 'بانتظار التسليم'}
+                    </span>
                 </div>
-            `;
-
-            html += sortedStories.map(s => {
-                const log = db.deliveryLogs.find(l => l.storyId === s.id);
-                const isLogged = !!log;
-
-                return `
-                    <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 opacity-60 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-[10px] font-mono text-gray-400">#${s.id}</span>
-                            ${isLogged ? '<span class="text-green-500 text-xs font-bold">✓ تم التسليم</span>' : '<span class="text-blue-500 text-xs font-bold italic text-animate-pulse">بانتظار التسليم</span>'}
-                        </div>
-                        <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
-                        
-                        ${isLogged ? `
-                            <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
-                                <b>المستلم:</b> ${log.to}<br>
-                                <b>التاريخ:</b> ${log.date}
-                            </div>
-                        ` : `
-                            <div class="flex gap-2 mt-auto">
-                                <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
-                                <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
-                                    تأكيد
-                                </button>
-                            </div>
-                        `}
+                <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
+                <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
+                
+                ${isLogged ? `
+                    <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
+                        <b>المستلم:</b> ${log.to}<br>
+                        <b>التاريخ:</b> ${log.date}
                     </div>
-                `;
-            }).join('');
-        });
+                ` : `
+                    <div class="flex gap-2 mt-auto">
+                        <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
+                        <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+                            تأكيد
+                        </button>
+                    </div>
+                `}
+            </div>
+        `;
+    };
 
-        container.innerHTML = html;
-    },
+    // 2. بناء الهيكل النهائي للسيكشنز
+    let html = `
+        <div class="col-span-full mb-4">
+            <h3 class="text-lg font-bold text-blue-700 flex items-center gap-2">
+                📦 بانتظار التسليم (${pendingStories.length})
+            </h3>
+        </div>
+        ${pendingStories.map(s => createCardHtml(s, false)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا يوجد مهام بانتظار التسليم</div>'}
+
+        <div class="col-span-full my-8 border-t-2 border-dashed border-gray-200"></div>
+
+        <div class="col-span-full mb-4">
+            <h3 class="text-lg font-bold text-gray-500 flex items-center gap-2">
+                ✅ تم التسليم مؤخراً (${completedStories.length})
+            </h3>
+        </div>
+        ${completedStories.map(s => createCardHtml(s, true)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لم يتم تسليم أي عناصر بعد</div>'}
+    `;
+
+    container.innerHTML = html;
+},
 
     markDelivered(id) {
         const to = document.getElementById(`to-${id}`).value;
