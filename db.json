@@ -156,7 +156,7 @@
       "timestamp": 1768410731915
     }
   ],
-  "sha": "a0518c07a8224cf8c1bc35ca8903f69fed35fb7c",
+  "sha": "b8483503d66a5041bceb3d27b8e1f294ed7f30ee",
   "currentStories": [
     {
       "id": "146435",
@@ -1303,6 +1303,26 @@
           "State": "New",
           "Release Expected Date": "",
           "Business Priority": ""
+        },
+        {
+          "ID": "156178",
+          "Work Item Type": "Bug",
+          "Title": "the result of the Molecular Detection of COVID-19 by real time PCR UAE report fail to upload to web result",
+          "Assigned To": "Mohamed Abomosallam <mohamed.abomosallam@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "2",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 3:42:12 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/15/2026 3:53:18 PM",
+          "State": "Resolved",
+          "Release Expected Date": "",
+          "Business Priority": ""
         }
       ],
       "calc": {
@@ -1864,7 +1884,7 @@
     {
       "id": "154632",
       "title": "Wareed Lab - NT Mobile APIs",
-      "state": "Active",
+      "state": "Active - With Bugs",
       "assignedTo": "Hamza Ashry Hamza Abdelhafeez <hamza.abdelhafeez@nationaltechnology.net>",
       "tester": "Unassigned",
       "area": "LDM Integration",
@@ -2169,16 +2189,76 @@
           "State": "Active",
           "Release Expected Date": "",
           "Business Priority": ""
+        },
+        {
+          "ID": "156179",
+          "Work Item Type": "Task",
+          "Title": "DB: LDM_BORG & LDM_TEST & LDM_DEV: Update SP_GETALLUSERSBYPARAMS to takes  extra parameter V_MOBILENUMBER",
+          "Assigned To": "Mostafa Mahanna <mostafa.mahanna@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": ""
         }
       ],
       "bugs": [
         {
           "ID": "156100",
           "Work Item Type": "Bug",
-          "Title": "Send OTP returns status code 500",
-          "Assigned To": "Mohamed Salama <mohamed.salama@nationaltechnology.net>",
+          "Title": "Send OTP returns status code 500 and missing CountyCode value in AddNewPatient response",
+          "Assigned To": "Hamza Ashry Hamza Abdelhafeez <hamza.abdelhafeez@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 4:15:57 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156102",
+          "Work Item Type": "Bug",
+          "Title": "Update credentials should accept the right password",
+          "Assigned To": "Hamza Ashry Hamza Abdelhafeez <hamza.abdelhafeez@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 4:15:40 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156187",
+          "Work Item Type": "Bug",
+          "Title": "API allows date range greater than 6 months for GetPatientAccessions endpoint",
+          "Assigned To": "Hamza Ashry Hamza Abdelhafeez <hamza.abdelhafeez@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "0.5",
           "TimeSheet_DevActualTime": "",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "",
@@ -2193,12 +2273,12 @@
           "Business Priority": ""
         },
         {
-          "ID": "156102",
+          "ID": "156190",
           "Work Item Type": "Bug",
-          "Title": "Update credentials should accept the right password",
-          "Assigned To": "Mohamed Salama <mohamed.salama@nationaltechnology.net>",
+          "Title": "API accepts lowercase gender value instead of enforcing capitalized format (Male And Female )",
+          "Assigned To": "Hamza Ashry Hamza Abdelhafeez <hamza.abdelhafeez@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
+          "Original Estimation": "0.5",
           "TimeSheet_DevActualTime": "",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "",
@@ -2216,15 +2296,53 @@
       "calc": {
         "devEnd": "2026-01-13T08:00:00.000Z",
         "testEnd": "2026-01-15T09:00:00.000Z",
-        "finalEnd": "2026-01-15T09:00:00.000Z"
+        "finalEnd": "2026-01-18T08:00:00.000Z"
+      }
+    },
+    {
+      "id": "155839",
+      "title": "Al Farabi Lab - Update MMS  Integration Add API \"Reviewed Services - Get Page By Dates\"",
+      "state": "Active - With Bugs",
+      "assignedTo": "Tarek Saad <tarek.saad@nationaltechnology.net>",
+      "tester": "Heba Mohamed El Sayed <heba.elsayed@nationaltechnology.net>",
+      "area": "LDM Integration",
+      "priority": 1,
+      "tasks": [],
+      "bugs": [
+        {
+          "ID": "156147",
+          "Work Item Type": "Bug",
+          "Title": "Reviewed Services issues",
+          "Assigned To": "Tarek Saad <tarek.saad@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        }
+      ],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
       }
     },
     {
       "id": "153515",
       "title": "Al Farabi Lab - AMAD Integration",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Mohamed Salama <mohamed.salama@nationaltechnology.net>",
-      "tester": "Unassigned",
+      "tester": "Ahmed Khaled Mubark <ahmed.mubarak@nationaltechnology.net>",
       "area": "LDM Integration",
       "priority": 2,
       "tasks": [
@@ -2593,8 +2711,8 @@
       ],
       "calc": {
         "devEnd": "2026-01-04T11:40:04.000Z",
-        "testEnd": "2026-01-15T09:00:00.000Z",
-        "finalEnd": "2026-01-15T09:00:00.000Z"
+        "testEnd": "2026-01-05T07:00:00.000Z",
+        "finalEnd": "2026-01-11T10:00:00.000Z"
       }
     },
     {
@@ -4001,19 +4119,19 @@
           "ID": "153345",
           "Work Item Type": "Task",
           "Title": "DB: update EPHI_Report_PKG with new requirements",
-          "Assigned To": "Mostafa Mahanna <mostafa.mahanna@nationaltechnology.net>",
+          "Assigned To": "Ahmed Attia Mohamed Al-Qashit <ahmed.elqashit@nationaltechnology.net>",
           "Activity": "DB Modification",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "3",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "12/31/2025 12:21:30 PM",
+          "Activated Date": "1/15/2026 4:02:17 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\Candidate CRs",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "12/31/2025 5:26:27 PM",
-          "State": "Closed",
+          "Resolved Date": "",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": ""
         },
@@ -4123,19 +4241,19 @@
           "ID": "155727",
           "Work Item Type": "Bug",
           "Title": "#CR-151975: The CBC report is printed at 3 pages with error",
-          "Assigned To": "Esraa Abdelsalam <esraa.abdelsalam@nationaltechnology.net>",
+          "Assigned To": "Mahmoud Ab Omar <mahmoud.aboomar@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.5",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "1/15/2026 3:47:25 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2025\\InternalLab-December 29-13",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
+          "Resolved Date": "1/15/2026 3:53:12 PM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": ""
         },
@@ -4145,17 +4263,17 @@
           "Title": "#CR151975: Incorrect Processing Unit Displayed in the result clinical group Report",
           "Assigned To": "Esraa Abdelsalam <esraa.abdelsalam@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
+          "Original Estimation": "1",
           "TimeSheet_DevActualTime": "",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "1/15/2026 3:54:33 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2025\\InternalLab-December 29-13",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "New",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": ""
         },
@@ -4166,7 +4284,7 @@
           "Assigned To": "Esraa Abdelsalam <esraa.abdelsalam@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "1",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "0.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/15/2026 2:28:20 PM",
           "Business Area": "",
@@ -4181,9 +4299,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-01-13T12:00:00.000Z",
-        "testEnd": "2026-01-18T07:00:00.000Z",
-        "finalEnd": "2026-01-18T07:00:00.000Z"
+        "devEnd": "2026-01-18T11:00:00.000Z",
+        "testEnd": "2026-01-21T07:00:00.000Z",
+        "finalEnd": "2026-01-21T07:00:00.000Z"
       }
     },
     {
@@ -5697,11 +5815,31 @@
           "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": ""
+        },
+        {
+          "ID": "156184",
+          "Work Item Type": "Task",
+          "Title": "BD016 : Review on CR",
+          "Assigned To": "Bardis Khamees <bardis.khamees@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "3.5",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 4:06:38 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": ""
         }
       ],
       "bugs": [],
       "calc": {
-        "devEnd": "2026-01-14T12:00:00.000Z",
+        "devEnd": "2026-01-15T10:00:00.000Z",
         "testEnd": "2026-01-21T10:00:00.000Z",
         "finalEnd": "2026-01-21T10:00:00.000Z"
       }
@@ -6127,7 +6265,7 @@
     {
       "id": "153179",
       "title": "Swiss LDM - Athir Ibtegration > Add New API (Get Result row Data)",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Tarek Saad <tarek.saad@nationaltechnology.net>",
       "tester": "Heba Mohamed El Sayed <heba.elsayed@nationaltechnology.net>",
       "area": "LDM Integration",
@@ -6724,7 +6862,28 @@
           "Business Priority": ""
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": "156135",
+          "Work Item Type": "Bug",
+          "Title": "Resistant Pattern Dropdown list not retrieves data in the grid",
+          "Assigned To": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        }
+      ],
       "calc": {
         "devEnd": "2026-01-13T18:33:02.000Z",
         "testEnd": "Waiting for Data",
@@ -7952,12 +8111,52 @@
           "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": ""
+        },
+        {
+          "ID": "156137",
+          "Work Item Type": "Bug",
+          "Title": "#150181: The resistant pattern is disappear if you add the other organism",
+          "Assigned To": "Ahmed Hafez <ahmed.hafez@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156143",
+          "Work Item Type": "Bug",
+          "Title": "#CR150181: The Urine culture screen is cashed with the previous organism after clear performed",
+          "Assigned To": "Ahmed Hafez <ahmed.hafez@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": ""
         }
       ],
       "calc": {
         "devEnd": "2026-01-13T08:48:45.000Z",
-        "testEnd": "2026-01-19T09:00:00.000Z",
-        "finalEnd": "2026-01-19T09:00:00.000Z"
+        "testEnd": "2026-01-22T09:00:00.000Z",
+        "finalEnd": "2026-01-22T09:00:00.000Z"
       }
     },
     {
@@ -8080,7 +8279,7 @@
     {
       "id": "151550",
       "title": "Metra Labs - Patient Reports: Update Header, Footer and Watermark displayed in Metra Lab Reports (All report types)",
-      "state": "Active",
+      "state": "Resolved",
       "assignedTo": "Esraa Abdelsalam <esraa.abdelsalam@nationaltechnology.net>",
       "tester": "Unassigned",
       "area": "Internal lab",
@@ -8292,7 +8491,7 @@
           "ID": "156070",
           "Work Item Type": "Bug",
           "Title": "Urine Culture Web Result Report doesn't obey Center Setup",
-          "Assigned To": "Esraa Abdelsalam <esraa.abdelsalam@nationaltechnology.net>",
+          "Assigned To": "Sara Mustafa <sara.mustafa@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "1",
@@ -8303,16 +8502,16 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/15/2026 3:03:44 PM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": ""
         }
       ],
       "calc": {
-        "devEnd": "2026-01-15T14:28:20.000Z",
-        "testEnd": "2026-01-19T11:00:00.000Z",
-        "finalEnd": "2026-01-19T11:00:00.000Z"
+        "devEnd": "2026-01-18T11:00:00.000Z",
+        "testEnd": "2026-01-20T11:00:00.000Z",
+        "finalEnd": "2026-01-20T11:00:00.000Z"
       }
     },
     {
@@ -8468,8 +8667,8 @@
       "bugs": [],
       "calc": {
         "devEnd": "2026-01-13T07:00:00.000Z",
-        "testEnd": "2026-01-21T07:00:00.000Z",
-        "finalEnd": "2026-01-21T07:00:00.000Z"
+        "testEnd": "2026-01-22T07:00:00.000Z",
+        "finalEnd": "2026-01-22T07:00:00.000Z"
       }
     },
     {
@@ -8762,8 +8961,8 @@
       "bugs": [],
       "calc": {
         "devEnd": "2026-01-15T13:00:00.000Z",
-        "testEnd": "2026-01-22T12:00:00.000Z",
-        "finalEnd": "2026-01-22T12:00:00.000Z"
+        "testEnd": "2026-01-25T12:00:00.000Z",
+        "finalEnd": "2026-01-25T12:00:00.000Z"
       }
     },
     {
@@ -8839,8 +9038,8 @@
       "bugs": [],
       "calc": {
         "devEnd": "2026-01-19T11:00:00.000Z",
-        "testEnd": "2026-01-25T08:00:00.000Z",
-        "finalEnd": "2026-01-25T08:00:00.000Z"
+        "testEnd": "2026-01-26T08:00:00.000Z",
+        "finalEnd": "2026-01-26T08:00:00.000Z"
       }
     },
     {
@@ -8988,11 +9187,185 @@
           "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": ""
+        },
+        {
+          "ID": "156177",
+          "Work Item Type": "Task",
+          "Title": "Publish Tasks of iteration V2.9",
+          "Assigned To": "Mostafa Mahanna <mostafa.mahanna@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "2",
+          "TimeSheet_DevActualTime": "2",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 3:02:11 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": ""
         }
       ],
       "bugs": [],
       "calc": {
-        "devEnd": "2026-01-15T13:00:00.000Z",
+        "devEnd": "2026-01-18T09:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      }
+    },
+    {
+      "id": "150546",
+      "title": "Alameda gp - Search by test result: For Formatted Text tests, display \"Formatted Text\" at the Test Type column at the grid; Nonnumeric Value column shall open a text field for each Formatted Text test added in the grid",
+      "state": "Active",
+      "assignedTo": "Ahmed Hafez <ahmed.hafez@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 12,
+      "tasks": [
+        {
+          "ID": "156158",
+          "Work Item Type": "Task",
+          "Title": "FD001 Update Test type UI Field Value for formatted text",
+          "Assigned To": "Ahmed Hafez <ahmed.hafez@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "0.75",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 2:12:29 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/15/2026 2:17:59 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156159",
+          "Work Item Type": "Task",
+          "Title": "FD004 Add Condition to Non numeric value control",
+          "Assigned To": "Ahmed Hafez <ahmed.hafez@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "0.75",
+          "TimeSheet_DevActualTime": "0.75",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 2:18:11 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/15/2026 2:18:57 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156160",
+          "Work Item Type": "Task",
+          "Title": "BD001 Filter result formmated tests by search criteria data from DB",
+          "Assigned To": "Ahmed Hafez <ahmed.hafez@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "2.25",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 2:24:56 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156167",
+          "Work Item Type": "Task",
+          "Title": "Update procedure SP_SEARCH_TEST_RESULT to filter formatted text results",
+          "Assigned To": "Mostafa Mahanna <mostafa.mahanna@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 4:10:40 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        }
+      ],
+      "bugs": [],
+      "calc": {
+        "devEnd": "2026-01-18T10:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      }
+    },
+    {
+      "id": "149618",
+      "title": "Alameda - Microbiology Statistics: At \"Organism Statistic Report\", add new input field for \"Count Patient Once\" check box",
+      "state": "Resolved",
+      "assignedTo": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 13,
+      "tasks": [
+        {
+          "ID": "156141",
+          "Work Item Type": "Task",
+          "Title": "DB Task add new parameter to procedure SP_RPO_ORGANISMSTATISTICS",
+          "Assigned To": "Ahmed Attia Mohamed Al-Qashit <ahmed.elqashit@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "0.75",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 1:05:22 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/15/2026 1:43:30 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156145",
+          "Work Item Type": "Task",
+          "Title": "Update the UI field value so that it is displayed when the Organism Statistics option is selected.",
+          "Assigned To": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "1",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 12:45:55 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/15/2026 2:25:47 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        }
+      ],
+      "bugs": [],
+      "calc": {
+        "devEnd": "2026-01-15T10:45:55.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -9070,8 +9443,8 @@
       "bugs": [],
       "calc": {
         "devEnd": "2025-09-21T09:00:00.000Z",
-        "testEnd": "2026-01-25T08:00:00.000Z",
-        "finalEnd": "2026-01-25T08:00:00.000Z"
+        "testEnd": "2026-01-26T08:00:00.000Z",
+        "finalEnd": "2026-01-26T08:00:00.000Z"
       }
     },
     {
@@ -9587,7 +9960,7 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-01-21T07:00:00.000Z",
+        "devEnd": "2026-01-21T12:00:00.000Z",
         "testEnd": "2026-01-27T11:00:00.000Z",
         "finalEnd": "2026-01-27T11:00:00.000Z"
       }
@@ -14054,7 +14427,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
           "Activated Date": "1/15/2026 12:01:33 PM",
           "Business Area": "",
           "Iteration Path": "Home Visit\\2025\\home_visit August 14-27",
@@ -14062,7 +14435,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/15/2026 1:19:43 PM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": ""
         }
@@ -14113,7 +14486,7 @@
     {
       "id": "151192",
       "title": "Update Odoo Service : Change all Date to date time and add new fields",
-      "state": "On-Hold",
+      "state": "Resolved",
       "assignedTo": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
       "tester": "Unassigned",
       "area": "Integration",
@@ -15125,6 +15498,46 @@
           "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": ""
+        },
+        {
+          "ID": "156163",
+          "Work Item Type": "Bug",
+          "Title": "Visit List - System allows changing visit status from Cancelled to Rejected",
+          "Assigned To": "Abdullah Helal <abdullah.helal@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "Home Visit",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156165",
+          "Work Item Type": "Bug",
+          "Title": "Visit List - System allows changing visit status from Rejected to Cancelled",
+          "Assigned To": "Abdullah Helal <abdullah.helal@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "Home Visit",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": ""
         }
       ],
       "calc": {
@@ -15864,7 +16277,7 @@
     {
       "id": "155211",
       "title": "MM | Client : Detailed Inventory Report Updates",
-      "state": "Resolved",
+      "state": "Tested",
       "assignedTo": "Sherif Eldorf <sherif.eldorf@nationaltechnology.net>",
       "tester": "Bassem Ayman Morsy <bassem.morsy@nationaltechnology.net>",
       "area": "MaterialManagement",
@@ -15940,7 +16353,7 @@
           "Activity": "",
           "Original Estimation": "0.5",
           "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "0.08",
           "Activated Date": "1/14/2026 11:33:02 AM",
           "Business Area": "",
           "Iteration Path": "MaterialManagement\\2025",
@@ -15948,7 +16361,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/14/2026 11:33:05 AM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": ""
         },
@@ -15968,7 +16381,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/14/2026 11:32:55 AM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": ""
         },
@@ -15980,7 +16393,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "1",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "0.08",
           "Activated Date": "1/14/2026 2:24:46 PM",
           "Business Area": "",
           "Iteration Path": "MaterialManagement\\2025",
@@ -15988,7 +16401,27 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/14/2026 4:52:40 PM",
-          "State": "Resolved",
+          "State": "Closed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156182",
+          "Work Item Type": "Bug",
+          "Title": "report pages  are 5  but appear as 4 pages only  and the last page which have  2  lables dosent appear",
+          "Assigned To": "Sherif Eldorf <sherif.eldorf@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "MaterialManagement\\2025",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
           "Release Expected Date": "",
           "Business Priority": ""
         }
@@ -15997,6 +16430,154 @@
         "devEnd": "2026-01-18T11:00:00.000Z",
         "testEnd": "2026-01-20T12:00:00.000Z",
         "finalEnd": "2026-01-20T12:00:00.000Z"
+      }
+    },
+    {
+      "id": "155739",
+      "title": "Home Visit - Countries: Add a new column at the grid and Add / Edit mode for Country Code; Displays autogenerated code for the Country",
+      "state": "Active",
+      "assignedTo": "Yara Mohsen <yara.abdelsalam@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Home Visit",
+      "priority": 999,
+      "tasks": [
+        {
+          "ID": "156146",
+          "Work Item Type": "Task",
+          "Title": "Create new column \"CountryCode\" in country table",
+          "Assigned To": "Moamen SalahElDeen <moamen.eldeen@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "0.25",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 1:32:52 PM",
+          "Business Area": "",
+          "Iteration Path": "Home Visit\\2025\\home_visit July 2-15",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/15/2026 2:03:33 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        }
+      ],
+      "bugs": [],
+      "calc": {
+        "devEnd": "2026-01-15T11:32:52.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      }
+    },
+    {
+      "id": "155740",
+      "title": "Home Visit - Governorates: Add a new column at the grid and Add / Edit mode for Governorate Code; Displays autogenerated code for the Governorate",
+      "state": "Active",
+      "assignedTo": "Yara Mohsen <yara.abdelsalam@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Home Visit",
+      "priority": 999,
+      "tasks": [
+        {
+          "ID": "156148",
+          "Work Item Type": "Task",
+          "Title": "Create new column \"GovernorateCode\" in governorate table",
+          "Assigned To": "Moamen SalahElDeen <moamen.eldeen@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "0.25",
+          "TimeSheet_DevActualTime": "0.25",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 1:33:11 PM",
+          "Business Area": "",
+          "Iteration Path": "Home Visit\\2025\\home_visit July 2-15",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/15/2026 2:03:03 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        }
+      ],
+      "bugs": [],
+      "calc": {
+        "devEnd": "2026-01-15T11:33:11.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      }
+    },
+    {
+      "id": "155741",
+      "title": "Home Visit - Patients Addresses: Add a new column at the database for Address Code; Address Code is autogenerated unique code; Address code won’t be visible at the UI; Generate address codes for the existing data",
+      "state": "Active",
+      "assignedTo": "Reem Ali <reem.abdulmuttalib@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Home Visit",
+      "priority": 999,
+      "tasks": [
+        {
+          "ID": "156162",
+          "Work Item Type": "Task",
+          "Title": "Add new column (address code ) for the patient address",
+          "Assigned To": "Moamen SalahElDeen <moamen.eldeen@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "0.25",
+          "TimeSheet_DevActualTime": "0.75",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 2:03:52 PM",
+          "Business Area": "",
+          "Iteration Path": "Home Visit",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/15/2026 2:04:06 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        }
+      ],
+      "bugs": [],
+      "calc": {
+        "devEnd": "2026-01-15T12:03:52.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      }
+    },
+    {
+      "id": "156096",
+      "title": "Update Odoo Service to sent Representative Update",
+      "state": "Active",
+      "assignedTo": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Integration",
+      "priority": 999,
+      "tasks": [
+        {
+          "ID": "156103",
+          "Work Item Type": "Task",
+          "Title": "Create function Update Representative of Visit",
+          "Assigned To": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "2",
+          "TimeSheet_DevActualTime": "2",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/14/2026 6:25:28 PM",
+          "Business Area": "",
+          "Iteration Path": "Integration",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        }
+      ],
+      "bugs": [],
+      "calc": {
+        "devEnd": "2026-01-15T11:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
       }
     }
   ]
