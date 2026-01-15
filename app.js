@@ -178,7 +178,13 @@ async saveToGitHub() {
         });
     },
 
-   calculateTimelines(stories) {
+  calculateTimelines(stories) {
+        // 0. ترتيب القصص لضمان معالجة المهام بالتسلسل (مثلاً حسب المعرف أو الأولوية)
+        stories.sort((a, b) => a.id - b.id);
+
+        // كائن لتتبع آخر موعد ينتهي فيه كل مختبر من عمله
+        const testerAvailability = {};
+
         stories.forEach(story => {
             // 1. حساب تطوير القصة (Development Tasks)
             const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
@@ -198,17 +204,28 @@ async saveToGitHub() {
 
             story.calc.devEnd = dateEngine.addWorkingHours(devStart, devHours, story.assignedTo);
 
-            // 2. حساب الاختبار (Testing Tasks)
+            // 2. حساب الاختبار (Testing Tasks) - المنطق المعدل هنا
             const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
             let testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
-            let testStart = new Date(story.calc.devEnd);
-            testStart.setDate(testStart.getDate() + 1);
-            testStart.setHours(9, 0, 0, 0);
+            // تحديد موعد جاهزية القصة للاختبار (بعد يوم من انتهاء التطوير في تمام التاسعة صباحاً)
+            let storyReadyForTest = new Date(story.calc.devEnd);
+            storyReadyForTest.setDate(storyReadyForTest.getDate() + 1);
+            storyReadyForTest.setHours(9, 0, 0, 0);
 
-            story.calc.testEnd = dateEngine.addWorkingHours(testStart, Math.max(0, testHours), story.tester);
+            // التحقق من توفر المختبر: هل هو مشغول بقصة سابقة؟
+            let testerNextAvailableSlot = testerAvailability[story.tester] || storyReadyForTest;
 
-            // 3. حساب الريورك (Bugs Rework) - المنطق الجديد
+            // تاريخ البدء الحقيقي هو الأحدث بين (جاهزية القصة) و (فراغ المختبر)
+            let actualTestStart = new Date(Math.max(storyReadyForTest, testerNextAvailableSlot));
+
+            // حساب تاريخ انتهاء الاختبار
+            story.calc.testEnd = dateEngine.addWorkingHours(actualTestStart, Math.max(0, testHours), story.tester);
+            
+            // تحديث سجل توفر المختبر للقصة القادمة
+            testerAvailability[story.tester] = new Date(story.calc.testEnd);
+
+            // 3. حساب الريورك (Bugs Rework)
             let lastBugEndDate = new Date(story.calc.testEnd);
 
             if (story.bugs && story.bugs.length > 0) {
@@ -217,10 +234,7 @@ async saveToGitHub() {
                     const bugActivatedDate = bug['Activated Date'] ? new Date(bug['Activated Date']) : null;
 
                     if (bugActivatedDate && bugEffort > 0) {
-                        // نحسب وقت انتهاء البج بناءً على تاريخ تفعيلها هي شخصياً
                         const bugFinish = dateEngine.addWorkingHours(bugActivatedDate, bugEffort, story.assignedTo);
-                        
-                        // وقت التسليم النهائي يتأثر بأقصى تاريخ انتهاء (سواء التستر أو آخر بج خلصت)
                         if (bugFinish > lastBugEndDate) {
                             lastBugEndDate = bugFinish;
                         }
