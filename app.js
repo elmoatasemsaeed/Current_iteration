@@ -40,11 +40,15 @@ const auth = {
         this.startApp();
     },
 
-    startApp() {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('app-container').classList.remove('hidden');
-        dataProcessor.sync(); 
-    },
+startApp() {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app-container').classList.remove('hidden');
+    
+    // أضف هذا السطر لفتح صفحة Current Status تلقائياً
+    ui.switchTab('active'); 
+    
+    dataProcessor.sync(); 
+},
 
     logout() {
         localStorage.removeItem('saved_creds');
