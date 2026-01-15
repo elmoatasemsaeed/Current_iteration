@@ -130,34 +130,28 @@ async saveToGitHub() {
         });
     },
 
-    processRows(rows) {
-        const stories = [];
-        let currentStory = null;
+   processRows(rows) {
+    const stories = [];
+    let currentStory = null;
 
-        rows.forEach(row => {
-            if (row['Work Item Type'] === 'User Story') {
-                let area = row['Business Area'];
-                if (area && area.trim().toLowerCase() === "integration") {
-                    area = "LDM Integration";
-                }
-                if (!area || area.trim() === "") {
-                    const path = row['Iteration Path'] || "";
-                    area = path.includes('\\') ? path.split('\\')[0] : path;
-                }
+    rows.forEach(row => {
+        if (row['Work Item Type'] === 'User Story') {
+            // ... (الكود الموجود مسبقاً) ...
 
-                currentStory = {
-                    id: row['ID'],
-                    title: row['Title'],
-                    state: row['State'],
-                    assignedTo: row['Assigned To'] || "Unassigned",
-                    tester: row['Assigned To Tester'] || "Unassigned",
-                    area: area || "General",
-                    expectedDate: row['Release Expected Date'],
-                    tasks: [],
-                    bugs: [],
-                    calc: {}
-                };
-                stories.push(currentStory);
+            currentStory = {
+                id: row['ID'],
+                title: row['Title'],
+                state: row['State'],
+                assignedTo: row['Assigned To'] || "Unassigned",
+                tester: row['Assigned To Tester'] || "Unassigned",
+                area: area || "General",
+                priority: parseInt(row['Business Priority']) || 999, // إضافة هذا السطر (999 للقيم الفارغة لتظهر في الآخر)
+                expectedDate: row['Release Expected Date'],
+                tasks: [],
+                bugs: [],
+                calc: {}
+            };
+            stories.push(currentStory);
             } else if (row['Work Item Type'] === 'Task' && currentStory) {
                 currentStory.tasks.push(row);
             } else if (row['Work Item Type'] === 'Bug' && currentStory) {
@@ -376,11 +370,17 @@ renderActiveCards() {
     }, {});
 
     // تحويل الكائن إلى مصفوفة للتمكن من عرضها وترتيب القصص داخل كل مجموعة
-    container.innerHTML = Object.keys(groupedStories).map(area => {
+container.innerHTML = Object.keys(groupedStories).map(area => {
         const storiesInArea = groupedStories[area].sort((a, b) => {
+            // 1. الترتيب حسب الأولوية (Priority) - الرقم الأقل يعني أولوية أعلى
+            if (a.priority !== b.priority) {
+                return a.priority - b.priority;
+            }
+            
+            // 2. إذا تساوت الأولوية، يتم الترتيب حسب التأخير
             const isALate = a.calc.finalEnd instanceof Date && new Date() > a.calc.finalEnd;
             const isBLate = b.calc.finalEnd instanceof Date && new Date() > b.calc.finalEnd;
-            return isBLate - isALate; // المتأخر (true) يظهر أولاً
+            return isBLate - isALate; 
         });
 
         return `
@@ -392,8 +392,8 @@ renderActiveCards() {
                 </h2>
             </div>
             ${storiesInArea.map(s => {
-const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
-                const hasError = s.calc.error;
+                // إضافة شارة (Badge) لعرض رقم الأولوية داخل الكارت (اختياري)
+                const priorityBadge = `<span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority}</span>`;
                 
                 let statusColor = "bg-blue-100 text-blue-700";
                 if(isLate) statusColor = "bg-red-100 text-red-700";
