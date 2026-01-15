@@ -183,11 +183,20 @@ async saveToGitHub() {
 
 
     calculateTimelines(stories) {
-        stories.sort((a, b) => a.id - b.id);
+        // 1. الترتيب بناءً على الأولوية (الأقل رقماً أولاً) ثم ID
+        stories.sort((a, b) => {
+            const priorityA = parseInt(a.priority) || 999;
+            const priorityB = parseInt(b.priority) || 999;
+            if (priorityA !== priorityB) {
+                return priorityA - priorityB;
+            }
+            return a.id - b.id;
+        });
+
         const testerAvailability = {};
 
         stories.forEach(story => {
-            // 1. حساب تطوير القصة
+            // حساب تطوير القصة (Dev)
             const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
             const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
             
@@ -205,35 +214,39 @@ async saveToGitHub() {
 
             story.calc.devEnd = dateEngine.addWorkingHours(devStart, devHours, story.assignedTo);
 
-            // 2. حساب الاختبار (Testing) مع فحص الإجازات
+            // حساب الاختبار (Testing) - هنا يكمن منطق الترتيب الجديد
             const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
             let testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
-            // تحديد موعد جاهزية القصة (اليوم التالي الساعة 9 صباحاً)
+            // موعد جاهزية القصة تقنياً (بعد انتهاء المطور)
             let storyReadyForTest = new Date(story.calc.devEnd);
+            // نفترض أنها تذهب للتستر في اليوم التالي (كما في كودك الأصلي)
             storyReadyForTest.setDate(storyReadyForTest.getDate() + 1);
             storyReadyForTest.setHours(9, 0, 0, 0);
 
-            // التحقق من توفر المختبر
+            // تحديد متى سيكون التستر متاحاً (بناءً على القصص ذات الأولوية الأعلى التي عالجناها للتو)
             let testerNextAvailableSlot = testerAvailability[story.tester] || storyReadyForTest;
+            
+            // البداية الفعلية هي الأبعد بين (جاهزية القصة) و (فراغ التستر)
             let actualTestStart = new Date(Math.max(storyReadyForTest, testerNextAvailableSlot));
 
-            // هـام: التأكد أن بداية الاختبار تقع في يوم عمل (وليس جمعة أو سبت أو إجازة رسمية)
+            // التأكد من أن البداية في يوم عمل
             while (!dateEngine.isWorkDay(actualTestStart, story.tester)) {
                 actualTestStart.setDate(actualTestStart.getDate() + 1);
                 actualTestStart.setHours(CONFIG.START_HOUR, 0, 0, 0);
             }
 
             story.calc.testEnd = dateEngine.addWorkingHours(actualTestStart, Math.max(0, testHours), story.tester);
+            
+            // تحديث "مفكرة" التستر بموعد انتهائه الجديد ليستخدم في القصة التالية (الأقل أولوية)
             testerAvailability[story.tester] = new Date(story.calc.testEnd);
 
-            // 3. حساب الريورك (Bugs Rework)
+            // حساب الريورك
             let lastBugEndDate = new Date(story.calc.testEnd);
             if (story.bugs && story.bugs.length > 0) {
                 story.bugs.forEach(bug => {
                     const bugEffort = parseFloat(bug['Original Estimation'] || 0);
                     const bugActivatedDate = bug['Activated Date'] ? new Date(bug['Activated Date']) : null;
-
                     if (bugActivatedDate && bugEffort > 0) {
                         const bugFinish = dateEngine.addWorkingHours(bugActivatedDate, bugEffort, story.assignedTo);
                         if (bugFinish > lastBugEndDate) lastBugEndDate = bugFinish;
