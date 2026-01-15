@@ -402,26 +402,29 @@ renderActiveCards() {
             </div>
             ${storiesInArea.map(s => {
                 // --- دمج التعريفات التي كانت تسبب الخطأ ---
-                const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
-                const hasError = s.calc.error;
-                const priorityBadge = `<span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>`;
-                
-                let statusColor = "bg-blue-100 text-blue-700";
-                if(isLate) statusColor = "bg-red-100 text-red-700";
-                if(hasError) statusColor = "bg-amber-100 text-amber-700";
+               const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
+const hasError = s.calc.error;
+const priorityBadge = `<span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>`;
 
-                return `
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
-                        <div class="p-5 flex-1">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="flex gap-2">
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
-                                        ${hasError ? 'Action Required' : (isLate ? 'Overdue ⚠️' : s.state)}
-                                    </span>
-                                    ${priorityBadge}
-                                </div>
-                                <span class="text-xs font-mono text-gray-400">#${s.id}</span>
-                            </div>
+let statusColor = "bg-blue-100 text-blue-700";
+if(isLate) statusColor = "bg-red-100 text-red-700";
+if(hasError) statusColor = "bg-amber-100 text-amber-700";
+
+// التعديل هنا في محتوى الـ span
+const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
+
+return `
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
+        <div class="p-5 flex-1">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex gap-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
+                        ${statusText}
+                    </span>
+                    ${priorityBadge}
+                </div>
+                <span class="text-xs font-mono text-gray-400">#${s.id}</span>
+            </div>
                             
                             <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
 
