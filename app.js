@@ -197,8 +197,11 @@ async saveToGitHub() {
 
         stories.forEach(story => {
             // حساب تطوير القصة (Dev)
-            const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-            const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+           const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+const devHours = devTasks.reduce((acc, t) => {
+    const effort = t['State'] === 'To Be Reviewed' ? 0 : parseFloat(t['Original Estimation'] || 0);
+    return acc + effort;
+}, 0);
             
             let devStart = null;
             const activatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
@@ -216,8 +219,11 @@ async saveToGitHub() {
 
             // حساب الاختبار (Testing) - هنا يكمن منطق الترتيب الجديد
             const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
-            let testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-
+const testHours = testTasks.reduce((acc, t) => {
+    // معاملة To Be Reviewed كأنها منتهية
+    const effort = t['State'] === 'To Be Reviewed' ? 0 : parseFloat(t['Original Estimation'] || 0);
+    return acc + effort;
+}, 0);
             // موعد جاهزية القصة تقنياً (بعد انتهاء المطور)
             let storyReadyForTest = new Date(story.calc.devEnd);
             // نفترض أنها تذهب للتستر في اليوم التالي (كما في كودك الأصلي)
