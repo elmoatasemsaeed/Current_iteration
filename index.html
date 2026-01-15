@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,29 +8,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link rel="icon" href="data:,">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
-        body { font-family: 'Cairo', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .status-delayed { background-color: #fee2e2; border-right: 4px solid #ef4444; }
+        .status-delayed { background-color: #fee2e2; border-left: 4px solid #ef4444; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
 
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900">
         <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
-            <h1 class="text-3xl font-bold text-center mb-8 text-blue-900">تسجيل الدخول</h1>
+            <h1 class="text-3xl font-bold text-center mb-8 text-blue-900">Login</h1>
             <div class="space-y-4">
-                <input type="text" id="username" placeholder="اسم المستخدم" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="password" id="password" placeholder="كلمة المرور" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="username" placeholder="Username" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="password" id="password" placeholder="Password" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 <input type="password" id="gh-token" placeholder="GitHub Personal Access Token" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 <div class="flex items-center gap-2">
                     <input type="checkbox" id="remember-me" class="w-4 h-4">
-                    <label for="remember-me" class="text-sm text-gray-600">تذكر بياناتي</label>
+                    <label for="remember-me" class="text-sm text-gray-600">Remember Me</label>
                 </div>
-                <button onclick="auth.handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">دخول</button>
+                <button onclick="auth.handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">Sign In</button>
             </div>
-            <p class="text-[10px] text-gray-400 mt-4 text-center italic">تأكد من صلاحيات الـ Token (repo scope)</p>
+            <p class="text-[10px] text-gray-400 mt-4 text-center italic">Ensure token has correct permissions (repo scope)</p>
         </div>
     </div>
 
@@ -44,26 +44,27 @@
                         <button onclick="ui.switchTab('active')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Current Status</button>
                         <button onclick="ui.switchTab('delivery')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Delivery (Tested)</button>
                         <button onclick="ui.switchTab('availability')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Availability</button>
-                        <button onclick="ui.switchTab('settings')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Setting</button>
+                        <button onclick="ui.switchTab('settings')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Settings</button>
                     </nav>
                 </div>
                 
                 <div class="flex items-center gap-3">
                     <button onclick="dataProcessor.sync()" class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">
-                        <span>🔄</span> مزامنة البيانات
+                        <span>🔄</span> Sync Data
                     </button>
                     <input type="file" id="csv-input" class="hidden" accept=".csv" onchange="dataProcessor.handleCSV(event)">
                     <button onclick="document.getElementById('csv-input').click()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition">
-                        📤 رفع CSV
+                        📤 Upload CSV
                     </button>
-                    <button onclick="auth.logout()" class="text-red-500 text-sm font-bold p-2 hover:bg-red-50 rounded">خروج</button>
+                    <button onclick="auth.logout()" class="text-red-500 text-sm font-bold p-2 hover:bg-red-50 rounded">Logout</button>
                 </div>
             </div>
         </header>
 
         <main class="p-6">
             <section id="tab-dashboard" class="tab-content space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="stats-cards"></div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="stats-cards">
+                    </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-xl shadow-sm border h-96 overflow-y-auto" id="overdue-list">
                         <h3 class="font-bold text-red-600 mb-4 flex items-center gap-2">⚠️ Delayed User Stories</h3>
@@ -82,22 +83,24 @@
                         <h2 class="text-2xl font-bold text-slate-800">Active Workstreams</h2>
                         <div id="active-filters" class="flex gap-2 w-full md:w-96">
                             <div class="relative w-full">
-                                <span class="absolute inset-y-0 right-3 flex items-center text-gray-400">🔍</span>
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
                                 <input type="text" 
                                        id="search-input" 
                                        onkeyup="ui.renderActiveCards()" 
-                                       placeholder="بحث برقم الـ ID، العنوان، أو الموظف..." 
-                                       class="w-full pr-10 pl-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm text-right">
+                                       placeholder="Search by ID, Title, or Employee..." 
+                                       class="w-full pl-10 pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm">
                             </div>
                         </div>
                     </div>
-                    <div id="active-cards-container" class="grid grid-cols-1 xl:grid-cols-2 gap-6"></div>
+                    
+                    <div id="active-cards-container" class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        </div>
                 </div>
             </section>
 
             <section id="tab-delivery" class="tab-content space-y-4">
                 <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <h2 class="font-bold text-green-800">Ready To deliver (Tested)</h2>
+                    <h2 class="font-bold text-green-800">Ready To Deliver (Tested)</h2>
                 </div>
                 <div id="delivery-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </section>
@@ -113,18 +116,18 @@
                         <div class="space-y-3">
                             <select id="staff-select" class="w-full border p-2 rounded"></select>
                             <input type="date" id="vacation-date" class="w-full border p-2 rounded">
-                            <button onclick="settings.addVacation()" class="bg-blue-600 text-white px-4 py-2 rounded shadow">إضافة</button>
+                            <button onclick="settings.addVacation()" class="bg-blue-600 text-white px-4 py-2 rounded shadow">Add</button>
                         </div>
                         <div class="mt-6 border-t pt-4">
-                            <h4 class="text-sm font-bold text-gray-500 mb-2">الإجازات الحالية:</h4>
+                            <h4 class="text-sm font-bold text-gray-500 mb-2">Current Vacations:</h4>
                             <div id="vacations-list" class="space-y-1 text-xs max-h-40 overflow-y-auto"></div>
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-xl border">
-                        <h3 class="font-bold mb-4">العطلات الرسمية</h3>
+                        <h3 class="font-bold mb-4">Public Holidays</h3>
                         <div class="flex gap-2">
                             <input type="date" id="holiday-date" class="border p-2 rounded flex-1">
-                            <button onclick="settings.addHoliday()" class="bg-gray-800 text-white px-4 py-2 rounded">إضافة</button>
+                            <button onclick="settings.addHoliday()" class="bg-gray-800 text-white px-4 py-2 rounded">Add</button>
                         </div>
                         <div id="holidays-list" class="mt-6 flex flex-wrap gap-2"></div>
                     </div>
