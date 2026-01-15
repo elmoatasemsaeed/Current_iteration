@@ -178,11 +178,6 @@ async saveToGitHub() {
         });
     },
 
-/**
- * تم تحديث منطق الحساب ليتوافق مع الإجازات الأسبوعية والرسمية
- */
-const dataProcessor = {
-    // ... (الكود السابق كما هو)
 
     calculateTimelines(stories) {
         stories.sort((a, b) => a.id - b.id);
