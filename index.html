@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,52 +63,37 @@
 
         <main class="p-6">
             <section id="tab-dashboard" class="tab-content space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="stats-cards">
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="stats-cards"></div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-xl shadow-sm border h-96 overflow-y-auto" id="overdue-list">
-                        <h3 class="font-bold text-red-600 mb-4 flex items-center gap-2">⚠️ Delyed User Storis</h3>
+                        <h3 class="font-bold text-red-600 mb-4 flex items-center gap-2">⚠️ Delayed User Stories</h3>
                         <div class="space-y-3" id="overdue-container"></div>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border h-96 overflow-y-auto" id="today-expected">
-                        <h3 class="font-bold text-blue-600 mb-4 flex items-center gap-2">📅 Expected Tody</h3>
+                        <h3 class="font-bold text-blue-600 mb-4 flex items-center gap-2">📅 Expected Today</h3>
                         <div class="space-y-3" id="today-container"></div>
                     </div>
                 </div>
             </section>
 
-           <section id="tab-active" class="tab-content">
-    <div class="flex flex-col gap-6">
-        <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-slate-800">Active Workstreams</h2>
-            <div id="active-filters" class="flex gap-2">
-                </div>
-        </div>
-        
-        <div id="active-cards-container" class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            </div>
-    </div>
-</section>
             <section id="tab-active" class="tab-content">
-    <div class="flex flex-col gap-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <h2 class="text-2xl font-bold text-slate-800">Active Workstreams</h2>
-            <div id="active-filters" class="flex gap-2 w-full md:w-96">
-                <div class="relative w-full">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
-                    <input type="text" 
-                           id="search-input" 
-                           onkeyup="ui.renderActiveCards()" 
-                           placeholder="بحث برقم الـ ID، العنوان، أو الموظف..." 
-                           class="w-full pl-10 pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm">
+                <div class="flex flex-col gap-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <h2 class="text-2xl font-bold text-slate-800">Active Workstreams</h2>
+                        <div id="active-filters" class="flex gap-2 w-full md:w-96">
+                            <div class="relative w-full">
+                                <span class="absolute inset-y-0 right-3 flex items-center text-gray-400">🔍</span>
+                                <input type="text" 
+                                       id="search-input" 
+                                       onkeyup="ui.renderActiveCards()" 
+                                       placeholder="بحث برقم الـ ID، العنوان، أو الموظف..." 
+                                       class="w-full pr-10 pl-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm text-right">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="active-cards-container" class="grid grid-cols-1 xl:grid-cols-2 gap-6"></div>
                 </div>
-            </div>
-        </div>
-        
-        <div id="active-cards-container" class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            </div>
-    </div>
-</section>
+            </section>
 
             <section id="tab-delivery" class="tab-content space-y-4">
                 <div class="bg-green-50 p-4 rounded-lg border border-green-200">
