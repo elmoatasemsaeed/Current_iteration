@@ -130,136 +130,126 @@ async saveToGitHub() {
         });
     },
 
-   processRows(rows) {
-    const stories = [];
-    let currentStory = null;
 
-    rows.forEach(row => {
-        if (row['Work Item Type'] === 'User Story') {
-            // --- استعادة الكود من نسخة app (23).js ---
-            let area = row['Business Area'];
-            if (area && area.trim().toLowerCase() === "integration") {
-                area = "LDM Integration";
+
+    processRows(rows) {
+        const stories = [];
+        let currentStory = null;
+
+        rows.forEach(row => {
+            if (row['Work Item Type'] === 'User Story') {
+                let area = row['Business Area'];
+                if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
+                if (!area || area.trim() === "") {
+                    const path = row['Iteration Path'] || "";
+                    area = path.includes('\\') ? path.split('\\')[0] : path;
+                }
+
+                currentStory = {
+                    id: row['ID'],
+                    title: row['Title'],
+                    state: row['State'],
+                    assignedTo: row['Assigned To'] || "Unassigned",
+                    tester: row['Assigned To Tester'] || "Unassigned",
+                    area: area || "General",
+                    priority: parseInt(row['Business Priority']) || 999,
+                    tasks: [],
+                    bugs: [],
+                    calc: {}
+                };
+                stories.push(currentStory);
+            } else if (row['Work Item Type'] === 'Task' && currentStory) {
+                currentStory.tasks.push(row);
+            } else if (row['Work Item Type'] === 'Bug' && currentStory) {
+                currentStory.bugs.push(row);
             }
-            if (!area || area.trim() === "") {
-                const path = row['Iteration Path'] || "";
-                area = path.includes('\\') ? path.split('\\')[0] : path;
-            }
-            // ------------------------------------------
-
-            currentStory = {
-                id: row['ID'],
-                title: row['Title'],
-                state: row['State'],
-                assignedTo: row['Assigned To'] || "Unassigned",
-                tester: row['Assigned To Tester'] || "Unassigned",
-                area: area || "General", // الآن لن يظهر خطأ
-                priority: parseInt(row['Business Priority']) || 999,
-                expectedDate: row['Release Expected Date'],
-                tasks: [],
-                bugs: [],
-                calc: {}
-            };
-            stories.push(currentStory);
-        } else if (row['Work Item Type'] === 'Task' && currentStory) {
-            currentStory.tasks.push(row);
-        } else if (row['Work Item Type'] === 'Bug' && currentStory) {
-            currentStory.bugs.push(row);
-        }
-    });
-
-        // 1. حساب التواريخ أولاً
-        this.calculateTimelines(stories);
-
-        // 2. تحديث الـ DB بالبيانات الجديدة (تمسح القديم وتضع الجديد)
-        // ملاحظة: deliveryLogs و vacations و holidays لن تتاثر لأننا نحدث مفتاح stories فقط
-        db.currentStories = stories;
-
-        // 3. حفظ النسخة الجديدة كاملة على جيت هب
-        this.saveToGitHub().then(() => {
-            alert("تم تحديث البيانات وحفظها بنجاح على GitHub");
         });
+
+        this.calculateTimelines(stories);
+        db.currentStories = stories;
+        this.saveToGitHub().then(() => alert("تم تحديث البيانات بناءً على منطق الأولويات الجديد"));
     },
 
-
     calculateTimelines(stories) {
-        // 1. الترتيب بناءً على الأولوية (الأقل رقماً أولاً) ثم ID
-        stories.sort((a, b) => {
-            const priorityA = parseInt(a.priority) || 999;
-            const priorityB = parseInt(b.priority) || 999;
-            if (priorityA !== priorityB) {
-                return priorityA - priorityB;
-            }
-            return a.id - b.id;
-        });
+        // 1. الترتيب الصارم حسب Business Priority (الأقل أولاً)
+        stories.sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
-        const testerAvailability = {};
+        // سجلات لتتبع متى يفرغ كل موظف (سواء ديف أو تستر)
+        const staffAvailability = {}; 
 
         stories.forEach(story => {
-            // حساب تطوير القصة (Dev)
-           const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-const devHours = devTasks.reduce((acc, t) => {
-    const effort = t['State'] === 'To Be Reviewed' ? 0 : parseFloat(t['Original Estimation'] || 0);
-    return acc + effort;
-}, 0);
-            
+            // --- أولاً: منطق الـ Development ---
+            const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+            const devHours = devTasks.reduce((acc, t) => {
+                const effort = t['State'] === 'To Be Reviewed' ? 0 : parseFloat(t['Original Estimation'] || 0);
+                return acc + effort;
+            }, 0);
+
+            // تحديد موعد البداية: من Activated Date لأول تاسك
             let devStart = null;
             const activatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
             if (activatedDates.length > 0) devStart = new Date(activatedDates[0]);
 
             if (!devStart) {
-                story.calc.error = "لم يتم بدء العمل (No Activated Tasks)";
-                story.calc.devEnd = "بانتظار البدء";
+                story.calc.error = "بانتظار تفعيل التاسكات (No Activated Tasks)";
+                story.calc.devEnd = "TBD";
                 story.calc.testEnd = "---";
                 story.calc.finalEnd = "---";
-                return; 
+                return;
             }
 
-            story.calc.devEnd = dateEngine.addWorkingHours(devStart, devHours, story.assignedTo);
+            // التأكد من أن المطور متاح (بناءً على قصص ذات أولوية أعلى)
+            let devActualStart = new Date(Math.max(devStart, staffAvailability[story.assignedTo] || devStart));
+            story.calc.devEnd = dateEngine.addWorkingHours(devActualStart, devHours, story.assignedTo);
+            
+            // تحديث إتاحة المطور
+            staffAvailability[story.assignedTo] = new Date(story.calc.devEnd);
 
-            // حساب الاختبار (Testing) - هنا يكمن منطق الترتيب الجديد
+            // --- ثانياً: منطق الـ Testing (يبدأ بعد الديف بيوم) ---
             const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
-const testHours = testTasks.reduce((acc, t) => {
-    // معاملة To Be Reviewed كأنها منتهية
-    const effort = t['State'] === 'To Be Reviewed' ? 0 : parseFloat(t['Original Estimation'] || 0);
-    return acc + effort;
-}, 0);
-            // موعد جاهزية القصة تقنياً (بعد انتهاء المطور)
-            let storyReadyForTest = new Date(story.calc.devEnd);
-            // نفترض أنها تذهب للتستر في اليوم التالي (كما في كودك الأصلي)
-            storyReadyForTest.setDate(storyReadyForTest.getDate() + 1);
-            storyReadyForTest.setHours(9, 0, 0, 0);
+            const testHours = testTasks.reduce((acc, t) => {
+                return acc + (t['State'] === 'To Be Reviewed' ? 0 : parseFloat(t['Original Estimation'] || 0));
+            }, 0);
 
-            // تحديد متى سيكون التستر متاحاً (بناءً على القصص ذات الأولوية الأعلى التي عالجناها للتو)
-            let testerNextAvailableSlot = testerAvailability[story.tester] || storyReadyForTest;
+            // يبدأ التستر في اليوم التالي لانتهاء الديف (9 صباحاً)
+            let readyForTestDate = new Date(story.calc.devEnd);
+            readyForTestDate.setDate(readyForTestDate.getDate() + 1);
+            readyForTestDate.setHours(9, 0, 0, 0);
+
+            // التستر يبدأ عندما يجهز الستوري وعندما يفرغ التستر من مهامه السابقة
+            let testActualStart = new Date(Math.max(readyForTestDate, staffAvailability[story.tester] || readyForTestDate));
+            story.calc.testEnd = dateEngine.addWorkingHours(testActualStart, testHours, story.tester);
             
-            // البداية الفعلية هي الأبعد بين (جاهزية القصة) و (فراغ التستر)
-            let actualTestStart = new Date(Math.max(storyReadyForTest, testerNextAvailableSlot));
+            // تحديث إتاحة التستر
+            staffAvailability[story.tester] = new Date(story.calc.testEnd);
 
-            // التأكد من أن البداية في يوم عمل
-            while (!dateEngine.isWorkDay(actualTestStart, story.tester)) {
-                actualTestStart.setDate(actualTestStart.getDate() + 1);
-                actualTestStart.setHours(CONFIG.START_HOUR, 0, 0, 0);
-            }
-
-            story.calc.testEnd = dateEngine.addWorkingHours(actualTestStart, Math.max(0, testHours), story.tester);
+            // --- ثالثاً: منطق الـ Bugs (Preemption/Priority Impact) ---
+            // إذا وجد بجز، فإنها تستهلك وقت المطور وتؤخر كل مواعيد الانتهاء اللاحقة
+            let finalDeliveryDate = new Date(story.calc.testEnd);
             
-            // تحديث "مفكرة" التستر بموعد انتهائه الجديد ليستخدم في القصة التالية (الأقل أولوية)
-            testerAvailability[story.tester] = new Date(story.calc.testEnd);
-
-            // حساب الريورك
-            let lastBugEndDate = new Date(story.calc.testEnd);
             if (story.bugs && story.bugs.length > 0) {
                 story.bugs.forEach(bug => {
                     const bugEffort = parseFloat(bug['Original Estimation'] || 0);
                     const bugActivatedDate = bug['Activated Date'] ? new Date(bug['Activated Date']) : null;
+                    
                     if (bugActivatedDate && bugEffort > 0) {
+                        // البج تسحب المطور من عمله الحالي إذا كانت أولوية الستوري عالية
+                        // نحسب وقت انتهاء البج بناءً على وقت تفعيلها + جهدها
                         const bugFinish = dateEngine.addWorkingHours(bugActivatedDate, bugEffort, story.assignedTo);
-                        if (bugFinish > lastBugEndDate) lastBugEndDate = bugFinish;
+                        
+                        // إذا انتهت البج بعد موعد التست، فإنها تدفع موعد التسليم النهائي
+                        if (bugFinish > finalDeliveryDate) {
+                            finalDeliveryDate = bugFinish;
+                        }
+
+                        // هام: البج تؤخر المطور في سجل الإتاحة العام للقصص القادمة
+                        if (bugFinish > staffAvailability[story.assignedTo]) {
+                            staffAvailability[story.assignedTo] = new Date(bugFinish);
+                        }
                     }
                 });
             }
-            story.calc.finalEnd = lastBugEndDate;
+            story.calc.finalEnd = finalDeliveryDate;
         });
 
         currentData = stories;
