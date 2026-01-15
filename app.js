@@ -407,10 +407,25 @@ const ui = {
 },
 renderActiveCards() {
     const container = document.getElementById('active-cards-container');
-    const activeStories = currentData.filter(s => s.state !== 'Tested');
+    const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; // الحصول على نص البحث
+    
+    // فلترة القصص النشطة بناءً على حالة البحث
+    const activeStories = currentData.filter(s => {
+        const isNotTested = s.state !== 'Tested';
+        const matchesSearch = 
+            s.title.toLowerCase().includes(searchTerm) || 
+            s.id.toString().includes(searchTerm) || 
+            s.assignedTo.toLowerCase().includes(searchTerm) || 
+            s.tester.toLowerCase().includes(searchTerm) ||
+            (s.area && s.area.toLowerCase().includes(searchTerm));
+            
+        return isNotTested && matchesSearch;
+    });
     
     if (activeStories.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No active stories found.</div>`;
+        container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">
+            ${searchTerm ? 'لا توجد نتائج تطابق بحثك.' : 'No active stories found.'}
+        </div>`;
         return;
     }
 
