@@ -361,7 +361,7 @@ renderActiveCards() {
         return;
     }
 
-    // 1. تجميع البيانات حسب Business Area وترتيبها داخلياً (المتأخر أولاً)
+    // 1. تجميع البيانات حسب Business Area
     const groupedStories = activeStories.reduce((groups, story) => {
         const area = story.area || "General";
         if (!groups[area]) groups[area] = [];
@@ -369,15 +369,15 @@ renderActiveCards() {
         return groups;
     }, {});
 
-    // تحويل الكائن إلى مصفوفة للتمكن من عرضها وترتيب القصص داخل كل مجموعة
-container.innerHTML = Object.keys(groupedStories).map(area => {
+    // 2. رندر المجموعات مع الترتيب
+    container.innerHTML = Object.keys(groupedStories).map(area => {
         const storiesInArea = groupedStories[area].sort((a, b) => {
-            // 1. الترتيب حسب الأولوية (Priority) - الرقم الأقل يعني أولوية أعلى
+            // الترتيب الأول: حسب الأولوية (Priority) - الرقم الأقل يعني أولوية أعلى
             if (a.priority !== b.priority) {
                 return a.priority - b.priority;
             }
             
-            // 2. إذا تساوت الأولوية، يتم الترتيب حسب التأخير
+            // الترتيب الثاني: إذا تساوت الأولوية، يتم الترتيب حسب التأخير
             const isALate = a.calc.finalEnd instanceof Date && new Date() > a.calc.finalEnd;
             const isBLate = b.calc.finalEnd instanceof Date && new Date() > b.calc.finalEnd;
             return isBLate - isALate; 
@@ -392,8 +392,10 @@ container.innerHTML = Object.keys(groupedStories).map(area => {
                 </h2>
             </div>
             ${storiesInArea.map(s => {
-                // إضافة شارة (Badge) لعرض رقم الأولوية داخل الكارت (اختياري)
-                const priorityBadge = `<span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority}</span>`;
+                // --- دمج التعريفات التي كانت تسبب الخطأ ---
+                const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
+                const hasError = s.calc.error;
+                const priorityBadge = `<span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>`;
                 
                 let statusColor = "bg-blue-100 text-blue-700";
                 if(isLate) statusColor = "bg-red-100 text-red-700";
@@ -407,11 +409,7 @@ container.innerHTML = Object.keys(groupedStories).map(area => {
                                     <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
                                         ${hasError ? 'Action Required' : (isLate ? 'Overdue ⚠️' : s.state)}
                                     </span>
-                                    ${isLate ? `
-                                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 border border-gray-200">
-                                            ${s.state}
-                                        </span>
-                                    ` : ''}
+                                    ${priorityBadge}
                                 </div>
                                 <span class="text-xs font-mono text-gray-400">#${s.id}</span>
                             </div>
@@ -426,7 +424,7 @@ container.innerHTML = Object.keys(groupedStories).map(area => {
                                         ${s.assignedTo}
                                     </p>
                                     <p class="text-[10px] text-gray-500 mt-1 italic">
-                                        Ends: ${hasError ? 'Pending' : new Date(s.calc.devEnd).toLocaleDateString('en-GB')}
+                                        Ends: ${hasError ? 'Pending' : (s.calc.devEnd instanceof Date ? s.calc.devEnd.toLocaleDateString('en-GB') : s.calc.devEnd)}
                                     </p>
                                 </div>
                                 <div>
