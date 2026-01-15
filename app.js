@@ -353,48 +353,58 @@ const ui = {
         this.renderSettings();
     },
 
-    renderStats() {
-        const active = currentData.filter(s => s.state !== 'Tested');
-        const tested = currentData.filter(s => s.state === 'Tested');
-        const delayed = active.filter(s => s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd);
+   renderStats() {
+    const active = currentData.filter(s => s.state !== 'Tested');
+    const tested = currentData.filter(s => s.state === 'Tested');
+    
+    // Safety check: ensure finalEnd is a valid Date object before comparing
+    const delayed = active.filter(s => {
+        return s.calc.finalEnd instanceof Date && 
+               !isNaN(s.calc.finalEnd.getTime()) && 
+               new Date() > s.calc.finalEnd;
+    });
 
-        const statsHtml = `
-            <div class="bg-blue-600 text-white p-4 rounded-xl shadow">
-                <div class="text-sm opacity-80">القصص النشطة</div>
-                <div class="text-2xl font-bold">${active.length}</div>
-            </div>
-            <div class="bg-green-600 text-white p-4 rounded-xl shadow">
-                <div class="text-sm opacity-80">بانتظار التسليم</div>
-                <div class="text-2xl font-bold">${tested.length}</div>
-            </div>
-            <div class="bg-red-600 text-white p-4 rounded-xl shadow">
-                <div class="text-sm opacity-80">متأخرة</div>
-                <div class="text-2xl font-bold">${delayed.length}</div>
-            </div>
-            <div class="bg-purple-600 text-white p-4 rounded-xl shadow">
-                <div class="text-sm opacity-80">تم تسليمها</div>
-                <div class="text-2xl font-bold">${db.deliveryLogs.length}</div>
-            </div>
-        `;
-        document.getElementById('stats-cards').innerHTML = statsHtml;
+    const statsHtml = `
+        <div class="bg-blue-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Active Stories</div>
+            <div class="text-2xl font-bold">${active.length}</div>
+        </div>
+        <div class="bg-green-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Ready for Delivery</div>
+            <div class="text-2xl font-bold">${tested.length}</div>
+        </div>
+        <div class="bg-red-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Delayed</div>
+            <div class="text-2xl font-bold">${delayed.length}</div>
+        </div>
+        <div class="bg-purple-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Delivered</div>
+            <div class="text-2xl font-bold">${db.deliveryLogs.length}</div>
+        </div>
+    `;
+    document.getElementById('stats-cards').innerHTML = statsHtml;
 
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('overdue-container').innerHTML = delayed.map(s => `
-            <div class="p-2 border-b text-sm">
-                <span class="font-bold">[${s.area}]</span> ${s.title}
-                <div class="text-xs text-red-400">تأخير منذ: ${s.calc.finalEnd.toLocaleDateString()}</div>
-            </div>
-        `).join('');
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Safety check for the overdue container
+    document.getElementById('overdue-container').innerHTML = delayed.map(s => `
+        <div class="p-2 border-b text-sm">
+            <span class="font-bold">[${s.area}]</span> ${s.title}
+            <div class="text-xs text-red-400">Delayed since: ${s.calc.finalEnd.toLocaleDateString()}</div>
+        </div>
+    `).join('');
 
-        document.getElementById('today-container').innerHTML = active.filter(s => {
-            return s.calc.finalEnd instanceof Date && s.calc.finalEnd.toISOString().split('T')[0] === today;
-        }).map(s => `
-            <div class="p-2 border-b text-sm">
-                <span class="font-bold">[${s.area}]</span> ${s.title} - <span class="text-blue-500">${s.assignedTo}</span>
-            </div>
-        `).join('') || '<div class="text-gray-400 text-center">لا يوجد شيء مخطط له اليوم</div>';
-    },
-
+    // Fix for Line 390: Check if date is valid before calling .toISOString()
+    document.getElementById('today-container').innerHTML = active.filter(s => {
+        return s.calc.finalEnd instanceof Date && 
+               !isNaN(s.calc.finalEnd.getTime()) && 
+               s.calc.finalEnd.toISOString().split('T')[0] === today;
+    }).map(s => `
+        <div class="p-2 border-b text-sm">
+            <span class="font-bold">[${s.area}]</span> ${s.title} - <span class="text-blue-500">${s.assignedTo}</span>
+        </div>
+    `).join('') || '<div class="text-gray-400 text-center">Nothing planned for today</div>';
+},
 renderActiveCards() {
     const container = document.getElementById('active-cards-container');
     const activeStories = currentData.filter(s => s.state !== 'Tested');
