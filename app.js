@@ -206,22 +206,47 @@ async saveToGitHub() {
             staffAvailability[story.assignedTo] = new Date(story.calc.devEnd);
 
             // --- ثانياً: منطق الـ Testing (يبدأ بعد الديف بيوم) ---
-            const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
-            const testHours = testTasks.reduce((acc, t) => {
-                return acc + (t['State'] === 'To Be Reviewed' ? 0 : parseFloat(t['Original Estimation'] || 0));
-            }, 0);
+            // --- ثانياً: منطق الـ Testing (مع معالجة الـ Overlap للتحضير) ---
+const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
 
-            // يبدأ التستر في اليوم التالي لانتهاء الديف (9 صباحاً)
-            let readyForTestDate = new Date(story.calc.devEnd);
-            readyForTestDate.setDate(readyForTestDate.getDate() + 1);
-            readyForTestDate.setHours(9, 0, 0, 0);
+// فصل مهام التحضير عن مهام التست الفعلية (بافتراض وجود كلمة Preparation في العنوان أو النشاط)
+const prepTasks = testTasks.filter(t => t['Title'].toLowerCase().includes('prep') || t['Activity'] === 'Preparation');
+const actualTestTasks = testTasks.filter(t => !prepTasks.includes(t));
 
-            // التستر يبدأ عندما يجهز الستوري وعندما يفرغ التستر من مهامه السابقة
-            let testActualStart = new Date(Math.max(readyForTestDate, staffAvailability[story.tester] || readyForTestDate));
-            story.calc.testEnd = dateEngine.addWorkingHours(testActualStart, testHours, story.tester);
-            
-            // تحديث إتاحة التستر
-            staffAvailability[story.tester] = new Date(story.calc.testEnd);
+const prepHours = prepTasks.reduce((acc, t) => acc + (t['State'] === 'To Be Reviewed' ? 0 : parseFloat(t['Original Estimation'] || 0)), 0);
+const actualTestHours = actualTestTasks.reduce((acc, t) => acc + (t['State'] === 'To Be Reviewed' ? 0 : parseFloat(t['Original Estimation'] || 0)), 0);
+
+// تحديد موعد بداية التحضير (إذا كان هناك Activated Date لمهمة التحضير)
+let prepStart = null;
+const prepActivatedDates = prepTasks.map(t => t['Activated Date']).filter(d => d).sort();
+if (prepActivatedDates.length > 0) prepStart = new Date(prepActivatedDates[0]);
+
+let testActualStart;
+
+if (prepStart && prepStart < story.calc.devEnd) {
+    // الحالة المطلوبة: إذا بدأ التحضير قبل انتهاء الديف، نعتبر وقت التحضير "مغطى" ولا نضيف ساعاته
+    // يبدأ التست الفعلي في اليوم التالي لانتهاء الديف
+    let readyForTestDate = new Date(story.calc.devEnd);
+    readyForTestDate.setDate(readyForTestDate.getDate() + 1);
+    readyForTestDate.setHours(9, 0, 0, 0);
+
+    testActualStart = new Date(Math.max(readyForTestDate, staffAvailability[story.tester] || readyForTestDate));
+    // نحسب فقط ساعات التست الفعلي دون التحضير
+    story.calc.testEnd = dateEngine.addWorkingHours(testActualStart, actualTestHours, story.tester);
+} else {
+    // الحالة العادية: التحضير يبدأ بعد الديف أو لا يوجد تداخل
+    let readyForTestDate = new Date(story.calc.devEnd);
+    readyForTestDate.setDate(readyForTestDate.getDate() + 1);
+    readyForTestDate.setHours(9, 0, 0, 0);
+
+    testActualStart = new Date(Math.max(readyForTestDate, staffAvailability[story.tester] || readyForTestDate));
+    // نحسب إجمالي الساعات (تحضير + تست)
+    const totalTestHours = prepHours + actualTestHours;
+    story.calc.testEnd = dateEngine.addWorkingHours(testActualStart, totalTestHours, story.tester);
+}
+
+// تحديث إتاحة التستر
+staffAvailability[story.tester] = new Date(story.calc.testEnd);
 
             // --- ثالثاً: منطق الـ Bugs (Preemption/Priority Impact) ---
             // إذا وجد بجز، فإنها تستهلك وقت المطور وتؤخر كل مواعيد الانتهاء اللاحقة
