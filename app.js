@@ -178,15 +178,18 @@ async saveToGitHub() {
         });
     },
 
-  calculateTimelines(stories) {
-        // 0. ترتيب القصص لضمان معالجة المهام بالتسلسل (مثلاً حسب المعرف أو الأولوية)
-        stories.sort((a, b) => a.id - b.id);
+/**
+ * تم تحديث منطق الحساب ليتوافق مع الإجازات الأسبوعية والرسمية
+ */
+const dataProcessor = {
+    // ... (الكود السابق كما هو)
 
-        // كائن لتتبع آخر موعد ينتهي فيه كل مختبر من عمله
+    calculateTimelines(stories) {
+        stories.sort((a, b) => a.id - b.id);
         const testerAvailability = {};
 
         stories.forEach(story => {
-            // 1. حساب تطوير القصة (Development Tasks)
+            // 1. حساب تطوير القصة
             const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
             const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
             
@@ -204,30 +207,30 @@ async saveToGitHub() {
 
             story.calc.devEnd = dateEngine.addWorkingHours(devStart, devHours, story.assignedTo);
 
-            // 2. حساب الاختبار (Testing Tasks) - المنطق المعدل هنا
+            // 2. حساب الاختبار (Testing) مع فحص الإجازات
             const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
             let testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
-            // تحديد موعد جاهزية القصة للاختبار (بعد يوم من انتهاء التطوير في تمام التاسعة صباحاً)
+            // تحديد موعد جاهزية القصة (اليوم التالي الساعة 9 صباحاً)
             let storyReadyForTest = new Date(story.calc.devEnd);
             storyReadyForTest.setDate(storyReadyForTest.getDate() + 1);
             storyReadyForTest.setHours(9, 0, 0, 0);
 
-            // التحقق من توفر المختبر: هل هو مشغول بقصة سابقة؟
+            // التحقق من توفر المختبر
             let testerNextAvailableSlot = testerAvailability[story.tester] || storyReadyForTest;
-
-            // تاريخ البدء الحقيقي هو الأحدث بين (جاهزية القصة) و (فراغ المختبر)
             let actualTestStart = new Date(Math.max(storyReadyForTest, testerNextAvailableSlot));
 
-            // حساب تاريخ انتهاء الاختبار
+            // هـام: التأكد أن بداية الاختبار تقع في يوم عمل (وليس جمعة أو سبت أو إجازة رسمية)
+            while (!dateEngine.isWorkDay(actualTestStart, story.tester)) {
+                actualTestStart.setDate(actualTestStart.getDate() + 1);
+                actualTestStart.setHours(CONFIG.START_HOUR, 0, 0, 0);
+            }
+
             story.calc.testEnd = dateEngine.addWorkingHours(actualTestStart, Math.max(0, testHours), story.tester);
-            
-            // تحديث سجل توفر المختبر للقصة القادمة
             testerAvailability[story.tester] = new Date(story.calc.testEnd);
 
             // 3. حساب الريورك (Bugs Rework)
             let lastBugEndDate = new Date(story.calc.testEnd);
-
             if (story.bugs && story.bugs.length > 0) {
                 story.bugs.forEach(bug => {
                     const bugEffort = parseFloat(bug['Original Estimation'] || 0);
@@ -235,13 +238,10 @@ async saveToGitHub() {
 
                     if (bugActivatedDate && bugEffort > 0) {
                         const bugFinish = dateEngine.addWorkingHours(bugActivatedDate, bugEffort, story.assignedTo);
-                        if (bugFinish > lastBugEndDate) {
-                            lastBugEndDate = bugFinish;
-                        }
+                        if (bugFinish > lastBugEndDate) lastBugEndDate = bugFinish;
                     }
                 });
             }
-
             story.calc.finalEnd = lastBugEndDate;
         });
 
@@ -250,16 +250,18 @@ async saveToGitHub() {
     }
 };
 
-/**
- * Time & Date Logic
- */
 const dateEngine = {
     isWorkDay(date, person) {
         const day = date.getDay();
         const dateStr = date.toISOString().split('T')[0];
         
+        // فحص عطلة نهاية الأسبوع (CONFIG.WEEKEND)
         if (CONFIG.WEEKEND.includes(day)) return false;
-        if (db.holidays.includes(dateStr)) return false;
+        
+        // فحص الإجازات الرسمية المسجلة في قسم Holidays
+        if (db.holidays && db.holidays.includes(dateStr)) return false;
+        
+        // فحص الإجازات الخاصة بالموظف
         if (db.vacations.some(v => v.name === person && v.date === dateStr)) return false;
         
         return true;
@@ -269,19 +271,32 @@ const dateEngine = {
         let result = new Date(startDate);
         let remainingHours = hours;
 
+        // إذا بدأنا في يوم إجازة، نتحرك لأول يوم عمل
+        while(!this.isWorkDay(result, person)) {
+            result.setDate(result.getDate() + 1);
+            result.setHours(CONFIG.START_HOUR, 0, 0, 0);
+        }
+
         while (remainingHours > 0) {
             if (this.isWorkDay(result, person)) {
                 let currentHour = result.getHours();
                 if (currentHour >= CONFIG.START_HOUR && currentHour < CONFIG.END_HOUR) {
+                    // حساب الساعات المتبقية بناءً على إنتاجية الساعات الفعلية
                     remainingHours -= (CONFIG.WORKING_HOURS / (CONFIG.END_HOUR - CONFIG.START_HOUR));
                 }
             }
             
             result.setHours(result.getHours() + 1);
             
+            // إذا وصلنا لنهاية يوم العمل، ننتقل لليوم التالي الساعة 9 صباحاً
             if (result.getHours() >= CONFIG.END_HOUR) {
                 result.setDate(result.getDate() + 1);
                 result.setHours(CONFIG.START_HOUR, 0, 0, 0);
+                
+                // تخطي الإجازات عند الانتقال للأيام التالية
+                while (!this.isWorkDay(result, person)) {
+                    result.setDate(result.getDate() + 1);
+                }
             }
         }
         return result;
