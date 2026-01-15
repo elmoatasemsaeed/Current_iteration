@@ -392,7 +392,7 @@ renderActiveCards() {
                 </h2>
             </div>
             ${storiesInArea.map(s => {
-                const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
+const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
                 const hasError = s.calc.error;
                 
                 let statusColor = "bg-blue-100 text-blue-700";
@@ -403,9 +403,16 @@ renderActiveCards() {
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
                         <div class="p-5 flex-1">
                             <div class="flex justify-between items-start mb-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
-                                    ${hasError ? 'Action Required' : (isLate ? 'Overdue ⚠️' : s.state)}
-                                </span>
+                                <div class="flex gap-2">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
+                                        ${hasError ? 'Action Required' : (isLate ? 'Overdue ⚠️' : s.state)}
+                                    </span>
+                                    ${isLate ? `
+                                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 border border-gray-200">
+                                            ${s.state}
+                                        </span>
+                                    ` : ''}
+                                </div>
                                 <span class="text-xs font-mono text-gray-400">#${s.id}</span>
                             </div>
                             
