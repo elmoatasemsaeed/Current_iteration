@@ -353,11 +353,17 @@ const ui = {
         this.renderSettings();
     },
 
-   renderStats() {
+  renderStats() {
+    // 1. القصص النشطة (ليست في حالة Tested)
     const active = currentData.filter(s => s.state !== 'Tested');
-    const tested = currentData.filter(s => s.state === 'Tested');
     
-    // Safety check: ensure finalEnd is a valid Date object before comparing
+    // 2. القصص الجاهزة للتسليم (حالتها Tested ولم يتم تسجيل تسليمها بعد)
+    const readyForDelivery = currentData.filter(s => 
+        s.state === 'Tested' && 
+        !db.deliveryLogs.some(log => log.storyId === s.id)
+    );
+    
+    // 3. القصص المتأخرة
     const delayed = active.filter(s => {
         return s.calc.finalEnd instanceof Date && 
                !isNaN(s.calc.finalEnd.getTime()) && 
@@ -371,7 +377,7 @@ const ui = {
         </div>
         <div class="bg-green-600 text-white p-4 rounded-xl shadow">
             <div class="text-sm opacity-80">Ready for Delivery</div>
-            <div class="text-2xl font-bold">${tested.length}</div>
+            <div class="text-2xl font-bold">${readyForDelivery.length}</div>
         </div>
         <div class="bg-red-600 text-white p-4 rounded-xl shadow">
             <div class="text-sm opacity-80">Delayed</div>
