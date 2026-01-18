@@ -524,10 +524,12 @@ renderActiveCards() {
                 </span>
             </div>
             ${isLate || isReleaseLate ? '<span class="text-xl animate-bounce">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
-        </div>
     </div>
-     `;
-    };
+                </div>`;
+            }).join('')}
+        `;
+    }).join(''); 
+},
 
 renderDelivery() {
     const container = document.getElementById('delivery-grid');
