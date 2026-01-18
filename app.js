@@ -655,11 +655,15 @@ renderDelivery() {
         let html = '';
 
         areas.forEach(area => {
-            const areaStories = currentData.filter(s => s.area === area && s.state !== 'Tested');
+            // التعديل هنا: استبعاد القصص التي في حالة Resolved أو Tested أو On-Hold من حساب "الانشغال"
+            const areaStories = currentData.filter(s => {
+                const isInactive = ['Resolved', 'Tested', 'On-Hold'].includes(s.state);
+                return s.area === area && !isInactive;
+            });
             
             const staffInArea = {
                 developers: [...new Set(areaStories.map(s => s.assignedTo))],
-                testers: [...new Set(areaStories.map(s => s.tester))].filter(t => t !== "Unassigned") // استبعاد Unassigned من قائمة التستر
+                testers: [...new Set(areaStories.map(s => s.tester))].filter(t => t !== "Unassigned")
             };
 
             html += `
@@ -677,18 +681,15 @@ renderDelivery() {
                     );
                     
                     const sortedTasks = tasks.sort((a, b) => {
-                        // منطق التعديل: إذا كان التستر Unassigned، نستخدم devEnd، وإلا نستخدم finalEnd
                         const getDate = (story) => {
                             if (story.tester === "Unassigned") {
                                 return story.calc.devEnd instanceof Date ? story.calc.devEnd : new Date(0);
                             }
                             return story.calc.finalEnd instanceof Date ? story.calc.finalEnd : new Date(0);
                         };
-
                         return getDate(b) - getDate(a);
                     });
 
-                    // تحديد تاريخ الإتاحة بناءً على آخر مهمة
                     let lastDate = null;
                     if (sortedTasks.length > 0) {
                         const topStory = sortedTasks[0];
@@ -720,9 +721,8 @@ renderDelivery() {
             }
         });
 
-        container.innerHTML = html || '<div class="col-span-full text-center text-gray-400">No data available to display.</div>';
+        container.innerHTML = html || '<div class="col-span-full text-center text-gray-400">No active tasks (All staff are free).</div>';
     },
-
     // وظيفة مساعدة لإنشاء الكارت (Card) لتقليل تكرار الكود
     generateStaffCard(person, icon) {
         const isFree = person.freeDate === null;
