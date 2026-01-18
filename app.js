@@ -356,6 +356,7 @@ const ui = {
         this.renderDelivery();
         this.renderAvailability();
         this.renderSettings();
+        this.renderClientRoadmap();
     },
 
   renderStats() {
@@ -416,7 +417,62 @@ const ui = {
         </div>
     `).join('') || '<div class="text-gray-400 text-center">Nothing planned for today</div>';
 },
-renderActiveCards() {
+
+renderClientRoadmap() {
+    const container = document.getElementById('roadmap-container');
+    const today = new Date();
+    const fourteenDaysLater = new Date();
+    fourteenDaysLater.setDate(today.getDate() + 14);
+
+    // 1. فلترة القصص التي لها تاريخ تسليم متوقع خلال الـ 14 يوم القادمين وليست منتهية
+    const upcomingDeliveries = currentData.filter(s => {
+        if (!s.expectedRelease || !(s.expectedRelease instanceof Date)) return false;
+        
+        // تصفية المهام التي لم تنتهِ بعد (أو انتهت مؤخراً وتريد عرضها)
+        const isNotDone = s.state !== 'Tested'; 
+        const isWithinRange = s.expectedRelease >= today && s.expectedRelease <= fourteenDaysLater;
+        
+        return isNotDone && isWithinRange;
+    });
+
+    // ترتيب حسب التاريخ الأقرب
+    upcomingDeliveries.sort((a, b) => a.expectedRelease - b.expectedRelease);
+
+    if (upcomingDeliveries.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-8 bg-white rounded-xl border border-dashed text-gray-400">No client deliveries expected in the next 14 days.</div>`;
+        return;
+    }
+
+    container.innerHTML = upcomingDeliveries.map(s => {
+        const diffTime = Math.abs(s.expectedRelease - today);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        // تحديد لون الكارت بناءً على قرب الموعد
+        let urgencyClass = "border-blue-200 bg-white";
+        if (diffDays <= 3) urgencyClass = "border-amber-400 bg-amber-50";
+        if (diffDays <= 1) urgencyClass = "border-red-400 bg-red-50";
+
+        return `
+            <div class="p-4 rounded-xl border-2 ${urgencyClass} shadow-sm">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">In ${diffDays} Days</span>
+                    <span class="text-[10px] text-gray-400">#${s.id}</span>
+                </div>
+                <div class="text-sm font-bold text-slate-800 truncate" title="${s.title}">${s.title}</div>
+                <div class="text-[11px] text-gray-500 mt-1">Area: ${s.area}</div>
+                <div class="mt-3 flex justify-between items-center">
+                    <div class="text-[10px] font-bold uppercase text-gray-400">Release:</div>
+                    <div class="text-xs font-bold text-slate-700">${s.expectedRelease.toLocaleDateString('en-GB')}</div>
+                </div>
+                <div class="mt-2 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-indigo-500" style="width: ${s.state === 'Resolved' ? '80%' : '40%'}"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+},
+    
+    renderActiveCards() {
     const container = document.getElementById('active-cards-container');
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; // الحصول على نص البحث
     
