@@ -186,9 +186,11 @@ async syncFromAzure() {
         this.processRows(rows);
         alert("تمت المزامنة بنجاح مطابقة للكويري");
 
-    } catch (error) {
+   } catch (error) {
         console.error("Azure Sync Error:", error);
         alert("حدث خطأ أثناء المزامنة. راجع الـ Console");
+    } finally {
+        if (typeof ui !== 'undefined' && ui.hideLoading) ui.hideLoading(); // إيقاف التحميل مهما كانت النتيجة
     }
 },    
 
@@ -447,6 +449,23 @@ const dateEngine = {
  * UI Rendering
  */
 const ui = {
+    // أضف هاتين الدالتين هنا
+    showLoading() {
+        // يمكنك تغيير هذا بـ Spinner حقيقي إذا كان لديك في الـ HTML
+        const btn = document.querySelector('button[onclick*="syncFromAzure"]');
+        if(btn) {
+            btn.disabled = true;
+            btn.innerHTML = "⏳ جاري المزامنة...";
+        }
+    },
+    
+    hideLoading() {
+        const btn = document.querySelector('button[onclick*="syncFromAzure"]');
+        if(btn) {
+            btn.disabled = false;
+            btn.innerHTML = "Sync from Azure";
+        }
+    },
     switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
