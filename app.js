@@ -157,6 +157,7 @@ async saveToGitHub() {
                     tester: row['Assigned To Tester'] || "Unassigned",
                     area: area || "General",
                     priority: parseInt(row['Business Priority']) || 999,
+                    expectedRelease: row['Release Expected Date'] ? new Date(row['Release Expected Date']) : null,
                     tasks: [],
                     bugs: [],
                     calc: {}
@@ -485,6 +486,10 @@ renderActiveCards() {
     // تنور أحمر إذا: التاريخ الحالي تجاوز موعد التست والحالة ليست Tested
     const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && s.state !== 'Tested';
     const testLightColor = (s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+              
+              // 3. لمبة تاريخ التسليم المتوقع (Client Expected Release)
+const isReleaseLate = s.expectedRelease instanceof Date && now > s.expectedRelease && s.state !== 'Tested';
+const releaseLightColor = (s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isReleaseLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
     const priorityBadge = `<span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>`;
 
@@ -495,65 +500,68 @@ renderActiveCards() {
     const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
 
     return `
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
-            <div class="p-5 flex-1">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="flex gap-2">
-                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
-                            ${statusText}
-                        </span>
-                        ${priorityBadge}
-                    </div>
-                    <span class="text-xs font-mono text-gray-400">#${s.id}</span>
-                </div>
-                                
-                <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
-
-                <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
-                    <div class="relative">
-                        <div class="flex items-center gap-2 mb-1">
-                            <div class="w-2.5 h-2.5 rounded-full ${devLightColor}" title="Dev Status Indicator"></div>
-                            <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
-                        </div>
-                        <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
-                            ${s.assignedTo}
-                        </p>
-                        <p class="text-[10px] text-gray-500 mt-1 italic">
-                            Ends: ${hasError ? 'Pending' : (s.calc.devEnd instanceof Date ? s.calc.devEnd.toLocaleDateString('en-GB') : s.calc.devEnd)}
-                        </p>
-                    </div>
-
-                    <div class="relative">
-                        <div class="flex items-center gap-2 mb-1">
-                            <div class="w-2.5 h-2.5 rounded-full ${testLightColor}" title="QA Status Indicator"></div>
-                            <p class="text-[10px] uppercase text-gray-400 font-bold">Quality Assurance</p>
-                        </div>
-                        <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
-                            ${s.tester}
-                        </p>
-                        <p class="text-[10px] text-gray-500 mt-1 italic">
-                            Ends: ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleDateString('en-GB') : 'TBD'}
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
-                <div class="flex flex-col">
-                    <span class="text-[10px] uppercase font-bold text-gray-400">Final Delivery</span>
-                    <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
-                        ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting for Data'}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
+        <div class="p-5 flex-1">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex gap-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
+                        ${statusText}
                     </span>
+                    ${priorityBadge}
                 </div>
-                ${isLate ? '<span class="text-xl">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
+                <span class="text-xs font-mono text-gray-400">#${s.id}</span>
+            </div>
+                            
+            <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
+
+            <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
+                <div class="relative">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-2.5 h-2.5 rounded-full ${devLightColor}" title="Dev Status"></div>
+                        <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
+                    </div>
+                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
+                        ${s.assignedTo}
+                    </p>
+                </div>
+
+                <div class="relative">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-2.5 h-2.5 rounded-full ${testLightColor}" title="QA Status"></div>
+                        <p class="text-[10px] uppercase text-gray-400 font-bold">Quality Assurance</p>
+                    </div>
+                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
+                        ${s.tester}
+                    </p>
+                </div>
+
+                <div class="col-span-2 mt-2 pt-2 border-t border-dashed border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2.5 h-2.5 rounded-full ${releaseLightColor}" title="Client Release Status"></div>
+                            <p class="text-[10px] uppercase text-gray-400 font-bold">Client Expected Date</p>
+                        </div>
+                        <p class="text-xs font-bold ${isReleaseLate ? 'text-red-600' : 'text-slate-600'}">
+                            ${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : 'Not Set'}
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
-    `;
-}).join('')}
-        `;
-    }).join('');
+
+        <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
+            <div class="flex flex-col">
+                <span class="text-[10px] uppercase font-bold text-gray-400">Final Delivery (Internal)</span>
+                <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
+                    ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting for Data'}
+                </span>
+            </div>
+            ${isLate || isReleaseLate ? '<span class="text-xl animate-bounce">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
+        </div>
+    </div>
+`;
 }
     ,
 
