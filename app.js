@@ -110,7 +110,8 @@ async syncFromAzure() {
         ui.showLoading(true);
         
         // 1. Fetch Query Results
-        const queryUrl = `https://dev.azure.com/${CONFIG.ADO_ORG}/${CONFIG.ADO_PROJECT}/_apis/vit/wiql/${CONFIG.ADO_QUERY_ID}?api-version=6.0`;
+// التعديل من vit إلى wit
+const queryUrl = `https://dev.azure.com/${CONFIG.ADO_ORG}/${CONFIG.ADO_PROJECT}/_apis/wit/wiql/${CONFIG.ADO_QUERY_ID}?api-version=6.0`;
         const queryRes = await fetch(queryUrl, {
             headers: { 'Authorization': `Basic ${btoa(':' + token)}` }
         });
