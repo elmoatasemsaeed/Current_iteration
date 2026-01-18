@@ -158,8 +158,12 @@ async syncFromAzure() {
         });
         const detailsData = await detailsRes.json();
 
-        // 3. تحويل بيانات Azure لتنسيق الـ Mapping
-        const rows = detailsData.value.map(item => {
+if (!detailsData || !detailsData.value) {
+    console.error("No data returned from Azure or Request Failed:", detailsData);
+    throw new Error("فشل جلب البيانات من Azure. تأكد من صلاحيات الـ Token.");
+}
+
+const rows = detailsData.value.map(item => {
             const f = item.fields;
             return {
                 'ID': item.id,
