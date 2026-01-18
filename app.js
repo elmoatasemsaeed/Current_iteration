@@ -728,17 +728,23 @@ renderDelivery() {
 },
 
 // تحديث دالة الكارت لضمان ظهور اللون الأخضر بوضوح للمتاحين
-generateStaffCard(person, icon) {
+// تحديث الدالة لتقبل المعطى الثالث role
+generateStaffCard(person, icon, role) {
     const isFree = person.freeDate === null;
     const dateString = isFree ? "متاح الآن" : person.freeDate.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
     
-    // تصميم اللون الأخضر للمتاح والأزرق/البنفسجي للمشغول
+    // الألوان الافتراضية بناءً على الدور (تظهر في حالة الانشغال)
+    let roleClasses = role === 'dev' 
+        ? "border-blue-500 bg-blue-50/50" // لون خلفية زرقاء خفيفة للمطورين
+        : "border-purple-500 bg-purple-50/50"; // لون خلفية بنفسجية خفيفة للتستر
+
+    // إذا كان الموظف متاحاً، نعطيه اللون الأخضر المميز بغض النظر عن دوره
     const statusClasses = isFree 
         ? "border-green-500 bg-green-50 shadow-[0_0_10px_rgba(34,197,94,0.1)]" 
-        : "border-indigo-500 bg-white";
+        : roleClasses;
     
-    const textClasses = isFree ? "text-green-700 font-bold" : "text-indigo-600";
-    const iconCircle = isFree ? "bg-green-100" : "bg-slate-100";
+    const textClasses = isFree ? "text-green-700 font-bold" : "text-slate-600";
+    const iconCircle = isFree ? "bg-green-100" : (role === 'dev' ? "bg-blue-100" : "bg-purple-100");
 
     return `
         <div class="p-4 rounded-xl shadow-sm border-l-4 ${statusClasses} flex flex-col justify-center transition-all">
