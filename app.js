@@ -73,10 +73,15 @@ db = JSON.parse(decodedContent);
                 db.sha = data.sha; 
                 
                 // إذا كان هناك بيانات مخزنة مسبقاً، قم بتحميلها في التطبيق
-                if (db.currentStories && db.currentStories.length > 0) {
-
-                this.calculateTimelines(db.currentStories);
-            }
+               if (db.currentStories && db.currentStories.length > 0) {
+    // تحويل نصوص التواريخ إلى Objects لضمان عمل الحسابات والـ UI
+    db.currentStories.forEach(s => {
+        if (s.expectedRelease) {
+            s.expectedRelease = new Date(s.expectedRelease);
+        }
+    });
+    this.calculateTimelines(db.currentStories);
+}
             
             ui.renderAll();
         } else {
