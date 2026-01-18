@@ -7,10 +7,7 @@ const CONFIG = {
     WORKING_HOURS: 5,
     START_HOUR: 9,
     END_HOUR: 17,
-    WEEKEND: [5, 6],
-    ADO_ORG: "NTDotNet",
-    ADO_PROJECT: "LDM",
-    ADO_QUERY_ID: "8a732680-07a6-4dff-bdbd-7800644f61b9"
+    WEEKEND: [5, 6] // الجمعة والسبت
 };
 
 let db = {
@@ -32,15 +29,12 @@ const auth = {
         const u = document.getElementById('username').value;
         const p = document.getElementById('password').value;
         const t = document.getElementById('gh-token').value;
-        const adoT = document.getElementById('ado-token').value; // جديد
         const rem = document.getElementById('remember-me').checked;
 
-        if(!u || !p || !t || !adoT) return alert("برجاء ملء جميع البيانات بما فيها Azure PAT");
+        if(!u || !p || !t) return alert("برجاء ملء جميع البيانات");
 
         sessionStorage.setItem('gh_token', t);
-        sessionStorage.setItem('ado_token', adoT); // حفظ توكن أزور
-
-        if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t, adoT}));
+        if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
 
         currentUser = { username: u, role: 'admin' };
         this.startApp();
@@ -99,85 +93,6 @@ db = JSON.parse(decodedContent);
         alert("خطأ في المزامنة مع GitHub"); 
     }
 },
-/**
- * Modified Sync Function with Field Mapping
- */
-async syncFromAzure() {
-    const token = sessionStorage.getItem('ado_token');
-    if(!token) return alert("برجاء تسجيل الدخول أولاً");
-
-    try {
-        ui.showLoading(true);
-        
-        // 1. Fetch Query Results
-// التعديل من vit إلى wit
-const queryUrl = `https://dev.azure.com/${CONFIG.ADO_ORG}/${CONFIG.ADO_PROJECT}/_apis/wit/wiql/${CONFIG.ADO_QUERY_ID}?api-version=6.0`;
-        const queryRes = await fetch(queryUrl, {
-            headers: { 'Authorization': `Basic ${btoa(':' + token)}` }
-        });
-        const queryData = await queryRes.json();
-
-        // 2. Extract IDs (handling Source/Target relations)
-        let allIds = [];
-        if(queryData.workItemRelations) {
-            allIds = queryData.workItemRelations
-                .flatMap(rel => [rel.source ? rel.source.id : null, rel.target ? rel.target.id : null])
-                .filter(id => id !== null);
-        } else {
-            allIds = queryData.workItems.map(i => i.id);
-        }
-        
-        const uniqueIds = [...new Set(allIds)];
-        if(uniqueIds.length === 0) throw new Error("لم يتم العثور على Work Items في الكويري");
-
-        // 3. Fetch Details for All IDs
-        const detailsUrl = `https://dev.azure.com/${CONFIG.ADO_ORG}/${CONFIG.ADO_PROJECT}/_apis/wit/workitems?ids=${uniqueIds.join(',')}&$expand=all&api-version=6.0`;
-        const detailsRes = await fetch(detailsUrl, {
-            headers: { 'Authorization': `Basic ${btoa(':' + token)}` }
-        });
-        const detailsData = await detailsRes.json();
-
-        // 4. Mapping: تحويل بيانات أزور لتطابق صيغة الـ CSV
-        const mappedData = detailsData.value.map(item => {
-            const f = item.fields;
-            
-            // دالة مساعدة لاستخراج الاسم فقط من حقول الأشخاص
-            const getName = (field) => field ? (field.displayName || field.uniqueName || field) : "";
-
-            return {
-                "ID": item.id.toString(),
-                "Work Item Type": f["System.WorkItemType"] || "",
-                "Title": f["System.Title"] || "",
-                "Assigned To": getName(f["System.AssignedTo"]),
-                "Activity": f["Microsoft.VSTS.Common.Activity"] || "",
-                "Original Estimation": f["NT.OriginalEstimation"] || 0,
-                "TimeSheet_DevActualTime": f["Custom.TimeSheet_DevActualTime"] || 0,
-                "TimeSheet_TestingActualTime": f["Custom.TimeSheet_TestingActualTime"] || 0,
-                "Activated Date": f["Microsoft.VSTS.Common.ActivatedDate"] || "",
-                "Business Area": f["MyCompany.MyProcess.BusinessArea"] || "",
-                "Iteration Path": f["System.IterationPath"] || "",
-                "CustomResolvedDate": f["Custom.CustomResolvedDate"] || "",
-                "Tested Date": f["MyCompany.MyProcess.TestedDate"] || "",
-                "Assigned To Tester": getName(f["MyCompany.MyProcess.Tester"]),
-                "Resolved Date": f["Microsoft.VSTS.Common.ResolvedDate"] || "",
-                "State": f["System.State"] || "",
-                "Release Expected Date": f["MyCompany.MyProcess.Release"] || "",
-                "Business Priority": f["MyCompany.MyProcess.BusinessPriority"] || ""
-            };
-        });
-
-        // 5. Processing like CSV
-        currentData = mappedData;
-        dataProcessor.processData(mappedData);
-        alert("تمت المزامنة بنجاح من Azure DevOps");
-
-    } catch (err) {
-        console.error(err);
-        alert("خطأ في المزامنة: " + err.message);
-    } finally {
-        ui.showLoading(false);
-    }
-},    
 
 async saveToGitHub() {
     const token = sessionStorage.getItem('gh_token');
@@ -434,23 +349,6 @@ const dateEngine = {
  * UI Rendering
  */
 const ui = {
-    // أضف هاتين الدالتين هنا
-    showLoading() {
-        // يمكنك تغيير هذا بـ Spinner حقيقي إذا كان لديك في الـ HTML
-        const btn = document.querySelector('button[onclick*="syncFromAzure"]');
-        if(btn) {
-            btn.disabled = true;
-            btn.innerHTML = "⏳ جاري المزامنة...";
-        }
-    },
-    
-    hideLoading() {
-        const btn = document.querySelector('button[onclick*="syncFromAzure"]');
-        if(btn) {
-            btn.disabled = false;
-            btn.innerHTML = "Sync from Azure";
-        }
-    },
     switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
