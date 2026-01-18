@@ -713,14 +713,14 @@ renderDelivery() {
         const sortedDevs = getSortedStaff(staffInArea.developers, 'dev');
         const sortedTesters = getSortedStaff(staffInArea.testers, 'test');
 
-        if (sortedDevs.length > 0) {
-            html += `<div class="col-span-full mb-2 mt-2 font-bold text-slate-500 text-sm uppercase tracking-widest">Developers</div>`;
-            html += sortedDevs.map(dev => this.generateStaffCard(dev, "🛠")).join('');
+       if (sortedDevs.length > 0) {
+            html += `<div class="col-span-full mb-2 mt-2 font-bold text-blue-600 text-sm uppercase tracking-widest">Developers</div>`;
+            html += sortedDevs.map(dev => this.generateStaffCard(dev, "🛠", 'dev')).join('');
         }
 
         if (sortedTesters.length > 0) {
-            html += `<div class="col-span-full mb-2 mt-4 font-bold text-slate-500 text-sm uppercase tracking-widest">Quality Assurance</div>`;
-            html += sortedTesters.map(tester => this.generateStaffCard(tester, "🔍")).join('');
+            html += `<div class="col-span-full mb-2 mt-4 font-bold text-purple-600 text-sm uppercase tracking-widest">Quality Assurance</div>`;
+            html += sortedTesters.map(tester => this.generateStaffCard(tester, "🔍", 'test')).join('');
         }
     });
 
