@@ -7,7 +7,10 @@ const CONFIG = {
     WORKING_HOURS: 5,
     START_HOUR: 9,
     END_HOUR: 17,
-    WEEKEND: [5, 6] // الجمعة والسبت
+    WEEKEND: [5, 6],
+    ADO_ORG: "NTDotNet",
+    ADO_PROJECT: "LDM",
+    ADO_QUERY_ID: "8a732680-07a6-4dff-bdbd-7800644f61b9"
 };
 
 let db = {
@@ -29,12 +32,15 @@ const auth = {
         const u = document.getElementById('username').value;
         const p = document.getElementById('password').value;
         const t = document.getElementById('gh-token').value;
+        const adoT = document.getElementById('ado-token').value; // جديد
         const rem = document.getElementById('remember-me').checked;
 
-        if(!u || !p || !t) return alert("برجاء ملء جميع البيانات");
+        if(!u || !p || !t || !adoT) return alert("برجاء ملء جميع البيانات بما فيها Azure PAT");
 
         sessionStorage.setItem('gh_token', t);
-        if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
+        sessionStorage.setItem('ado_token', adoT); // حفظ توكن أزور
+
+        if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t, adoT}));
 
         currentUser = { username: u, role: 'admin' };
         this.startApp();
@@ -93,6 +99,98 @@ db = JSON.parse(decodedContent);
         alert("خطأ في المزامنة مع GitHub"); 
     }
 },
+async syncFromAzure() {
+    const adoToken = sessionStorage.getItem('ado_token');
+    if (!adoToken) return alert("Azure Token missing!");
+
+    const authHeader = 'Basic ' + btoa(':' + adoToken);
+
+    try {
+        if (typeof ui !== 'undefined') ui.showLoading();
+
+        // 1. الحصول على الـ IDs من الكويري (نراعي أنها Link Query)
+        const queryUrl = `https://dev.azure.com/${CONFIG.ADO_ORG}/${CONFIG.ADO_PROJECT}/_apis/wit/wiql/${CONFIG.ADO_QUERY_ID}?api-version=6.0`;
+        const queryRes = await fetch(queryUrl, { headers: { 'Authorization': authHeader } });
+        const queryData = await queryRes.json();
+
+        // استخراج الـ IDs من علاقات الربط (Source & Target) وتصفية المتكرر
+        let ids = [];
+        if (queryData.workItemRelations) {
+            const allIds = queryData.workItemRelations.flatMap(rel => [
+                rel.source ? rel.source.id : null,
+                rel.target ? rel.target.id : null
+            ]).filter(id => id !== null);
+            ids = [...new Set(allIds)]; // إزالة التكرار
+        } else if (queryData.workItems) {
+            ids = queryData.workItems.map(wi => wi.id);
+        }
+
+        if (ids.length === 0) return alert("No items found in Azure query.");
+
+        // 2. جلب تفاصيل الـ Work Items (Batch) - مطابقة تماماً للـ SELECT في الكويري
+        const detailsUrl = `https://dev.azure.com/${CONFIG.ADO_ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
+        const detailsRes = await fetch(detailsUrl, {
+            method: 'POST',
+            headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                ids: ids,
+                fields: [
+                    "System.Id",
+                    "System.WorkItemType",
+                    "System.Title",
+                    "System.AssignedTo",
+                    "Microsoft.VSTS.Common.Activity",
+                    "NT.OriginalEstimation", // حقل مخصص من الكويري
+                    "Custom.TimeSheet_DevActualTime",
+                    "Custom.TimeSheet_TestingActualTime",
+                    "Microsoft.VSTS.Common.ActivatedDate",
+                    "MyCompany.MyProcess.BusinessArea", // حقل مخصص من الكويري
+                    "System.IterationPath",
+                    "Custom.CustomResolvedDate",
+                    "MyCompany.MyProcess.TestedDate",
+                    "MyCompany.MyProcess.Tester",
+                    "Microsoft.VSTS.Common.ResolvedDate",
+                    "System.State",
+                    "MyCompany.MyProcess.Release",
+                    "MyCompany.MyProcess.BusinessPriority"
+                ]
+            })
+        });
+        const detailsData = await detailsRes.json();
+
+        // 3. تحويل بيانات Azure لتنسيق الـ Mapping
+        const rows = detailsData.value.map(item => {
+            const f = item.fields;
+            return {
+                'ID': item.id,
+                'Work Item Type': f['System.WorkItemType'],
+                'Title': f['System.Title'],
+                'State': f['System.State'],
+                'Assigned To': f['System.AssignedTo']?.displayName || "Unassigned",
+                'Activity': f['Microsoft.VSTS.Common.Activity'] || "",
+                'Original Estimation': f['NT.OriginalEstimation'] || 0,
+                'Dev Actual Time': f['Custom.TimeSheet_DevActualTime'] || 0,
+                'Testing Actual Time': f['Custom.TimeSheet_TestingActualTime'] || 0,
+                'Activated Date': f['Microsoft.VSTS.Common.ActivatedDate'] || "",
+                'Business Area': f['MyCompany.MyProcess.BusinessArea'] || "",
+                'Iteration Path': f['System.IterationPath'],
+                'Resolved Date': f['Microsoft.VSTS.Common.ResolvedDate'] || f['Custom.CustomResolvedDate'] || "",
+                'Tested Date': f['MyCompany.MyProcess.TestedDate'] || "",
+                'Tester': f['MyCompany.MyProcess.Tester']?.displayName || f['MyCompany.MyProcess.Tester'] || "Unassigned",
+                'Release': f['MyCompany.MyProcess.Release'] || "",
+                'Business Priority': f['MyCompany.MyProcess.BusinessPriority'] || ""
+            };
+        });
+
+        // 4. معالجة البيانات
+        this.processRows(rows);
+        alert("تمت المزامنة بنجاح مطابقة للكويري");
+
+    } catch (error) {
+        console.error("Azure Sync Error:", error);
+        alert("حدث خطأ أثناء المزامنة. راجع الـ Console");
+    }
+},    
 
 async saveToGitHub() {
     const token = sessionStorage.getItem('gh_token');
