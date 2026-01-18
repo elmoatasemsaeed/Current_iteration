@@ -482,7 +482,7 @@ renderClientRoadmap() {
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; // الحصول على نص البحث
     
     // فلترة القصص النشطة بناءً على حالة البحث
-   onst activeStories = currentData.filter(s => {
+   const activeStories = currentData.filter(s => {
     // تعديل شرط استبعاد الحالات المنتهية
     const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
     const matchesSearch = 
