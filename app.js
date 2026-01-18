@@ -646,7 +646,7 @@ renderDelivery() {
         this.renderDelivery();
     },
 
-   renderAvailability() {
+  renderAvailability() {
         const container = document.getElementById('availability-container');
         
         // 1. استخراج كل المناطق (Areas) الفريدة
@@ -657,11 +657,11 @@ renderDelivery() {
         areas.forEach(area => {
             const areaStories = currentData.filter(s => s.area === area && s.state !== 'Tested');
             
-            // استخراج الأشخاص في هذه المنطقة وتصنيفهم
-            const staffInArea = {
-                developers: [...new Set(areaStories.map(s => s.assignedTo))],
-                testers: [...new Set(areaStories.map(s => s.tester))]
-            };
+            // 2. استخراج المطورين فقط وتجاهل الـ Unassigned
+            const rawDevelopers = [...new Set(areaStories.map(s => s.assignedTo))];
+            const developersOnly = rawDevelopers.filter(name => name && name.toLowerCase() !== "unassigned");
+
+            if (developersOnly.length === 0) return; // تخطي المنطقة إذا لم يوجد بها مطورين
 
             html += `
                 <div class="col-span-full mt-6">
@@ -671,12 +671,10 @@ renderDelivery() {
                 </div>
             `;
 
-            // وظيفة فرعية لحساب التاريخ المتاح وترتيب الأشخاص
-            const getSortedStaff = (staffList, roleType) => {
+            // وظيفة فرعية لحساب التاريخ المتاح وترتيب الأشخاص (للمطورين فقط)
+            const getSortedStaff = (staffList) => {
                 return staffList.map(person => {
-                    const tasks = areaStories.filter(s => 
-                        (roleType === 'dev' ? s.assignedTo === person : s.tester === person)
-                    );
+                    const tasks = areaStories.filter(s => s.assignedTo === person);
                     
                     const sortedTasks = tasks.sort((a, b) => {
                         const dateA = a.calc.finalEnd instanceof Date ? a.calc.finalEnd : new Date(0);
@@ -690,30 +688,24 @@ renderDelivery() {
 
                     return { name: person, freeDate: lastDate };
                 }).sort((a, b) => {
-                    // الترتيب: المتاح (null) أولاً، ثم الأقدم تاريخاً (الأقرب للإتاحة)
                     if (a.freeDate === null) return -1;
                     if (b.freeDate === null) return 1;
                     return a.freeDate - b.freeDate;
                 });
             };
 
-            const sortedDevs = getSortedStaff(staffInArea.developers, 'dev');
-            const sortedTesters = getSortedStaff(staffInArea.testers, 'test');
+            const sortedDevs = getSortedStaff(developersOnly);
 
-            // رندر المطورين
+            // 3. رندر المطورين فقط
             if (sortedDevs.length > 0) {
                 html += `<div class="col-span-full mb-2 mt-2 font-bold text-slate-500 text-sm uppercase tracking-widest">Developers</div>`;
                 html += sortedDevs.map(dev => this.generateStaffCard(dev, "🛠")).join('');
             }
-
-            // رندر المختبرين
-            if (sortedTesters.length > 0) {
-                html += `<div class="col-span-full mb-2 mt-4 font-bold text-slate-500 text-sm uppercase tracking-widest">Quality Assurance</div>`;
-                html += sortedTesters.map(tester => this.generateStaffCard(tester, "🔍")).join('');
-            }
+            
+            // تم حذف كود رندر الـ Testers من هنا
         });
 
-        container.innerHTML = html || '<div class="col-span-full text-center text-gray-400">No data available to display.</div>';
+        container.innerHTML = html || '<div class="col-span-full text-center text-gray-400">No Developers found.</div>';
     },
 
     // وظيفة مساعدة لإنشاء الكارت (Card) لتقليل تكرار الكود
