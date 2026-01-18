@@ -172,7 +172,7 @@ for (let i = 0; i < ids.length; i += chunkSize) {
     allWorkItems = allWorkItems.concat(detailsData.value);
 }
 
-// 3. تحويل بيانات Azure لتنسيق الـ Mapping (باستخدام allWorkItems المجمعة)
+// 3. تحويل بيانات Azure لتنسيق الـ Mapping الموحد
 const rows = allWorkItems.map(item => {
     const f = item.fields;
     return {
@@ -182,18 +182,17 @@ const rows = allWorkItems.map(item => {
         'State': f['System.State'],
         'Assigned To': f['System.AssignedTo']?.displayName || "Unassigned",
         'Activity': f['Microsoft.VSTS.Common.Activity'] || "",
-        'Original Estimation': f['NT.OriginalEstimation'] || 0,
+        'Original Estimation': f['NT.OriginalEstimation'] || f['Microsoft.VSTS.Scheduling.OriginalEstimate'] || 0,
         'Dev Actual Time': f['Custom.TimeSheet_DevActualTime'] || 0,
         'Testing Actual Time': f['Custom.TimeSheet_TestingActualTime'] || 0,
         'Activated Date': f['Microsoft.VSTS.Common.ActivatedDate'] || "",
-        'Business Area': f['MyCompany.MyProcess.BusinessArea'] || "",
+        'Business Area': f['MyCompany.MyProcess.BusinessArea'] || f['System.AreaPath'] || "",
         'Iteration Path': f['System.IterationPath'],
         'Resolved Date': f['Microsoft.VSTS.Common.ResolvedDate'] || f['Custom.CustomResolvedDate'] || "",
         'Tested Date': f['MyCompany.MyProcess.TestedDate'] || "",
-        // تعديل المسميات التالية لتطابق processRows:
         'Assigned To Tester': f['MyCompany.MyProcess.Tester']?.displayName || f['MyCompany.MyProcess.Tester'] || "Unassigned",
         'Release Expected Date': f['MyCompany.MyProcess.Release'] || "",
-        'Business Priority': f['MyCompany.MyProcess.BusinessPriority'] || 999
+        'Business Priority': f['MyCompany.MyProcess.BusinessPriority'] || f['Microsoft.VSTS.Common.Priority'] || 999
     };
 });
         // 4. معالجة البيانات
