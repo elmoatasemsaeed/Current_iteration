@@ -560,10 +560,9 @@ const releaseLightColor = (s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px
             </div>
             ${isLate || isReleaseLate ? '<span class="text-xl animate-bounce">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
         </div>
-    </div>
-`;
-}
-    ,
+   </div>
+        `;
+    };
 
 renderDelivery() {
     const container = document.getElementById('delivery-grid');
