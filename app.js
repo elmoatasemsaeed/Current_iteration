@@ -127,64 +127,74 @@ async syncFromAzure() {
 
         if (ids.length === 0) return alert("No items found in Azure query.");
 
-        // 2. جلب تفاصيل الـ Work Items (Batch) - مطابقة تماماً للـ SELECT في الكويري
-        const detailsUrl = `https://dev.azure.com/${CONFIG.ADO_ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
-        const detailsRes = await fetch(detailsUrl, {
-            method: 'POST',
-            headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                ids: ids,
-                fields: [
-                    "System.Id",
-                    "System.WorkItemType",
-                    "System.Title",
-                    "System.AssignedTo",
-                    "Microsoft.VSTS.Common.Activity",
-                    "NT.OriginalEstimation", // حقل مخصص من الكويري
-                    "Custom.TimeSheet_DevActualTime",
-                    "Custom.TimeSheet_TestingActualTime",
-                    "Microsoft.VSTS.Common.ActivatedDate",
-                    "MyCompany.MyProcess.BusinessArea", // حقل مخصص من الكويري
-                    "System.IterationPath",
-                    "Custom.CustomResolvedDate",
-                    "MyCompany.MyProcess.TestedDate",
-                    "MyCompany.MyProcess.Tester",
-                    "Microsoft.VSTS.Common.ResolvedDate",
-                    "System.State",
-                    "MyCompany.MyProcess.Release",
-                    "MyCompany.MyProcess.BusinessPriority"
-                ]
-            })
-        });
-        const detailsData = await detailsRes.json();
+        // 2. جلب تفاصيل الـ Work Items (Batch) - تقسيم الـ IDs لمجموعات (Chunks)
+const chunkSize = 200;
+let allWorkItems = [];
 
-if (!detailsData || !detailsData.value) {
-    console.error("No data returned from Azure or Request Failed:", detailsData);
-    throw new Error("فشل جلب البيانات من Azure. تأكد من صلاحيات الـ Token.");
+for (let i = 0; i < ids.length; i += chunkSize) {
+    const chunk = ids.slice(i, i + chunkSize);
+    
+    const detailsUrl = `https://dev.azure.com/${CONFIG.ADO_ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
+    const detailsRes = await fetch(detailsUrl, {
+        method: 'POST',
+        headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            ids: chunk,
+            fields: [
+                "System.Id",
+                "System.WorkItemType",
+                "System.Title",
+                "System.AssignedTo",
+                "Microsoft.VSTS.Common.Activity",
+                "NT.OriginalEstimation",
+                "Custom.TimeSheet_DevActualTime",
+                "Custom.TimeSheet_TestingActualTime",
+                "Microsoft.VSTS.Common.ActivatedDate",
+                "MyCompany.MyProcess.BusinessArea",
+                "System.IterationPath",
+                "Custom.CustomResolvedDate",
+                "MyCompany.MyProcess.TestedDate",
+                "MyCompany.MyProcess.Tester",
+                "Microsoft.VSTS.Common.ResolvedDate",
+                "System.State",
+                "MyCompany.MyProcess.Release",
+                "MyCompany.MyProcess.BusinessPriority"
+            ]
+        })
+    });
+
+    if (!detailsRes.ok) {
+        const errorData = await detailsRes.json();
+        throw new Error(`Azure API Error: ${errorData.message}`);
+    }
+
+    const detailsData = await detailsRes.json();
+    allWorkItems = allWorkItems.concat(detailsData.value);
 }
 
-const rows = detailsData.value.map(item => {
-            const f = item.fields;
-            return {
-                'ID': item.id,
-                'Work Item Type': f['System.WorkItemType'],
-                'Title': f['System.Title'],
-                'State': f['System.State'],
-                'Assigned To': f['System.AssignedTo']?.displayName || "Unassigned",
-                'Activity': f['Microsoft.VSTS.Common.Activity'] || "",
-                'Original Estimation': f['NT.OriginalEstimation'] || 0,
-                'Dev Actual Time': f['Custom.TimeSheet_DevActualTime'] || 0,
-                'Testing Actual Time': f['Custom.TimeSheet_TestingActualTime'] || 0,
-                'Activated Date': f['Microsoft.VSTS.Common.ActivatedDate'] || "",
-                'Business Area': f['MyCompany.MyProcess.BusinessArea'] || "",
-                'Iteration Path': f['System.IterationPath'],
-                'Resolved Date': f['Microsoft.VSTS.Common.ResolvedDate'] || f['Custom.CustomResolvedDate'] || "",
-                'Tested Date': f['MyCompany.MyProcess.TestedDate'] || "",
-                'Tester': f['MyCompany.MyProcess.Tester']?.displayName || f['MyCompany.MyProcess.Tester'] || "Unassigned",
-                'Release': f['MyCompany.MyProcess.Release'] || "",
-                'Business Priority': f['MyCompany.MyProcess.BusinessPriority'] || ""
-            };
-        });
+// 3. تحويل بيانات Azure لتنسيق الـ Mapping (باستخدام allWorkItems المجمعة)
+const rows = allWorkItems.map(item => {
+    const f = item.fields;
+    return {
+        'ID': item.id,
+        'Work Item Type': f['System.WorkItemType'],
+        'Title': f['System.Title'],
+        'State': f['System.State'],
+        'Assigned To': f['System.AssignedTo']?.displayName || "Unassigned",
+        'Activity': f['Microsoft.VSTS.Common.Activity'] || "",
+        'Original Estimation': f['NT.OriginalEstimation'] || 0,
+        'Dev Actual Time': f['Custom.TimeSheet_DevActualTime'] || 0,
+        'Testing Actual Time': f['Custom.TimeSheet_TestingActualTime'] || 0,
+        'Activated Date': f['Microsoft.VSTS.Common.ActivatedDate'] || "",
+        'Business Area': f['MyCompany.MyProcess.BusinessArea'] || "",
+        'Iteration Path': f['System.IterationPath'],
+        'Resolved Date': f['Microsoft.VSTS.Common.ResolvedDate'] || f['Custom.CustomResolvedDate'] || "",
+        'Tested Date': f['MyCompany.MyProcess.TestedDate'] || "",
+        'Tester': f['MyCompany.MyProcess.Tester']?.displayName || f['MyCompany.MyProcess.Tester'] || "Unassigned",
+        'Release': f['MyCompany.MyProcess.Release'] || "",
+        'Business Priority': f['MyCompany.MyProcess.BusinessPriority'] || ""
+    };
+});
 
         // 4. معالجة البيانات
         this.processRows(rows);
