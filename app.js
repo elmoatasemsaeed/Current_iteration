@@ -462,9 +462,45 @@ renderActiveCards() {
             return isBLate - isALate; 
         });
 
-        // ... بداية الدالة مستمرة حتى الوصول للجزء الخاص بالـ return داخل الـ map
+        return `
+            <div class="col-span-full mt-8 mb-4">
+                <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
+                    <span class="w-2 h-6 bg-indigo-600 rounded-full"></span>
+                    ${area} 
+                    <span class="text-sm font-normal text-gray-400">(${storiesInArea.length})</span>
+                </h2>
+            </div>
+          ${storiesInArea.map(s => {
+    const now = new Date();
+    const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
+    const hasError = s.calc.error;
+    
+    // --- منطق لمبات الحالة ---
+    
+    // 1. لمبة التطوير (Development)
+    // تنور أحمر إذا: التاريخ الحالي تجاوز موعد الديف و الحالة ليست Resolved وليست Tested
+    const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && s.state !== 'Resolved' && s.state !== 'Tested';
+    const devLightColor = (s.state === 'Resolved' || s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
-    return `
+    // 2. لمبة الجودة (QA)
+    // تنور أحمر إذا: التاريخ الحالي تجاوز موعد التست والحالة ليست Tested
+    const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && s.state !== 'Tested';
+    const testLightColor = (s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+
+    // 3. لمبة تاريخ التسليم المتوقع (Client Expected Release)
+    const isReleaseLate = s.expectedRelease instanceof Date && now > s.expectedRelease && s.state !== 'Tested';
+    const releaseLightColor = (s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isReleaseLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+
+    const priorityBadge = `<span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>`;
+
+    let statusColor = "bg-blue-100 text-blue-700";
+    if(isLate) statusColor = "bg-red-100 text-red-700";
+    if(hasError) statusColor = "bg-amber-100 text-amber-700";
+
+    const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
+
+    // ابحث عن جزء الـ Return داخل renderActiveCards واستبدله بهذا:
+return `
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
         <div class="p-5 flex-1">
             <div class="flex justify-between items-start mb-4">
@@ -524,12 +560,14 @@ renderActiveCards() {
                 </span>
             </div>
             ${isLate || isReleaseLate ? '<span class="text-xl animate-bounce">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
+        </div>
     </div>
-                </div>`;
-            }).join('')}
+    `;
+}).join('')}
         `;
-    }).join(''); 
-},
+    }).join('');
+}
+    ,
 
 renderDelivery() {
     const container = document.getElementById('delivery-grid');
