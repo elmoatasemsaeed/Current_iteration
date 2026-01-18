@@ -190,12 +190,12 @@ const rows = allWorkItems.map(item => {
         'Iteration Path': f['System.IterationPath'],
         'Resolved Date': f['Microsoft.VSTS.Common.ResolvedDate'] || f['Custom.CustomResolvedDate'] || "",
         'Tested Date': f['MyCompany.MyProcess.TestedDate'] || "",
-        'Tester': f['MyCompany.MyProcess.Tester']?.displayName || f['MyCompany.MyProcess.Tester'] || "Unassigned",
-        'Release': f['MyCompany.MyProcess.Release'] || "",
-        'Business Priority': f['MyCompany.MyProcess.BusinessPriority'] || ""
+        // تعديل المسميات التالية لتطابق processRows:
+        'Assigned To Tester': f['MyCompany.MyProcess.Tester']?.displayName || f['MyCompany.MyProcess.Tester'] || "Unassigned",
+        'Release Expected Date': f['MyCompany.MyProcess.Release'] || "",
+        'Business Priority': f['MyCompany.MyProcess.BusinessPriority'] || 999
     };
 });
-
         // 4. معالجة البيانات
         this.processRows(rows);
         alert("تمت المزامنة بنجاح مطابقة للكويري");
