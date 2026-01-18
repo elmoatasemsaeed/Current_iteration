@@ -483,16 +483,16 @@ renderClientRoadmap() {
     
     // فلترة القصص النشطة بناءً على حالة البحث
    const activeStories = currentData.filter(s => {
-    // تعديل شرط استبعاد الحالات المنتهية
     const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
     const matchesSearch = 
         s.title.toLowerCase().includes(searchTerm) || 
         s.id.toString().includes(searchTerm) || 
-            s.tester.toLowerCase().includes(searchTerm) ||
-            (s.area && s.area.toLowerCase().includes(searchTerm));
+        s.tester.toLowerCase().includes(searchTerm) ||
+        (s.area && s.area.toLowerCase().includes(searchTerm));
             
-        return isNotTested && matchesSearch;
-    });
+    // استخدام isNotFinished بدلاً من isNotTested
+    return isNotFinished && matchesSearch; 
+});
     
     if (activeStories.length === 0) {
         container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">
