@@ -366,13 +366,13 @@ const ui = {
 
   renderStats() {
     // 1. القصص النشطة (ليست في حالة Tested)
-    const active = currentData.filter(s => s.state !== 'Tested');
+    const active = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
     
     // 2. القصص الجاهزة للتسليم (حالتها Tested ولم يتم تسجيل تسليمها بعد)
     const readyForDelivery = currentData.filter(s => 
-        s.state === 'Tested' && 
-        !db.deliveryLogs.some(log => log.storyId === s.id)
-    );
+    (s.state === 'Tested' || s.state === 'Closed') && 
+    !db.deliveryLogs.some(log => log.storyId === s.id)
+);
     
     // 3. القصص المتأخرة
     const delayed = active.filter(s => {
@@ -482,12 +482,12 @@ renderClientRoadmap() {
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; // الحصول على نص البحث
     
     // فلترة القصص النشطة بناءً على حالة البحث
-    const activeStories = currentData.filter(s => {
-        const isNotTested = s.state !== 'Tested';
-        const matchesSearch = 
-            s.title.toLowerCase().includes(searchTerm) || 
-            s.id.toString().includes(searchTerm) || 
-            s.assignedTo.toLowerCase().includes(searchTerm) || 
+   onst activeStories = currentData.filter(s => {
+    // تعديل شرط استبعاد الحالات المنتهية
+    const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
+    const matchesSearch = 
+        s.title.toLowerCase().includes(searchTerm) || 
+        s.id.toString().includes(searchTerm) || 
             s.tester.toLowerCase().includes(searchTerm) ||
             (s.area && s.area.toLowerCase().includes(searchTerm));
             
@@ -540,16 +540,16 @@ renderClientRoadmap() {
     
     // 1. لمبة التطوير (Development)
     // تنور أحمر إذا: التاريخ الحالي تجاوز موعد الديف و الحالة ليست Resolved وليست Tested
-    const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && s.state !== 'Resolved' && s.state !== 'Tested';
+    const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed';
     const devLightColor = (s.state === 'Resolved' || s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
     // 2. لمبة الجودة (QA)
     // تنور أحمر إذا: التاريخ الحالي تجاوز موعد التست والحالة ليست Tested
-    const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && s.state !== 'Tested';
+    const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && s.state === 'Tested' || s.state === 'Closed';
     const testLightColor = (s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
     // 3. لمبة تاريخ التسليم المتوقع (Client Expected Release)
-    const isReleaseLate = s.expectedRelease instanceof Date && now > s.expectedRelease && s.state !== 'Tested';
+    const isReleaseLate = s.expectedRelease instanceof Date && now > s.expectedRelease && s.state === 'Tested' || s.state === 'Closed';
     const releaseLightColor = (s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isReleaseLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
     const priorityBadge = `<span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>`;
@@ -634,7 +634,7 @@ renderDelivery() {
     const container = document.getElementById('delivery-grid');
     
     // 1. جلب كل الستوريز التي حالتها المختبرة
-    const allTested = currentData.filter(s => s.state === 'Tested');
+    const allTested = currentData.filter(s => s.state === 'Tested' || s.state === 'Closed');
 
     if (allTested.length === 0 && db.deliveryLogs.length === 0) {
         container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">لا توجد عناصر جاهزة للتسليم حالياً.</div>`;
@@ -750,7 +750,7 @@ renderDelivery() {
                 // الفلترة هنا للمهام "النشطة" فقط لحساب تاريخ الفراغ
                 const activeTasks = allAreaStories.filter(s => {
                     const isUserTask = (roleType === 'dev' ? s.assignedTo === person : s.tester === person);
-                    const isActive = !['Resolved', 'Tested', 'On-Hold'].includes(s.state);
+                    const isActive = !['Resolved', 'Tested', 'Closed', 'On-Hold'].includes(s.state);
                     return isUserTask && isActive;
                 });
                 
