@@ -222,7 +222,7 @@
       "timestamp": 1768755210309
     }
   ],
-  "sha": "8ae00fd20d5ee6df83badedf5ad93d6705cb2a42",
+  "sha": "47c769d119939519a46163f749326e056e806056",
   "currentStories": [
     {
       "id": "138714",
@@ -1137,7 +1137,7 @@
           "Title": "TR014 : Add رصيد النقاط  Label and Value at Electronic Invoice / Debit Note / Credit Note",
           "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
           "Activity": "Development",
-          "Original Estimation": "0.5",
+          "Original Estimation": "1.25",
           "TimeSheet_DevActualTime": "0.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/13/2026 2:42:47 PM",
@@ -2223,7 +2223,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/6/2026 3:29:09 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": ""
         },
@@ -2243,7 +2243,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/6/2026 3:28:02 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": ""
         },
@@ -2263,7 +2263,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/6/2026 4:13:09 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": ""
         },
@@ -2554,7 +2554,7 @@
           "Assigned To": "Fatma Fayed <fatma.fayed@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "0.5",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "0.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/18/2026 5:06:24 PM",
           "Business Area": "",
@@ -2563,22 +2563,22 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "Active",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": ""
         }
       ],
       "bugs": [],
       "calc": {
-        "devEnd": "2026-01-08T12:00:00.000Z",
-        "testEnd": "2026-01-12T07:00:00.000Z",
-        "finalEnd": "2026-01-12T07:00:00.000Z"
+        "devEnd": "2026-01-12T08:00:00.000Z",
+        "testEnd": "2026-01-14T07:00:00.000Z",
+        "finalEnd": "2026-01-14T07:00:00.000Z"
       }
     },
     {
       "id": "151975",
       "title": "Update EPHI patient reports Header & Report body data.",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Esraa Abdelsalam <esraa.abdelsalam@nationaltechnology.net>",
       "tester": "Mahmoud Ab Omar <mahmoud.aboomar@nationaltechnology.net>",
       "area": "Internal lab",
@@ -2855,7 +2855,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
           "Activated Date": "1/18/2026 4:07:28 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
@@ -2875,7 +2875,7 @@
           "Activity": "",
           "Original Estimation": "",
           "TimeSheet_DevActualTime": "",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
           "Activated Date": "",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
@@ -3807,6 +3807,124 @@
         "devEnd": "2026-01-13T18:33:02.000Z",
         "testEnd": "2026-01-15T07:00:00.000Z",
         "finalEnd": "2026-01-15T07:00:00.000Z"
+      }
+    },
+    {
+      "id": "153715",
+      "title": "Internal CR - Financial Claims: Add Currency field at the search criteria",
+      "state": "Closed",
+      "assignedTo": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
+      "tester": "Bassem Ayman Morsy <bassem.morsy@nationaltechnology.net>",
+      "area": "Front and Financial",
+      "priority": 3,
+      "expectedRelease": null,
+      "tasks": [
+        {
+          "ID": "156214",
+          "Work Item Type": "Task",
+          "Title": "BD001 : Update Claims Query to Support Currency Filters",
+          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "2.25",
+          "TimeSheet_DevActualTime": "0.75",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 9:17:44 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/15/2026 9:49:41 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156215",
+          "Work Item Type": "Task",
+          "Title": "Front end : FD005:  add new control Currency",
+          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.25",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/15/2026 9:26:49 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/15/2026 9:49:37 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156319",
+          "Work Item Type": "Task",
+          "Title": "preparation task for CR 153715",
+          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
+          "Activity": "Testing",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "1.5",
+          "Activated Date": "1/18/2026 4:38:10 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156321",
+          "Work Item Type": "Task",
+          "Title": "Execution Task For 153715",
+          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
+          "Activity": "Testing",
+          "Original Estimation": "2",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "1.5",
+          "Activated Date": "1/18/2026 4:43:35 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "156344",
+          "Work Item Type": "Task",
+          "Title": "CR_153715 >> Review Preparation & Execution's CR",
+          "Assigned To": "Salah Abdelhakeem <salah.abdelhakeem@nationaltechnology.net>",
+          "Activity": "Testing",
+          "Original Estimation": "2",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "2",
+          "Activated Date": "1/18/2026 5:22:56 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/18/2026 5:30:23 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        }
+      ],
+      "bugs": [],
+      "calc": {
+        "devEnd": "2026-01-15T19:17:44.000Z",
+        "testEnd": "2026-01-18T12:00:00.000Z",
+        "finalEnd": "2026-01-18T12:00:00.000Z"
       }
     },
     {
@@ -6719,7 +6837,7 @@
       ],
       "bugs": [],
       "calc": {
-        "devEnd": "2026-01-14T12:05:26.000Z",
+        "devEnd": "2026-01-15T19:17:44.000Z",
         "testEnd": "2026-01-21T13:00:00.000Z",
         "finalEnd": "2026-01-21T13:00:00.000Z"
       }
@@ -6899,7 +7017,7 @@
           "Assigned To": "Mostafa Mahanna <mostafa.mahanna@nationaltechnology.net>",
           "Activity": "DB Modification",
           "Original Estimation": "2",
-          "TimeSheet_DevActualTime": "2.5",
+          "TimeSheet_DevActualTime": "3.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/15/2026 3:02:11 PM",
           "Business Area": "",
@@ -8804,6 +8922,84 @@
         "devEnd": "TBD",
         "testEnd": "---",
         "finalEnd": "---"
+      }
+    },
+    {
+      "id": "146133",
+      "title": "Nokhba Lab - Create new API for WhatsApp",
+      "state": "Closed",
+      "assignedTo": "Elhussein Ahmed <elhussein.ahmed@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Integration",
+      "priority": 999,
+      "expectedRelease": null,
+      "tasks": [
+        {
+          "ID": "146143",
+          "Work Item Type": "Task",
+          "Title": "Create Project Api",
+          "Assigned To": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "2",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "8/20/2025 2:08:17 PM",
+          "Business Area": "",
+          "Iteration Path": "Integration",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "8/24/2025 3:29:21 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "146145",
+          "Work Item Type": "Task",
+          "Title": "Create Api Send WhatsApp Messages",
+          "Assigned To": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "4",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "8/20/2025 7:34:18 PM",
+          "Business Area": "",
+          "Iteration Path": "Integration",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "8/20/2025 7:34:18 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        },
+        {
+          "ID": "146146",
+          "Work Item Type": "Task",
+          "Title": "Publish Api",
+          "Assigned To": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "2",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "Integration",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "8/24/2025 3:29:45 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": ""
+        }
+      ],
+      "bugs": [],
+      "calc": {
+        "devEnd": "2025-08-20T11:08:17.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
       }
     },
     {
@@ -11205,8 +11401,8 @@
       "bugs": [],
       "calc": {
         "devEnd": "2026-01-15T11:31:23.000Z",
-        "testEnd": "2026-01-18T07:00:00.000Z",
-        "finalEnd": "2026-01-18T07:00:00.000Z"
+        "testEnd": "2026-01-18T12:00:00.000Z",
+        "finalEnd": "2026-01-18T12:00:00.000Z"
       }
     },
     {
@@ -11985,7 +12181,7 @@
           "Assigned To": "Moamen SalahElDeen <moamen.eldeen@nationaltechnology.net>",
           "Activity": "DB Modification",
           "Original Estimation": "1",
-          "TimeSheet_DevActualTime": "3.5",
+          "TimeSheet_DevActualTime": "3.75",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/11/2026 1:10:37 PM",
           "Business Area": "",
@@ -12719,8 +12915,8 @@
       ],
       "calc": {
         "devEnd": "2026-01-15T13:31:23.000Z",
-        "testEnd": "2026-01-18T12:00:00.000Z",
-        "finalEnd": "2026-01-18T12:00:00.000Z"
+        "testEnd": "2026-01-19T09:00:00.000Z",
+        "finalEnd": "2026-01-19T09:00:00.000Z"
       }
     },
     {
@@ -12740,7 +12936,7 @@
           "Assigned To": "Moamen SalahElDeen <moamen.eldeen@nationaltechnology.net>",
           "Activity": "DB Modification",
           "Original Estimation": "1",
-          "TimeSheet_DevActualTime": "0.25",
+          "TimeSheet_DevActualTime": "0.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/15/2026 1:32:52 PM",
           "Business Area": "",
@@ -12816,7 +13012,7 @@
           "Assigned To": "Moamen SalahElDeen <moamen.eldeen@nationaltechnology.net>",
           "Activity": "DB Modification",
           "Original Estimation": "0.25",
-          "TimeSheet_DevActualTime": "0.75",
+          "TimeSheet_DevActualTime": "1",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/15/2026 2:03:52 PM",
           "Business Area": "",
@@ -12874,7 +13070,7 @@
           "Assigned To": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "1.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "",
           "Business Area": "",
@@ -12992,7 +13188,7 @@
           "Assigned To": "Yara Mohsen <yara.abdelsalam@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "1.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "",
           "Business Area": "",
