@@ -647,40 +647,44 @@ renderDelivery() {
     },
 
   renderAvailability() {
-        const container = document.getElementById('availability-container');
+    const container = document.getElementById('availability-container');
+    
+    // 1. استخراج كل المناطق (Areas) الفريدة
+    const areas = [...new Set(currentData.map(s => s.area || "General"))];
+    
+    let html = '';
+
+    areas.forEach(area => {
+        // جميع القصص في هذه المنطقة
+        const allAreaStories = currentData.filter(s => s.area === area);
         
-        // 1. استخراج كل المناطق (Areas) الفريدة
-        const areas = [...new Set(currentData.map(s => s.area || "General"))];
-        
-        let html = '';
+        // استخراج قائمة الموظفين (كل من له علاقة بهذه المنطقة سواء قصصه منتهية أو لا)
+        const staffInArea = {
+            developers: [...new Set(allAreaStories.map(s => s.assignedTo))],
+            testers: [...new Set(allAreaStories.map(s => s.tester))].filter(t => t !== "Unassigned")
+        };
 
-        areas.forEach(area => {
-            // التعديل هنا: استبعاد القصص التي في حالة Resolved أو Tested أو On-Hold من حساب "الانشغال"
-            const areaStories = currentData.filter(s => {
-                const isInactive = ['Resolved', 'Tested', 'On-Hold'].includes(s.state);
-                return s.area === area && !isInactive;
-            });
-            
-            const staffInArea = {
-                developers: [...new Set(areaStories.map(s => s.assignedTo))],
-                testers: [...new Set(areaStories.map(s => s.tester))].filter(t => t !== "Unassigned")
-            };
+        html += `
+            <div class="col-span-full mt-6">
+                <h2 class="text-xl font-bold text-indigo-800 border-b-2 border-indigo-100 pb-2 mb-4 flex items-center gap-2">
+                    📍 Area: ${area}
+                </h2>
+            </div>
+        `;
 
-            html += `
-                <div class="col-span-full mt-6">
-                    <h2 class="text-xl font-bold text-indigo-800 border-b-2 border-indigo-100 pb-2 mb-4 flex items-center gap-2">
-                        📍 Area: ${area}
-                    </h2>
-                </div>
-            `;
-
-            const getSortedStaff = (staffList, roleType) => {
-                return staffList.map(person => {
-                    const tasks = areaStories.filter(s => 
-                        (roleType === 'dev' ? s.assignedTo === person : s.tester === person)
-                    );
-                    
-                    const sortedTasks = tasks.sort((a, b) => {
+        const getSortedStaff = (staffList, roleType) => {
+            return staffList.map(person => {
+                // الفلترة هنا للمهام "النشطة" فقط لحساب تاريخ الفراغ
+                const activeTasks = allAreaStories.filter(s => {
+                    const isUserTask = (roleType === 'dev' ? s.assignedTo === person : s.tester === person);
+                    const isActive = !['Resolved', 'Tested', 'On-Hold'].includes(s.state);
+                    return isUserTask && isActive;
+                });
+                
+                let lastDate = null;
+                if (activeTasks.length > 0) {
+                    // ترتيب المهام النشطة للحصول على أبعد تاريخ انتهاء
+                    const sortedTasks = activeTasks.sort((a, b) => {
                         const getDate = (story) => {
                             if (story.tester === "Unassigned") {
                                 return story.calc.devEnd instanceof Date ? story.calc.devEnd : new Date(0);
@@ -689,58 +693,66 @@ renderDelivery() {
                         };
                         return getDate(b) - getDate(a);
                     });
+                    
+                    const topStory = sortedTasks[0];
+                    lastDate = (topStory.tester === "Unassigned") ? topStory.calc.devEnd : topStory.calc.finalEnd;
+                }
 
-                    let lastDate = null;
-                    if (sortedTasks.length > 0) {
-                        const topStory = sortedTasks[0];
-                        lastDate = (topStory.tester === "Unassigned") ? topStory.calc.devEnd : topStory.calc.finalEnd;
-                    }
+                return { 
+                    name: person, 
+                    freeDate: lastDate instanceof Date ? lastDate : null 
+                };
+            }).sort((a, b) => {
+                // المتاح (null) يظهر أولاً
+                if (a.freeDate === null && b.freeDate !== null) return -1;
+                if (a.freeDate !== null && b.freeDate === null) return 1;
+                return a.freeDate - b.freeDate;
+            });
+        };
 
-                    return { 
-                        name: person, 
-                        freeDate: lastDate instanceof Date ? lastDate : null 
-                    };
-                }).sort((a, b) => {
-                    if (a.freeDate === null) return -1;
-                    if (b.freeDate === null) return 1;
-                    return a.freeDate - b.freeDate;
-                });
-            };
+        const sortedDevs = getSortedStaff(staffInArea.developers, 'dev');
+        const sortedTesters = getSortedStaff(staffInArea.testers, 'test');
 
-            const sortedDevs = getSortedStaff(staffInArea.developers, 'dev');
-            const sortedTesters = getSortedStaff(staffInArea.testers, 'test');
+        if (sortedDevs.length > 0) {
+            html += `<div class="col-span-full mb-2 mt-2 font-bold text-slate-500 text-sm uppercase tracking-widest">Developers</div>`;
+            html += sortedDevs.map(dev => this.generateStaffCard(dev, "🛠")).join('');
+        }
 
-            if (sortedDevs.length > 0) {
-                html += `<div class="col-span-full mb-2 mt-2 font-bold text-slate-500 text-sm uppercase tracking-widest">Developers</div>`;
-                html += sortedDevs.map(dev => this.generateStaffCard(dev, "🛠")).join('');
-            }
+        if (sortedTesters.length > 0) {
+            html += `<div class="col-span-full mb-2 mt-4 font-bold text-slate-500 text-sm uppercase tracking-widest">Quality Assurance</div>`;
+            html += sortedTesters.map(tester => this.generateStaffCard(tester, "🔍")).join('');
+        }
+    });
 
-            if (sortedTesters.length > 0) {
-                html += `<div class="col-span-full mb-2 mt-4 font-bold text-slate-500 text-sm uppercase tracking-widest">Quality Assurance</div>`;
-                html += sortedTesters.map(tester => this.generateStaffCard(tester, "🔍")).join('');
-            }
-        });
+    container.innerHTML = html || '<div class="col-span-full text-center text-gray-400">No staff found.</div>';
+},
 
-        container.innerHTML = html || '<div class="col-span-full text-center text-gray-400">No active tasks (All staff are free).</div>';
-    },
-    // وظيفة مساعدة لإنشاء الكارت (Card) لتقليل تكرار الكود
-    generateStaffCard(person, icon) {
-        const isFree = person.freeDate === null;
-        const dateString = isFree ? "متاح الآن" : person.freeDate.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-        const statusColor = isFree ? "border-green-500 bg-green-50" : "border-indigo-500 bg-white";
+// تحديث دالة الكارت لضمان ظهور اللون الأخضر بوضوح للمتاحين
+generateStaffCard(person, icon) {
+    const isFree = person.freeDate === null;
+    const dateString = isFree ? "متاح الآن" : person.freeDate.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+    
+    // تصميم اللون الأخضر للمتاح والأزرق/البنفسجي للمشغول
+    const statusClasses = isFree 
+        ? "border-green-500 bg-green-50 shadow-[0_0_10px_rgba(34,197,94,0.1)]" 
+        : "border-indigo-500 bg-white";
+    
+    const textClasses = isFree ? "text-green-700 font-bold" : "text-indigo-600";
+    const iconCircle = isFree ? "bg-green-100" : "bg-slate-100";
 
-        return `
-            <div class="p-4 rounded-xl shadow-sm border-l-4 ${statusColor} flex flex-col justify-center">
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-lg">${icon}</span>
-                    <span class="font-bold text-slate-800">${person.name}</span>
-                </div>
-                <div class="text-sm ${isFree ? 'text-green-700 font-bold' : 'text-indigo-600'}">
-                    ${isFree ? '● ' : '📅 '}${dateString}
-                </div>
+    return `
+        <div class="p-4 rounded-xl shadow-sm border-l-4 ${statusClasses} flex flex-col justify-center transition-all">
+            <div class="flex items-center gap-2 mb-1">
+                <span class="w-8 h-8 rounded-full ${iconCircle} flex items-center justify-center text-lg">${icon}</span>
+                <span class="font-bold text-slate-800">${person.name}</span>
             </div>
-        `;
-    },
+            <div class="text-sm ${textClasses} mt-2 flex items-center gap-1">
+                ${isFree ? '<span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>' : '📅 '}
+                ${dateString}
+            </div>
+        </div>
+    `;
+},
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
         const staffSelect = document.getElementById('staff-select');
