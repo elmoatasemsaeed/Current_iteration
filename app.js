@@ -657,11 +657,10 @@ renderDelivery() {
         areas.forEach(area => {
             const areaStories = currentData.filter(s => s.area === area && s.state !== 'Tested');
             
-            // 2. استخراج المطورين فقط وتجاهل الـ Unassigned
-            const rawDevelopers = [...new Set(areaStories.map(s => s.assignedTo))];
-            const developersOnly = rawDevelopers.filter(name => name && name.toLowerCase() !== "unassigned");
-
-            if (developersOnly.length === 0) return; // تخطي المنطقة إذا لم يوجد بها مطورين
+            const staffInArea = {
+                developers: [...new Set(areaStories.map(s => s.assignedTo))],
+                testers: [...new Set(areaStories.map(s => s.tester))].filter(t => t !== "Unassigned") // استبعاد Unassigned من قائمة التستر
+            };
 
             html += `
                 <div class="col-span-full mt-6">
@@ -671,22 +670,35 @@ renderDelivery() {
                 </div>
             `;
 
-            // وظيفة فرعية لحساب التاريخ المتاح وترتيب الأشخاص (للمطورين فقط)
-            const getSortedStaff = (staffList) => {
+            const getSortedStaff = (staffList, roleType) => {
                 return staffList.map(person => {
-                    const tasks = areaStories.filter(s => s.assignedTo === person);
+                    const tasks = areaStories.filter(s => 
+                        (roleType === 'dev' ? s.assignedTo === person : s.tester === person)
+                    );
                     
                     const sortedTasks = tasks.sort((a, b) => {
-                        const dateA = a.calc.finalEnd instanceof Date ? a.calc.finalEnd : new Date(0);
-                        const dateB = b.calc.finalEnd instanceof Date ? b.calc.finalEnd : new Date(0);
-                        return dateB - dateA;
+                        // منطق التعديل: إذا كان التستر Unassigned، نستخدم devEnd، وإلا نستخدم finalEnd
+                        const getDate = (story) => {
+                            if (story.tester === "Unassigned") {
+                                return story.calc.devEnd instanceof Date ? story.calc.devEnd : new Date(0);
+                            }
+                            return story.calc.finalEnd instanceof Date ? story.calc.finalEnd : new Date(0);
+                        };
+
+                        return getDate(b) - getDate(a);
                     });
 
-                    const lastDate = (sortedTasks.length > 0 && sortedTasks[0].calc.finalEnd instanceof Date) 
-                        ? sortedTasks[0].calc.finalEnd 
-                        : null;
+                    // تحديد تاريخ الإتاحة بناءً على آخر مهمة
+                    let lastDate = null;
+                    if (sortedTasks.length > 0) {
+                        const topStory = sortedTasks[0];
+                        lastDate = (topStory.tester === "Unassigned") ? topStory.calc.devEnd : topStory.calc.finalEnd;
+                    }
 
-                    return { name: person, freeDate: lastDate };
+                    return { 
+                        name: person, 
+                        freeDate: lastDate instanceof Date ? lastDate : null 
+                    };
                 }).sort((a, b) => {
                     if (a.freeDate === null) return -1;
                     if (b.freeDate === null) return 1;
@@ -694,18 +706,21 @@ renderDelivery() {
                 });
             };
 
-            const sortedDevs = getSortedStaff(developersOnly);
+            const sortedDevs = getSortedStaff(staffInArea.developers, 'dev');
+            const sortedTesters = getSortedStaff(staffInArea.testers, 'test');
 
-            // 3. رندر المطورين فقط
             if (sortedDevs.length > 0) {
                 html += `<div class="col-span-full mb-2 mt-2 font-bold text-slate-500 text-sm uppercase tracking-widest">Developers</div>`;
                 html += sortedDevs.map(dev => this.generateStaffCard(dev, "🛠")).join('');
             }
-            
-            // تم حذف كود رندر الـ Testers من هنا
+
+            if (sortedTesters.length > 0) {
+                html += `<div class="col-span-full mb-2 mt-4 font-bold text-slate-500 text-sm uppercase tracking-widest">Quality Assurance</div>`;
+                html += sortedTesters.map(tester => this.generateStaffCard(tester, "🔍")).join('');
+            }
         });
 
-        container.innerHTML = html || '<div class="col-span-full text-center text-gray-400">No Developers found.</div>';
+        container.innerHTML = html || '<div class="col-span-full text-center text-gray-400">No data available to display.</div>';
     },
 
     // وظيفة مساعدة لإنشاء الكارت (Card) لتقليل تكرار الكود
