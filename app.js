@@ -411,6 +411,14 @@ const ui = {
         this.renderSettings();
         this.renderClientRoadmap();
         this.renderWorkload();
+    if (currentUser && currentUser.role === 'viewer') {
+        const uploadBtn = document.querySelector("button[onclick*='csv-input']");
+        if (uploadBtn) uploadBtn.style.display = 'none';
+        
+        const settingsNav = document.querySelector("button[onclick*='settings']");
+        if (settingsNav) settingsNav.style.display = 'none';
+    }
+
     },
 
   renderStats() {
@@ -732,18 +740,18 @@ renderDelivery() {
                 <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
                 
 ${isLogged ? `
-                    <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
-                        <b>المستلم:</b> ${s.logData.to}<br>
-                        <b>التاريخ:</b> ${s.logData.date}
-                    </div>
-                ` : (currentUser.role === 'admin' ? `
-                    <div class="flex gap-2 mt-auto">
-                        <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
-                        <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
-                            تأكيد
-                        </button>
-                    </div>
-                ` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
+    <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
+        <b>المستلم:</b> ${s.logData.to}<br>
+        <b>التاريخ:</b> ${s.logData.date}
+    </div>
+` : (currentUser && currentUser.role === 'admin' ? `
+    <div class="flex gap-2 mt-auto">
+        <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
+        <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+            تأكيد
+        </button>
+    </div>
+` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
             </div>
         `;
     };
@@ -770,6 +778,10 @@ ${isLogged ? `
 },
 
     markDelivered(id) {
+        if (currentUser.role !== 'admin') {
+        alert("عذراً، لا تملك صلاحية تنفيذ هذا الإجراء.");
+        return;
+    }
         const to = document.getElementById(`to-${id}`).value;
         if(!to) return alert("اكتب المستلم");
         db.deliveryLogs.push({
