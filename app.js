@@ -842,8 +842,8 @@ renderWorkload() {
     // 1. فلترة القصص النشطة فقط
     const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
 
-    // 2. هيكل بيانات لتجميع الساعات حسب (المنطقة -> الدور -> الشخص)
-    const areaWorkload = {}; 
+    // 2. تجميع البيانات حسب Area -> Role -> Staff
+    const areaWorkload = {};
     const MAX_HOURS = 50;
 
     activeStories.forEach(s => {
@@ -864,76 +864,79 @@ renderWorkload() {
 
         // إضافة للمطور
         if (s.assignedTo && s.assignedTo !== "Unassigned") {
-            if (!areaWorkload[area].devs[s.assignedTo]) {
-                areaWorkload[area].devs[s.assignedTo] = { hours: 0, items: [] };
-            }
+            if (!areaWorkload[area].devs[s.assignedTo]) areaWorkload[area].devs[s.assignedTo] = { hours: 0, items: [] };
             areaWorkload[area].devs[s.assignedTo].hours += devHours;
             areaWorkload[area].devs[s.assignedTo].items.push(s);
         }
 
         // إضافة للمختبر
         if (s.tester && s.tester !== "Unassigned") {
-            if (!areaWorkload[area].testers[s.tester]) {
-                areaWorkload[area].testers[s.tester] = { hours: 0, items: [] };
-            }
+            if (!areaWorkload[area].testers[s.tester]) areaWorkload[area].testers[s.tester] = { hours: 0, items: [] };
             areaWorkload[area].testers[s.tester].hours += testHours;
             areaWorkload[area].testers[s.tester].items.push(s);
         }
     });
 
-    // 3. دالة فرعية لإنشاء بار التحميل للموظف
-    const generateStaffBar = (staffName, data, color) => {
-        const percentage = Math.min((data.hours / MAX_HOURS) * 100, 100);
-        const barColor = data.hours > MAX_HOURS ? 'bg-red-500' : `bg-${color}-500`;
-        const textColor = data.hours > MAX_HOURS ? 'text-red-600 bg-red-50' : `text-${color}-600 bg-${color}-50`;
+    // 3. دالة فرعية لإنشاء بلوك الموظف (Progress Bar)
+    const generateStaffProgress = (staff, data, color) => {
+        const totalHours = data.hours;
+        const percentage = Math.min((totalHours / MAX_HOURS) * 100, 100);
+        const isOverloaded = totalHours > MAX_HOURS;
+        const barColor = isOverloaded ? 'bg-red-500' : `bg-${color}-500`;
+        const textColor = isOverloaded ? 'text-red-600 bg-red-50' : `text-${color}-600 bg-${color}-50`;
 
         return `
-            <div class="mb-4 last:mb-0">
+            <div class="mb-4">
                 <div class="flex justify-between items-center mb-1">
-                    <span class="text-sm font-semibold text-slate-700">${staffName}</span>
-                    <span class="text-[10px] font-bold ${textColor} px-2 py-0.5 rounded">
-                        ${data.hours.toFixed(1)} / ${MAX_HOURS}h
+                    <span class="text-sm font-semibold text-slate-700">${staff}</span>
+                    <span class="text-[11px] font-bold ${textColor} px-2 py-0.5 rounded">
+                        ${totalHours.toFixed(1)} / ${MAX_HOURS}h
                     </span>
                 </div>
                 <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                     <div class="${barColor} h-full transition-all duration-500" style="width: ${percentage}%"></div>
+                </div>
+                <div class="mt-1 flex flex-wrap gap-1">
+                    ${data.items.map(s => `<span class="text-[8px] px-1 bg-white border border-gray-100 text-gray-400 rounded">#${s.id}</span>`).join('')}
                 </div>
             </div>
         `;
     };
 
     // 4. بناء الـ HTML النهائي
-    let html = `<div class="space-y-8">`;
+    let finalHtml = '';
+    const sortedAreas = Object.keys(areaWorkload).sort();
 
-    Object.keys(areaWorkload).forEach(area => {
-        // ترتيب الموظفين داخل كل قسم: الأقل ساعات يظهر أولاً
-        const sortedDevs = Object.keys(areaWorkload[area].devs).sort((a, b) => areaWorkload[area].devs[a].hours - areaWorkload[area].devs[b].hours);
-        const sortedTesters = Object.keys(areaWorkload[area].testers).sort((a, b) => areaWorkload[area].testers[a].hours - areaWorkload[area].testers[b].hours);
+    sortedAreas.forEach(area => {
+        const devs = areaWorkload[area].devs;
+        const testers = areaWorkload[area].testers;
 
-        html += `
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="bg-slate-50 px-6 py-3 border-b border-gray-100 flex justify-between items-center">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                        <span class="w-2 h-4 bg-indigo-500 rounded-sm"></span>
-                        Area: ${area}
-                    </h3>
-                </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-[10px] uppercase tracking-widest font-bold text-blue-500 mb-4">Developers (Less Busy First)</h4>
-                        ${sortedDevs.length > 0 ? sortedDevs.map(name => generateStaffBar(name, areaWorkload[area].devs, 'blue')).join('') : '<p class="text-xs text-gray-400 italic">No developers active in this area</p>'}
+        finalHtml += `
+            <div class="col-span-full mb-8">
+                <h2 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2">
+                    <span class="p-1.5 bg-indigo-100 rounded-lg text-indigo-600">📂</span>
+                    Area: ${area}
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        <h4 class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span> Developers
+                        </h4>
+                        ${Object.keys(devs).map(name => generateStaffProgress(name, devs[name], 'blue')).join('') || '<p class="text-xs text-gray-400">No active dev tasks</p>'}
                     </div>
-                    <div>
-                        <h4 class="text-[10px] uppercase tracking-widest font-bold text-purple-500 mb-4">Testers (Less Busy First)</h4>
-                        ${sortedTesters.length > 0 ? sortedTesters.map(name => generateStaffBar(name, areaWorkload[area].testers, 'purple')).join('') : '<p class="text-xs text-gray-400 italic">No testers active in this area</p>'}
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        <h4 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-purple-500"></span> QA Testers
+                        </h4>
+                        ${Object.keys(testers).map(name => generateStaffProgress(name, testers[name], 'purple')).join('') || '<p class="text-xs text-gray-400">No active test tasks</p>'}
                     </div>
                 </div>
             </div>
         `;
     });
 
-    html += `</div>`;
-    container.innerHTML = Object.keys(areaWorkload).length > 0 ? html : '<div class="text-center py-20 text-gray-400">No workload data available.</div>';
+    container.innerHTML = finalHtml || '<div class="col-span-full text-center py-20 text-gray-400">No workload data available.</div>';
 },
     
     renderSettings() {
