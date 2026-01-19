@@ -588,25 +588,35 @@ return `
                     </p>
                 </div>
 
+
+                <div class="relative">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-2.5 h-2.5 rounded-full ${devLightColor}" title="Dev Status"></div>
+                        <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
+                            ${s.assignedTo}
+                        </p>
+                        <p class="text-[10px] text-indigo-500 font-semibold ml-8">
+                            Ends: ${s.calc.devEnd instanceof Date ? s.calc.devEnd.toLocaleDateString('en-GB') : '---'}
+                        </p>
+                    </div>
+                </div>
+
                 <div class="relative">
                     <div class="flex items-center gap-2 mb-1">
                         <div class="w-2.5 h-2.5 rounded-full ${testLightColor}" title="QA Status"></div>
                         <p class="text-[10px] uppercase text-gray-400 font-bold">Quality Assurance</p>
                     </div>
-                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
-                        ${s.tester}
-                    </p>
-                </div>
-
-                <div class="col-span-2 mt-2 pt-2 border-t border-dashed border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-2.5 h-2.5 rounded-full ${releaseLightColor}" title="Client Release Status"></div>
-                            <p class="text-[10px] uppercase text-gray-400 font-bold">Client Expected Date</p>
-                        </div>
-                        <p class="text-xs font-bold ${isReleaseLate ? 'text-red-600' : 'text-slate-600'}">
-                            ${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : 'Not Set'}
+                    <div class="flex flex-col gap-1">
+                        <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
+                            ${s.tester}
+                        </p>
+                        <p class="text-[10px] text-purple-500 font-semibold ml-8">
+                            Ends: ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleDateString('en-GB') : 'TBD'}
                         </p>
                     </div>
                 </div>
