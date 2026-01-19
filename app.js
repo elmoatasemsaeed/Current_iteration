@@ -33,22 +33,35 @@ const auth = {
 
         if(!u || !p || !t) return alert("برجاء ملء جميع البيانات");
 
+        // البحث عن المستخدم في قاعدة البيانات
+        const userMatch = db.users.find(user => user.username === u && user.password === p);
+        
+        if (!userMatch) {
+            return alert("خطأ في اسم المستخدم أو كلمة المرور");
+        }
+
         sessionStorage.setItem('gh_token', t);
         if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
 
-        currentUser = { username: u, role: 'admin' };
+        currentUser = userMatch; // تخزين بيانات المستخدم المسجل حالياً
         this.startApp();
     },
 
-startApp() {
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('app-container').classList.remove('hidden');
-    
-    // أضف هذا السطر لفتح صفحة Current Status تلقائياً
-    ui.switchTab('active'); 
-    
-    dataProcessor.sync(); 
-},
+    startApp() {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        
+        // إخفاء أزرار التحكم إذا كان المستخدم Viewer
+        if (currentUser.role === 'viewer') {
+            document.querySelectorAll('button[onclick*="dataProcessor"], button[onclick*="settings"], input[type="file"]')
+                    .forEach(el => el.style.display = 'none');
+            // إخفاء تبويب الإعدادات تماماً للمشاهدين
+            document.querySelector('button[onclick*="settings"]').style.display = 'none';
+        }
+        
+        ui.switchTab('active'); 
+        dataProcessor.sync(); 
+    },
 
     logout() {
         localStorage.removeItem('saved_creds');
@@ -956,13 +969,49 @@ renderWorkload() {
                 ${h} <button onclick="settings.removeHoliday(${i})" class="text-red-500">×</button>
             </span>
         `).join('');
+
+    const usersList = document.getElementById('users-list');
+    if(usersList) {
+        usersList.innerHTML = db.users.map((u, i) => `
+            <div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
+                <div>
+                    <span class="font-bold text-slate-700">${u.username}</span>
+                    <span class="text-[10px] ml-2 px-2 py-0.5 rounded-full ${u.role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">${u.role}</span>
+                </div>
+                <button onclick="settings.removeUser(${i})" class="text-red-500 hover:text-red-700 font-bold text-xl">&times;</button>
+            </div>
+        `).join('');
     }
+}
 };
 
 /**
  * Settings Management
  */
 const settings = {
+    addUser() {
+        const username = document.getElementById('new-user-name').value;
+        const password = document.getElementById('new-user-pass').value;
+        const role = document.getElementById('new-user-role').value;
+
+        if(!username || !password) return alert("Please fill all fields");
+        
+        if(db.users.some(u => u.username === username)) return alert("User already exists");
+
+        db.users.push({ username, password, role });
+        dataProcessor.saveToGitHub().then(() => {
+            alert("User added successfully");
+            ui.renderSettings();
+        });
+    },
+
+    removeUser(index) {
+        if(db.users[index].username === currentUser.username) return alert("Cannot delete yourself!");
+        db.users.splice(index, 1);
+        dataProcessor.saveToGitHub();
+        ui.renderSettings();
+    },
+    
     addVacation() {
         const name = document.getElementById('staff-select').value;
         const date = document.getElementById('vacation-date').value;
