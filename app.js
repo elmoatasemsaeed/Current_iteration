@@ -25,46 +25,56 @@ let currentUser = null;
  * Authentication & GitHub Sync
  */
 const auth = {
-    const u = document.getElementById('username').value;
+    async handleLogin() {
+        const u = document.getElementById('username').value;
         const p = document.getElementById('password').value;
         const t = document.getElementById('gh-token').value;
         const rem = document.getElementById('remember-me').checked;
 
         if(!u || !p || !t) return alert("برجاء ملء جميع البيانات");
 
-        // خطوة إضافية: محاولة جلب البيانات من GitHub أولاً للتحقق من المستخدمين
+        // إظهار رسالة تحميل بسيطة على الزر
+        const loginBtn = document.querySelector("button[onclick='auth.handleLogin()']");
+        const originalText = loginBtn.innerText;
+        loginBtn.innerText = "جاري التحقق...";
+        loginBtn.disabled = true;
+
         try {
+            // محاولة جلب الملف من GitHub للتحقق من بيانات المستخدمين
             const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                 headers: { 'Authorization': `token ${t}` }
             });
-            
+
             if (response.ok) {
                 const data = await response.json();
+                // فك التشفير ودعم اللغة العربية
                 const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
                 const remoteDb = JSON.parse(decodedContent);
                 
-                // البحث في البيانات القادمة من GitHub
+                // البحث عن المستخدم داخل الملف المجلوب
                 const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
                 
                 if (userMatch) {
-                    db = remoteDb; // تحديث قاعدة البيانات المحلية بالبيانات المجلوبة
+                    db = remoteDb; // تحديث قاعدة البيانات المحلية
                     db.sha = data.sha;
                     sessionStorage.setItem('gh_token', t);
                     if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
                     currentUser = userMatch;
                     this.startApp();
                 } else {
-                    alert("خطأ في اسم المستخدم أو كلمة المرور");
+                    alert("خطأ في اسم المستخدم أو كلمة المرور داخل ملف GitHub");
                 }
             } else {
-                alert("تعذر الوصول للملف على GitHub. تأكد من التوكن (Token) واسم المستودع.");
+                alert("تعذر الوصول للملف. تأكد من Token ومن اسم المستودع (Repo Name)");
             }
         } catch (e) {
             console.error(e);
-            alert("حدث خطأ أثناء الاتصال بـ GitHub");
+            alert("حدث خطأ في الاتصال بـ GitHub. تأكد من الإنترنت والـ Token");
+        } finally {
+            loginBtn.innerText = originalText;
+            loginBtn.disabled = false;
         }
     },
-
     startApp() {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('app-container').classList.remove('hidden');
