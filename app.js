@@ -839,91 +839,101 @@ renderWorkload() {
     const container = document.getElementById('workload-container');
     if (!container) return;
 
-    // فلترة القصص النشطة فقط (ليست Tested ولا Closed)
+    // 1. فلترة القصص النشطة فقط
     const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
 
-    const workload = {
-        devs: {},
-        testers: {}
-    };
-
-    const MAX_HOURS = 50; // المرجع الخاص بك (100%)
+    // 2. هيكل بيانات لتجميع الساعات حسب (المنطقة -> الدور -> الشخص)
+    const areaWorkload = {}; 
+    const MAX_HOURS = 50;
 
     activeStories.forEach(s => {
-        // حساب ساعات التطوير لهذه الستوري
+        const area = s.area || "General";
+        if (!areaWorkload[area]) {
+            areaWorkload[area] = { devs: {}, testers: {} };
+        }
+
+        // حساب ساعات التطوير
         const devHours = s.tasks
             .filter(t => ["Development", "DB Modification"].includes(t['Activity']))
             .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
-        // حساب ساعات الاختبار لهذه الستوري
+        // حساب ساعات الاختبار
         const testHours = s.tasks
             .filter(t => t['Activity'] === 'Testing' || t['Activity'] === 'Preparation')
             .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
-        // إضافة الساعات للمطور
+        // إضافة للمطور
         if (s.assignedTo && s.assignedTo !== "Unassigned") {
-            if (!workload.devs[s.assignedTo]) workload.devs[s.assignedTo] = { hours: 0, items: [] };
-            workload.devs[s.assignedTo].hours += devHours;
-            workload.devs[s.assignedTo].items.push(s);
+            if (!areaWorkload[area].devs[s.assignedTo]) {
+                areaWorkload[area].devs[s.assignedTo] = { hours: 0, items: [] };
+            }
+            areaWorkload[area].devs[s.assignedTo].hours += devHours;
+            areaWorkload[area].devs[s.assignedTo].items.push(s);
         }
 
-        // إضافة الساعات للمختبر
+        // إضافة للمختبر
         if (s.tester && s.tester !== "Unassigned") {
-            if (!workload.testers[s.tester]) workload.testers[s.tester] = { hours: 0, items: [] };
-            workload.testers[s.tester].hours += testHours;
-            workload.testers[s.tester].items.push(s);
+            if (!areaWorkload[area].testers[s.tester]) {
+                areaWorkload[area].testers[s.tester] = { hours: 0, items: [] };
+            }
+            areaWorkload[area].testers[s.tester].hours += testHours;
+            areaWorkload[area].testers[s.tester].items.push(s);
         }
     });
 
-    const generateSection = (title, data, color) => {
-        // ترتيب الموظفين حسب الأكثر انشغالاً (بالساعات)
-        const sortedStaff = Object.keys(data).sort((a, b) => data[b].hours - data[a].hours);
-        
-        return `
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800">
-                    <span class="w-3 h-3 rounded-full bg-${color}-500"></span>
-                    ${title}
-                </h3>
-                <div class="space-y-6">
-                    ${sortedStaff.map(staff => {
-                        const totalHours = data[staff].hours;
-                        const percentage = Math.min((totalHours / MAX_HOURS) * 100, 100);
-                        
-                        // تغيير لون البار إذا تخطى الـ 100% (50 ساعة)
-                        const barColor = totalHours > MAX_HOURS ? 'bg-red-500' : `bg-${color}-500`;
+    // 3. دالة فرعية لإنشاء بار التحميل للموظف
+    const generateStaffBar = (staffName, data, color) => {
+        const percentage = Math.min((data.hours / MAX_HOURS) * 100, 100);
+        const barColor = data.hours > MAX_HOURS ? 'bg-red-500' : `bg-${color}-500`;
+        const textColor = data.hours > MAX_HOURS ? 'text-red-600 bg-red-50' : `text-${color}-600 bg-${color}-50`;
 
-                        return `
-                            <div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-semibold text-slate-700">${staff}</span>
-                                    <span class="text-sm font-bold ${totalHours > MAX_HOURS ? 'text-red-600 bg-red-50' : `text-${color}-600 bg-${color}-50`} px-2 py-1 rounded">
-                                        ${totalHours.toFixed(1)} / ${MAX_HOURS} hrs
-                                    </span>
-                                </div>
-                                <div class="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
-                                    <div class="${barColor} h-full transition-all duration-500" style="width: ${percentage}%"></div>
-                                </div>
-                                <div class="mt-2 flex flex-wrap gap-1">
-                                    ${data[staff].items.map(s => `
-                                        <span class="text-[9px] px-1.5 py-0.5 bg-white border border-gray-200 rounded text-gray-500 shadow-sm">#${s.id}</span>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                    ${sortedStaff.length === 0 ? '<p class="text-gray-400 text-center">No active work hours</p>' : ''}
+        return `
+            <div class="mb-4 last:mb-0">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-sm font-semibold text-slate-700">${staffName}</span>
+                    <span class="text-[10px] font-bold ${textColor} px-2 py-0.5 rounded">
+                        ${data.hours.toFixed(1)} / ${MAX_HOURS}h
+                    </span>
+                </div>
+                <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                    <div class="${barColor} h-full transition-all duration-500" style="width: ${percentage}%"></div>
                 </div>
             </div>
         `;
     };
 
-    container.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            ${generateSection('Development Workload (Target: 50h)', workload.devs, 'blue')}
-            ${generateSection('Testing Workload (Target: 50h)', workload.testers, 'purple')}
-        </div>
-    `;
+    // 4. بناء الـ HTML النهائي
+    let html = `<div class="space-y-8">`;
+
+    Object.keys(areaWorkload).forEach(area => {
+        // ترتيب الموظفين داخل كل قسم: الأقل ساعات يظهر أولاً
+        const sortedDevs = Object.keys(areaWorkload[area].devs).sort((a, b) => areaWorkload[area].devs[a].hours - areaWorkload[area].devs[b].hours);
+        const sortedTesters = Object.keys(areaWorkload[area].testers).sort((a, b) => areaWorkload[area].testers[a].hours - areaWorkload[area].testers[b].hours);
+
+        html += `
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="bg-slate-50 px-6 py-3 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-2 h-4 bg-indigo-500 rounded-sm"></span>
+                        Area: ${area}
+                    </h3>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-[10px] uppercase tracking-widest font-bold text-blue-500 mb-4">Developers (Less Busy First)</h4>
+                        ${sortedDevs.length > 0 ? sortedDevs.map(name => generateStaffBar(name, areaWorkload[area].devs, 'blue')).join('') : '<p class="text-xs text-gray-400 italic">No developers active in this area</p>'}
+                    </div>
+                    <div>
+                        <h4 class="text-[10px] uppercase tracking-widest font-bold text-purple-500 mb-4">Testers (Less Busy First)</h4>
+                        ${sortedTesters.length > 0 ? sortedTesters.map(name => generateStaffBar(name, areaWorkload[area].testers, 'purple')).join('') : '<p class="text-xs text-gray-400 italic">No testers active in this area</p>'}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = Object.keys(areaWorkload).length > 0 ? html : '<div class="text-center py-20 text-gray-400">No workload data available.</div>';
 },
     
     renderSettings() {
