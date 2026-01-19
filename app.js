@@ -731,7 +731,6 @@ renderDelivery() {
                 <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
                 <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
                 
-// داخل دالة renderDelivery - ابحث عن السطر الذي يبدأ بـ ${isLogged ? `
 ${isLogged ? `
                     <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
                         <b>المستلم:</b> ${s.logData.to}<br>
@@ -1018,6 +1017,7 @@ renderWorkload() {
             </div>
         `).join('');
     }
+        }
 };
 
 /**
