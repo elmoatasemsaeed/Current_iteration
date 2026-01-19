@@ -488,6 +488,7 @@ renderClientRoadmap() {
         s.title.toLowerCase().includes(searchTerm) || 
         s.id.toString().includes(searchTerm) || 
         s.tester.toLowerCase().includes(searchTerm) ||
+        s.assignedTo.toLowerCase().includes(searchTerm) ||
         (s.area && s.area.toLowerCase().includes(searchTerm));
             
     // استخدام isNotFinished بدلاً من isNotTested
