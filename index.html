@@ -120,6 +120,25 @@
 
             <section id="tab-settings" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="bg-white p-6 rounded-xl border">
+        <h3 class="font-bold mb-4 flex items-center gap-2">👥 User Management</h3>
+        <div class="space-y-3 mb-6">
+            <input type="text" id="new-user-name" placeholder="Username" class="w-full border p-2 rounded">
+            <input type="password" id="new-user-pass" placeholder="Password" class="w-full border p-2 rounded">
+            <select id="new-user-role" class="w-full border p-2 rounded">
+                <option value="viewer">Viewer (Read Only)</option>
+                <option value="admin">Admin (Full Access)</option>
+            </select>
+            <button onclick="settings.addUser()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700">Create User</button>
+        </div>
+        <div class="border-t pt-4">
+            <h4 class="text-sm font-bold text-gray-500 mb-2">Existing Users:</h4>
+            <div id="users-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
+        </div>
+    </div>
+    
+    </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-white p-6 rounded-xl border">
                         <h3 class="font-bold mb-4">Add Vacation For Employee</h3>
                         <div class="space-y-3">
