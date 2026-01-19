@@ -222,7 +222,7 @@ async saveToGitHub() {
                 currentStory.tasks.push(row);
             } else if (row['Work Item Type'] === 'Bug' && currentStory) {
                 currentStory.bugs.push(row);
-                } else if (itemType === 'Test Case' && currentStory) {
+            } else if (row['Work Item Type'] === 'Test Case' && currentStory) {
                 currentStory.testCases.push({
                     id: row['ID'],
                     state: row['State']
