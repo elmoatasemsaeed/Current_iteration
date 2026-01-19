@@ -1018,7 +1018,6 @@ renderWorkload() {
             </div>
         `).join('');
     }
-}
 };
 
 /**
