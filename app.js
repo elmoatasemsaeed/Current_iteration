@@ -25,26 +25,44 @@ let currentUser = null;
  * Authentication & GitHub Sync
  */
 const auth = {
-    handleLogin() {
-        const u = document.getElementById('username').value;
+    const u = document.getElementById('username').value;
         const p = document.getElementById('password').value;
         const t = document.getElementById('gh-token').value;
         const rem = document.getElementById('remember-me').checked;
 
         if(!u || !p || !t) return alert("برجاء ملء جميع البيانات");
 
-        // البحث عن المستخدم في قاعدة البيانات
-        const userMatch = db.users.find(user => user.username === u && user.password === p);
-        
-        if (!userMatch) {
-            return alert("خطأ في اسم المستخدم أو كلمة المرور");
+        // خطوة إضافية: محاولة جلب البيانات من GitHub أولاً للتحقق من المستخدمين
+        try {
+            const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+                headers: { 'Authorization': `token ${t}` }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+                const remoteDb = JSON.parse(decodedContent);
+                
+                // البحث في البيانات القادمة من GitHub
+                const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
+                
+                if (userMatch) {
+                    db = remoteDb; // تحديث قاعدة البيانات المحلية بالبيانات المجلوبة
+                    db.sha = data.sha;
+                    sessionStorage.setItem('gh_token', t);
+                    if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
+                    currentUser = userMatch;
+                    this.startApp();
+                } else {
+                    alert("خطأ في اسم المستخدم أو كلمة المرور");
+                }
+            } else {
+                alert("تعذر الوصول للملف على GitHub. تأكد من التوكن (Token) واسم المستودع.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("حدث خطأ أثناء الاتصال بـ GitHub");
         }
-
-        sessionStorage.setItem('gh_token', t);
-        if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
-
-        currentUser = userMatch; // تخزين بيانات المستخدم المسجل حالياً
-        this.startApp();
     },
 
     startApp() {
