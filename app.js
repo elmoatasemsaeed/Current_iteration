@@ -210,6 +210,7 @@ async saveToGitHub() {
                     tester: row['Assigned To Tester'] || "Unassigned",
                     area: area || "General",
                     priority: parseInt(row['Business Priority']) || 999,
+                    tags: row['Tags'] ? row['Tags'].split(';').filter(t => t.trim() !== "") : [],
                     expectedRelease: row['Release Expected Date'] ? new Date(row['Release Expected Date']) : null,
                     tasks: [],
                     bugs: [],
@@ -633,6 +634,15 @@ return `
             </div>
                             
             <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
+            ${s.tags && s.tags.length > 0 ? `
+    <div class="flex flex-wrap gap-1 mb-2">
+        ${s.tags.map(tag => `
+            <span class="text-[9px] px-2 py-0.5 bg-slate-100 text-slate-500 rounded border border-slate-200">
+                #${tag.trim()}
+            </span>
+        `).join('')}
+    </div>
+` : ''}
 
             <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
                 <div class="relative">
