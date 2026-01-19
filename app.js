@@ -731,10 +731,10 @@ renderDelivery() {
         // جميع القصص في هذه المنطقة
         const allAreaStories = currentData.filter(s => s.area === area);
         
-        // استخراج قائمة الموظفين (كل من له علاقة بهذه المنطقة سواء قصصه منتهية أو لا)
+        // استخراج قائمة الموظفين (الديف فقط)
         const staffInArea = {
-            developers: [...new Set(allAreaStories.map(s => s.assignedTo))],
-            testers: [...new Set(allAreaStories.map(s => s.tester))].filter(t => t !== "Unassigned")
+            developers: [...new Set(allAreaStories.map(s => s.assignedTo))]
+            // تم حذف التستر من هنا
         };
 
         html += `
@@ -747,7 +747,6 @@ renderDelivery() {
 
         const getSortedStaff = (staffList, roleType) => {
             return staffList.map(person => {
-                // الفلترة هنا للمهام "النشطة" فقط لحساب تاريخ الفراغ
                 const activeTasks = allAreaStories.filter(s => {
                     const isUserTask = (roleType === 'dev' ? s.assignedTo === person : s.tester === person);
                     const isActive = !['Resolved', 'Tested', 'Closed', 'On-Hold'].includes(s.state);
@@ -756,19 +755,16 @@ renderDelivery() {
                 
                 let lastDate = null;
                 if (activeTasks.length > 0) {
-                    // ترتيب المهام النشطة للحصول على أبعد تاريخ انتهاء
                     const sortedTasks = activeTasks.sort((a, b) => {
                         const getDate = (story) => {
-                            if (story.tester === "Unassigned") {
-                                return story.calc.devEnd instanceof Date ? story.calc.devEnd : new Date(0);
-                            }
-                            return story.calc.finalEnd instanceof Date ? story.calc.finalEnd : new Date(0);
+                            // الحساب يعتمد على devEnd لأننا نهتم بجاهزية المطور
+                            return story.calc.devEnd instanceof Date ? story.calc.devEnd : new Date(0);
                         };
                         return getDate(b) - getDate(a);
                     });
                     
                     const topStory = sortedTasks[0];
-                    lastDate = (topStory.tester === "Unassigned") ? topStory.calc.devEnd : topStory.calc.finalEnd;
+                    lastDate = topStory.calc.devEnd;
                 }
 
                 return { 
@@ -776,7 +772,6 @@ renderDelivery() {
                     freeDate: lastDate instanceof Date ? lastDate : null 
                 };
             }).sort((a, b) => {
-                // المتاح (null) يظهر أولاً
                 if (a.freeDate === null && b.freeDate !== null) return -1;
                 if (a.freeDate !== null && b.freeDate === null) return 1;
                 return a.freeDate - b.freeDate;
@@ -784,16 +779,11 @@ renderDelivery() {
         };
 
         const sortedDevs = getSortedStaff(staffInArea.developers, 'dev');
-        const sortedTesters = getSortedStaff(staffInArea.testers, 'test');
 
-       if (sortedDevs.length > 0) {
+        // عرض الديف فقط وحذف الجزء الخاص بالـ Testers
+        if (sortedDevs.length > 0) {
             html += `<div class="col-span-full mb-2 mt-2 font-bold text-blue-600 text-sm uppercase tracking-widest">Developers</div>`;
             html += sortedDevs.map(dev => this.generateStaffCard(dev, "🛠", 'dev')).join('');
-        }
-
-        if (sortedTesters.length > 0) {
-            html += `<div class="col-span-full mb-2 mt-4 font-bold text-purple-600 text-sm uppercase tracking-widest">Quality Assurance</div>`;
-            html += sortedTesters.map(tester => this.generateStaffCard(tester, "🔍", 'test')).join('');
         }
     });
 
