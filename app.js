@@ -214,6 +214,7 @@ async saveToGitHub() {
                     expectedRelease: row['Release Expected Date'] ? new Date(row['Release Expected Date']) : null,
                     tasks: [],
                     bugs: [],
+                    testCases: [],
                     calc: {}
                 };
                 stories.push(currentStory);
@@ -221,6 +222,11 @@ async saveToGitHub() {
                 currentStory.tasks.push(row);
             } else if (row['Work Item Type'] === 'Bug' && currentStory) {
                 currentStory.bugs.push(row);
+                } else if (itemType === 'Test Case' && currentStory) {
+                currentStory.testCases.push({
+                    id: row['ID'],
+                    state: row['State']
+                });
             }
         });
 
@@ -537,9 +543,8 @@ renderClientRoadmap() {
     
     renderActiveCards() {
     const container = document.getElementById('active-cards-container');
-    const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; // الحصول على نص البحث
+    const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; 
     
-    // فلترة القصص النشطة بناءً على حالة البحث
    const activeStories = currentData.filter(s => {
     const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
     const matchesSearch = 
@@ -549,7 +554,6 @@ renderClientRoadmap() {
         s.assignedTo.toLowerCase().includes(searchTerm) ||
         (s.area && s.area.toLowerCase().includes(searchTerm));
             
-    // استخدام isNotFinished بدلاً من isNotTested
     return isNotFinished && matchesSearch; 
 });
     
@@ -560,7 +564,6 @@ renderClientRoadmap() {
         return;
     }
 
-    // 1. تجميع البيانات حسب Business Area
     const groupedStories = activeStories.reduce((groups, story) => {
         const area = story.area || "General";
         if (!groups[area]) groups[area] = [];
@@ -568,15 +571,9 @@ renderClientRoadmap() {
         return groups;
     }, {});
 
-    // 2. رندر المجموعات مع الترتيب
     container.innerHTML = Object.keys(groupedStories).map(area => {
         const storiesInArea = groupedStories[area].sort((a, b) => {
-            // الترتيب الأول: حسب الأولوية (Priority) - الرقم الأقل يعني أولوية أعلى
-            if (a.priority !== b.priority) {
-                return a.priority - b.priority;
-            }
-            
-            // الترتيب الثاني: إذا تساوت الأولوية، يتم الترتيب حسب التأخير
+            if (a.priority !== b.priority) return a.priority - b.priority;
             const isALate = a.calc.finalEnd instanceof Date && new Date() > a.calc.finalEnd;
             const isBLate = b.calc.finalEnd instanceof Date && new Date() > b.calc.finalEnd;
             return isBLate - isALate; 
@@ -596,30 +593,28 @@ renderClientRoadmap() {
     const hasError = s.calc.error;
     
     // --- منطق لمبات الحالة ---
-    
-    // 1. لمبة التطوير (Development)
-    // تنور أحمر إذا: التاريخ الحالي تجاوز موعد الديف و الحالة ليست Resolved وليست Tested
-    const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed';
-    const devLightColor = (s.state === 'Resolved' || s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+    const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && (s.state !== 'Resolved' && s.state !== 'Tested' && s.state !== 'Closed');
+    const devLightColor = (s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
-    // 2. لمبة الجودة (QA)
-    // تنور أحمر إذا: التاريخ الحالي تجاوز موعد التست والحالة ليست Tested
-    const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && s.state === 'Tested' || s.state === 'Closed';
-    const testLightColor = (s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+    const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && (s.state !== 'Tested' && s.state !== 'Closed');
+    const testLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
-    // 3. لمبة تاريخ التسليم المتوقع (Client Expected Release)
-    const isReleaseLate = s.expectedRelease instanceof Date && now > s.expectedRelease && s.state === 'Tested' || s.state === 'Closed';
-    const releaseLightColor = (s.state === 'Tested') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isReleaseLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+    const isReleaseLate = s.expectedRelease instanceof Date && now > s.expectedRelease && (s.state !== 'Tested' && s.state !== 'Closed');
+    const releaseLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isReleaseLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+
+    // --- منطق احتساب تقدم الاختبار (Testing Progress) ---
+    const testCases = s.testCases || [];
+    const totalTC = testCases.length;
+    const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
+    const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
 
     const priorityBadge = `<span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>`;
 
     let statusColor = "bg-blue-100 text-blue-700";
     if(isLate) statusColor = "bg-red-100 text-red-700";
     if(hasError) statusColor = "bg-amber-100 text-amber-700";
-
     const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
 
-    // ابحث عن جزء الـ Return داخل renderActiveCards واستبدله بهذا:
 return `
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
         <div class="p-5 flex-1">
@@ -635,14 +630,10 @@ return `
                             
             <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
             ${s.tags && s.tags.length > 0 ? `
-    <div class="flex flex-wrap gap-1 mb-2">
-        ${s.tags.map(tag => `
-            <span class="text-[9px] px-2 py-0.5 bg-slate-100 text-slate-500 rounded border border-slate-200">
-                #${tag.trim()}
-            </span>
-        `).join('')}
-    </div>
-` : ''}
+                <div class="flex flex-wrap gap-1 mb-2">
+                    ${s.tags.map(tag => `<span class="text-[9px] px-2 py-0.5 bg-slate-100 text-slate-500 rounded border border-slate-200">#${tag.trim()}</span>`).join('')}
+                </div>
+            ` : ''}
 
             <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
                 <div class="relative">
@@ -671,6 +662,19 @@ return `
                             <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
                             ${s.tester}
                         </p>
+                        
+                        ${totalTC > 0 ? `
+                            <div class="ml-8 mt-1 mb-1">
+                                <div class="flex justify-between items-center mb-0.5">
+                                    <span class="text-[9px] text-gray-400 font-bold">Progress: ${completedTC}/${totalTC}</span>
+                                    <span class="text-[9px] text-indigo-600 font-bold">${progressPercent}%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                                    <div class="bg-indigo-500 h-full transition-all duration-500" style="width: ${progressPercent}%"></div>
+                                </div>
+                            </div>
+                        ` : '<p class="text-[9px] text-gray-400 ml-8 italic">No TCs found</p>'}
+
                         <p class="text-[10px] text-gray-500 ml-8">
                             Ends: ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting'}
                         </p>
