@@ -847,22 +847,37 @@ renderWorkload() {
         testers: {}
     };
 
-    // حساب عدد القصص لكل موظف
+    const MAX_HOURS = 50; // المرجع الخاص بك (100%)
+
     activeStories.forEach(s => {
-        // للمطورين
+        // حساب ساعات التطوير لهذه الستوري
+        const devHours = s.tasks
+            .filter(t => ["Development", "DB Modification"].includes(t['Activity']))
+            .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+
+        // حساب ساعات الاختبار لهذه الستوري
+        const testHours = s.tasks
+            .filter(t => t['Activity'] === 'Testing' || t['Activity'] === 'Preparation')
+            .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+
+        // إضافة الساعات للمطور
         if (s.assignedTo && s.assignedTo !== "Unassigned") {
-            if (!workload.devs[s.assignedTo]) workload.devs[s.assignedTo] = [];
-            workload.devs[s.assignedTo].push(s);
+            if (!workload.devs[s.assignedTo]) workload.devs[s.assignedTo] = { hours: 0, items: [] };
+            workload.devs[s.assignedTo].hours += devHours;
+            workload.devs[s.assignedTo].items.push(s);
         }
-        // للمختبرين
+
+        // إضافة الساعات للمختبر
         if (s.tester && s.tester !== "Unassigned") {
-            if (!workload.testers[s.tester]) workload.testers[s.tester] = [];
-            workload.testers[s.tester].push(s);
+            if (!workload.testers[s.tester]) workload.testers[s.tester] = { hours: 0, items: [] };
+            workload.testers[s.tester].hours += testHours;
+            workload.testers[s.tester].items.push(s);
         }
     });
 
     const generateSection = (title, data, color) => {
-        const sortedStaff = Object.keys(data).sort((a, b) => data[b].length - data[a].length);
+        // ترتيب الموظفين حسب الأكثر انشغالاً (بالساعات)
+        const sortedStaff = Object.keys(data).sort((a, b) => data[b].hours - data[a].hours);
         
         return `
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -872,34 +887,42 @@ renderWorkload() {
                 </h3>
                 <div class="space-y-6">
                     ${sortedStaff.map(staff => {
-                        const count = data[staff].length;
-                        const percentage = Math.min((count / 10) * 100, 100); // نفترض أن 10 ستوريز هي الحمولة القصوى 100%
+                        const totalHours = data[staff].hours;
+                        const percentage = Math.min((totalHours / MAX_HOURS) * 100, 100);
+                        
+                        // تغيير لون البار إذا تخطى الـ 100% (50 ساعة)
+                        const barColor = totalHours > MAX_HOURS ? 'bg-red-500' : `bg-${color}-500`;
+
                         return `
                             <div>
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="font-semibold text-slate-700">${staff}</span>
-                                    <span class="text-sm font-bold text-${color}-600 bg-${color}-50 px-2 py-1 rounded">${count} Stories</span>
+                                    <span class="text-sm font-bold ${totalHours > MAX_HOURS ? 'text-red-600 bg-red-50' : `text-${color}-600 bg-${color}-50`} px-2 py-1 rounded">
+                                        ${totalHours.toFixed(1)} / ${MAX_HOURS} hrs
+                                    </span>
                                 </div>
                                 <div class="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
-                                    <div class="bg-${color}-500 h-full transition-all duration-500" style="width: ${percentage}%"></div>
+                                    <div class="${barColor} h-full transition-all duration-500" style="width: ${percentage}%"></div>
                                 </div>
                                 <div class="mt-2 flex flex-wrap gap-1">
-                                    ${data[staff].map(s => `
-                                        <span class="text-[9px] px-1.5 py-0.5 bg-gray-50 border border-gray-100 rounded text-gray-500">#${s.id}</span>
+                                    ${data[staff].items.map(s => `
+                                        <span class="text-[9px] px-1.5 py-0.5 bg-white border border-gray-200 rounded text-gray-500 shadow-sm">#${s.id}</span>
                                     `).join('')}
                                 </div>
                             </div>
                         `;
                     }).join('')}
-                    ${sortedStaff.length === 0 ? '<p class="text-gray-400 text-center">No active work items</p>' : ''}
+                    ${sortedStaff.length === 0 ? '<p class="text-gray-400 text-center">No active work hours</p>' : ''}
                 </div>
             </div>
         `;
     };
 
     container.innerHTML = `
-        ${generateSection('Development Team Workload', workload.devs, 'blue')}
-        ${generateSection('Testing Team Workload', workload.testers, 'purple')}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            ${generateSection('Development Workload (Target: 50h)', workload.devs, 'blue')}
+            ${generateSection('Testing Workload (Target: 50h)', workload.testers, 'purple')}
+        </div>
     `;
 },
     
