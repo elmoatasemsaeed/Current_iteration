@@ -362,6 +362,7 @@ const ui = {
         this.renderAvailability();
         this.renderSettings();
         this.renderClientRoadmap();
+        this.renderWorkload();
     },
 
   renderStats() {
@@ -833,6 +834,75 @@ generateStaffCard(person, icon, role) {
         </div>
     `;
 },
+
+renderWorkload() {
+    const container = document.getElementById('workload-container');
+    if (!container) return;
+
+    // فلترة القصص النشطة فقط (ليست Tested ولا Closed)
+    const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
+
+    const workload = {
+        devs: {},
+        testers: {}
+    };
+
+    // حساب عدد القصص لكل موظف
+    activeStories.forEach(s => {
+        // للمطورين
+        if (s.assignedTo && s.assignedTo !== "Unassigned") {
+            if (!workload.devs[s.assignedTo]) workload.devs[s.assignedTo] = [];
+            workload.devs[s.assignedTo].push(s);
+        }
+        // للمختبرين
+        if (s.tester && s.tester !== "Unassigned") {
+            if (!workload.testers[s.tester]) workload.testers[s.tester] = [];
+            workload.testers[s.tester].push(s);
+        }
+    });
+
+    const generateSection = (title, data, color) => {
+        const sortedStaff = Object.keys(data).sort((a, b) => data[b].length - data[a].length);
+        
+        return `
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800">
+                    <span class="w-3 h-3 rounded-full bg-${color}-500"></span>
+                    ${title}
+                </h3>
+                <div class="space-y-6">
+                    ${sortedStaff.map(staff => {
+                        const count = data[staff].length;
+                        const percentage = Math.min((count / 10) * 100, 100); // نفترض أن 10 ستوريز هي الحمولة القصوى 100%
+                        return `
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-semibold text-slate-700">${staff}</span>
+                                    <span class="text-sm font-bold text-${color}-600 bg-${color}-50 px-2 py-1 rounded">${count} Stories</span>
+                                </div>
+                                <div class="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
+                                    <div class="bg-${color}-500 h-full transition-all duration-500" style="width: ${percentage}%"></div>
+                                </div>
+                                <div class="mt-2 flex flex-wrap gap-1">
+                                    ${data[staff].map(s => `
+                                        <span class="text-[9px] px-1.5 py-0.5 bg-gray-50 border border-gray-100 rounded text-gray-500">#${s.id}</span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                    ${sortedStaff.length === 0 ? '<p class="text-gray-400 text-center">No active work items</p>' : ''}
+                </div>
+            </div>
+        `;
+    };
+
+    container.innerHTML = `
+        ${generateSection('Development Team Workload', workload.devs, 'blue')}
+        ${generateSection('Testing Team Workload', workload.testers, 'purple')}
+    `;
+},
+    
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
         const staffSelect = document.getElementById('staff-select');
