@@ -105,16 +105,22 @@
                 </div>
             </section>
 
-            <section id="tab-delivery" class="tab-content space-y-4">
-                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <h2 class="font-bold text-green-800">Ready To Deliver (Tested)</h2>
-                </div>
-                <div id="delivery-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-            </section>
-
-            <section id="tab-availability" class="tab-content">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="availability-container"></div>
-            </section>
+           <section id="tab-delivery" class="tab-content space-y-4">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-green-50 p-4 rounded-lg border border-green-200">
+        <h2 class="font-bold text-green-800 text-2xl">Ready To Deliver (Tested)</h2>
+        
+        <div class="relative w-full md:w-80">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
+            <input type="text" 
+                   id="search-delivery-input" 
+                   onkeyup="ui.renderDelivery()" 
+                   placeholder="Search by ID, Title, or Recipient..." 
+                   class="w-full pl-10 pr-4 py-2 border border-green-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm">
+        </div>
+    </div>
+    
+    <div id="delivery-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+</section>
 
             <section id="tab-settings" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
