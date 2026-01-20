@@ -748,33 +748,48 @@ renderClientRoadmap() {
 
 renderDelivery() {
     const container = document.getElementById('delivery-grid');
+    // جلب نص البحث وتحويله لحروف صغيرة
+    const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || ""; 
     
     // 1. جلب كل الستوريز التي حالتها المختبرة
     const allTested = currentData.filter(s => s.state === 'Tested' || s.state === 'Closed');
 
-    if (allTested.length === 0 && db.deliveryLogs.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">لا توجد عناصر جاهزة للتسليم حالياً.</div>`;
-        return;
-    }
-
-    // 2. الفلترة الصحيحة:
-    // "بانتظار التسليم": هي التي حالتها Tested ولكن لم يتم تسجيلها في الـ Logs
-    const pendingStories = allTested.filter(s => !db.deliveryLogs.some(l => l.storyId === s.id.toString()));
+    // 2. الفلترة للقصص بانتظار التسليم (مع البحث)
+    const pendingStories = allTested.filter(s => {
+        const isPending = !db.deliveryLogs.some(l => l.storyId === s.id.toString());
+        const matchesSearch = 
+            s.title.toLowerCase().includes(searchTerm) || 
+            s.id.toString().includes(searchTerm) || 
+            (s.area && s.area.toLowerCase().includes(searchTerm));
+        return isPending && matchesSearch;
+    });
     
-    // "تم التسليم": هي الستوريز الموجودة في الـ Logs
-    // نقوم بمطابقة بيانات الـ Log مع بيانات الستوري الأصلية لعرض الاسم والتفاصيل
+    // 3. الفلترة للقصص التي تم تسليمها (مع البحث)
     const completedStories = db.deliveryLogs.map(log => {
         const story = currentData.find(s => s.id.toString() === log.storyId.toString());
         return { 
             ...story, 
             logData: log,
-            // إذا لم يتم العثور على الستوري في ملف الـ CSV الحالي (تم حذفها مثلاً)، نعرض بيانات اللوج فقط
             title: story ? story.title : "Story not in current CSV",
             area: story ? story.area : "N/A"
         };
-    }).reverse(); // لعرض الأحدث أولاً
+    }).filter(s => {
+        const matchesSearch = 
+            s.title.toLowerCase().includes(searchTerm) || 
+            s.logData.storyId.toString().includes(searchTerm) || 
+            s.logData.to.toLowerCase().includes(searchTerm) ||
+            (s.area && s.area.toLowerCase().includes(searchTerm));
+        return matchesSearch;
+    }).reverse();
 
-    // وظيفة مساعدة لإنشاء HTML لكل كارت
+    if (pendingStories.length === 0 && completedStories.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">
+            ${searchTerm ? 'لا توجد نتائج تطابق بحثك في قسم التسليم.' : 'لا توجد عناصر حالياً.'}
+        </div>`;
+        return;
+    }
+
+    // وظيفة مساعدة لإنشاء HTML لكل كارت (كما هي بدون تغيير)
     const createCardHtml = (s, isLogged) => {
         return `
             <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 opacity-60 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
@@ -787,19 +802,19 @@ renderDelivery() {
                 <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
                 <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
                 
-${isLogged ? `
-    <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
-        <b>المستلم:</b> ${s.logData.to}<br>
-        <b>التاريخ:</b> ${s.logData.date}
-    </div>
-` : (currentUser && currentUser.role === 'admin' ? `
-    <div class="flex gap-2 mt-auto">
-        <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
-        <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
-            تأكيد
-        </button>
-    </div>
-` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
+                ${isLogged ? `
+                    <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
+                        <b>المستلم:</b> ${s.logData.to}<br>
+                        <b>التاريخ:</b> ${s.logData.date}
+                    </div>
+                ` : (currentUser && currentUser.role === 'admin' ? `
+                    <div class="flex gap-2 mt-auto">
+                        <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
+                        <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+                            تأكيد
+                        </button>
+                    </div>
+                ` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
             </div>
         `;
     };
@@ -810,7 +825,7 @@ ${isLogged ? `
                 📦 بانتظار التسليم (${pendingStories.length})
             </h3>
         </div>
-        ${pendingStories.map(s => createCardHtml(s, false)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا يوجد مهام بانتظار التسليم</div>'}
+        ${pendingStories.map(s => createCardHtml(s, false)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
 
         <div class="col-span-full my-8 border-t-2 border-dashed border-gray-200"></div>
 
@@ -819,7 +834,7 @@ ${isLogged ? `
                 ✅ تم التسليم مؤخراً (${completedStories.length})
             </h3>
         </div>
-        ${completedStories.map(s => createCardHtml(s, true)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لم يتم تسليم أي عناصر بعد</div>'}
+        ${completedStories.map(s => createCardHtml(s, true)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
     `;
 
     container.innerHTML = html;
