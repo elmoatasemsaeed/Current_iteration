@@ -175,7 +175,17 @@
 </section>
         </main>
     </div>
-
+<div id="story-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
+            <h2 id="modal-title" class="text-xl font-bold text-slate-800 pr-8"></h2>
+            <button onclick="ui.closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+        </div>
+        <div id="modal-body" class="p-6 space-y-6">
+            </div>
+    </div>
+</div>
     <script src="app.js"></script>
+    
 </body>
 </html>
