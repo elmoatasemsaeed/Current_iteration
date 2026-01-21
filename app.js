@@ -602,18 +602,16 @@ renderClientRoadmap() {
                     const isReleaseLate = s.expectedRelease instanceof Date && now > s.expectedRelease && (s.state !== 'Tested' && s.state !== 'Closed');
                     const releaseLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isReleaseLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
-                    // --- [جديد] منطق احتساب تقدم التطوير (Dev Progress) ---
+                    // --- منطق احتساب التقدم ---
                     const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
                     const totalDevTasks = nonTestTasks.length;
                     const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed'].includes(t['State'])).length;
                     const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
 
-                    // --- [جديد] منطق احتساب تقدم إصلاح الأخطاء (Fixing Progress) ---
                     const totalBugs = s.bugs ? s.bugs.length : 0;
                     const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
                     const fixingProgressPercent = totalBugs > 0 ? Math.round((completedBugs / totalBugs) * 100) : 0;
 
-                    // --- منطق احتساب تقدم الاختبار (Testing Progress) ---
                     const testCases = s.testCases || [];
                     const totalTC = testCases.length;
                     const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
@@ -627,126 +625,106 @@ renderClientRoadmap() {
                     const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
 
                     return `
-                    <div onclick="ui.openStoryModal('${s.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col">
-
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
-                            <div class="p-5 flex-1">
-                                <div class="flex justify-between items-start mb-4">
-                                    <div class="flex gap-2">
-                                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
-                                            ${statusText}
-                                        </span>
-                                        ${priorityBadge}
-                                    </div>
-                                    <span class="text-xs font-mono text-gray-400">#${s.id}</span>
+                    <div onclick="ui.openStoryModal('${s.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col mb-4">
+                        <div class="p-5 flex-1">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex gap-2">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
+                                        ${statusText}
+                                    </span>
+                                    ${priorityBadge}
                                 </div>
-                                                
-                                <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
-                                ${s.tags && s.tags.length > 0 ? `
-                                    <div class="flex flex-wrap gap-1 mb-2">
-                                        ${s.tags.map(tag => `<span class="text-[9px] px-2 py-0.5 bg-slate-100 text-slate-500 rounded border border-slate-200">#${tag.trim()}</span>`).join('')}
+                                <span class="text-xs font-mono text-gray-400">#${s.id}</span>
+                            </div>
+                                            
+                            <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
+                            ${s.tags && s.tags.length > 0 ? `
+                                <div class="flex flex-wrap gap-1 mb-2">
+                                    ${s.tags.map(tag => `<span class="text-[9px] px-2 py-0.5 bg-slate-100 text-slate-500 rounded border border-slate-200">#${tag.trim()}</span>`).join('')}
+                                </div>
+                            ` : ''}
+
+                            <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
+                                <div class="relative">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <div class="w-2.5 h-2.5 rounded-full ${devLightColor}" title="Dev Status"></div>
+                                        <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
                                     </div>
-                                ` : ''}
-
-                                <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
-                                    <div class="relative">
-                                        <div class="flex items-center gap-2 mb-1">
-                                            <div class="w-2.5 h-2.5 rounded-full ${devLightColor}" title="Dev Status"></div>
-                                            <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
+                                    <div class="flex flex-col gap-0.5">
+                                        <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                            <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
+                                            ${s.assignedTo}
+                                        </p>
+                                        <div class="ml-8 mt-1 mb-1">
+                                            <div class="flex justify-between items-center mb-0.5">
+                                                <span class="text-[9px] text-gray-400 font-bold">Dev: ${completedDevTasks}/${totalDevTasks}</span>
+                                                <span class="text-[9px] text-blue-600 font-bold">${devProgressPercent}%</span>
+                                            </div>
+                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                                                <div class="bg-blue-500 h-full transition-all duration-500" style="width: ${devProgressPercent}%"></div>
+                                            </div>
                                         </div>
-                                        <div class="flex flex-col gap-0.5">
-                                            <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                                <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
-                                                ${s.assignedTo}
-                                            </p>
-
+                                        ${totalBugs > 0 ? `
                                             <div class="ml-8 mt-1 mb-1">
                                                 <div class="flex justify-between items-center mb-0.5">
-                                                    <span class="text-[9px] text-gray-400 font-bold">Dev: ${completedDevTasks}/${totalDevTasks}</span>
-                                                    <span class="text-[9px] text-blue-600 font-bold">${devProgressPercent}%</span>
+                                                    <span class="text-[9px] text-gray-400 font-bold">Fixing: ${completedBugs}/${totalBugs}</span>
+                                                    <span class="text-[9px] text-red-600 font-bold">${fixingProgressPercent}%</span>
                                                 </div>
                                                 <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                                                    <div class="bg-blue-500 h-full transition-all duration-500" style="width: ${devProgressPercent}%"></div>
+                                                    <div class="bg-red-500 h-full transition-all duration-500" style="width: ${fixingProgressPercent}%"></div>
                                                 </div>
                                             </div>
-
-                                            ${totalBugs > 0 ? `
-                                                <div class="ml-8 mt-1 mb-1">
-                                                    <div class="flex justify-between items-center mb-0.5">
-                                                        <span class="text-[9px] text-gray-400 font-bold">Fixing: ${completedBugs}/${totalBugs}</span>
-                                                        <span class="text-[9px] text-red-600 font-bold">${fixingProgressPercent}%</span>
-                                                    </div>
-                                                    <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                                                        <div class="bg-red-500 h-full transition-all duration-500" style="width: ${fixingProgressPercent}%"></div>
-                                                    </div>
-                                                </div>
-                                            ` : ''}
-
-                                            <p class="text-[10px] text-gray-500 ml-8">
-                                                Ends: ${s.calc.devEnd instanceof Date ? s.calc.devEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'TBD'}
-                                            </p>
-                                        </div>
+                                        ` : ''}
+                                        <p class="text-[10px] text-gray-500 ml-8">
+                                            Ends: ${s.calc.devEnd instanceof Date ? s.calc.devEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'TBD'}
+                                        </p>
                                     </div>
+                                </div>
 
-                                    <div class="relative">
-                                        <div class="flex items-center gap-2 mb-1">
-                                            <div class="w-2.5 h-2.5 rounded-full ${testLightColor}" title="QA Status"></div>
-                                            <p class="text-[10px] uppercase text-gray-400 font-bold">Quality Assurance</p>
-                                        </div>
-                                        <div class="flex flex-col gap-0.5">
-                                            <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                                <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
-                                                ${s.tester}
-                                            </p>
-                                            
-                                            ${totalTC > 0 ? `
-                                                <div class="ml-8 mt-1 mb-1">
-                                                    <div class="flex justify-between items-center mb-0.5">
-                                                        <span class="text-[9px] text-gray-400 font-bold">Progress: ${completedTC}/${totalTC}</span>
-                                                        <span class="text-[9px] text-indigo-600 font-bold">${progressPercent}%</span>
-                                                    </div>
-                                                    <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                                                        <div class="bg-indigo-500 h-full transition-all duration-500" style="width: ${progressPercent}%"></div>
-                                                    </div>
-                                                </div>
-                                            ` : '<p class="text-[9px] text-gray-400 ml-8 italic">No TCs found</p>'}
-
-                                            <p class="text-[10px] text-gray-500 ml-8">
-                                                Ends: ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting'}
-                                            </p>
-                                        </div>
+                                <div class="relative">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <div class="w-2.5 h-2.5 rounded-full ${testLightColor}" title="QA Status"></div>
+                                        <p class="text-[10px] uppercase text-gray-400 font-bold">Quality Assurance</p>
                                     </div>
-
-                                    <div class="col-span-2 mt-2 pt-2 border-t border-dashed border-gray-100">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-2.5 h-2.5 rounded-full ${releaseLightColor}" title="Client Release Status"></div>
-                                                <p class="text-[10px] uppercase text-gray-400 font-bold">Client Expected Date</p>
+                                    <div class="flex flex-col gap-0.5">
+                                        <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                            <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
+                                            ${s.tester}
+                                        </p>
+                                        ${totalTC > 0 ? `
+                                            <div class="ml-8 mt-1 mb-1">
+                                                <div class="flex justify-between items-center mb-0.5">
+                                                    <span class="text-[9px] text-gray-400 font-bold">Progress: ${completedTC}/${totalTC}</span>
+                                                    <span class="text-[9px] text-indigo-600 font-bold">${progressPercent}%</span>
+                                                </div>
+                                                <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                                                    <div class="bg-indigo-500 h-full transition-all duration-500" style="width: ${progressPercent}%"></div>
+                                                </div>
                                             </div>
-                                            <p class="text-xs font-bold ${isReleaseLate ? 'text-red-600' : 'text-slate-600'}">
-                                                ${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : 'Not Set'}
-                                            </p>
-                                        </div>
+                                        ` : '<p class="text-[9px] text-gray-400 ml-8 italic">No TCs found</p>'}
+                                        <p class="text-[10px] text-gray-500 ml-8">
+                                            Ends: ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting'}
+                                        </p>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
-                                <div class="flex flex-col">
-                                    <span class="text-[10px] uppercase font-bold text-gray-400">Final Delivery (Internal)</span>
-                                    <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
-                                        ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting for Data'}
-                                    </span>
-                                </div>
-                                ${isLate || isReleaseLate ? '<span class="text-xl animate-bounce">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
                             </div>
                         </div>
+
+                        <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] uppercase font-bold text-gray-400">Final Delivery (Internal)</span>
+                                <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
+                                    ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting for Data'}
+                                </span>
+                            </div>
+                            ${isLate || isReleaseLate ? '<span class="text-xl animate-bounce">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
+                        </div>
+                    </div>
                     `;
                 }).join('')}
             `;
         }).join('');
-    }
-    ,
+    },
 
 renderDelivery() {
     const container = document.getElementById('delivery-grid');
