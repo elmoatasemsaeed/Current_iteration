@@ -1152,7 +1152,7 @@ openStoryModal(storyId) {
     closeModal() {
         document.getElementById('story-modal').classList.add('hidden');
         document.body.style.overflow = 'auto';
-    }
+    },
     
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
