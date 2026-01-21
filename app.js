@@ -1068,20 +1068,23 @@ openStoryModal(storyId) {
                 </div>
             </div>
 
-            <div class="space-y-4">
-                <h4 class="font-bold text-blue-700 border-b pb-1">🛠 Development Details</h4>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <p><b>Assigned To:</b> ${s.assignedTo}</p>
-                    <p><b>Dev End:</b> ${s.calc.devEnd instanceof Date ? s.calc.devEnd.toLocaleString() : 'TBD'}</p>
-                </div>
-                <div class="space-y-1">
-                    ${nonTestTasks.map(t => `
-                        <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
-                            <span>${t['Title']}</span>
-                            <span class="px-2 rounded ${t['State'] === 'Closed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${t['State']}</span>
-                        </div>
-                    `).join('')}
-                </div>
+           <div class="space-y-4">
+    <h4 class="font-bold text-blue-700 border-b pb-1">🛠 Development Details</h4>
+    <div class="grid grid-cols-2 gap-2 text-xs">
+        <p><b>Assigned To:</b> ${s.assignedTo}</p>
+        <p><b>Dev End:</b> ${s.calc.devEnd instanceof Date ? s.calc.devEnd.toLocaleString() : 'TBD'}</p>
+    </div>
+    <div class="space-y-1">
+        ${nonTestTasks.map(t => `
+            <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
+                <span class="flex items-start gap-2">
+                    <span class="font-mono text-blue-600 font-bold bg-blue-50 px-1 rounded">#${t['ID']}</span>
+                    <span>${t['Title']}</span>
+                </span>
+                <span class="px-2 rounded h-fit ${t['State'] === 'Closed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${t['State']}</span>
+            </div>
+        `).join('')}
+    </div>
             </div>
 
             <div class="space-y-4">
