@@ -627,6 +627,8 @@ renderClientRoadmap() {
                     const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
 
                     return `
+                    <div onclick="ui.openStoryModal('${s.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col">
+
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden flex flex-col">
                             <div class="p-5 flex-1">
                                 <div class="flex justify-between items-start mb-4">
@@ -1061,6 +1063,96 @@ renderWorkload() {
 
     container.innerHTML = finalHtml || '<div class="col-span-full text-center py-20 text-gray-400">No workload data available.</div>';
 },
+    
+openStoryModal(storyId) {
+        const s = currentData.find(item => item.id.toString() === storyId.toString());
+        if (!s) return;
+
+        const modal = document.getElementById('story-modal');
+        const title = document.getElementById('modal-title');
+        const body = document.getElementById('modal-body');
+
+        title.innerText = `[#${s.id}] ${s.title}`;
+        
+        // حسابات التقدم للعرض بالتفصيل
+        const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
+        const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
+
+        body.innerHTML = `
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="bg-slate-50 p-3 rounded-lg">
+                    <p class="text-gray-500 text-xs font-bold uppercase">Business Area</p>
+                    <p class="font-semibold text-slate-700">${s.area}</p>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg">
+                    <p class="text-gray-500 text-xs font-bold uppercase">Priority</p>
+                    <p class="font-semibold text-slate-700">P${s.priority}</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="font-bold text-blue-700 border-b pb-1">🛠 Development Details</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <p><b>Assigned To:</b> ${s.assignedTo}</p>
+                    <p><b>Dev End:</b> ${s.calc.devEnd instanceof Date ? s.calc.devEnd.toLocaleString() : 'TBD'}</p>
+                </div>
+                <div class="space-y-1">
+                    ${nonTestTasks.map(t => `
+                        <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
+                            <span>${t['Title']}</span>
+                            <span class="px-2 rounded ${t['State'] === 'Closed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${t['State']}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="font-bold text-purple-700 border-b pb-1">🔍 QA & Testing</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <p><b>Tester:</b> ${s.tester}</p>
+                    <p><b>Test End:</b> ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleString() : 'Waiting'}</p>
+                </div>
+                <div class="space-y-1">
+                    ${s.testCases && s.testCases.length > 0 ? s.testCases.map(tc => `
+                        <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
+                            <span>TC #${tc.id}</span>
+                            <span class="font-bold ${tc.state === 'Pass' ? 'text-green-600' : 'text-red-600'}">${tc.state}</span>
+                        </div>
+                    `).join('') : '<p class="text-xs text-gray-400 italic">No test cases linked yet.</p>'}
+                </div>
+            </div>
+
+            ${s.bugs && s.bugs.length > 0 ? `
+            <div class="space-y-2">
+                <h4 class="font-bold text-red-600 border-b pb-1">🐞 Bugs (${s.bugs.length})</h4>
+                ${s.bugs.map(b => `
+                    <div class="text-[11px] border-l-2 border-red-500 pl-2 py-1">
+                        <p class="font-bold">${b['Title']}</p>
+                        <p class="text-gray-500">State: ${b['State']} | Effort: ${b['Original Estimation']}h</p>
+                    </div>
+                `).join('')}
+            </div>` : ''}
+
+            <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold text-indigo-700 uppercase">Internal Delivery Target</span>
+                    <span class="text-sm font-bold text-indigo-900">${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString() : 'Calculating...'}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span>
+                    <span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString() : 'Not Scheduled'}</span>
+                </div>
+            </div>
+        `;
+
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // منع السكرول في الخلفية
+    },
+
+    closeModal() {
+        document.getElementById('story-modal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
     
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
