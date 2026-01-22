@@ -1263,14 +1263,12 @@ async fetchFromAzure() {
         const spinner = document.getElementById('azure-spinner');
         if (spinner) spinner.classList.remove('hidden');
 
-        // دالة تنظيف الأسماء كما في مشروعك القديم
         const cleanName = (rawName) => {
             if (!rawName) return "";
             return String(rawName).split('<')[0].trim();
         };
 
         try {
-            // 1. استخدام البروكسي لتجاوز CORS
             const targetUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/wiql/${CONFIG.AZURE.QUERY_ID}?api-version=6.0`;
             const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 
@@ -1294,8 +1292,6 @@ async fetchFromAzure() {
             }
 
             const ids = queryResult.workItems.map(item => item.id);
-
-            // 2. جلب تفاصيل العناصر
             const detailsUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/workitems?ids=${ids.join(',')}&api-version=6.0`;
             const proxyDetailsUrl = `https://corsproxy.io/?${encodeURIComponent(detailsUrl)}`;
 
@@ -1306,19 +1302,15 @@ async fetchFromAzure() {
             const detailsData = await detailsRes.json();
             const allFieldsData = detailsData.value || [];
 
-            // 3. تحويل البيانات وتنظيفها لتعمل مع الـ DataProcessor
             const formattedRows = allFieldsData.map(item => {
                 const row = {};
                 const f = item.fields;
 
-                // استخدام fieldMap الموجودة أصلاً في الكود الخاص بك
                 for (const [azField, localField] of Object.entries(this.fieldMap)) {
                     let value = f[azField] || "";
-                    
                     if (value && typeof value === 'object') {
                         value = value.displayName || value.uniqueName || "";
                     }
-                    
                     if (azField === 'System.AssignedTo' || azField.toLowerCase().includes('tester')) {
                         value = cleanName(value);
                     }
@@ -1327,7 +1319,6 @@ async fetchFromAzure() {
                 return row;
             });
 
-            // 4. تمرير البيانات لمعالج البيانات الخاص بك
             if (typeof dataProcessor !== 'undefined') {
                 dataProcessor.processRows(formattedRows);
                 alert(`تم بنجاح جلب ${formattedRows.length} عنصر.`);
@@ -1339,7 +1330,9 @@ async fetchFromAzure() {
         } finally {
             if (spinner) spinner.classList.add('hidden');
         }
-    };
+    } // إغلاق fetchFromAzure
+}; // إغلاق azureProcessor
+
 /**
  * Initialize
  */
@@ -1347,9 +1340,9 @@ window.onload = () => {
     const saved = localStorage.getItem('saved_creds');
     if(saved) {
         const creds = JSON.parse(saved);
-        document.getElementById('username').value = creds.u;
-        document.getElementById('password').value = creds.p;
-        document.getElementById('gh-token').value = creds.t;
+        if (document.getElementById('username')) document.getElementById('username').value = creds.u;
+        if (document.getElementById('password')) document.getElementById('password').value = creds.p;
+        if (document.getElementById('gh-token')) document.getElementById('gh-token').value = creds.t;
         auth.handleLogin();
     }
 };
