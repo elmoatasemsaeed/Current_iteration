@@ -1254,99 +1254,92 @@ const azureProcessor = {
     },
 
 async fetchFromAzure() {
-    const token = sessionStorage.getItem('az_token');
-    if (!token) {
-        alert("من فضلك أدخل Azure PAT أولاً في صفحة تسجيل الدخول");
-        return;
-    }
-
-    const spinner = document.getElementById('azure-spinner');
-    if (spinner) spinner.classList.remove('hidden');
-
-    // دالة داخلية لتنظيف الأسماء (مأخوذة من ملف automation.js الخاص بك)
-    const cleanName = (rawName) => {
-        if (!rawName) return "";
-        return String(rawName).split('<')[0].trim();
-    };
-
-    try {
-        // 1. إعداد الرابط باستخدام بروكسي خارجي لتجاوز مشكلة الـ CORS
-        const targetUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/wiql/${CONFIG.AZURE.QUERY_ID}?api-version=6.0`;
-        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
-
-        const res = await fetch(proxyUrl, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Basic ${btoa(':' + token)}`,
-                'Accept': 'application/json'
-            }
-        });
-
-        if (!res.ok) {
-            if (res.status === 401) throw new Error("فشل التحقق: الـ PAT غير صحيح أو منتهي الصلاحية.");
-            throw new Error(`خطأ من Azure: ${res.status}`);
-        }
-
-        const queryResult = await res.json();
-        
-        if (!queryResult.workItems || queryResult.workItems.length === 0) {
-            alert("لا توجد بيانات في هذه الكويري.");
+        const token = sessionStorage.getItem('az_token');
+        if (!token) {
+            alert("من فضلك أدخل Azure PAT أولاً في صفحة تسجيل الدخول");
             return;
         }
 
-        const ids = queryResult.workItems.map(item => item.id);
+        const spinner = document.getElementById('azure-spinner');
+        if (spinner) spinner.classList.remove('hidden');
 
-        // 2. جلب تفاصيل الـ Work Items (Batch Fetch)
-        const detailsUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/workitems?ids=${ids.join(',')}&api-version=6.0`;
-        const proxyDetailsUrl = `https://corsproxy.io/?${encodeURIComponent(detailsUrl)}`;
+        // دالة تنظيف الأسماء كما في مشروعك القديم
+        const cleanName = (rawName) => {
+            if (!rawName) return "";
+            return String(rawName).split('<')[0].trim();
+        };
 
-        const detailsRes = await fetch(proxyDetailsUrl, {
-            headers: { 'Authorization': `Basic ${btoa(':' + token)}` }
-        });
-        
-        const detailsData = await detailsRes.json();
-        const allFieldsData = detailsData.value || [];
+        try {
+            // 1. استخدام البروكسي لتجاوز CORS
+            const targetUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/wiql/${CONFIG.AZURE.QUERY_ID}?api-version=6.0`;
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 
-        // 3. تحويل وتنظيف البيانات لتناسب Logic المعالجة الخاص بك
-        const formattedRows = allFieldsData.map(item => {
-            const row = {};
-            const f = item.fields;
-
-            // استخدام الخريطة (fieldMap) الموجودة في الكود الخاص بك
-            for (const [azField, localField] of Object.entries(this.fieldMap)) {
-                let value = f[azField] || "";
-                
-                // معالجة الكائنات (Objects) مثل Assigned To
-                if (value && typeof value === 'object') {
-                    value = value.displayName || value.uniqueName || "";
+            const res = await fetch(proxyUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Basic ${btoa(':' + token)}`,
+                    'Accept': 'application/json'
                 }
-                
-                // تنظيف الأسماء إذا كان الحقل يخص الأشخاص (Assigned To / Tester)
-                if (azField === 'System.AssignedTo' || azField.toLowerCase().includes('tester')) {
-                    value = cleanName(value);
-                }
+            });
 
-                row[localField] = value;
+            if (!res.ok) {
+                if (res.status === 401) throw new Error("فشل التحقق: الـ PAT غير صحيح");
+                throw new Error(`خطأ Azure: ${res.status}`);
             }
-            return row;
-        });
 
-        // 4. تمرير البيانات للمعالج
-        if (typeof dataProcessor !== 'undefined') {
-            dataProcessor.processRows(formattedRows);
-            alert(`تم بنجاح جلب ${formattedRows.length} عنصر.`);
-        } else {
-            console.error("dataProcessor غير موجود!");
+            const queryResult = await res.json();
+            if (!queryResult.workItems || queryResult.workItems.length === 0) {
+                alert("لا توجد بيانات.");
+                return;
+            }
+
+            const ids = queryResult.workItems.map(item => item.id);
+
+            // 2. جلب تفاصيل العناصر
+            const detailsUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/workitems?ids=${ids.join(',')}&api-version=6.0`;
+            const proxyDetailsUrl = `https://corsproxy.io/?${encodeURIComponent(detailsUrl)}`;
+
+            const detailsRes = await fetch(proxyDetailsUrl, {
+                headers: { 'Authorization': `Basic ${btoa(':' + token)}` }
+            });
+            
+            const detailsData = await detailsRes.json();
+            const allFieldsData = detailsData.value || [];
+
+            // 3. تحويل البيانات وتنظيفها لتعمل مع الـ DataProcessor
+            const formattedRows = allFieldsData.map(item => {
+                const row = {};
+                const f = item.fields;
+
+                // استخدام fieldMap الموجودة أصلاً في الكود الخاص بك
+                for (const [azField, localField] of Object.entries(this.fieldMap)) {
+                    let value = f[azField] || "";
+                    
+                    if (value && typeof value === 'object') {
+                        value = value.displayName || value.uniqueName || "";
+                    }
+                    
+                    if (azField === 'System.AssignedTo' || azField.toLowerCase().includes('tester')) {
+                        value = cleanName(value);
+                    }
+                    row[localField] = value;
+                }
+                return row;
+            });
+
+            // 4. تمرير البيانات لمعالج البيانات الخاص بك
+            if (typeof dataProcessor !== 'undefined') {
+                dataProcessor.processRows(formattedRows);
+                alert(`تم بنجاح جلب ${formattedRows.length} عنصر.`);
+            }
+
+        } catch (error) {
+            console.error("Azure Fetch Error:", error);
+            alert("حدث خطأ: " + error.message);
+        } finally {
+            if (spinner) spinner.classList.add('hidden');
         }
-
-    } catch (error) {
-        console.error("Azure Fetch Error:", error);
-        alert("حدث خطأ أثناء الجلب: " + error.message);
-    } finally {
-        if (spinner) spinner.classList.add('hidden');
-    }
-},
-
+    },
 /**
  * Initialize
  */
