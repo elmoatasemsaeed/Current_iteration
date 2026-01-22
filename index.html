@@ -45,6 +45,7 @@
                         <button onclick="ui.switchTab('delivery')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Delivery (Tested)</button>
                         <button onclick="ui.switchTab('availability')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Availability</button>
                         <button onclick="ui.switchTab('workload')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Workload</button>
+                        <button onclick="ui.switchTab('daily-activity')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Daily Activity</button>
                         <button onclick="ui.switchTab('settings')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Settings</button>
                     </nav>
                 </div>
@@ -172,6 +173,18 @@
             <section id="tab-workload" class="tab-content">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="workload-container">
         </div>
+</section>
+            <section id="tab-daily-activity" class="tab-content space-y-4">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-amber-50 p-4 rounded-lg border border-amber-200">
+        <div>
+            <h2 class="font-bold text-amber-800 text-2xl">Daily Activity Log</h2>
+            <p class="text-sm text-amber-600">All work items activated or updated today</p>
+        </div>
+        <button onclick="ui.exportDailyActivityToExcel()" class="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition flex items-center gap-2">
+            📊 Export to Excel
+        </button>
+    </div>
+    <div id="daily-activity-container" class="space-y-8"></div>
 </section>
         </main>
     </div>
