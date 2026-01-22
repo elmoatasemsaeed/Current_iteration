@@ -7,7 +7,12 @@ const CONFIG = {
     WORKING_HOURS: 5,
     START_HOUR: 9,
     END_HOUR: 17,
-    WEEKEND: [5, 6] // الجمعة والسبت
+    WEEKEND: [5, 6],
+    AZURE: {
+        ORG: "NTDotNet", 
+        PROJECT: "LDM",
+        QUERY_ID: "8a732680-07a6-4dff-bdbd-7800644f61b9"
+    }
 };
 
 let db = {
@@ -74,6 +79,8 @@ const auth = {
             loginBtn.innerText = originalText;
             loginBtn.disabled = false;
         }
+        const azToken = document.getElementById('az-token').value;
+sessionStorage.setItem('az_token', azToken);
     },
    
     startApp() {
@@ -1219,6 +1226,82 @@ const settings = {
         db.holidays.splice(i, 1);
         dataProcessor.saveToGitHub();
         ui.renderSettings();
+    }
+};
+const azureProcessor = {
+    // خريطة تحويل المسميات من Azure إلى المسميات التي يفهمها التطبيق
+    fieldMap: {
+        'System.Id': 'ID',
+        'System.WorkItemType': 'Work Item Type',
+        'System.Title': 'Title',
+        'System.AssignedTo': 'Assigned To',
+        'Microsoft.VSTS.Common.Activity': 'Activity',
+        'NT.OriginalEstimation': 'Original Estimation',
+        'Custom.TimeSheet_DevActualTime': 'TimeSheet_DevActualTime',
+        'Custom.TimeSheet_TestingActualTime': 'TimeSheet_TestingActualTime',
+        'Microsoft.VSTS.Common.ActivatedDate': 'Activated Date',
+        'MyCompany.MyProcess.BusinessArea': 'Business Area',
+        'System.IterationPath': 'Iteration Path',
+        'Custom.CustomResolvedDate': 'CustomResolvedDate',
+        'MyCompany.MyProcess.TestedDate': 'Tested Date',
+        'MyCompany.MyProcess.Tester': 'Assigned To Tester',
+        'Microsoft.VSTS.Common.ResolvedDate': 'Resolved Date',
+        'System.State': 'State',
+        'MyCompany.MyProcess.Release': 'Release Expected Date',
+        'MyCompany.MyProcess.BusinessPriority': 'Business Priority',
+        'System.Tags': 'Tags'
+    },
+
+    async fetchFromAzure() {
+        const token = sessionStorage.getItem('az_token');
+        if (!token) return alert("برجاء إدخال Azure PAT في شاشة الدخول");
+
+        const spinner = document.getElementById('az-spinner');
+        spinner.classList.remove('hidden');
+
+        try {
+            const authHeader = { 'Authorization': `Basic ${btoa(':' + token)}` };
+            
+            // 1. جلب قائمة الـ IDs من الكويري (لتخطي قيد الـ 200 سطر)
+            const queryUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/queries/${CONFIG.AZURE.QUERY_ID}/execute?api-version=6.0`;
+            const queryRes = await fetch(queryUrl, { headers: authHeader });
+            const queryData = await queryRes.json();
+            
+            const workItemIds = queryData.workItems.map(wi => wi.id);
+            if (workItemIds.length === 0) throw new Error("لم يتم العثور على نتائج في الكويري");
+
+            // 2. جلب تفاصيل العناصر في مجموعات (Chunks) كل مجموعة 200 عنصر
+            let allFieldsData = [];
+            for (let i = 0; i < workItemIds.length; i += 200) {
+                const chunk = workItemIds.slice(i, i + 200);
+                const detailsUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/workitems?ids=${chunk.join(',')}&api-version=6.0`;
+                const detailsRes = await fetch(detailsUrl, { headers: authHeader });
+                const detailsData = await detailsRes.json();
+                allFieldsData = allFieldsData.concat(detailsData.value);
+            }
+
+            // 3. تحويل البيانات لتناسب تنسيق الـ CSV الذي يعالجه التطبيق
+            const formattedRows = allFieldsData.map(item => {
+                const row = {};
+                for (const [azField, localField] of Object.entries(this.fieldMap)) {
+                    let value = item.fields[azField] || "";
+                    // معالجة خاصة للحقول المعقدة مثل Assigned To
+                    if (value && typeof value === 'object') value = value.displayName || value.uniqueName;
+                    row[localField] = value;
+                }
+                return row;
+            });
+
+            // 4. إرسال البيانات للمعالجة بنفس منطق الـ CSV القديم
+            dataProcessor.processRows(formattedRows);
+            alert(`تم جلب ${formattedRows.length} عنصر بنجاح من Azure`);
+
+        } catch (error) {
+            console.error("Azure Fetch Error:", error);
+            alert("فشل جلب البيانات من Azure: " + error.message);
+        } finally {
+            spinner.classList.add('hidden');
+        }
     }
 };
 
