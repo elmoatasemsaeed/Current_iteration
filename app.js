@@ -1255,60 +1255,92 @@ const azureProcessor = {
 
     async fetchFromAzure() {
     const token = sessionStorage.getItem('az_token');
-    if (!token) return alert("برجاء إدخال Azure PAT في شاشة الدخول");
+    if (!token) return alert("من فضلك أدخل Azure PAT أولاً في صفحة تسجيل الدخول");
 
-    const spinner = document.getElementById('az-spinner');
+    const spinner = document.getElementById('azure-spinner');
     if (spinner) spinner.classList.remove('hidden');
 
+    // دالة داخلية لتنظيف الأسماء (مثل مشروعك القديم)
+    const cleanName = (rawName) => {
+        if (!rawName) return "";
+        return String(rawName).split('<')[0].trim();
+    };
+
     try {
-        // --- إضافة هذا السطر لتعريف الرابط ناقصاً ---
-            const queryUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/wiql/${CONFIG.AZURE.QUERY_ID}?api-version=6.0`;
-            const authHeader = {
-    'Authorization': `Basic ${btoa(':' + token)}`,
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-};
-            const queryRes = await fetch(queryUrl, {method: 'GET', headers: authHeader, mode: 'cors'});
-            const queryData = await queryRes.json();
-            
-            const workItemIds = queryData.workItems.map(wi => wi.id);
-            if (workItemIds.length === 0) throw new Error("لم يتم العثور على نتائج في الكويري");
+        // 1. إعداد الروابط باستخدام البروكسي لتخطى حماية الـ CORS
+        const targetUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/wiql/${CONFIG.AZURE.QUERY_ID}?api-version=6.0`;
+        const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
 
-            // 2. جلب تفاصيل العناصر في مجموعات (Chunks) كل مجموعة 200 عنصر
-            let allFieldsData = [];
-            for (let i = 0; i < workItemIds.length; i += 200) {
-                const chunk = workItemIds.slice(i, i + 200);
-                const detailsUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/workitems?ids=${chunk.join(',')}&api-version=6.0`;
-                const detailsRes = await fetch(detailsUrl, { headers: authHeader });
-                const detailsData = await detailsRes.json();
-                allFieldsData = allFieldsData.concat(detailsData.value);
+        // 2. طلب الحصول على قائمة معرفات الـ IDs
+        const res = await fetch(proxyUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Basic ${btoa(':' + token)}`,
+                'Accept': 'application/json'
             }
+        });
 
-            // 3. تحويل البيانات لتناسب تنسيق الـ CSV الذي يعالجه التطبيق
-            const formattedRows = allFieldsData.map(item => {
-                const row = {};
-                for (const [azField, localField] of Object.entries(this.fieldMap)) {
-                    let value = item.fields[azField] || "";
-                    // معالجة خاصة للحقول المعقدة مثل Assigned To
-                    if (value && typeof value === 'object') value = value.displayName || value.uniqueName;
-                    row[localField] = value;
-                }
-                return row;
-            });
-
-            // 4. إرسال البيانات للمعالجة بنفس منطق الـ CSV القديم
-            dataProcessor.processRows(formattedRows);
-            alert(`تم جلب ${formattedRows.length} عنصر بنجاح من Azure`);
-
-        } catch (error) {
-            console.error("Azure Fetch Error:", error);
-            alert("فشل جلب البيانات من Azure: " + error.message);
-        } finally {
-            spinner.classList.add('hidden');
+        if (!res.ok) {
+            if (res.status === 401) throw new Error("فشل التحقق: الـ PAT غير صحيح أو منتهي الصلاحية.");
+            throw new Error(`خطأ من Azure: ${res.status}`);
         }
-    }
-};
 
+        const queryResult = await res.json();
+        const ids = queryResult.workItems.map(item => item.id);
+
+        if (ids.length === 0) {
+            alert("لا توجد بيانات في الكويري المحددة.");
+            return;
+        }
+
+        // 3. جلب تفاصيل الـ Work Items (تقسيمهم لمجموعات لتفادي كبر حجم الطلب)
+        const chunkSize = 200;
+        let allFieldsData = [];
+
+        for (let i = 0; i < ids.length; i += chunkSize) {
+            const chunk = ids.slice(i, i + chunkSize);
+            const detailsUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/workitems?ids=${chunk.join(',')}&api-version=6.0`;
+            const proxyDetailsUrl = "https://corsproxy.io/?" + encodeURIComponent(detailsUrl);
+
+            const detailsRes = await fetch(proxyDetailsUrl, {
+                headers: { 'Authorization': `Basic ${btoa(':' + token)}` }
+            });
+            const detailsData = await detailsRes.json();
+            allFieldsData = allFieldsData.concat(detailsData.value);
+        }
+
+        // 4. تحويل البيانات وتنسيقها وتنظيف الأسماء
+        const formattedRows = allFieldsData.map(item => {
+            const row = {};
+            for (const [azField, localField] of Object.entries(this.fieldMap)) {
+                let value = item.fields[azField] || "";
+                
+                // معالجة خاصة للحقول المعقدة (مثل Assigned To)
+                if (value && typeof value === 'object') {
+                    value = value.displayName || value.uniqueName || "";
+                }
+                
+                // تنظيف الاسم إذا كان هذا الحقل يخص الأشخاص
+                if (azField === 'System.AssignedTo' || azField.toLowerCase().includes('tester')) {
+                    value = cleanName(value);
+                }
+
+                row[localField] = value;
+            }
+            return row;
+        });
+
+        // 5. إرسال البيانات للمعالج (Data Processor)
+        dataProcessor.processRows(formattedRows);
+        alert(`تم جلب ${formattedRows.length} عنصر بنجاح من Azure ومعالجتها.`);
+
+    } catch (error) {
+        console.error("Azure Fetch Error:", error);
+        alert("فشل جلب البيانات: " + error.message + "\nتأكد من تفعيل البروكسي أو صحة الـ PAT.");
+    } finally {
+        if (spinner) spinner.classList.add('hidden');
+    }
+},
 /**
  * Initialize
  */
