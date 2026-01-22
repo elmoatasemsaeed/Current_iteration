@@ -1253,7 +1253,7 @@ const azureProcessor = {
         'System.Tags': 'Tags'
     },
 
-    async fetchFromAzure() {
+async fetchFromAzure() {
     const token = sessionStorage.getItem('az_token');
     if (!token) return alert("من فضلك أدخل Azure PAT أولاً في صفحة تسجيل الدخول");
 
@@ -1341,6 +1341,7 @@ const azureProcessor = {
         if (spinner) spinner.classList.add('hidden');
     }
 },
+
 /**
  * Initialize
  */
