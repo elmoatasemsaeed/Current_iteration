@@ -1339,7 +1339,7 @@ async fetchFromAzure() {
         } finally {
             if (spinner) spinner.classList.add('hidden');
         }
-    },
+    };
 /**
  * Initialize
  */
