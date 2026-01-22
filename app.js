@@ -1237,6 +1237,58 @@ openStoryModal(storyId) {
 },
 
     
+  exportDailyActivityToExcel() {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const activities = [];
+
+        currentData.forEach(story => {
+            story.tasks.forEach(task => {
+                if (task['Activated Date'] && task['Activated Date'].startsWith(todayStr)) {
+                    activities.push({
+                        ID: story.id,
+                        Area: story.area,
+                        Type: 'Task',
+                        Title: task['Title'],
+                        Person: story.assignedTo,
+                        State: task['State']
+                    });
+                }
+            });
+
+            if (story.bugs) {
+                story.bugs.forEach(bug => {
+                    if (bug['Activated Date'] && bug['Activated Date'].startsWith(todayStr)) {
+                        activities.push({
+                            ID: story.id,
+                            Area: story.area,
+                            Type: 'Bug',
+                            Title: bug['Title'],
+                            Person: story.assignedTo,
+                            State: bug['State']
+                        });
+                    }
+                });
+            }
+        });
+
+        if (activities.length === 0) return alert("لا توجد أنشطة مسجلة اليوم لتصديرها");
+
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+        csvContent += "ID,Area,Type,Title,Person,State\n";
+        
+        activities.forEach(row => {
+            csvContent += `${row.ID},${row.Area},${row.Type},"${row.Title.replace(/"/g, '""')}",${row.Person},${row.State}\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Activity_Report_${todayStr}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    },  
+
     
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
