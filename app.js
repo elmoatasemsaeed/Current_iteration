@@ -744,41 +744,7 @@ renderDelivery() {
         return isPending && matchesSearch;
     });
     
-    exportDailyActivityToExcel = () => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    let csvContent = "\ufeff"; // UTF-8 BOM for Arabic support
-    csvContent += "Business Area,Story ID,Type,Activity,Title,Person,State\n";
 
-    currentData.forEach(story => {
-        const processItem = (item, type, activity) => {
-            if (item['Activated Date'] && item['Activated Date'].startsWith(todayStr)) {
-                const row = [
-                    `"${story.area}"`,
-                    `"${story.id}"`,
-                    `"${type}"`,
-                    `"${activity}"`,
-                    `"${item['Title'].replace(/"/g, '""')}"`,
-                    `"${story.assignedTo}"`,
-                    `"${item['State']}"`
-                ];
-                csvContent += row.join(",") + "\n";
-            }
-        };
-
-        story.tasks.forEach(t => processItem(t, 'Task', t['Activity']));
-        if (story.bugs) story.bugs.forEach(b => processItem(b, 'Bug', 'Fixing'));
-    });
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `Daily_Activity_${todayStr}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
     
     // 3. الفلترة للقصص التي تم تسليمها (مع البحث)
     const completedStories = db.deliveryLogs.map(log => {
@@ -855,6 +821,7 @@ renderDelivery() {
 
     container.innerHTML = html;
 },
+    
 
     markDelivered(id) {
         if (currentUser.role !== 'admin') {
@@ -1077,7 +1044,42 @@ renderWorkload() {
 
     container.innerHTML = finalHtml || '<div class="col-span-full text-center py-20 text-gray-400">No workload data available.</div>';
 },
-    
+
+    exportDailyActivityToExcel = () => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    let csvContent = "\ufeff"; // UTF-8 BOM for Arabic support
+    csvContent += "Business Area,Story ID,Type,Activity,Title,Person,State\n";
+
+    currentData.forEach(story => {
+        const processItem = (item, type, activity) => {
+            if (item['Activated Date'] && item['Activated Date'].startsWith(todayStr)) {
+                const row = [
+                    `"${story.area}"`,
+                    `"${story.id}"`,
+                    `"${type}"`,
+                    `"${activity}"`,
+                    `"${item['Title'].replace(/"/g, '""')}"`,
+                    `"${story.assignedTo}"`,
+                    `"${item['State']}"`
+                ];
+                csvContent += row.join(",") + "\n";
+            }
+        };
+
+        story.tasks.forEach(t => processItem(t, 'Task', t['Activity']));
+        if (story.bugs) story.bugs.forEach(b => processItem(b, 'Bug', 'Fixing'));
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Daily_Activity_${todayStr}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
 openStoryModal(storyId) {
         const s = currentData.find(item => item.id.toString() === storyId.toString());
         if (!s) return;
