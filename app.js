@@ -1134,6 +1134,102 @@ openStoryModal(storyId) {
         document.getElementById('story-modal').classList.add('hidden');
         document.body.style.overflow = 'auto';
     },
+    renderDailyActivity() {
+    const container = document.getElementById('daily-activity-container');
+    const todayStr = new Date().toISOString().split('T')[0];
+    const activities = [];
+
+    currentData.forEach(story => {
+        // فحص المهام (Tasks)
+        story.tasks.forEach(task => {
+            if (task['Activated Date'] && task['Activated Date'].startsWith(todayStr)) {
+                activities.push({
+                    area: story.area,
+                    storyId: story.id,
+                    title: task['Title'],
+                    type: 'Task',
+                    activity: task['Activity'] || 'General',
+                    person: story.assignedTo, // أو الشخص المسند إليه التاسك إذا توفر
+                    state: task['State']
+                });
+            }
+        });
+
+        // فحص البجز (Bugs)
+        if (story.bugs) {
+            story.bugs.forEach(bug => {
+                if (bug['Activated Date'] && bug['Activated Date'].startsWith(todayStr)) {
+                    activities.push({
+                        area: story.area,
+                        storyId: story.id,
+                        title: bug['Title'],
+                        type: 'Bug',
+                        activity: 'Fixing',
+                        person: story.assignedTo,
+                        state: bug['State']
+                    });
+                }
+            });
+        }
+    });
+
+    if (activities.length === 0) {
+        container.innerHTML = `<div class="text-center py-20 text-gray-400 bg-white rounded-xl border">No activity recorded for today.</div>`;
+        return;
+    }
+
+    // تجميع حسب الـ Area
+    const grouped = activities.reduce((acc, curr) => {
+        if (!acc[curr.area]) acc[curr.area] = [];
+        acc[curr.area].push(curr);
+        return acc;
+    }, {});
+
+    container.innerHTML = Object.keys(grouped).map(area => `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-3 border-b flex justify-between items-center">
+                <h3 class="font-bold text-slate-700 flex items-center gap-2">
+                    <span class="w-3 h-3 bg-amber-500 rounded-full"></span> ${area}
+                </h3>
+                <span class="text-xs font-medium text-slate-500">${grouped[area].length} Activities</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold">
+                        <tr>
+                            <th class="px-6 py-3">ID</th>
+                            <th class="px-6 py-3">Type</th>
+                            <th class="px-6 py-3">Activity/Title</th>
+                            <th class="px-6 py-3">Person</th>
+                            <th class="px-6 py-3">State</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        ${grouped[area].map(act => `
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-mono text-blue-600">#${act.storyId}</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${act.type === 'Bug' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">
+                                        ${act.type}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-700">${act.activity}</div>
+                                    <div class="text-[11px] text-gray-400 truncate w-64">${act.title}</div>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">${act.person}</td>
+                                <td class="px-6 py-4">
+                                    <span class="text-[11px] font-semibold text-slate-500">${act.state}</span>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `).join('');
+},
+    
     
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
@@ -1220,6 +1316,41 @@ const settings = {
         dataProcessor.saveToGitHub();
         ui.renderSettings();
     }
+};
+exportDailyActivityToExcel() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    let csvContent = "\ufeff"; // UTF-8 BOM for Arabic support
+    csvContent += "Business Area,Story ID,Type,Activity,Title,Person,State\n";
+
+    currentData.forEach(story => {
+        const processItem = (item, type, activity) => {
+            if (item['Activated Date'] && item['Activated Date'].startsWith(todayStr)) {
+                const row = [
+                    `"${story.area}"`,
+                    `"${story.id}"`,
+                    `"${type}"`,
+                    `"${activity}"`,
+                    `"${item['Title'].replace(/"/g, '""')}"`,
+                    `"${story.assignedTo}"`,
+                    `"${item['State']}"`
+                ];
+                csvContent += row.join(",") + "\n";
+            }
+        };
+
+        story.tasks.forEach(t => processItem(t, 'Task', t['Activity']));
+        if (story.bugs) story.bugs.forEach(b => processItem(b, 'Bug', 'Fixing'));
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Daily_Activity_${todayStr}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 };
 
 /**
