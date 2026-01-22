@@ -1260,11 +1260,11 @@ const azureProcessor = {
         spinner.classList.remove('hidden');
 
         try {
-            const authHeader = { 'Authorization': `Basic ${btoa(':' + token)}` };
+            
             
             // 1. جلب قائمة الـ IDs من الكويري (لتخطي قيد الـ 200 سطر)
-            const queryUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/queries/${CONFIG.AZURE.QUERY_ID}/execute?api-version=6.0`;
-            const queryRes = await fetch(queryUrl, { headers: authHeader });
+            const authHeader = {'Authorization': `Basic ${btoa(':' + token)}`, 'Content-Type': 'application/json'};
+            const queryRes = await fetch(queryUrl, {method: 'GET', headers: authHeader, mode: 'cors'});
             const queryData = await queryRes.json();
             
             const workItemIds = queryData.workItems.map(wi => wi.id);
