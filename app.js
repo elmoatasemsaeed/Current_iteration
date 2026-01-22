@@ -1316,7 +1316,7 @@ const settings = {
         dataProcessor.saveToGitHub();
         ui.renderSettings();
     }
-};
+},
 exportDailyActivityToExcel() {
     const todayStr = new Date().toISOString().split('T')[0];
     let csvContent = "\ufeff"; // UTF-8 BOM for Arabic support
