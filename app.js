@@ -34,36 +34,39 @@ const auth = {
         const u = document.getElementById('username').value;
         const p = document.getElementById('password').value;
         const t = document.getElementById('gh-token').value;
+        const azToken = document.getElementById('az-token').value; // جلب قيمة Azure PAT
         const rem = document.getElementById('remember-me').checked;
 
         if(!u || !p || !t) return alert("برجاء ملء جميع البيانات");
 
-        // إظهار رسالة تحميل بسيطة على الزر
         const loginBtn = document.querySelector("button[onclick='auth.handleLogin()']");
         const originalText = loginBtn.innerText;
         loginBtn.innerText = "جاري التحقق...";
         loginBtn.disabled = true;
 
         try {
-            // محاولة جلب الملف من GitHub للتحقق من بيانات المستخدمين
             const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                 headers: { 'Authorization': `token ${t}` }
             });
 
             if (response.ok) {
                 const data = await response.json();
-                // فك التشفير ودعم اللغة العربية
                 const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
                 const remoteDb = JSON.parse(decodedContent);
                 
-                // البحث عن المستخدم داخل الملف المجلوب
                 const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
                 
                 if (userMatch) {
-                    db = remoteDb; // تحديث قاعدة البيانات المحلية
+                    db = remoteDb;
                     db.sha = data.sha;
                     sessionStorage.setItem('gh_token', t);
-                    if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
+                    sessionStorage.setItem('az_token', azToken); // تخزينه في الجلسة الحالية
+
+                    // --- التعديل هنا: إضافة azToken للـ localStorage ---
+                    if(rem) {
+                        localStorage.setItem('saved_creds', JSON.stringify({u, p, t, azToken}));
+                    }
+                    
                     currentUser = userMatch;
                     this.startApp();
                 } else {
@@ -79,8 +82,6 @@ const auth = {
             loginBtn.innerText = originalText;
             loginBtn.disabled = false;
         }
-        const azToken = document.getElementById('az-token').value;
-sessionStorage.setItem('az_token', azToken);
     },
    
     startApp() {
