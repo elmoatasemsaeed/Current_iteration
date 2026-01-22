@@ -7,12 +7,7 @@ const CONFIG = {
     WORKING_HOURS: 5,
     START_HOUR: 9,
     END_HOUR: 17,
-    WEEKEND: [5, 6],
-    AZURE: {
-        ORG: "NTDotNet", 
-        PROJECT: "LDM",
-        QUERY_ID: "8a732680-07a6-4dff-bdbd-7800644f61b9"
-    }
+    WEEKEND: [5, 6] // الجمعة والسبت
 };
 
 let db = {
@@ -34,39 +29,36 @@ const auth = {
         const u = document.getElementById('username').value;
         const p = document.getElementById('password').value;
         const t = document.getElementById('gh-token').value;
-        const azToken = document.getElementById('az-token').value; // جلب قيمة Azure PAT
         const rem = document.getElementById('remember-me').checked;
 
         if(!u || !p || !t) return alert("برجاء ملء جميع البيانات");
 
+        // إظهار رسالة تحميل بسيطة على الزر
         const loginBtn = document.querySelector("button[onclick='auth.handleLogin()']");
         const originalText = loginBtn.innerText;
         loginBtn.innerText = "جاري التحقق...";
         loginBtn.disabled = true;
 
         try {
+            // محاولة جلب الملف من GitHub للتحقق من بيانات المستخدمين
             const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                 headers: { 'Authorization': `token ${t}` }
             });
 
             if (response.ok) {
                 const data = await response.json();
+                // فك التشفير ودعم اللغة العربية
                 const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
                 const remoteDb = JSON.parse(decodedContent);
                 
+                // البحث عن المستخدم داخل الملف المجلوب
                 const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
                 
                 if (userMatch) {
-                    db = remoteDb;
+                    db = remoteDb; // تحديث قاعدة البيانات المحلية
                     db.sha = data.sha;
                     sessionStorage.setItem('gh_token', t);
-                    sessionStorage.setItem('az_token', azToken); // تخزينه في الجلسة الحالية
-
-                    // --- التعديل هنا: إضافة azToken للـ localStorage ---
-                    if(rem) {
-                        localStorage.setItem('saved_creds', JSON.stringify({u, p, t, azToken}));
-                    }
-                    
+                    if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
                     currentUser = userMatch;
                     this.startApp();
                 } else {
@@ -1229,120 +1221,7 @@ const settings = {
         ui.renderSettings();
     }
 };
-const azureProcessor = {
-    // خريطة تحويل المسميات من Azure إلى المسميات التي يفهمها التطبيق
-    fieldMap: {
-        'System.Id': 'ID',
-        'System.WorkItemType': 'Work Item Type',
-        'System.Title': 'Title',
-        'System.AssignedTo': 'Assigned To',
-        'Microsoft.VSTS.Common.Activity': 'Activity',
-        'NT.OriginalEstimation': 'Original Estimation',
-        'Custom.TimeSheet_DevActualTime': 'TimeSheet_DevActualTime',
-        'Custom.TimeSheet_TestingActualTime': 'TimeSheet_TestingActualTime',
-        'Microsoft.VSTS.Common.ActivatedDate': 'Activated Date',
-        'MyCompany.MyProcess.BusinessArea': 'Business Area',
-        'System.IterationPath': 'Iteration Path',
-        'Custom.CustomResolvedDate': 'CustomResolvedDate',
-        'MyCompany.MyProcess.TestedDate': 'Tested Date',
-        'MyCompany.MyProcess.Tester': 'Assigned To Tester',
-        'Microsoft.VSTS.Common.ResolvedDate': 'Resolved Date',
-        'System.State': 'State',
-        'MyCompany.MyProcess.Release': 'Release Expected Date',
-        'MyCompany.MyProcess.BusinessPriority': 'Business Priority',
-        'System.Tags': 'Tags'
-    },
 
-async fetchFromAzure() {
-        const token = sessionStorage.getItem('az_token');
-        if (!token) {
-            return alert("من فضلك أدخل Azure PAT أولاً في صفحة تسجيل الدخول");
-        }
-
-        const spinner = document.getElementById('azure-spinner');
-        if (spinner) spinner.classList.remove('hidden');
-
-        // دالة تنظيف الأسماء (تتعامل مع كائنات Azure المعقدة)
-        const cleanName = (val) => {
-            if (!val) return "Unassigned";
-            if (typeof val === 'object') return val.displayName || val.uniqueName || "Unassigned";
-            return String(val).split('<')[0].trim();
-        };
-
-        try {
-            // 1. استعلام WIQL لجلب الـ IDs - اتصال مباشر بدون بروكسي
-            const wiqlUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/wiql/${CONFIG.AZURE.QUERY_ID}?api-version=6.0`;
-            
-            const wiqlRes = await fetch(wiqlUrl, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Basic ${btoa(':' + token)}`,
-                    'Accept': 'application/json',
-                    'X-TFS-FedAuthRedirect': 'Suppress' // تمنع إعادة التوجيه لصفحة تسجيل الدخول
-                }
-            });
-
-            if (!wiqlRes.ok) throw new Error(`Azure Auth Error: ${wiqlRes.status}`);
-
-            const queryResult = await wiqlRes.json();
-            const ids = queryResult.workItems.map(item => item.id);
-
-            if (ids.length === 0) {
-                if (spinner) spinner.classList.add('hidden');
-                return alert("لا توجد عناصر عمل في هذا الاستعلام.");
-            }
-
-            // 2. جلب التفاصيل الكاملة للعناصر (Batch Request)
-            const detailsUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/workitems?ids=${ids.join(',')}&api-version=6.0`;
-            
-            const detailsRes = await fetch(detailsUrl, {
-                headers: { 
-                    'Authorization': `Basic ${btoa(':' + token)}`,
-                    'X-TFS-FedAuthRedirect': 'Suppress'
-                }
-            });
-            
-            const detailsData = await detailsRes.json();
-            const allItems = detailsData.value || [];
-
-            // 3. تحويل البيانات لتناسب منطق الـ CSV/DataProcessor
-            const formattedRows = allItems.map(item => {
-                const row = {};
-                const f = item.fields;
-
-                // تحويل كل حقل في Azure إلى الحقل المقابل في تطبيقك
-                for (const [azField, localField] of Object.entries(this.fieldMap)) {
-                    let value = f[azField] || "";
-                    
-                    // معالجة الأسماء (المطور والتستر)
-                    if (azField === 'System.AssignedTo' || azField.toLowerCase().includes('tester')) {
-                        value = cleanName(value);
-                    }
-                    
-                    // معالجة تواريخ أزور (ISO) لتصبح Objects قابلة للحساب
-                    if (azField.toLowerCase().includes('date') && value) {
-                        value = new Date(value);
-                    }
-
-                    row[localField] = value;
-                }
-                return row;
-            });
-
-            // 4. إرسال البيانات للمعالج الرئيسي
-            if (typeof dataProcessor !== 'undefined') {
-                dataProcessor.processRows(formattedRows);
-                alert(`تم تحديث ${formattedRows.length} عنصر بنجاح من Azure.`);
-            }
-
-        } catch (error) {
-            console.error("Azure Integration Error:", error);
-            alert("فشل الاتصال بـ Azure: " + error.message + "\nتأكد من صلاحيات الـ PAT وإعدادات الـ CORS.");
-        } finally {
-            if (spinner) spinner.classList.add('hidden');
-        }
-    }
-};
 /**
  * Initialize
  */
@@ -1350,9 +1229,9 @@ window.onload = () => {
     const saved = localStorage.getItem('saved_creds');
     if(saved) {
         const creds = JSON.parse(saved);
-        if (document.getElementById('username')) document.getElementById('username').value = creds.u;
-        if (document.getElementById('password')) document.getElementById('password').value = creds.p;
-        if (document.getElementById('gh-token')) document.getElementById('gh-token').value = creds.t;
+        document.getElementById('username').value = creds.u;
+        document.getElementById('password').value = creds.p;
+        document.getElementById('gh-token').value = creds.t;
         auth.handleLogin();
     }
 };
