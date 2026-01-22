@@ -1256,83 +1256,93 @@ const azureProcessor = {
 async fetchFromAzure() {
         const token = sessionStorage.getItem('az_token');
         if (!token) {
-            alert("من فضلك أدخل Azure PAT أولاً في صفحة تسجيل الدخول");
-            return;
+            return alert("من فضلك أدخل Azure PAT أولاً في صفحة تسجيل الدخول");
         }
 
         const spinner = document.getElementById('azure-spinner');
         if (spinner) spinner.classList.remove('hidden');
 
-        const cleanName = (rawName) => {
-            if (!rawName) return "";
-            return String(rawName).split('<')[0].trim();
+        // دالة تنظيف الأسماء (تتعامل مع كائنات Azure المعقدة)
+        const cleanName = (val) => {
+            if (!val) return "Unassigned";
+            if (typeof val === 'object') return val.displayName || val.uniqueName || "Unassigned";
+            return String(val).split('<')[0].trim();
         };
 
         try {
-            const targetUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/wiql/${CONFIG.AZURE.QUERY_ID}?api-version=6.0`;
-            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
-
-            const res = await fetch(proxyUrl, {
+            // 1. استعلام WIQL لجلب الـ IDs - اتصال مباشر بدون بروكسي
+            const wiqlUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/wiql/${CONFIG.AZURE.QUERY_ID}?api-version=6.0`;
+            
+            const wiqlRes = await fetch(wiqlUrl, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Basic ${btoa(':' + token)}`,
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-TFS-FedAuthRedirect': 'Suppress' // تمنع إعادة التوجيه لصفحة تسجيل الدخول
                 }
             });
 
-            if (!res.ok) {
-                if (res.status === 401) throw new Error("فشل التحقق: الـ PAT غير صحيح");
-                throw new Error(`خطأ Azure: ${res.status}`);
-            }
+            if (!wiqlRes.ok) throw new Error(`Azure Auth Error: ${wiqlRes.status}`);
 
-            const queryResult = await res.json();
-            if (!queryResult.workItems || queryResult.workItems.length === 0) {
-                alert("لا توجد بيانات.");
-                return;
-            }
-
+            const queryResult = await wiqlRes.json();
             const ids = queryResult.workItems.map(item => item.id);
-            const detailsUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/workitems?ids=${ids.join(',')}&api-version=6.0`;
-            const proxyDetailsUrl = `https://corsproxy.io/?${encodeURIComponent(detailsUrl)}`;
 
-            const detailsRes = await fetch(proxyDetailsUrl, {
-                headers: { 'Authorization': `Basic ${btoa(':' + token)}` }
+            if (ids.length === 0) {
+                if (spinner) spinner.classList.add('hidden');
+                return alert("لا توجد عناصر عمل في هذا الاستعلام.");
+            }
+
+            // 2. جلب التفاصيل الكاملة للعناصر (Batch Request)
+            const detailsUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/workitems?ids=${ids.join(',')}&api-version=6.0`;
+            
+            const detailsRes = await fetch(detailsUrl, {
+                headers: { 
+                    'Authorization': `Basic ${btoa(':' + token)}`,
+                    'X-TFS-FedAuthRedirect': 'Suppress'
+                }
             });
             
             const detailsData = await detailsRes.json();
-            const allFieldsData = detailsData.value || [];
+            const allItems = detailsData.value || [];
 
-            const formattedRows = allFieldsData.map(item => {
+            // 3. تحويل البيانات لتناسب منطق الـ CSV/DataProcessor
+            const formattedRows = allItems.map(item => {
                 const row = {};
                 const f = item.fields;
 
+                // تحويل كل حقل في Azure إلى الحقل المقابل في تطبيقك
                 for (const [azField, localField] of Object.entries(this.fieldMap)) {
                     let value = f[azField] || "";
-                    if (value && typeof value === 'object') {
-                        value = value.displayName || value.uniqueName || "";
-                    }
+                    
+                    // معالجة الأسماء (المطور والتستر)
                     if (azField === 'System.AssignedTo' || azField.toLowerCase().includes('tester')) {
                         value = cleanName(value);
                     }
+                    
+                    // معالجة تواريخ أزور (ISO) لتصبح Objects قابلة للحساب
+                    if (azField.toLowerCase().includes('date') && value) {
+                        value = new Date(value);
+                    }
+
                     row[localField] = value;
                 }
                 return row;
             });
 
+            // 4. إرسال البيانات للمعالج الرئيسي
             if (typeof dataProcessor !== 'undefined') {
                 dataProcessor.processRows(formattedRows);
-                alert(`تم بنجاح جلب ${formattedRows.length} عنصر.`);
+                alert(`تم تحديث ${formattedRows.length} عنصر بنجاح من Azure.`);
             }
 
         } catch (error) {
-            console.error("Azure Fetch Error:", error);
-            alert("حدث خطأ: " + error.message);
+            console.error("Azure Integration Error:", error);
+            alert("فشل الاتصال بـ Azure: " + error.message + "\nتأكد من صلاحيات الـ PAT وإعدادات الـ CORS.");
         } finally {
             if (spinner) spinner.classList.add('hidden');
         }
-    } // إغلاق fetchFromAzure
-}; // إغلاق azureProcessor
-
+    }
+};
 /**
  * Initialize
  */
