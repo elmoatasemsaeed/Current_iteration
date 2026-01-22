@@ -1265,7 +1265,7 @@ openStoryModal(storyId) {
 };
 
 
-exportDailyActivityToExcel() {
+const exportDailyActivityToExcel = () => {
     const todayStr = new Date().toISOString().split('T')[0];
     let csvContent = "\ufeff"; // UTF-8 BOM for Arabic support
     csvContent += "Business Area,Story ID,Type,Activity,Title,Person,State\n";
