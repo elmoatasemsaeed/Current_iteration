@@ -24,6 +24,7 @@
                 <input type="text" id="username" placeholder="Username" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 <input type="password" id="password" placeholder="Password" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 <input type="password" id="gh-token" placeholder="GitHub Personal Access Token" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="password" id="az-token" placeholder="Azure DevOps PAT" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 <div class="flex items-center gap-2">
                     <input type="checkbox" id="remember-me" class="w-4 h-4">
                     <label for="remember-me" class="text-sm text-gray-600">Remember Me</label>
@@ -55,6 +56,9 @@
                     <button onclick="document.getElementById('csv-input').click()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition">
                         📤 Upload CSV
                     </button>
+                    <button onclick="azureProcessor.fetchFromAzure()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition flex items-center gap-2">
+    <span id="az-spinner" class="hidden animate-spin">⏳</span> ☁️ Fetch from Azure
+</button>
                     <button onclick="auth.logout()" class="text-red-500 text-sm font-bold p-2 hover:bg-red-50 rounded">Logout</button>
                 </div>
             </div>
