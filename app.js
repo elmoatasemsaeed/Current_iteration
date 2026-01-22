@@ -1253,16 +1253,15 @@ const azureProcessor = {
     },
 
     async fetchFromAzure() {
-        const token = sessionStorage.getItem('az_token');
-        if (!token) return alert("برجاء إدخال Azure PAT في شاشة الدخول");
+    const token = sessionStorage.getItem('az_token');
+    if (!token) return alert("برجاء إدخال Azure PAT في شاشة الدخول");
 
-        const spinner = document.getElementById('az-spinner');
-        spinner.classList.remove('hidden');
+    const spinner = document.getElementById('az-spinner');
+    if (spinner) spinner.classList.remove('hidden');
 
-        try {
-            
-            
-            // 1. جلب قائمة الـ IDs من الكويري (لتخطي قيد الـ 200 سطر)
+    try {
+        // --- إضافة هذا السطر لتعريف الرابط ناقصاً ---
+            const queryUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/wiql/${CONFIG.AZURE.QUERY_ID}?api-version=6.0`;
             const authHeader = {'Authorization': `Basic ${btoa(':' + token)}`, 'Content-Type': 'application/json'};
             const queryRes = await fetch(queryUrl, {method: 'GET', headers: authHeader, mode: 'cors'});
             const queryData = await queryRes.json();
