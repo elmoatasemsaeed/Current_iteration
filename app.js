@@ -1263,7 +1263,11 @@ const azureProcessor = {
     try {
         // --- إضافة هذا السطر لتعريف الرابط ناقصاً ---
             const queryUrl = `https://dev.azure.com/${CONFIG.AZURE.ORG}/${CONFIG.AZURE.PROJECT}/_apis/wit/wiql/${CONFIG.AZURE.QUERY_ID}?api-version=6.0`;
-            const authHeader = {'Authorization': `Basic ${btoa(':' + token)}`, 'Content-Type': 'application/json'};
+            const authHeader = {
+    'Authorization': `Basic ${btoa(':' + token)}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+};
             const queryRes = await fetch(queryUrl, {method: 'GET', headers: authHeader, mode: 'cors'});
             const queryData = await queryRes.json();
             
