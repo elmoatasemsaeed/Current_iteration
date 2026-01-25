@@ -389,7 +389,7 @@
       "timestamp": 1769098614103
     }
   ],
-  "sha": "ad8d5726a5a70084e6b948ed87475d6fac00cfc4",
+  "sha": "725a1107905f50c336750b3ea6bb2931a5d48d83",
   "currentStories": [
     {
       "id": "138714",
@@ -399,7 +399,9 @@
       "tester": "Mohamed Abomosallam <mohamed.abomosallam@nationaltechnology.net>",
       "area": "Internal lab",
       "priority": 1,
-      "tags": [],
+      "tags": [
+        "DB Reviewed"
+      ],
       "expectedRelease": null,
       "tasks": [
         {
@@ -565,7 +567,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/18/2026 9:38:39 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "2.9.0; liquibase"
@@ -1448,8 +1450,8 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-01-12T14:48:27.000Z",
-        "testEnd": "2026-01-13T09:00:00.000Z",
+        "devEnd": "2026-01-13T10:00:00.000Z",
+        "testEnd": "2026-01-14T09:00:00.000Z",
         "finalEnd": "2026-01-19T14:30:07.000Z"
       }
     },
@@ -1610,7 +1612,9 @@
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 1,
-      "tags": [],
+      "tags": [
+        "DB Reviewed"
+      ],
       "expectedRelease": null,
       "tasks": [
         {
@@ -1944,7 +1948,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/15/2026 5:48:54 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "2.9.0; liquibase"
@@ -2597,7 +2601,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/20/2026 12:31:10 PM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -2752,7 +2756,7 @@
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-01-12T08:52:00.000Z",
+        "devEnd": "2026-01-12T09:52:00.000Z",
         "testEnd": "2026-02-03T09:00:00.000Z",
         "finalEnd": "2026-02-03T09:00:00.000Z"
       }
@@ -2862,7 +2866,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "0.75",
-          "TimeSheet_TestingActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "1",
           "Activated Date": "1/22/2026 12:31:47 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-January 14-28",
@@ -2870,7 +2874,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/22/2026 2:13:20 PM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -2973,11 +2977,11 @@
         },
         {
           "id": "156923",
-          "state": "Fail"
+          "state": "Pass"
         },
         {
           "id": "156924",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "156925",
@@ -3239,6 +3243,22 @@
       "testCases": [
         {
           "id": "157168",
+          "state": "Design"
+        },
+        {
+          "id": "157178",
+          "state": "Design"
+        },
+        {
+          "id": "157184",
+          "state": "Design"
+        },
+        {
+          "id": "157185",
+          "state": "Design"
+        },
+        {
+          "id": "157187",
           "state": "Design"
         }
       ],
@@ -4732,6 +4752,47 @@
       }
     },
     {
+      "id": "153549",
+      "title": "Update Zatca Integration - Add New config for Type of Invoices",
+      "state": "Active",
+      "assignedTo": "Mohamed Salama <mohamed.salama@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "LDM Integration",
+      "priority": 2,
+      "tags": [],
+      "expectedRelease": null,
+      "tasks": [
+        {
+          "ID": "157181",
+          "Work Item Type": "Task",
+          "Title": "Planning And Preparation",
+          "Assigned To": "Mohamed Salama <mohamed.salama@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.5",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 12:34:27 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-01-25T13:34:27.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      }
+    },
+    {
       "id": "154515",
       "title": "Wareed Lab - Genesys WhatsApp Integration - Add Reservation & reservation Reminder",
       "state": "Resolved",
@@ -4830,7 +4891,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-01-19T16:44:16.000Z",
+        "devEnd": "2026-01-25T13:34:27.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -5238,47 +5299,6 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-01-25T13:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
-      }
-    },
-    {
-      "id": "138397",
-      "title": "ALhassa - Rejected Samples Alarm: Update the search criteria of the screen",
-      "state": "Active",
-      "assignedTo": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 4,
-      "tags": [],
-      "expectedRelease": null,
-      "tasks": [
-        {
-          "ID": "157166",
-          "Work Item Type": "Task",
-          "Title": "Preparation",
-          "Assigned To": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1",
-          "TimeSheet_DevActualTime": "",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/25/2026 11:32:37 AM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\Candidate CRs",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "calc": {
-        "devEnd": "2026-01-25T11:32:37.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -6546,8 +6566,8 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/25/2026 12:55:20 PM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -6560,15 +6580,15 @@
           "Activity": "Testing",
           "Original Estimation": "20",
           "TimeSheet_DevActualTime": "",
-          "TimeSheet_TestingActualTime": "14.5",
+          "TimeSheet_TestingActualTime": "20",
           "Activated Date": "1/19/2026 4:19:05 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-January 14-28",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/25/2026 12:57:20 PM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -6667,7 +6687,7 @@
           "Activity": "",
           "Original Estimation": "7",
           "TimeSheet_DevActualTime": "3.5",
-          "TimeSheet_TestingActualTime": "1",
+          "TimeSheet_TestingActualTime": "1.5",
           "Activated Date": "1/19/2026 10:01:03 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-January 14-28",
@@ -6675,7 +6695,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/20/2026 4:53:58 PM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -6688,7 +6708,7 @@
           "Activity": "",
           "Original Estimation": "7",
           "TimeSheet_DevActualTime": "0.67",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "0.5",
           "Activated Date": "1/22/2026 2:23:01 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-January 14-28",
@@ -6696,7 +6716,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/22/2026 3:19:38 PM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -6737,7 +6757,7 @@
         },
         {
           "id": "156928",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "156983",
@@ -6802,8 +6822,8 @@
       ],
       "calc": {
         "devEnd": "2026-02-08T07:00:00.000Z",
-        "testEnd": "2026-02-15T07:00:00.000Z",
-        "finalEnd": "2026-02-15T07:00:00.000Z"
+        "testEnd": "2026-02-09T07:00:00.000Z",
+        "finalEnd": "2026-02-09T07:00:00.000Z"
       }
     },
     {
@@ -6849,341 +6869,6 @@
         "devEnd": "TBD",
         "testEnd": "---",
         "finalEnd": "---"
-      }
-    },
-    {
-      "id": "150541",
-      "title": "SKUH - Patient Reports: For all Report types, Make the footer takes 2/3 width as the attached image; footer image read from branch setup; Add web results QR code",
-      "state": "Resolved",
-      "assignedTo": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 5,
-      "tags": [],
-      "expectedRelease": null,
-      "tasks": [
-        {
-          "ID": "156553",
-          "Work Item Type": "Task",
-          "Title": "Preparation",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "4",
-          "TimeSheet_DevActualTime": "4",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/19/2026 6:56:08 PM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156636",
-          "Work Item Type": "Task",
-          "Title": "TR012 : Add QR Code to Print alone Report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1.5",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 4:33:52 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/22/2026 2:10:50 PM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156637",
-          "Work Item Type": "Task",
-          "Title": "TR014 : Bind PatientNo to QR Code, and footer image from the branch setup in Print alone report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1.25",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 4:32:42 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/22/2026 11:50:47 AM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156638",
-          "Work Item Type": "Task",
-          "Title": "TR001: Set size of image 2/3 and QR Code 1/3 in Print alone report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "0.5",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 4:34:36 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/22/2026 11:48:40 AM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156653",
-          "Work Item Type": "Task",
-          "Title": "TR012 : Add QR Code to Clinical Group report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1.5",
-          "TimeSheet_DevActualTime": "1",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 1:39:11 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/22/2026 11:48:58 AM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156654",
-          "Work Item Type": "Task",
-          "Title": "TR014 : Bind PatientNo to QR Code, and footer image from the branch setup in Clinical Group report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1.25",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 1:38:49 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/22/2026 11:49:54 AM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156656",
-          "Work Item Type": "Task",
-          "Title": "TR001: Set size of image 2/3 and QR Code 1/3 in Clinical Group report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "0.5",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 1:38:57 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\Candidate CRs",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/22/2026 11:47:07 AM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156657",
-          "Work Item Type": "Task",
-          "Title": "TR012 : Add QR Code to CBC Report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1.5",
-          "TimeSheet_DevActualTime": "2",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/20/2026 4:12:01 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/20/2026 5:35:14 PM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156658",
-          "Work Item Type": "Task",
-          "Title": "TR014 : Bind PatientNo to QR Code, and footer image from the branch setup in CBC report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1.25",
-          "TimeSheet_DevActualTime": "2",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/20/2026 4:12:44 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/20/2026 5:35:55 PM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156659",
-          "Work Item Type": "Task",
-          "Title": "TR001: Set size of image 2/3 and QR Code 1/3 in CBC Report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "0.5",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/20/2026 4:12:30 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/20/2026 5:35:37 PM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156661",
-          "Work Item Type": "Task",
-          "Title": "TR012 : Add QR Code to Formatted Text Report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1.5",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 4:34:15 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/22/2026 2:11:36 PM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156663",
-          "Work Item Type": "Task",
-          "Title": "TR014 : Bind PatientNo to QR Code, and footer image from the branch setup in Formatted Text report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1.25",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 4:32:56 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/22/2026 11:50:25 AM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156664",
-          "Work Item Type": "Task",
-          "Title": "TR001: Set size of image 2/3 and QR Code 1/3 in Formatted Text report",
-          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "0.5",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 4:34:25 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/22/2026 11:47:19 AM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156668",
-          "Work Item Type": "Task",
-          "Title": "TR015: Review on CR",
-          "Assigned To": "Bardis Khamees <bardis.khamees@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 10:36:10 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Closed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": ""
-        },
-        {
-          "ID": "156793",
-          "Work Item Type": "Task",
-          "Title": "DB Modification LDM_DEV & LDM_TEST: Return PATIENTNUMBER in SKUH_Reports.RPO_GETRGCGRSS7 stored procedure",
-          "Assigned To": "Ahmed Farag Shaban <ahmed.shaban@nationaltechnology.net>",
-          "Activity": "DB Modification",
-          "Original Estimation": "1",
-          "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "1/21/2026 4:03:06 PM",
-          "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "1/21/2026 4:29:06 PM",
-          "State": "To Be Reviewed",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": "liquibase; V2.9"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "calc": {
-        "devEnd": "2026-01-21T08:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
       }
     },
     {
@@ -7283,6 +6968,27 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "2.9.0; liquibase"
+        },
+        {
+          "ID": "157176",
+          "Work Item Type": "Task",
+          "Title": "Review Task for Execution Activity",
+          "Assigned To": "Yasmine Abdelwahed <yasmine.abdelwahed@nationaltechnology.net>",
+          "Activity": "Testing",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
+          "Activated Date": "1/25/2026 12:16:43 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
         }
       ],
       "bugs": [
@@ -7444,9 +7150,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-01-25T13:32:37.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
+        "devEnd": "2026-01-12T13:32:13.000Z",
+        "testEnd": "2026-02-04T11:00:00.000Z",
+        "finalEnd": "2026-02-04T11:00:00.000Z"
       }
     },
     {
@@ -7692,8 +7398,8 @@
       ],
       "calc": {
         "devEnd": "2026-01-15T13:00:00.000Z",
-        "testEnd": "2026-02-16T09:00:00.000Z",
-        "finalEnd": "2026-02-16T09:00:00.000Z"
+        "testEnd": "2026-02-10T09:00:00.000Z",
+        "finalEnd": "2026-02-10T09:00:00.000Z"
       }
     },
     {
@@ -7876,6 +7582,27 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
+        },
+        {
+          "ID": "157189",
+          "Work Item Type": "Task",
+          "Title": "TR015: Review on CR",
+          "Assigned To": "Bardis Khamees <bardis.khamees@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 1:07:25 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
         }
       ],
       "bugs": [],
@@ -7938,9 +7665,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-01-22T13:51:12.000Z",
-        "testEnd": "2026-01-25T12:00:00.000Z",
-        "finalEnd": "2026-01-25T12:00:00.000Z"
+        "devEnd": "2026-01-25T07:00:00.000Z",
+        "testEnd": "2026-01-26T12:00:00.000Z",
+        "finalEnd": "2026-01-26T12:00:00.000Z"
       }
     },
     {
@@ -8477,8 +8204,8 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
+          "Resolved Date": "1/25/2026 12:35:57 PM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -8493,7 +8220,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "1",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "0.5",
           "Activated Date": "1/24/2026 7:13:55 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
@@ -8542,39 +8269,39 @@
         },
         {
           "id": "156802",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "156803",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "156804",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "156807",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "156808",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "156810",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "156812",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "156814",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "156815",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "156821",
@@ -8582,7 +8309,7 @@
         },
         {
           "id": "156828",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "157019",
@@ -8591,8 +8318,8 @@
       ],
       "calc": {
         "devEnd": "2026-02-03T07:00:00.000Z",
-        "testEnd": "2026-02-05T11:00:00.000Z",
-        "finalEnd": "2026-02-05T11:00:00.000Z"
+        "testEnd": "2026-02-04T07:00:00.000Z",
+        "finalEnd": "2026-02-04T07:00:00.000Z"
       }
     },
     {
@@ -8781,6 +8508,200 @@
         "devEnd": "2026-01-21T14:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
+      }
+    },
+    {
+      "id": "156144",
+      "title": "Wateen Lab - Claims: Create a new Claim Form named \"Excel Form\"",
+      "state": "Active",
+      "assignedTo": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
+      "tester": "Bassem Ayman Morsy <bassem.morsy@nationaltechnology.net>",
+      "area": "Front and Financial",
+      "priority": 6,
+      "tags": [],
+      "expectedRelease": null,
+      "tasks": [
+        {
+          "ID": "156761",
+          "Work Item Type": "Task",
+          "Title": "preparation task for CR156144",
+          "Assigned To": "Bassem Ayman Morsy <bassem.morsy@nationaltechnology.net>",
+          "Activity": "Testing",
+          "Original Estimation": "3",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "3",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 1:56:49 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156763",
+          "Work Item Type": "Task",
+          "Title": "Execution task for CR 156144",
+          "Assigned To": "Bassem Ayman Morsy <bassem.morsy@nationaltechnology.net>",
+          "Activity": "Testing",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157029",
+          "Work Item Type": "Task",
+          "Title": "DB Modification LDM_DEV & LDM_TEST : Create New Procedure SP_WateenExcelForm",
+          "Assigned To": "Ahmed Farag Shaban <ahmed.shaban@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "2.5",
+          "TimeSheet_DevActualTime": "2",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/22/2026 3:35:04 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157037",
+          "Work Item Type": "Task",
+          "Title": "BD001 : Create New Claim Form named \"Excel Form\"",
+          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "2.25",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 12:51:10 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157045",
+          "Work Item Type": "Task",
+          "Title": "CR_156144 >> Review CR's Prepration",
+          "Assigned To": "Salah Abdelhakeem <salah.abdelhakeem@nationaltechnology.net>",
+          "Activity": "Testing",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
+          "Activated Date": "1/22/2026 3:08:48 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 3:12:11 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        }
+      ],
+      "bugs": [],
+      "testCases": [
+        {
+          "id": "156766",
+          "state": "Design"
+        },
+        {
+          "id": "156768",
+          "state": "Design"
+        },
+        {
+          "id": "156769",
+          "state": "Design"
+        },
+        {
+          "id": "156774",
+          "state": "Design"
+        },
+        {
+          "id": "156776",
+          "state": "Design"
+        },
+        {
+          "id": "156805",
+          "state": "Design"
+        },
+        {
+          "id": "156809",
+          "state": "Design"
+        },
+        {
+          "id": "156813",
+          "state": "Design"
+        },
+        {
+          "id": "156816",
+          "state": "Design"
+        },
+        {
+          "id": "156827",
+          "state": "Design"
+        },
+        {
+          "id": "156829",
+          "state": "Design"
+        },
+        {
+          "id": "156830",
+          "state": "Design"
+        },
+        {
+          "id": "156834",
+          "state": "Design"
+        },
+        {
+          "id": "156836",
+          "state": "Design"
+        },
+        {
+          "id": "156837",
+          "state": "Design"
+        },
+        {
+          "id": "156838",
+          "state": "Design"
+        },
+        {
+          "id": "156840",
+          "state": "Design"
+        }
+      ],
+      "calc": {
+        "devEnd": "2026-01-26T07:00:00.000Z",
+        "testEnd": "2026-01-27T07:00:00.000Z",
+        "finalEnd": "2026-01-27T07:00:00.000Z"
       }
     },
     {
@@ -9078,7 +8999,7 @@
     {
       "id": "152874",
       "title": "Alameda gp - Timestamp report : New screen",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Mohamad Samy Sayed Abdelkhalek <mohamed.abdelkhalek@nationaltechnology.net>",
       "tester": "Sara Mustafa <sara.mustafa@nationaltechnology.net>",
       "area": "Internal lab",
@@ -9321,6 +9242,48 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "missing assets\\i18n\\KPI files in angular publish; no changes in code; PUBLISH ISSUE"
+        },
+        {
+          "ID": "157169",
+          "Work Item Type": "Bug",
+          "Title": "Reject Sample Page doesn't Reject Samples",
+          "Assigned To": "Mohamad Samy Sayed Abdelkhalek <mohamed.abdelkhalek@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157172",
+          "Work Item Type": "Bug",
+          "Title": "Rejected Samples are retrieved @ Time Stamp Report",
+          "Assigned To": "Mohamad Samy Sayed Abdelkhalek <mohamed.abdelkhalek@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
         }
       ],
       "testCases": [
@@ -9334,7 +9297,7 @@
         },
         {
           "id": "155691",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "155698",
@@ -9925,9 +9888,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-01-26T09:00:00.000Z",
-        "testEnd": "2026-02-05T11:00:00.000Z",
-        "finalEnd": "2026-02-05T11:00:00.000Z"
+        "devEnd": "2026-01-25T13:00:00.000Z",
+        "testEnd": "2026-02-04T07:00:00.000Z",
+        "finalEnd": "2026-02-04T07:00:00.000Z"
       }
     },
     {
@@ -10334,19 +10297,19 @@
           "ID": "157167",
           "Work Item Type": "Bug",
           "Title": "#CR150546: Error occur when save result at result Formatted text service",
-          "Assigned To": "Ahmed Hafez <ahmed.hafez@nationaltechnology.net>",
+          "Assigned To": "Mohamed Ismail <mohamed.ismail@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
+          "Original Estimation": "1",
           "TimeSheet_DevActualTime": "",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "1/25/2026 12:57:49 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "New",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -10491,7 +10454,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-01-26T11:00:00.000Z",
+        "devEnd": "2026-01-26T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -10504,7 +10467,9 @@
       "tester": "Unassigned",
       "area": "Internal lab",
       "priority": 14,
-      "tags": [],
+      "tags": [
+        "DB Reviewed"
+      ],
       "expectedRelease": null,
       "tasks": [
         {
@@ -10565,7 +10530,7 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/20/2026 7:16:02 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "2.9.0; liquibase"
@@ -10595,7 +10560,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-01-26T11:00:00.000Z",
+        "devEnd": "2026-01-26T09:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -10681,6 +10646,382 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-02-08T14:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      }
+    },
+    {
+      "id": "150541",
+      "title": "SKUH - Patient Reports: For all Report types, Make the footer takes 2/3 width as the attached image; footer image read from branch setup; Add web results QR code",
+      "state": "Resolved",
+      "assignedTo": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 16,
+      "tags": [],
+      "expectedRelease": null,
+      "tasks": [
+        {
+          "ID": "156553",
+          "Work Item Type": "Task",
+          "Title": "Preparation",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "4",
+          "TimeSheet_DevActualTime": "4",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/19/2026 6:56:08 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156636",
+          "Work Item Type": "Task",
+          "Title": "TR012 : Add QR Code to Print alone Report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.5",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 4:33:52 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 2:10:50 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156637",
+          "Work Item Type": "Task",
+          "Title": "TR014 : Bind PatientNo to QR Code, and footer image from the branch setup in Print alone report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.25",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 4:32:42 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 11:50:47 AM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156638",
+          "Work Item Type": "Task",
+          "Title": "TR001: Set size of image 2/3 and QR Code 1/3 in Print alone report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 4:34:36 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 11:48:40 AM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156653",
+          "Work Item Type": "Task",
+          "Title": "TR012 : Add QR Code to Clinical Group report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.5",
+          "TimeSheet_DevActualTime": "1",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 1:39:11 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 11:48:58 AM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156654",
+          "Work Item Type": "Task",
+          "Title": "TR014 : Bind PatientNo to QR Code, and footer image from the branch setup in Clinical Group report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.25",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 1:38:49 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 11:49:54 AM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156656",
+          "Work Item Type": "Task",
+          "Title": "TR001: Set size of image 2/3 and QR Code 1/3 in Clinical Group report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 1:38:57 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 11:47:07 AM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156657",
+          "Work Item Type": "Task",
+          "Title": "TR012 : Add QR Code to CBC Report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.5",
+          "TimeSheet_DevActualTime": "2",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/20/2026 4:12:01 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/20/2026 5:35:14 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156658",
+          "Work Item Type": "Task",
+          "Title": "TR014 : Bind PatientNo to QR Code, and footer image from the branch setup in CBC report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.25",
+          "TimeSheet_DevActualTime": "2",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/20/2026 4:12:44 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/20/2026 5:35:55 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156659",
+          "Work Item Type": "Task",
+          "Title": "TR001: Set size of image 2/3 and QR Code 1/3 in CBC Report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/20/2026 4:12:30 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/20/2026 5:35:37 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156661",
+          "Work Item Type": "Task",
+          "Title": "TR012 : Add QR Code to Formatted Text Report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.5",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 4:34:15 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 2:11:36 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156663",
+          "Work Item Type": "Task",
+          "Title": "TR014 : Bind PatientNo to QR Code, and footer image from the branch setup in Formatted Text report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.25",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 4:32:56 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 11:50:25 AM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156664",
+          "Work Item Type": "Task",
+          "Title": "TR001: Set size of image 2/3 and QR Code 1/3 in Formatted Text report",
+          "Assigned To": "Abdullah Omara <abdullah.omara@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 4:34:25 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/22/2026 11:47:19 AM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156668",
+          "Work Item Type": "Task",
+          "Title": "TR015: Review on CR",
+          "Assigned To": "Bardis Khamees <bardis.khamees@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 10:36:10 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Closed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "156793",
+          "Work Item Type": "Task",
+          "Title": "DB Modification LDM_DEV & LDM_TEST: Return PATIENTNUMBER in SKUH_Reports.RPO_GETRGCGRSS7 stored procedure",
+          "Assigned To": "Ahmed Farag Shaban <ahmed.shaban@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/21/2026 4:03:06 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/21/2026 4:29:06 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "liquibase; V2.9"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-01-21T08:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      }
+    },
+    {
+      "id": "138397",
+      "title": "ALhassa - Rejected Samples Alarm: Update the search criteria of the screen",
+      "state": "Active",
+      "assignedTo": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 18,
+      "tags": [],
+      "expectedRelease": null,
+      "tasks": [
+        {
+          "ID": "157166",
+          "Work Item Type": "Task",
+          "Title": "Preparation",
+          "Assigned To": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 11:32:37 AM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-01-26T11:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -15250,9 +15591,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-01-25T14:00:00.000Z",
-        "testEnd": "2026-01-26T07:00:00.000Z",
-        "finalEnd": "2026-01-26T07:00:00.000Z"
+        "devEnd": "2026-01-27T09:00:00.000Z",
+        "testEnd": "2026-01-28T07:00:00.000Z",
+        "finalEnd": "2026-01-28T07:00:00.000Z"
       }
     },
     {
@@ -16090,10 +16431,10 @@
           "ID": "156931",
           "Work Item Type": "Bug",
           "Title": "the visit status chips counter display as zero",
-          "Assigned To": "Reem Ali <reem.abdulmuttalib@nationaltechnology.net>",
+          "Assigned To": "Mohamed Abomosallam <mohamed.abomosallam@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "1.5",
-          "TimeSheet_DevActualTime": "0.25",
+          "TimeSheet_DevActualTime": "1.25",
           "TimeSheet_TestingActualTime": "0.42",
           "Activated Date": "1/25/2026 10:40:13 AM",
           "Business Area": "",
@@ -16101,8 +16442,8 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Reactive",
+          "Resolved Date": "1/25/2026 12:55:45 PM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -17333,6 +17674,27 @@
           "Assigned To Tester": "",
           "Resolved Date": "1/22/2026 4:33:46 PM",
           "State": "Closed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157183",
+          "Work Item Type": "Bug",
+          "Title": "Changing Role does not reset modified outside Area(s) value",
+          "Assigned To": "Bassant Abdelhamid <bassant.abdelhamid@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "Home Visit\\2025\\home_visit January 5-19",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -19250,6 +19612,47 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-01-26T10:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      }
+    },
+    {
+      "id": "157179",
+      "title": "Internal CR - NT app assist Mobile",
+      "state": "Active",
+      "assignedTo": "Mahmoud Elghoraqy <mahmoud.elghoraqy@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "MobileApp",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "tasks": [
+        {
+          "ID": "157180",
+          "Work Item Type": "Task",
+          "Title": "Add Print feature to app assist in background",
+          "Assigned To": "Mahmoud Elghoraqy <mahmoud.elghoraqy@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "12",
+          "TimeSheet_DevActualTime": "12",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 12:34:08 PM",
+          "Business Area": "",
+          "Iteration Path": "MobileApp",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
         },
         {
           "ID": "111457",
@@ -19402,7 +19805,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-01-26T10:00:00.000Z",
+        "devEnd": "2026-02-08T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
