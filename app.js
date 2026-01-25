@@ -772,34 +772,41 @@ renderDelivery() {
     }
 
     // وظيفة مساعدة لإنشاء HTML لكل كارت (كما هي بدون تغيير)
-    const createCardHtml = (s, isLogged) => {
-        return `
-            <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 opacity-60 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span>
-                    <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">
-                        ${isLogged ? '✓ تم التسليم' : 'بانتظار التسليم'}
-                    </span>
-                </div>
-                <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
-                <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
-                
-                ${isLogged ? `
+   const createCardHtml = (s, isLogged) => {
+    return `
+        <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
+            <div class="flex justify-between items-start mb-2">
+                <span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span>
+                <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">
+                    ${isLogged ? '✓ تم التسليم' : 'بانتظار التسليم'}
+                </span>
+            </div>
+            <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
+            <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
+            
+            ${isLogged ? `
+                <div class="relative group">
                     <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
                         <b>المستلم:</b> ${s.logData.to}<br>
                         <b>التاريخ:</b> ${s.logData.date}
                     </div>
-                ` : (currentUser && currentUser.role === 'admin' ? `
-                    <div class="flex gap-2 mt-auto">
-                        <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
-                        <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
-                            تأكيد
+                    ${currentUser && currentUser.role === 'admin' ? `
+                        <button onclick="ui.editDelivery('${s.logData.storyId}')" class="absolute top-1 left-1 bg-white border shadow-sm text-gray-400 hover:text-blue-600 rounded p-1 text-[10px] transition-all">
+                            ✏️ تعديل
                         </button>
-                    </div>
-                ` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
-            </div>
-        `;
-    };
+                    ` : ''}
+                </div>
+            ` : (currentUser && currentUser.role === 'admin' ? `
+                <div class="flex gap-2 mt-auto">
+                    <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
+                    <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+                        تأكيد
+                    </button>
+                </div>
+            ` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
+        </div>
+    `;
+};
 
     let html = `
         <div class="col-span-full mb-4">
@@ -836,7 +843,30 @@ renderDelivery() {
         dataProcessor.saveToGitHub();
         this.renderDelivery();
     },
+    
+editDelivery(id) {
+    if (currentUser.role !== 'admin') return;
 
+    // حذف اللوج القديم لإعادته لقائمة "بانتظار التسليم"
+    const confirmEdit = confirm("هل تريد إلغاء التسليم الحالي وتعديله؟");
+    if (confirmEdit) {
+        db.deliveryLogs = db.deliveryLogs.filter(log => log.storyId.toString() !== id.toString());
+        
+        // حفظ التغييرات في GitHub
+        dataProcessor.saveToGitHub().then(() => {
+            this.renderDelivery();
+            // تركيز تلقائي على حقل الإدخال الجديد بعد إعادة الرندر
+            setTimeout(() => {
+                const input = document.getElementById(`to-${id}`);
+                if (input) {
+                    input.focus();
+                    input.classList.add('ring-2', 'ring-orange-400');
+                }
+            }, 100);
+        });
+    }
+},
+    
   renderAvailability() {
     const container = document.getElementById('availability-container');
     
