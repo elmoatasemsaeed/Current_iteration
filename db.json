@@ -419,7 +419,7 @@
       "timestamp": 1769353413785
     }
   ],
-  "sha": "adf8c641cab2f76706fb377e79cac2152f4207df",
+  "sha": "0731f037028df072a73950f77a670e28513bd4ef",
   "currentStories": [
     {
       "id": "138714",
@@ -2402,6 +2402,27 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
+        },
+        {
+          "ID": "157271",
+          "Work Item Type": "Task",
+          "Title": "Execute Wareed APIs Test Cases",
+          "Assigned To": "Abdelrahman Elbetar <abdelrahman.elbetar@nationaltechnology.net>",
+          "Activity": "Testing",
+          "Original Estimation": "3",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "3",
+          "Activated Date": "1/25/2026 5:16:00 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
         }
       ],
       "bugs": [
@@ -2745,7 +2766,7 @@
           "ID": "156988",
           "Work Item Type": "Bug",
           "Title": "Patient address is not overwritten in LDM after calling AddNewOrder API",
-          "Assigned To": "Mohamed Salama <mohamed.salama@nationaltechnology.net>",
+          "Assigned To": "Abdelrahman Elbetar <abdelrahman.elbetar@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "1.32",
@@ -2756,8 +2777,8 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/25/2026 5:11:26 PM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -2766,7 +2787,7 @@
           "ID": "157033",
           "Work Item Type": "Bug",
           "Title": "Extra services are returned with status \"Cancelled\" in GetAccessionDetails API",
-          "Assigned To": "Mohamed Salama <mohamed.salama@nationaltechnology.net>",
+          "Assigned To": "Abdelrahman Elbetar <abdelrahman.elbetar@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "1",
@@ -2777,8 +2798,8 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/25/2026 5:11:04 PM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -2787,8 +2808,8 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-01-12T09:52:00.000Z",
-        "testEnd": "2026-02-03T09:00:00.000Z",
-        "finalEnd": "2026-02-03T09:00:00.000Z"
+        "testEnd": "2026-02-03T14:00:00.000Z",
+        "finalEnd": "2026-02-03T14:00:00.000Z"
       }
     },
     {
@@ -3245,7 +3266,7 @@
           "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
-          "Tags": "On Hold"
+          "Tags": ""
         },
         {
           "ID": "157015",
@@ -8171,7 +8192,9 @@
       "tester": "Mohamed Elgmmal <mohamed.elgmmal@nationaltechnology.net>",
       "area": "Internal lab",
       "priority": 6,
-      "tags": [],
+      "tags": [
+        "2 Generic Bugs"
+      ],
       "expectedRelease": null,
       "tasks": [
         {
@@ -8698,7 +8721,56 @@
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": "157232",
+          "state": "Design"
+        },
+        {
+          "id": "157235",
+          "state": "Design"
+        },
+        {
+          "id": "157236",
+          "state": "Design"
+        },
+        {
+          "id": "157238",
+          "state": "Design"
+        },
+        {
+          "id": "157239",
+          "state": "Design"
+        },
+        {
+          "id": "157242",
+          "state": "Design"
+        },
+        {
+          "id": "157244",
+          "state": "Design"
+        },
+        {
+          "id": "157252",
+          "state": "Design"
+        },
+        {
+          "id": "157254",
+          "state": "Design"
+        },
+        {
+          "id": "157258",
+          "state": "Design"
+        },
+        {
+          "id": "157259",
+          "state": "Design"
+        },
+        {
+          "id": "157261",
+          "state": "Design"
+        }
+      ],
       "calc": {
         "devEnd": "2026-01-21T14:00:00.000Z",
         "testEnd": "2026-02-01T07:00:00.000Z",
@@ -8786,7 +8858,7 @@
           "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "2.25",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "2",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/25/2026 12:51:10 PM",
           "Business Area": "",
@@ -10307,14 +10379,14 @@
     {
       "id": "150546",
       "title": "Alameda gp - Search by test result: For Formatted Text tests, display \"Formatted Text\" at the Test Type column at the grid; Nonnumeric Value column shall open a text field for each Formatted Text test added in the grid",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Ahmed Hafez <ahmed.hafez@nationaltechnology.net>",
       "tester": "Mahmoud Ab Omar <mahmoud.aboomar@nationaltechnology.net>",
       "area": "Internal lab",
       "priority": 12,
       "tags": [
         "DB Reviewed",
-        " undertesting TC 18 /(2 failed-2 done/14 exectution)"
+        " undertesting TC 18 /(2 failed-16 done/0 exectution)"
       ],
       "expectedRelease": null,
       "tasks": [
@@ -10431,7 +10503,7 @@
           "Activity": "Testing",
           "Original Estimation": "5",
           "TimeSheet_DevActualTime": "",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "4",
           "Activated Date": "1/22/2026 8:14:33 AM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
@@ -10496,7 +10568,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
           "Activated Date": "1/25/2026 12:57:49 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
@@ -10505,6 +10577,27 @@
           "Assigned To Tester": "",
           "Resolved Date": "1/25/2026 1:48:40 PM",
           "State": "Resolved",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157243",
+          "Work Item Type": "Bug",
+          "Title": "#CR150546: The Excel Sheet is retrieved data if the no result text contains the entered word",
+          "Assigned To": "Ahmed Hafez <ahmed.hafez@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": ""
@@ -10541,47 +10634,47 @@
         },
         {
           "id": "156889",
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": "156890",
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": "156894",
-          "state": "Ready"
+          "state": "Fail"
         },
         {
           "id": "156895",
-          "state": "Ready"
+          "state": "Fail"
         },
         {
           "id": "156899",
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": "156900",
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": "156901",
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": "156904",
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": "156906",
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": "156908",
-          "state": "Ready"
+          "state": "Fail"
         },
         {
           "id": "156909",
-          "state": "Ready"
+          "state": "Pass"
         }
       ],
       "calc": {
@@ -10595,7 +10688,7 @@
       "title": "Alameda - Microbiology Statistics: At \"Organism Statistic Report\", add new input field for \"Count Patient Once\" check box",
       "state": "Resolved",
       "assignedTo": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
-      "tester": "Unassigned",
+      "tester": "Ammar Yasser Ahmed <Ammar.Ahmed@nationaltechnology.net>",
       "area": "Internal lab",
       "priority": 13,
       "tags": [
@@ -10659,7 +10752,7 @@
       "title": "Alameda - Results: For each Test, with expand, add new section below the methodology named \"Corrected Comment\"",
       "state": "Resolved",
       "assignedTo": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
-      "tester": "Unassigned",
+      "tester": "Mohamed Elgmmal <mohamed.elgmmal@nationaltechnology.net>",
       "area": "Internal lab",
       "priority": 14,
       "tags": [
@@ -11363,8 +11456,8 @@
       "testCases": [],
       "calc": {
         "devEnd": "2025-09-21T09:00:00.000Z",
-        "testEnd": "2026-02-03T09:00:00.000Z",
-        "finalEnd": "2026-02-03T09:00:00.000Z"
+        "testEnd": "2026-02-03T14:00:00.000Z",
+        "finalEnd": "2026-02-03T14:00:00.000Z"
       }
     },
     {
@@ -13244,8 +13337,8 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-01-21T15:01:26.000Z",
-        "testEnd": "2026-02-11T08:00:00.000Z",
-        "finalEnd": "2026-02-11T08:00:00.000Z"
+        "testEnd": "2026-02-11T13:00:00.000Z",
+        "finalEnd": "2026-02-11T13:00:00.000Z"
       }
     },
     {
@@ -13432,8 +13525,8 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-02-01T12:00:00.000Z",
-        "testEnd": "2026-02-11T08:00:00.000Z",
-        "finalEnd": "2026-02-11T08:00:00.000Z"
+        "testEnd": "2026-02-11T13:00:00.000Z",
+        "finalEnd": "2026-02-11T13:00:00.000Z"
       }
     },
     {
@@ -15200,7 +15293,176 @@
           "Tags": ""
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": "157250",
+          "Work Item Type": "Bug",
+          "Title": "Error ERP mapping code is required in the screen while not required in the Cr",
+          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157253",
+          "Work Item Type": "Bug",
+          "Title": "Can't edit or delete records",
+          "Assigned To": "Elhussein Ahmed <elhussein.ahmed@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "3",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 4:34:47 PM",
+          "Business Area": "",
+          "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/25/2026 4:38:57 PM",
+          "State": "Resolved",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157256",
+          "Work Item Type": "Bug",
+          "Title": "latest added record is not displayed at the top of the list",
+          "Assigned To": "Elhussein Ahmed <elhussein.ahmed@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "0.01",
+          "TimeSheet_DevActualTime": "0.08",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 4:42:13 PM",
+          "Business Area": "",
+          "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/25/2026 4:42:44 PM",
+          "State": "Resolved",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157260",
+          "Work Item Type": "Bug",
+          "Title": "No asterisk symbol * is displayed beside required fields ( Product title, Consumption type, Product category, Manufacturer )",
+          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157265",
+          "Work Item Type": "Bug",
+          "Title": "Inactive Product categories and Product manufacturers are displayed at product add screen and can be selected",
+          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157267",
+          "Work Item Type": "Bug",
+          "Title": "No validation error trying to upload invalid image and documents ( PDF, Excel ) are not accepted",
+          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157270",
+          "Work Item Type": "Bug",
+          "Title": "Edit screen displaying wrong product Category Name",
+          "Assigned To": "Sherif Eldorf <sherif.eldorf@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 5:20:25 PM",
+          "Business Area": "",
+          "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157272",
+          "Work Item Type": "Bug",
+          "Title": "Cant delete Product category",
+          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "0.25",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 5:25:09 PM",
+          "Business Area": "",
+          "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        }
+      ],
       "testCases": [
         {
           "id": "151656",
@@ -17047,6 +17309,27 @@
           "Tags": ""
         },
         {
+          "ID": "157183",
+          "Work Item Type": "Bug",
+          "Title": "Login - username is not case-sensitive \"System allow login with different letter casing\"",
+          "Assigned To": "Bassant Abdelhamid <bassant.abdelhamid@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "1",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 4:44:24 PM",
+          "Business Area": "",
+          "Iteration Path": "Home Visit\\2025\\home_visit January 5-19",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/25/2026 4:44:24 PM",
+          "State": "Resolved",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
           "ID": "157215",
           "Work Item Type": "Bug",
           "Title": "Age segment - Age segment name is case insensitive \"system allow segment name duplication with different letter cases\"",
@@ -17070,7 +17353,7 @@
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-02-12T07:00:00.000Z",
+        "devEnd": "2026-02-12T12:00:00.000Z",
         "testEnd": "2026-02-16T07:00:00.000Z",
         "finalEnd": "2026-02-16T07:00:00.000Z"
       }
@@ -20040,6 +20323,27 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/25/2026 1:56:16 PM",
+          "State": "Resolved",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": ""
+        },
+        {
+          "ID": "157264",
+          "Work Item Type": "Bug",
+          "Title": "Get Retest Requests>> The API Returns invalid response \"session ID is invalid.\"",
+          "Assigned To": "mariam Okab <mariam.okab@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "0.25",
+          "TimeSheet_DevActualTime": "0.25",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/25/2026 4:59:44 PM",
+          "Business Area": "",
+          "Iteration Path": "Integration",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/25/2026 5:00:19 PM",
           "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": "",
