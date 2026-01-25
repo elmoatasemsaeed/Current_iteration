@@ -792,7 +792,7 @@ renderDelivery() {
                     </div>
                     ${currentUser && currentUser.role === 'admin' ? `
                         <button onclick="ui.editDelivery('${s.logData.storyId}')" class="absolute top-1 left-1 bg-white border shadow-sm text-gray-400 hover:text-blue-600 rounded p-1 text-[10px] transition-all">
-                            ✏️ تعديل
+                            ✏️
                         </button>
                     ` : ''}
                 </div>
