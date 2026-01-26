@@ -422,17 +422,20 @@ const ui = {
         this.renderSettings();
         this.renderClientRoadmap();
         this.renderWorkload();
-    if (currentUser && currentUser.role === 'viewer') {
-        const uploadBtn = document.querySelector("button[onclick*='csv-input']");
-        if (uploadBtn) uploadBtn.style.display = 'none';
-        
-        const settingsNav = document.querySelector("button[onclick*='settings']");
-        if (settingsNav) settingsNav.style.display = 'none';
-        if (tabId === 'daily-activity') {
-        this.renderDailyActivity();
-    }
 
-    },
+        if (currentUser && currentUser.role === 'viewer') {
+            const uploadBtn = document.querySelector("button[onclick*='csv-input']");
+            if (uploadBtn) uploadBtn.style.display = 'none';
+            
+            const settingsNav = document.querySelector("button[onclick*='settings']");
+            if (settingsNav) settingsNav.style.display = 'none';
+        }
+
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab && activeTab.id === 'tab-daily-activity') {
+            this.renderDailyActivity();
+        }
+    }, 
 
   renderStats() {
     // 1. القصص النشطة (ليست في حالة Tested)
