@@ -1182,56 +1182,74 @@ renderDailyActivity() {
     const activities = [];
 
     currentData.forEach(story => {
-        // تحويل النص إلى تاريخ إذا لم يكن Object بالفعل
-        const cDate = (story.changedDate && !(story.changedDate instanceof Date)) 
-                      ? new Date(story.changedDate) 
-                      : story.changedDate;
+        // 1. تحقق هل الاستوري نفسها تعدلت اليوم؟
+        let isModifiedToday = story.changedDate && story.changedDate.toISOString().split('T')[0] === todayStr;
 
-        if (cDate && !isNaN(cDate) && cDate.toISOString().split('T')[0] === todayStr) {
+        // 2. تحقق هل أي من التاسكات التابعة لها تعدلت اليوم؟
+        const hasModifiedTasks = story.tasks.some(task => {
+            const taskChangedDate = task['Changed Date'] ? new Date(task['Changed Date']) : null;
+            return taskChangedDate && taskChangedDate.toISOString().split('T')[0] === todayStr;
+        });
+
+        if (isModifiedToday || hasModifiedTasks) {
             activities.push({
-                area: story.area,
-                storyId: story.id,
+                id: story.id,
                 title: story.title,
-                person: story.assignedTo,
-                state: story.state
+                branch: story.branch || "N/A",   // الفرع
+                customer: story.customer || "General", // العميل
+                state: story.state,
+                person: story.assignedTo
             });
         }
     });
 
     if (activities.length === 0) {
-        container.innerHTML = `<div class="text-center py-20 text-gray-400 bg-white rounded-xl border">No activity recorded for today.</div>`;
+        container.innerHTML = `<div class="text-center py-20 text-gray-400 bg-white rounded-xl border">لم يتم تسجيل أي نشاط على المهام اليوم.</div>`;
         return;
     }
 
-    // ... باقي كود الـ Grouping والـ HTML كما هو في الكود السابق ...
-    const grouped = activities.reduce((acc, curr) => {
-        if (!acc[curr.area]) acc[curr.area] = [];
-        acc[curr.area].push(curr);
+    // 3. التجميع: أولاً حسب الفرع (Branch) ثم حسب العميل (Customer)
+    const groupedData = activities.reduce((acc, curr) => {
+        if (!acc[curr.branch]) acc[curr.branch] = {};
+        if (!acc[curr.branch][curr.customer]) acc[curr.branch][curr.customer] = [];
+        acc[curr.branch][curr.customer].push(curr);
         return acc;
     }, {});
 
-    container.innerHTML = Object.keys(grouped).map(area => `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-            <div class="bg-slate-50 px-6 py-3 border-b flex justify-between items-center">
-                <h3 class="font-bold text-slate-700 font-sans">${area}</h3>
-                <span class="text-xs font-medium text-slate-500">${grouped[area].length} Items</span>
-            </div>
-            <table class="w-full text-left text-sm">
-                <tbody class="divide-y divide-gray-100">
-                    ${grouped[area].map(act => `
-                        <tr>
-                            <td class="px-6 py-4 font-mono text-blue-600">#${act.storyId}</td>
-                            <td class="px-6 py-4 font-medium">${act.title}</td>
-                            <td class="px-6 py-4 text-gray-500">${act.person}</td>
-                            <td class="px-6 py-4"><span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded text-xs font-bold">${act.state}</span></td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `).join('');
-},
+    // 4. بناء الـ HTML
+    let html = '';
+    for (const branch in groupedData) {
+        html += `
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-indigo-700 mb-3 flex items-center gap-2">
+                    <span class="px-2 py-1 bg-indigo-100 rounded">الفرع: ${branch}</span>
+                </h2>`;
+        
+        for (const customer in groupedData[branch]) {
+            html += `
+                <div class="ml-4 mb-4 border-r-4 border-amber-400 pr-4">
+                    <h3 class="text-md font-semibold text-slate-600 mb-2">العميل: ${customer}</h3>
+                    <div class="grid grid-cols-1 gap-2">
+                        ${groupedData[branch][customer].map(item => `
+                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 flex justify-between items-center">
+                                <div>
+                                    <span class="font-mono text-xs text-blue-600 font-bold">#${item.id}</span>
+                                    <span class="text-sm text-slate-800 mr-2">${item.title}</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-[10px] text-gray-500">${item.person}</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-50 text-green-700">${item.state}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+        }
+        html += `</div>`;
+    }
 
+    container.innerHTML = html;
+},
     
   exportDailyActivityToExcel() {
     const todayStr = new Date().toISOString().split('T')[0];
