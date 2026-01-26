@@ -791,7 +791,7 @@ renderDelivery() {
                     </div>
                     ${currentUser && currentUser.role === 'admin' ? `
                         <button onclick="ui.editDelivery('${s.logData.storyId}')" 
-                                class="absolute top-2 right-2 bg-white border border-green-200 shadow-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 rounded-md p-1.5 text-[10px] transition-all z-10 flex items-center gap-1"
+                                class="absolute top-2 left-2 bg-white border border-green-200 shadow-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 rounded-md p-1.5 text-[10px] transition-all z-10 flex items-center gap-1"
                                 title="تعديل">
                             <span>✏️</span>
                             <span class="text-[9px] font-bold">تعديل</span>
