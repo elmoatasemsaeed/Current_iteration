@@ -443,7 +443,7 @@
       "timestamp": 1769422736108
     }
   ],
-  "sha": "b35bfa3e470b0199f344b34265924b72c8a2d858",
+  "sha": "0a312a48126d7e3fdb8a35253b2efe13a93fd221",
   "currentStories": [
     {
       "id": "138714",
@@ -2741,6 +2741,30 @@
           "Changed Date": "1/25/2026 5:46:02 PM",
           "Branch": "",
           "Customer": "Wareed Lab_294"
+        },
+        {
+          "ID": "157393",
+          "Work Item Type": "Task",
+          "Title": "Regression On Wareed API",
+          "Assigned To": "Abdelrahman Elbetar <abdelrahman.elbetar@nationaltechnology.net>",
+          "Activity": "Testing",
+          "Original Estimation": "3",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "3",
+          "Activated Date": "1/26/2026 1:15:48 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/26/2026 2:50:34 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "1/26/2026 2:50:34 PM",
+          "Branch": "",
+          "Customer": "Wareed Lab_294"
         }
       ],
       "bugs": [
@@ -3879,7 +3903,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/25/2026 2:08:06 PM",
+          "Changed Date": "1/26/2026 2:39:32 PM",
           "Branch": "",
           "Customer": "Al Farabi Lab KSA_283"
         },
@@ -3927,7 +3951,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "wait @156478",
-          "Changed Date": "1/25/2026 2:08:06 PM",
+          "Changed Date": "1/26/2026 2:39:32 PM",
           "Branch": "",
           "Customer": "Al Farabi Lab KSA_283"
         },
@@ -3951,7 +3975,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "wait @156478",
-          "Changed Date": "1/25/2026 2:08:06 PM",
+          "Changed Date": "1/26/2026 2:39:32 PM",
           "Branch": "",
           "Customer": "Al Farabi Lab KSA_283"
         }
@@ -4828,7 +4852,7 @@
           "Assigned To": "Mostafa Osama Abdelatif <mostafa.abdelatif@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "1.25",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "1.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/26/2026 10:50:54 AM",
           "Business Area": "",
@@ -4841,7 +4865,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 10:50:54 AM",
+          "Changed Date": "1/26/2026 1:22:24 PM",
           "Branch": "",
           "Customer": "Wateen Lab_325"
         },
@@ -4912,8 +4936,8 @@
           "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "1/26/2026 12:19:12 PM",
+          "Tags": "2.9.0; liquibase",
+          "Changed Date": "1/26/2026 2:58:38 PM",
           "Branch": "",
           "Customer": "Wateen Lab_325"
         }
@@ -4969,6 +4993,125 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-01-21T15:02:59.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      }
+    },
+    {
+      "id": "156154",
+      "title": "Copy the Sample Barcode from Smou Lab to Wateen Lab.",
+      "state": "Active",
+      "assignedTo": "Ibrahim Ahmed Abo El-Fadl Ahmed <ibrahim.ahmed@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Registration",
+      "priority": 3,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Wateen Lab_325",
+      "changedDate": "2026-01-26T12:45:55.000Z",
+      "tasks": [
+        {
+          "ID": "157329",
+          "Work Item Type": "Task",
+          "Title": "Dev Preparation",
+          "Assigned To": "Ibrahim Ahmed Abo El-Fadl Ahmed <ibrahim.ahmed@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "2",
+          "TimeSheet_DevActualTime": "1",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/26/2026 10:36:11 AM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/26/2026 2:49:36 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "1/26/2026 2:49:36 PM",
+          "Branch": "",
+          "Customer": "Wateen Lab_325"
+        },
+        {
+          "ID": "157385",
+          "Work Item Type": "Task",
+          "Title": "TR012 | Copy Smou Barcode Reports and Customize it to Wateen",
+          "Assigned To": "Ibrahim Ahmed Abo El-Fadl Ahmed <ibrahim.ahmed@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "3",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/26/2026 2:51:09 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "1/26/2026 2:51:09 PM",
+          "Branch": "",
+          "Customer": ""
+        },
+        {
+          "ID": "157391",
+          "Work Item Type": "Task",
+          "Title": "TR012 | Copy Smou Silent Print Barcode and Customize it to Wateen",
+          "Assigned To": "Ibrahim Ahmed Abo El-Fadl Ahmed <ibrahim.ahmed@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/26/2026 2:51:15 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "1/26/2026 2:51:15 PM",
+          "Branch": "",
+          "Customer": "Wateen Lab_325"
+        },
+        {
+          "ID": "157394",
+          "Work Item Type": "Task",
+          "Title": "@LDM_DEV Copy the procedure Smou_GENERATE_REGBARCODE to Wateen",
+          "Assigned To": "Mostafa Mahanna <mostafa.mahanna@nationaltechnology.net>",
+          "Activity": "DB Modification",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/26/2026 2:41:58 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/26/2026 2:58:05 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "2.9.0; liquibase",
+          "Changed Date": "1/26/2026 2:58:13 PM",
+          "Branch": "",
+          "Customer": "Wateen Lab_325"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-01-28T10:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -6474,9 +6617,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-02-05T08:00:00.000Z",
-        "testEnd": "2026-02-12T07:00:00.000Z",
-        "finalEnd": "2026-02-12T07:00:00.000Z"
+        "devEnd": "2026-02-08T07:00:00.000Z",
+        "testEnd": "2026-02-15T07:00:00.000Z",
+        "finalEnd": "2026-02-15T07:00:00.000Z"
       }
     },
     {
@@ -6533,19 +6676,19 @@
     {
       "id": "152487",
       "title": "Alameda gp - Microbiology Statistics: Add \"Resistant Pattern\" at the search criteria; Update the reports (Organism antibiotic Resistant pattern, Organism statistics, Antibiotic sensitivity) to respect the selected Resistant Pattern at the search criteria",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
       "tester": "Ammar Yasser Ahmed <Ammar.Ahmed@nationaltechnology.net>",
       "area": "Internal lab",
       "priority": 5,
       "tags": [
-        "CR Under review",
+        "1 Generic Bug",
         " DB Reviewed"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-01-22T16:13:05.000Z",
+      "changedDate": "2026-01-26T12:54:43.000Z",
       "tasks": [
         {
           "ID": "155445",
@@ -6865,7 +7008,7 @@
     {
       "id": "156151",
       "title": "Copy the Claim forms from Smou Lab to Wateen lab.",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
       "tester": "Bassem Ayman Morsy <bassem.morsy@nationaltechnology.net>",
       "area": "Front and Financial",
@@ -6874,7 +7017,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wateen Lab_325",
-      "changedDate": "2026-01-25T11:57:20.000Z",
+      "changedDate": "2026-01-26T12:18:20.000Z",
       "tasks": [
         {
           "ID": "156848",
@@ -7093,7 +7236,32 @@
           "Customer": "Wateen Lab_325"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": "157404",
+          "Work Item Type": "Bug",
+          "Title": "Mismatch between Search Date/Time Criteria and Action Center Time for Create Proforma No & crate claim no",
+          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "1/26/2026 2:24:17 PM",
+          "Branch": "",
+          "Customer": "Wateen Lab_325"
+        }
+      ],
       "testCases": [
         {
           "id": "156858",
@@ -7744,18 +7912,18 @@
           "Original Estimation": "5",
           "TimeSheet_DevActualTime": "",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "1/26/2026 1:32:13 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-January 14-28",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "New",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/25/2026 2:58:08 PM",
+          "Changed Date": "1/26/2026 1:32:13 PM",
           "Branch": "",
           "Customer": "Al Nas Hospital_0229"
         }
@@ -7764,15 +7932,15 @@
       "testCases": [
         {
           "id": "157232",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "157235",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "157236",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "157238",
@@ -7788,7 +7956,7 @@
         },
         {
           "id": "157244",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "157252",
@@ -7831,7 +7999,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wateen Lab_325",
-      "changedDate": "2026-01-26T11:11:00.000Z",
+      "changedDate": "2026-01-26T12:05:21.000Z",
       "tasks": [
         {
           "ID": "156761",
@@ -8087,11 +8255,13 @@
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 7,
-      "tags": [],
+      "tags": [
+        "waiting review"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wateen Lab_325",
-      "changedDate": "2026-01-26T11:05:16.000Z",
+      "changedDate": "2026-01-26T13:21:18.000Z",
       "tasks": [
         {
           "ID": "157388",
@@ -8100,9 +8270,57 @@
           "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "1.5",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "1",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/26/2026 1:06:12 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/26/2026 3:03:41 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "1/26/2026 3:21:18 PM",
+          "Branch": "",
+          "Customer": "Wateen Lab_325"
+        },
+        {
+          "ID": "157389",
+          "Work Item Type": "Task",
+          "Title": "TR012 : Copy Patient Electronic Note  from Smou Lab.",
+          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1.5",
+          "TimeSheet_DevActualTime": "1",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/26/2026 1:40:42 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/26/2026 3:05:59 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "1/26/2026 3:21:18 PM",
+          "Branch": "",
+          "Customer": "Wateen Lab_325"
+        },
+        {
+          "ID": "157417",
+          "Work Item Type": "Task",
+          "Title": "TR015: Review on CR",
+          "Assigned To": "Bardis Khamees <bardis.khamees@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/26/2026 3:21:03 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
           "CustomResolvedDate": "",
@@ -8113,39 +8331,15 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 1:06:12 PM",
+          "Changed Date": "1/26/2026 3:21:03 PM",
           "Branch": "",
-          "Customer": ""
-        },
-        {
-          "ID": "157389",
-          "Work Item Type": "Task",
-          "Title": "TR012 : Copy Patient Electronic Note  from Smou Lab.",
-          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
-          "Activity": "Development",
-          "Original Estimation": "1.5",
-          "TimeSheet_DevActualTime": "",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
-          "Business Area": "",
-          "Iteration Path": "LDM\\Front Team\\2026\\Front-January 14-28",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "1/26/2026 12:56:23 PM",
-          "Branch": "",
-          "Customer": ""
+          "Customer": "Wateen Lab_325"
         }
       ],
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-01-27T12:00:00.000Z",
+        "devEnd": "2026-01-27T09:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -8396,7 +8590,7 @@
           "TimeSheet_TestingActualTime": "0.5",
           "Activated Date": "1/18/2026 11:15:45 AM",
           "Business Area": "",
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-January 14-28",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
@@ -8405,7 +8599,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "Browser Caching Issue; no changes in code",
-          "Changed Date": "1/22/2026 2:00:28 PM",
+          "Changed Date": "1/26/2026 2:57:39 PM",
           "Branch": "",
           "Customer": "Alameda_0062"
         },
@@ -8735,7 +8929,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "liquibase; V2.9",
-          "Changed Date": "1/25/2026 2:51:33 PM",
+          "Changed Date": "1/26/2026 2:47:50 PM",
           "Branch": "",
           "Customer": "Nile Lab_1111111"
         },
@@ -8778,12 +8972,12 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/26/2026 3:15:40 PM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/21/2026 5:58:04 PM",
+          "Changed Date": "1/26/2026 3:15:40 PM",
           "Branch": "",
           "Customer": "Nile Lab_1111111"
         },
@@ -8821,7 +9015,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "3",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
           "Activated Date": "1/20/2026 12:47:38 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
@@ -8829,11 +9023,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "1/20/2026 2:55:05 PM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "Footer & Water Mark; Not Resolved Yet; Now all Web Result display Header",
-          "Changed Date": "1/26/2026 11:39:08 AM",
+          "Changed Date": "1/26/2026 3:17:09 PM",
           "Branch": "",
           "Customer": "Nile Lab_1111111"
         },
@@ -8869,19 +9063,19 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "TimeSheet_TestingActualTime": "0.25",
+          "Activated Date": "1/26/2026 3:16:49 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
+          "Resolved Date": "1/26/2026 3:16:49 PM",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "1/26/2026 11:41:55 AM",
+          "Tags": "Cash Issue; Not A Bug",
+          "Changed Date": "1/26/2026 3:16:49 PM",
           "Branch": "",
           "Customer": "Nile Lab_1111111"
         },
@@ -8892,20 +9086,20 @@
           "Assigned To": "Sara Mustafa <sara.mustafa@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "1",
-          "TimeSheet_DevActualTime": "",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "TimeSheet_DevActualTime": "0.25",
+          "TimeSheet_TestingActualTime": "0.5",
+          "Activated Date": "1/26/2026 2:44:54 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-January 14-28",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
+          "Resolved Date": "1/26/2026 2:49:05 PM",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "1/26/2026 11:46:53 AM",
+          "Tags": "DB Modification",
+          "Changed Date": "1/26/2026 3:17:25 PM",
           "Branch": "",
           "Customer": "Nile Lab_1111111"
         }
@@ -8950,8 +9144,8 @@
       ],
       "calc": {
         "devEnd": "2026-01-12T07:00:00.000Z",
-        "testEnd": "2026-02-09T08:00:00.000Z",
-        "finalEnd": "2026-02-09T08:00:00.000Z"
+        "testEnd": "2026-02-05T12:00:00.000Z",
+        "finalEnd": "2026-02-05T12:00:00.000Z"
       }
     },
     {
@@ -9600,7 +9794,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-01-26T08:23:50.000Z",
+      "changedDate": "2026-01-26T13:01:50.000Z",
       "tasks": [
         {
           "ID": "156522",
@@ -10337,7 +10531,7 @@
           "Assigned To": "Ahmed Attia Mohamed Al-Qashit <ahmed.elqashit@nationaltechnology.net>",
           "Activity": "DB Modification",
           "Original Estimation": "5",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/25/2026 4:38:11 PM",
           "Business Area": "",
@@ -10345,12 +10539,12 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/26/2026 3:12:56 PM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "1/26/2026 1:06:26 PM",
+          "Tags": "2.9.0; liquibase",
+          "Changed Date": "1/26/2026 3:12:56 PM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -10550,7 +10744,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-02-04T13:00:00.000Z",
+        "devEnd": "2026-02-03T13:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -10648,7 +10842,7 @@
           "Assigned To": "Ahmed Farag Shaban <ahmed.shaban@nationaltechnology.net>",
           "Activity": "DB Modification",
           "Original Estimation": "2",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "2.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/26/2026 9:02:16 AM",
           "Business Area": "",
@@ -10656,12 +10850,12 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/26/2026 2:10:09 PM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "1/26/2026 9:02:16 AM",
+          "Tags": "liquibase; V2.9",
+          "Changed Date": "1/26/2026 2:29:17 PM",
           "Branch": "",
           "Customer": "Al Hasa Health Cluster_20"
         }
@@ -10669,7 +10863,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-01-27T12:00:00.000Z",
+        "devEnd": "2026-01-27T09:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -10765,8 +10959,8 @@
       "testCases": [],
       "calc": {
         "devEnd": "2025-09-21T09:00:00.000Z",
-        "testEnd": "2026-02-09T08:00:00.000Z",
-        "finalEnd": "2026-02-09T08:00:00.000Z"
+        "testEnd": "2026-02-05T12:00:00.000Z",
+        "finalEnd": "2026-02-05T12:00:00.000Z"
       }
     },
     {
@@ -11423,9 +11617,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-02-09T14:00:00.000Z",
-        "testEnd": "2026-02-15T11:00:00.000Z",
-        "finalEnd": "2026-02-15T11:00:00.000Z"
+        "devEnd": "2026-02-08T14:00:00.000Z",
+        "testEnd": "2026-02-12T11:00:00.000Z",
+        "finalEnd": "2026-02-12T11:00:00.000Z"
       }
     },
     {
@@ -12550,8 +12744,8 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-01-21T15:01:26.000Z",
-        "testEnd": "2026-02-17T07:00:00.000Z",
-        "finalEnd": "2026-02-17T07:00:00.000Z"
+        "testEnd": "2026-02-15T11:00:00.000Z",
+        "finalEnd": "2026-02-15T11:00:00.000Z"
       }
     },
     {
@@ -12813,8 +13007,8 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-01-22T12:00:00.000Z",
-        "testEnd": "2026-02-17T07:00:00.000Z",
-        "finalEnd": "2026-02-17T07:00:00.000Z"
+        "testEnd": "2026-02-15T11:00:00.000Z",
+        "finalEnd": "2026-02-15T11:00:00.000Z"
       }
     },
     {
@@ -13128,7 +13322,7 @@
           "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "0.5",
-          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_DevActualTime": "1",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/25/2026 6:19:32 PM",
           "Business Area": "",
@@ -13141,7 +13335,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/25/2026 6:28:53 PM",
+          "Changed Date": "1/26/2026 3:21:18 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         }
@@ -13151,10 +13345,10 @@
           "ID": "157250",
           "Work Item Type": "Bug",
           "Title": "Error ERP mapping code is required in the screen while not required in the Cr",
-          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
+          "Assigned To": "Elhussein Ahmed <elhussein.ahmed@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "0.05",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "0.25",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/26/2026 12:59:59 PM",
           "Business Area": "",
@@ -13162,12 +13356,12 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/26/2026 1:39:20 PM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 12:59:59 PM",
+          "Changed Date": "1/26/2026 3:10:49 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -13223,10 +13417,10 @@
           "ID": "157260",
           "Work Item Type": "Bug",
           "Title": "No asterisk symbol * is displayed beside required fields ( Product title, Consumption type, Product category, Manufacturer )",
-          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
+          "Assigned To": "Elhussein Ahmed <elhussein.ahmed@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "0.25",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "0.25",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/26/2026 12:28:55 PM",
           "Business Area": "",
@@ -13234,12 +13428,12 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/26/2026 1:39:12 PM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 12:28:55 PM",
+          "Changed Date": "1/26/2026 1:39:12 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -13271,7 +13465,7 @@
           "ID": "157267",
           "Work Item Type": "Bug",
           "Title": "No validation error trying to upload invalid image and documents ( PDF, Excel ) are not accepted",
-          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
+          "Assigned To": "Sherif Eldorf <sherif.eldorf@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "",
           "TimeSheet_DevActualTime": "",
@@ -13287,7 +13481,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/25/2026 5:00:50 PM",
+          "Changed Date": "1/26/2026 3:11:36 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -13343,23 +13537,23 @@
           "ID": "157296",
           "Work Item Type": "Bug",
           "Title": "Error Unspecified error occured is displayed trying to save a duplicated product name",
-          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
+          "Assigned To": "Sherif Eldorf <sherif.eldorf@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
+          "Original Estimation": "1",
           "TimeSheet_DevActualTime": "",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "1/26/2026 3:03:16 PM",
           "Business Area": "",
           "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "New",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/25/2026 6:53:35 PM",
+          "Changed Date": "1/26/2026 3:03:16 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -13367,23 +13561,23 @@
           "ID": "157346",
           "Work Item Type": "Bug",
           "Title": "Manufacture is not saved after adding product",
-          "Assigned To": "Sherif Eldorf <sherif.eldorf@nationaltechnology.net>",
+          "Assigned To": "Elhussein Ahmed <elhussein.ahmed@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "1",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "1/26/2026 2:01:32 PM",
           "Business Area": "",
           "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
+          "Resolved Date": "1/26/2026 3:10:56 PM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 11:05:57 AM",
+          "Changed Date": "1/26/2026 3:10:56 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -13391,23 +13585,23 @@
           "ID": "157350",
           "Work Item Type": "Bug",
           "Title": "Can't edit products",
-          "Assigned To": "Sherif Eldorf <sherif.eldorf@nationaltechnology.net>",
+          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
+          "Original Estimation": "0.5",
           "TimeSheet_DevActualTime": "",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "1/26/2026 3:07:33 PM",
           "Business Area": "",
           "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "New",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 11:11:20 AM",
+          "Changed Date": "1/26/2026 3:11:02 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -13415,47 +13609,47 @@
           "ID": "157355",
           "Work Item Type": "Bug",
           "Title": "Product name is not displayed at delete confirmation pop-up and error is displayed after entering a title > 200 char",
-          "Assigned To": "Sherif Eldorf <sherif.eldorf@nationaltechnology.net>",
+          "Assigned To": "Elhussein Ahmed <elhussein.ahmed@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.33",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "1/26/2026 1:41:07 PM",
           "Business Area": "",
           "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
+          "Resolved Date": "1/26/2026 2:00:16 PM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 11:35:08 AM",
+          "Changed Date": "1/26/2026 2:00:16 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
         {
           "ID": "157392",
           "Work Item Type": "Bug",
-          "Title": "Validation Mismatch on \"Manufacture\" Field it is supposed to be required",
-          "Assigned To": "Yahia Hassan <yahia.hassan@nationaltechnology.net>",
+          "Title": "Validation Mismatch on \"Manufacture\", \"Category\" Fields ( should be required }",
+          "Assigned To": "Elhussein Ahmed <elhussein.ahmed@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "0.25",
-          "TimeSheet_DevActualTime": "",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.5",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "1/26/2026 1:31:45 PM",
           "Business Area": "",
           "Iteration Path": "MaterialManagement\\2025\\MM August 26-11",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
+          "Resolved Date": "1/26/2026 1:39:26 PM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 1:13:11 PM",
+          "Changed Date": "1/26/2026 1:39:26 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         }
@@ -14694,7 +14888,7 @@
           "Assigned To": "Yara Mohsen <yara.abdelsalam@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "0.5",
-          "TimeSheet_DevActualTime": "1",
+          "TimeSheet_DevActualTime": "2",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/26/2026 11:05:26 AM",
           "Business Area": "",
@@ -14702,12 +14896,12 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/26/2026 2:01:24 PM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 11:31:18 AM",
+          "Changed Date": "1/26/2026 2:01:24 PM",
           "Branch": "",
           "Customer": ""
         },
@@ -14718,7 +14912,7 @@
           "Assigned To": "Yara Mohsen <yara.abdelsalam@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "0.5",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "0.33",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "1/26/2026 11:19:58 AM",
           "Business Area": "",
@@ -14726,12 +14920,36 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/26/2026 1:54:42 PM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 11:19:58 AM",
+          "Changed Date": "1/26/2026 2:00:36 PM",
+          "Branch": "",
+          "Customer": ""
+        },
+        {
+          "ID": "157400",
+          "Work Item Type": "Task",
+          "Title": "Fix inactive collector error message",
+          "Assigned To": "Yara Mohsen <yara.abdelsalam@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "0.2",
+          "TimeSheet_DevActualTime": "0.75",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "1/26/2026 1:52:05 PM",
+          "Business Area": "",
+          "Iteration Path": "Home Visit\\2025\\home_visit July 2-15",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "1/26/2026 1:52:57 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "1/26/2026 1:52:57 PM",
           "Branch": "",
           "Customer": ""
         }
@@ -15648,13 +15866,37 @@
           "Changed Date": "1/25/2026 7:48:45 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": "157401",
+          "Work Item Type": "Bug",
+          "Title": "UTC z display as value in country time zone drop down list",
+          "Assigned To": "Abdullah Helal <abdullah.helal@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "0.25",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "Home Visit",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "1/26/2026 1:52:48 PM",
+          "Branch": "",
+          "Customer": "Internal CR_2000"
         }
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-02-17T09:00:00.000Z",
-        "testEnd": "2026-02-19T07:00:00.000Z",
-        "finalEnd": "2026-02-19T07:00:00.000Z"
+        "devEnd": "2026-02-15T11:00:00.000Z",
+        "testEnd": "2026-02-17T07:00:00.000Z",
+        "finalEnd": "2026-02-17T07:00:00.000Z"
       }
     },
     {
@@ -17514,8 +17756,8 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-01-15T13:13:32.000Z",
-        "testEnd": "2026-02-26T07:00:00.000Z",
-        "finalEnd": "2026-02-26T07:00:00.000Z"
+        "testEnd": "2026-02-24T07:00:00.000Z",
+        "finalEnd": "2026-02-24T07:00:00.000Z"
       }
     },
     {
@@ -17681,8 +17923,8 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-01-26T10:17:05.000Z",
-        "testEnd": "2026-02-26T07:00:00.000Z",
-        "finalEnd": "2026-02-26T07:00:00.000Z"
+        "testEnd": "2026-02-24T07:00:00.000Z",
+        "finalEnd": "2026-02-24T07:00:00.000Z"
       }
     },
     {
@@ -18001,12 +18243,12 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "1/26/2026 2:11:34 PM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "1/26/2026 12:39:36 PM",
+          "Changed Date": "1/26/2026 2:11:34 PM",
           "Branch": "",
           "Customer": "Anti-Narcotics General Administration of Egypt - ANGA_0425"
         }
@@ -18087,9 +18329,9 @@
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-01-26T11:17:05.000Z",
-        "testEnd": "2026-02-26T07:00:00.000Z",
-        "finalEnd": "2026-02-26T07:00:00.000Z"
+        "devEnd": "2026-01-26T10:17:05.000Z",
+        "testEnd": "2026-02-24T07:00:00.000Z",
+        "finalEnd": "2026-02-24T07:00:00.000Z"
       }
     },
     {
