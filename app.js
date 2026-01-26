@@ -428,6 +428,8 @@ const ui = {
         
         const settingsNav = document.querySelector("button[onclick*='settings']");
         if (settingsNav) settingsNav.style.display = 'none';
+        if (tabId === 'daily-activity') {
+        this.renderDailyActivity();
     }
 
     },
@@ -1178,74 +1180,95 @@ openStoryModal(storyId) {
     
 renderDailyActivity() {
     const container = document.getElementById('daily-activity-container');
-    const todayStr = new Date().toISOString().split('T')[0];
+    if (!container) return;
+
+    // الحصول على تاريخ اليوم بتنسيق YYYY-MM-DD
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+
     const activities = [];
 
+    // 1. فلترة البيانات بناءً على التعديلات التي تمت اليوم في التاسكات
     currentData.forEach(story => {
-        // 1. تحقق هل الاستوري نفسها تعدلت اليوم؟
-        let isModifiedToday = story.changedDate && story.changedDate.toISOString().split('T')[0] === todayStr;
+        let hasActivityToday = false;
 
-        // 2. تحقق هل أي من التاسكات التابعة لها تعدلت اليوم؟
-        const hasModifiedTasks = story.tasks.some(task => {
-            const taskChangedDate = task['Changed Date'] ? new Date(task['Changed Date']) : null;
-            return taskChangedDate && taskChangedDate.toISOString().split('T')[0] === todayStr;
-        });
+        // التحقق من تاريخ تغيير الاستوري نفسها
+        const storyDate = story.changedDate ? new Date(story.changedDate).toISOString().split('T')[0] : null;
+        if (storyDate === todayStr) {
+            hasActivityToday = true;
+        }
 
-        if (isModifiedToday || hasModifiedTasks) {
+        // التحقق من تاريخ تغيير أي تاسك داخل الاستوري
+        if (story.tasks && story.tasks.length > 0) {
+            const taskChangedToday = story.tasks.some(task => {
+                const taskDateRaw = task['Changed Date'];
+                if (!taskDateRaw) return false;
+                const taskDate = new Date(taskDateRaw).toISOString().split('T')[0];
+                return taskDate === todayStr;
+            });
+            if (taskChangedToday) hasActivityToday = true;
+        }
+
+        if (hasActivityToday) {
             activities.push({
                 id: story.id,
                 title: story.title,
-                branch: story.branch || "N/A",   // الفرع
-                customer: story.customer || "General", // العميل
+                branch: story.branch || "غير محدد",
+                customer: story.customer || "عام",
                 state: story.state,
-                person: story.assignedTo
+                assignedTo: story.assignedTo
             });
         }
     });
 
+    // إذا لم توجد بيانات
     if (activities.length === 0) {
-        container.innerHTML = `<div class="text-center py-20 text-gray-400 bg-white rounded-xl border">لم يتم تسجيل أي نشاط على المهام اليوم.</div>`;
+        container.innerHTML = `
+            <div class="bg-white p-10 rounded-xl border-2 border-dashed border-gray-200 text-center">
+                <p class="text-gray-500">لا توجد تحديثات أو نشاطات مسجلة بتاريخ اليوم (${todayStr})</p>
+            </div>`;
         return;
     }
 
-    // 3. التجميع: أولاً حسب الفرع (Branch) ثم حسب العميل (Customer)
-    const groupedData = activities.reduce((acc, curr) => {
-        if (!acc[curr.branch]) acc[curr.branch] = {};
-        if (!acc[curr.branch][curr.customer]) acc[curr.branch][curr.customer] = [];
-        acc[curr.branch][curr.customer].push(curr);
+    // 2. تجميع البيانات (Grouping) حسب الفرع ثم العميل
+    const grouped = activities.reduce((acc, item) => {
+        if (!acc[item.branch]) acc[item.branch] = {};
+        if (!acc[item.branch][item.customer]) acc[item.branch][item.customer] = [];
+        acc[item.branch][item.customer].push(item);
         return acc;
     }, {});
 
-    // 4. بناء الـ HTML
+    // 3. بناء واجهة العرض (UI)
     let html = '';
-    for (const branch in groupedData) {
+    for (const branch in grouped) {
         html += `
-            <div class="mb-8">
-                <h2 class="text-lg font-bold text-indigo-700 mb-3 flex items-center gap-2">
-                    <span class="px-2 py-1 bg-indigo-100 rounded">الفرع: ${branch}</span>
-                </h2>`;
-        
-        for (const customer in groupedData[branch]) {
+            <div class="branch-group mb-6">
+                <div class="bg-slate-800 text-white px-4 py-2 rounded-t-lg font-bold flex justify-between">
+                    <span>الفرع: ${branch}</span>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-b-lg p-4 shadow-sm">`;
+
+        for (const customer in grouped[branch]) {
             html += `
-                <div class="ml-4 mb-4 border-r-4 border-amber-400 pr-4">
-                    <h3 class="text-md font-semibold text-slate-600 mb-2">العميل: ${customer}</h3>
-                    <div class="grid grid-cols-1 gap-2">
-                        ${groupedData[branch][customer].map(item => `
-                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 flex justify-between items-center">
-                                <div>
-                                    <span class="font-mono text-xs text-blue-600 font-bold">#${item.id}</span>
-                                    <span class="text-sm text-slate-800 mr-2">${item.title}</span>
-                                </div>
+                <div class="customer-section mb-4 last:mb-0">
+                    <h4 class="text-amber-700 font-semibold border-b border-amber-100 pb-1 mb-2 italic">العميل: ${customer}</h4>
+                    <div class="space-y-2">
+                        ${grouped[branch][customer].map(item => `
+                            <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded border-r-2 border-slate-300">
                                 <div class="flex items-center gap-3">
-                                    <span class="text-[10px] text-gray-500">${item.person}</span>
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-50 text-green-700">${item.state}</span>
+                                    <span class="text-xs font-bold bg-slate-100 px-2 py-1 rounded">#${item.id}</span>
+                                    <span class="text-sm font-medium text-gray-700">${item.title}</span>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">${item.assignedTo}</span>
+                                    <span class="text-[11px] font-bold text-blue-600">${item.state}</span>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
                 </div>`;
         }
-        html += `</div>`;
+        html += `</div></div>`;
     }
 
     container.innerHTML = html;
