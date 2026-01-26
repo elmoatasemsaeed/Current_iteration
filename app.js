@@ -771,8 +771,7 @@ renderDelivery() {
         return;
     }
 
-    // وظيفة مساعدة لإنشاء HTML لكل كارت (كما هي بدون تغيير)
-   const createCardHtml = (s, isLogged) => {
+    const createCardHtml = (s, isLogged) => {
     return `
         <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
             <div class="flex justify-between items-start mb-2">
@@ -785,14 +784,16 @@ renderDelivery() {
             <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
             
             ${isLogged ? `
-                <div class="relative group">
-                    <div class="text-xs bg-green-50 text-green-700 p-2 rounded-lg border border-green-100">
+                <div class="relative group mt-2">
+                    <div class="text-xs bg-green-50 text-green-700 p-2 pr-8 rounded-lg border border-green-100 min-h-[50px]">
                         <b>المستلم:</b> ${s.logData.to}<br>
                         <b>التاريخ:</b> ${s.logData.date}
                     </div>
                     ${currentUser && currentUser.role === 'admin' ? `
-                        <button onclick="ui.editDelivery('${s.logData.storyId}')" class="absolute top-1 left-1 bg-white border shadow-sm text-gray-400 hover:text-blue-600 rounded p-1 text-[10px] transition-all">
-                            ✏️
+                        <button onclick="ui.editDelivery('${s.logData.storyId}')" 
+                                class="absolute top-1.5 left-1.5 bg-white border border-green-200 shadow-sm text-gray-400 hover:text-blue-600 hover:border-blue-300 rounded-md p-1.5 text-[10px] transition-all z-10"
+                                title="تعديل بيانات التسليم">
+                            ✏️ تعديل
                         </button>
                     ` : ''}
                 </div>
