@@ -212,6 +212,9 @@ async saveToGitHub() {
                     priority: parseInt(row['Business Priority']) || 999,
                     tags: row['Tags'] ? row['Tags'].split(';').filter(t => t.trim() !== "") : [],
                     expectedRelease: row['Release Expected Date'] ? new Date(row['Release Expected Date']) : null,
+                    branch: row['Branch'] || "N/A",           // تعريف عمود Branch
+                    customer: row['Customer'] || "General",   // تعريف عمود Customer
+                    changedDate: row['Changed Date'] ? new Date(row['Changed Date']) : null, // تعريف Changed Date
                     tasks: [],
                     bugs: [],
                     testCases: [],
