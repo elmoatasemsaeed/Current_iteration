@@ -1181,41 +1181,23 @@ openStoryModal(storyId) {
     const activities = [];
 
     currentData.forEach(story => {
-        // فحص المهام (Tasks)
-        story.tasks.forEach(task => {
-            if (task['Activated Date'] && task['Activated Date'].startsWith(todayStr)) {
-                activities.push({
-                    area: story.area,
-                    storyId: story.id,
-                    title: task['Title'],
-                    type: 'Task',
-                    activity: task['Activity'] || 'General',
-                    person: story.assignedTo, // أو الشخص المسند إليه التاسك إذا توفر
-                    state: task['State']
-                });
-            }
-        });
-
-        // فحص البجز (Bugs)
-        if (story.bugs) {
-            story.bugs.forEach(bug => {
-                if (bug['Activated Date'] && bug['Activated Date'].startsWith(todayStr)) {
-                    activities.push({
-                        area: story.area,
-                        storyId: story.id,
-                        title: bug['Title'],
-                        type: 'Bug',
-                        activity: 'Fixing',
-                        person: story.assignedTo,
-                        state: bug['State']
-                    });
-                }
+        // التحقق مما إذا كان تاريخ التغيير الخاص بالاستوري هو اليوم
+        // نستخدم changedDate الذي تم تعريفه أثناء معالجة الـ CSV
+        if (story.changedDate && story.changedDate.toISOString().split('T')[0] === todayStr) {
+            activities.push({
+                area: story.area,
+                storyId: story.id,
+                title: story.title,
+                type: 'User Story',
+                activity: 'Status Update',
+                person: story.assignedTo,
+                state: story.state
             });
         }
     });
 
     if (activities.length === 0) {
-        container.innerHTML = `<div class="text-center py-20 text-gray-400 bg-white rounded-xl border">No activity recorded for today.</div>`;
+        container.innerHTML = `<div class="text-center py-20 text-gray-400 bg-white rounded-xl border">No activity recorded for today (based on Changed Date).</div>`;
         return;
     }
 
@@ -1227,22 +1209,21 @@ openStoryModal(storyId) {
     }, {});
 
     container.innerHTML = Object.keys(grouped).map(area => `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
             <div class="bg-slate-50 px-6 py-3 border-b flex justify-between items-center">
                 <h3 class="font-bold text-slate-700 flex items-center gap-2">
                     <span class="w-3 h-3 bg-amber-500 rounded-full"></span> ${area}
                 </h3>
-                <span class="text-xs font-medium text-slate-500">${grouped[area].length} Activities</span>
+                <span class="text-xs font-medium text-slate-500">${grouped[area].length} Items Modified Today</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead class="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold">
                         <tr>
                             <th class="px-6 py-3">ID</th>
-                            <th class="px-6 py-3">Type</th>
-                            <th class="px-6 py-3">Activity/Title</th>
+                            <th class="px-6 py-3">Title</th>
                             <th class="px-6 py-3">Person</th>
-                            <th class="px-6 py-3">State</th>
+                            <th class="px-6 py-3">Current State</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -1250,17 +1231,13 @@ openStoryModal(storyId) {
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 font-mono text-blue-600">#${act.storyId}</td>
                                 <td class="px-6 py-4">
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${act.type === 'Bug' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">
-                                        ${act.type}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-700">${act.activity}</div>
-                                    <div class="text-[11px] text-gray-400 truncate w-64">${act.title}</div>
+                                    <div class="font-medium text-slate-700">${act.title}</div>
                                 </td>
                                 <td class="px-6 py-4 text-slate-600">${act.person}</td>
                                 <td class="px-6 py-4">
-                                    <span class="text-[11px] font-semibold text-slate-500">${act.state}</span>
+                                    <span class="px-2 py-1 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700">
+                                        ${act.state}
+                                    </span>
                                 </td>
                             </tr>
                         `).join('')}
@@ -1273,57 +1250,40 @@ openStoryModal(storyId) {
 
     
   exportDailyActivityToExcel() {
-        const todayStr = new Date().toISOString().split('T')[0];
-        const activities = [];
+    const todayStr = new Date().toISOString().split('T')[0];
+    const activities = [];
 
-        currentData.forEach(story => {
-            story.tasks.forEach(task => {
-                if (task['Activated Date'] && task['Activated Date'].startsWith(todayStr)) {
-                    activities.push({
-                        ID: story.id,
-                        Area: story.area,
-                        Type: 'Task',
-                        Title: task['Title'],
-                        Person: story.assignedTo,
-                        State: task['State']
-                    });
-                }
+    currentData.forEach(story => {
+        if (story.changedDate && story.changedDate.toISOString().split('T')[0] === todayStr) {
+            activities.push({
+                ID: story.id,
+                Area: story.area,
+                Title: story.title,
+                Person: story.assignedTo,
+                State: story.state,
+                ChangedDate: story.changedDate.toLocaleString()
             });
+        }
+    });
 
-            if (story.bugs) {
-                story.bugs.forEach(bug => {
-                    if (bug['Activated Date'] && bug['Activated Date'].startsWith(todayStr)) {
-                        activities.push({
-                            ID: story.id,
-                            Area: story.area,
-                            Type: 'Bug',
-                            Title: bug['Title'],
-                            Person: story.assignedTo,
-                            State: bug['State']
-                        });
-                    }
-                });
-            }
-        });
+    if (activities.length === 0) return alert("لا توجد أنشطة مسجلة بتاريخ اليوم لتصديرها");
 
-        if (activities.length === 0) return alert("لا توجد أنشطة مسجلة اليوم لتصديرها");
+    // إنشاء محتوى CSV مع دعم اللغة العربية (BOM)
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+    csvContent += "ID,Area,Title,Assigned To,Current State,Last Changed\n";
+    
+    activities.forEach(row => {
+        csvContent += `${row.ID},${row.Area},"${row.Title.replace(/"/g, '""')}",${row.Person},${row.State},"${row.ChangedDate}"\n`;
+    });
 
-        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-        csvContent += "ID,Area,Type,Title,Person,State\n";
-        
-        activities.forEach(row => {
-            csvContent += `${row.ID},${row.Area},${row.Type},"${row.Title.replace(/"/g, '""')}",${row.Person},${row.State}\n`;
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Activity_Report_${todayStr}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    },  
-
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Daily_Report_${todayStr}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+},
     
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
