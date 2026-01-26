@@ -126,6 +126,7 @@ db = JSON.parse(decodedContent);
     db.currentStories.forEach(s => {
         if (s.expectedRelease) {
             s.expectedRelease = new Date(s.expectedRelease);
+            if (s.changedDate) s.changedDate = new Date(s.changedDate);
         }
     });
     this.calculateTimelines(db.currentStories);
@@ -1175,21 +1176,22 @@ openStoryModal(storyId) {
     },
      
     
-    renderDailyActivity() {
+renderDailyActivity() {
     const container = document.getElementById('daily-activity-container');
     const todayStr = new Date().toISOString().split('T')[0];
     const activities = [];
 
     currentData.forEach(story => {
-        // التحقق مما إذا كان تاريخ التغيير الخاص بالاستوري هو اليوم
-        // نستخدم changedDate الذي تم تعريفه أثناء معالجة الـ CSV
-        if (story.changedDate && story.changedDate.toISOString().split('T')[0] === todayStr) {
+        // تحويل النص إلى تاريخ إذا لم يكن Object بالفعل
+        const cDate = (story.changedDate && !(story.changedDate instanceof Date)) 
+                      ? new Date(story.changedDate) 
+                      : story.changedDate;
+
+        if (cDate && !isNaN(cDate) && cDate.toISOString().split('T')[0] === todayStr) {
             activities.push({
                 area: story.area,
                 storyId: story.id,
                 title: story.title,
-                type: 'User Story',
-                activity: 'Status Update',
                 person: story.assignedTo,
                 state: story.state
             });
@@ -1197,11 +1199,11 @@ openStoryModal(storyId) {
     });
 
     if (activities.length === 0) {
-        container.innerHTML = `<div class="text-center py-20 text-gray-400 bg-white rounded-xl border">No activity recorded for today (based on Changed Date).</div>`;
+        container.innerHTML = `<div class="text-center py-20 text-gray-400 bg-white rounded-xl border">No activity recorded for today.</div>`;
         return;
     }
 
-    // تجميع حسب الـ Area
+    // ... باقي كود الـ Grouping والـ HTML كما هو في الكود السابق ...
     const grouped = activities.reduce((acc, curr) => {
         if (!acc[curr.area]) acc[curr.area] = [];
         acc[curr.area].push(curr);
@@ -1211,39 +1213,21 @@ openStoryModal(storyId) {
     container.innerHTML = Object.keys(grouped).map(area => `
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
             <div class="bg-slate-50 px-6 py-3 border-b flex justify-between items-center">
-                <h3 class="font-bold text-slate-700 flex items-center gap-2">
-                    <span class="w-3 h-3 bg-amber-500 rounded-full"></span> ${area}
-                </h3>
-                <span class="text-xs font-medium text-slate-500">${grouped[area].length} Items Modified Today</span>
+                <h3 class="font-bold text-slate-700 font-sans">${area}</h3>
+                <span class="text-xs font-medium text-slate-500">${grouped[area].length} Items</span>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold">
+            <table class="w-full text-left text-sm">
+                <tbody class="divide-y divide-gray-100">
+                    ${grouped[area].map(act => `
                         <tr>
-                            <th class="px-6 py-3">ID</th>
-                            <th class="px-6 py-3">Title</th>
-                            <th class="px-6 py-3">Person</th>
-                            <th class="px-6 py-3">Current State</th>
+                            <td class="px-6 py-4 font-mono text-blue-600">#${act.storyId}</td>
+                            <td class="px-6 py-4 font-medium">${act.title}</td>
+                            <td class="px-6 py-4 text-gray-500">${act.person}</td>
+                            <td class="px-6 py-4"><span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded text-xs font-bold">${act.state}</span></td>
                         </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        ${grouped[area].map(act => `
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 font-mono text-blue-600">#${act.storyId}</td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-700">${act.title}</div>
-                                </td>
-                                <td class="px-6 py-4 text-slate-600">${act.person}</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700">
-                                        ${act.state}
-                                    </span>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
+                    `).join('')}
+                </tbody>
+            </table>
         </div>
     `).join('');
 },
@@ -1254,21 +1238,25 @@ openStoryModal(storyId) {
     const activities = [];
 
     currentData.forEach(story => {
-        if (story.changedDate && story.changedDate.toISOString().split('T')[0] === todayStr) {
+        // التأكد من تحويل القيمة لتاريخ صالح
+        const cDate = (story.changedDate && !(story.changedDate instanceof Date)) 
+                      ? new Date(story.changedDate) 
+                      : story.changedDate;
+
+        if (cDate && !isNaN(cDate) && cDate.toISOString().split('T')[0] === todayStr) {
             activities.push({
                 ID: story.id,
                 Area: story.area,
                 Title: story.title,
                 Person: story.assignedTo,
                 State: story.state,
-                ChangedDate: story.changedDate.toLocaleString()
+                ChangedDate: cDate.toLocaleString('en-GB')
             });
         }
     });
 
     if (activities.length === 0) return alert("لا توجد أنشطة مسجلة بتاريخ اليوم لتصديرها");
 
-    // إنشاء محتوى CSV مع دعم اللغة العربية (BOM)
     let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
     csvContent += "ID,Area,Title,Assigned To,Current State,Last Changed\n";
     
