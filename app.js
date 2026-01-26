@@ -784,16 +784,17 @@ renderDelivery() {
             <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
             
             ${isLogged ? `
-                <div class="relative group mt-2">
-                    <div class="text-xs bg-green-50 text-green-700 p-2 pr-8 rounded-lg border border-green-100 min-h-[50px]">
+                <div class="relative group mt-2" dir="rtl">
+                    <div class="text-xs bg-green-50 text-green-700 p-3 pr-12 rounded-lg border border-green-100 min-h-[60px] leading-relaxed">
                         <b>المستلم:</b> ${s.logData.to}<br>
                         <b>التاريخ:</b> ${s.logData.date}
                     </div>
                     ${currentUser && currentUser.role === 'admin' ? `
                         <button onclick="ui.editDelivery('${s.logData.storyId}')" 
-                                class="absolute top-1.5 left-1.5 bg-white border border-green-200 shadow-sm text-gray-400 hover:text-blue-600 hover:border-blue-300 rounded-md p-1.5 text-[10px] transition-all z-10"
-                                title="تعديل بيانات التسليم">
-                            ✏️ تعديل
+                                class="absolute top-2 right-2 bg-white border border-green-200 shadow-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 rounded-md p-1.5 text-[10px] transition-all z-10 flex items-center gap-1"
+                                title="تعديل">
+                            <span>✏️</span>
+                            <span class="text-[9px] font-bold">تعديل</span>
                         </button>
                     ` : ''}
                 </div>
