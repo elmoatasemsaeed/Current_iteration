@@ -1210,7 +1210,7 @@ renderDailyActivity() {
                 id: story.id,
                 title: story.title,
                 branch: story.branch || "غير محدد",
-                area: story.area || "General", // إضافة الـ Area
+                area: story.area || "General",
                 customer: story.customer || "عام",
                 state: story.state,
                 assignedTo: story.assignedTo
@@ -1234,30 +1234,50 @@ renderDailyActivity() {
         return acc;
     }, {});
 
-    // 3. بناء واجهة العرض
+    // 3. بناء واجهة العرض مع العدادات
     let html = '';
     for (const branch in grouped) {
+        // حساب إجمالي الفرع
+        let branchCount = 0;
+        Object.values(grouped[branch]).forEach(area => {
+            Object.values(area).forEach(cust => branchCount += cust.length);
+        });
+
         html += `
             <div class="branch-group mb-8">
                 <div class="bg-slate-800 text-white px-4 py-3 rounded-t-lg font-bold shadow-md flex justify-between items-center">
                     <span class="text-lg">📁 الفرع: ${branch}</span>
+                    <span class="bg-white/20 px-3 py-1 rounded-full text-sm">إجمالي: ${branchCount}</span>
                 </div>
                 <div class="bg-white border border-gray-200 rounded-b-lg p-5 shadow-sm space-y-6">`;
 
         for (const area in grouped[branch]) {
+            // حساب إجمالي المنطقة
+            let areaCount = 0;
+            Object.values(grouped[branch][area]).forEach(cust => areaCount += cust.length);
+
             html += `
                 <div class="area-section border-r-4 border-indigo-500 pr-4">
-                    <h3 class="text-indigo-700 font-bold text-md mb-3 flex items-center gap-2">
-                        <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
-                        المنطقة (Area): ${area}
+                    <h3 class="text-indigo-700 font-bold text-md mb-3 flex items-center justify-between">
+                        <span class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                            المنطقة (Area): ${area}
+                        </span>
+                        <span class="text-xs bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">${areaCount} ستوري</span>
                     </h3>`;
 
             for (const customer in grouped[branch][area]) {
+                const customerStories = grouped[branch][area][customer];
+                const customerCount = customerStories.length;
+
                 html += `
                     <div class="customer-block mr-4 mb-4 last:mb-0">
-                        <h4 class="text-amber-700 font-semibold text-sm border-b border-amber-100 pb-1 mb-2 italic">العميل: ${customer}</h4>
+                        <h4 class="text-amber-700 font-semibold text-sm border-b border-amber-100 pb-1 mb-2 italic flex justify-between items-center">
+                            <span>العميل: ${customer}</span>
+                            <span class="text-[10px] text-amber-500 font-bold">${customerCount}</span>
+                        </h4>
                         <div class="grid gap-2">
-                            ${grouped[branch][area][customer].map(item => `
+                            ${customerStories.map(item => `
                                 <div class="flex items-center justify-between p-3 bg-slate-50 hover:bg-indigo-50 transition-colors rounded-lg border border-gray-100">
                                     <div class="flex items-center gap-3">
                                         <span class="text-[10px] font-mono font-bold bg-white border border-slate-200 px-2 py-1 rounded shadow-sm">#${item.id}</span>
