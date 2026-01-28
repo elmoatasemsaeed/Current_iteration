@@ -1301,41 +1301,91 @@ renderDailyActivity() {
     container.innerHTML = html;
 },
     
-  exportDailyActivityToExcel() {
+ exportDailyActivityToExcel() {
     const todayStr = new Date().toISOString().split('T')[0];
     const activities = [];
 
+    // 1. تجميع الأنشطة التي تمت اليوم (نفس منطق الريندر)
     currentData.forEach(story => {
-        // التأكد من تحويل القيمة لتاريخ صالح
-        const cDate = (story.changedDate && !(story.changedDate instanceof Date)) 
-                      ? new Date(story.changedDate) 
-                      : story.changedDate;
+        let hasActivityToday = false;
+        const storyDate = story.changedDate ? new Date(story.changedDate).toISOString().split('T')[0] : null;
+        if (storyDate === todayStr) hasActivityToday = true;
 
-        if (cDate && !isNaN(cDate) && cDate.toISOString().split('T')[0] === todayStr) {
+        if (story.tasks && story.tasks.length > 0) {
+            const taskChangedToday = story.tasks.some(task => {
+                if (!task['Changed Date']) return false;
+                const taskDate = new Date(task['Changed Date']).toISOString().split('T')[0];
+                return taskDate === todayStr;
+            });
+            if (taskChangedToday) hasActivityToday = true;
+        }
+
+        if (hasActivityToday) {
             activities.push({
-                ID: story.id,
-                Area: story.area,
-                Title: story.title,
-                Person: story.assignedTo,
-                State: story.state,
-                ChangedDate: cDate.toLocaleString('en-GB')
+                id: story.id,
+                title: story.title,
+                branch: story.branch || "N/A",
+                area: story.area || "General",
+                customer: story.customer || "General",
+                state: story.state,
+                assignedTo: story.assignedTo
             });
         }
     });
 
     if (activities.length === 0) return alert("لا توجد أنشطة مسجلة بتاريخ اليوم لتصديرها");
 
-    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-    csvContent += "ID,Area,Title,Assigned To,Current State,Last Changed\n";
-    
-    activities.forEach(row => {
-        csvContent += `${row.ID},${row.Area},"${row.Title.replace(/"/g, '""')}",${row.Person},${row.State},"${row.ChangedDate}"\n`;
-    });
+    // 2. تنظيم البيانات في مجموعات (Grouping)
+    const grouped = activities.reduce((acc, item) => {
+        if (!acc[item.branch]) acc[item.branch] = {};
+        if (!acc[item.branch][item.area]) acc[item.branch][item.area] = {};
+        if (!acc[item.branch][item.area][item.customer]) acc[item.branch][item.area][item.customer] = [];
+        acc[item.branch][item.area][item.customer].push(item);
+        return acc;
+    }, {});
 
+    // 3. بناء محتوى CSV مع الملخصات
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+    csvContent += "Type,Identifier,Details,Assigned To,Status\n"; // العناوين
+
+    for (const branch in grouped) {
+        // حساب إجمالي الفرع
+        let branchCount = 0;
+        Object.values(grouped[branch]).forEach(area => {
+            Object.values(area).forEach(cust => branchCount += cust.length);
+        });
+        
+        // صف الفرع الرئيسي (الملخص)
+        csvContent += `BRANCH,${branch},Total Stories: ${branchCount},,\n`;
+
+        for (const area in grouped[branch]) {
+            let areaCount = 0;
+            Object.values(grouped[branch][area]).forEach(cust => areaCount += cust.length);
+            
+            // صف المنطقة (الملخص)
+            csvContent += `AREA,${area},Stories: ${areaCount},,\n`;
+
+            for (const customer in grouped[branch][area]) {
+                const customerStories = grouped[branch][area][customer];
+                
+                // صف العميل (الملخص)
+                csvContent += `CUSTOMER,${customer},Items: ${customerStories.length},,\n`;
+
+                // صفوف الستوريز التابعة للعميل
+                customerStories.forEach(s => {
+                    csvContent += `STORY,#${s.id},"${s.title.replace(/"/g, '""')}",${s.assignedTo},${s.state}\n`;
+                });
+            }
+        }
+        // سطر فارغ للفصل بين الفروع
+        csvContent += ",,,,\n";
+    }
+
+    // 4. تحميل الملف
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Daily_Report_${todayStr}.csv`);
+    link.setAttribute("download", `Daily_Report_Summary_${todayStr}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
