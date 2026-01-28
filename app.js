@@ -1185,28 +1185,21 @@ renderDailyActivity() {
     const container = document.getElementById('daily-activity-container');
     if (!container) return;
 
-    // الحصول على تاريخ اليوم بتنسيق YYYY-MM-DD
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
-
     const activities = [];
 
-    // 1. فلترة البيانات بناءً على التعديلات التي تمت اليوم في التاسكات
+    // 1. جمع النشاطات التي تمت اليوم
     currentData.forEach(story => {
         let hasActivityToday = false;
-
-        // التحقق من تاريخ تغيير الاستوري نفسها
         const storyDate = story.changedDate ? new Date(story.changedDate).toISOString().split('T')[0] : null;
-        if (storyDate === todayStr) {
-            hasActivityToday = true;
-        }
+        
+        if (storyDate === todayStr) hasActivityToday = true;
 
-        // التحقق من تاريخ تغيير أي تاسك داخل الاستوري
         if (story.tasks && story.tasks.length > 0) {
             const taskChangedToday = story.tasks.some(task => {
-                const taskDateRaw = task['Changed Date'];
-                if (!taskDateRaw) return false;
-                const taskDate = new Date(taskDateRaw).toISOString().split('T')[0];
+                if (!task['Changed Date']) return false;
+                const taskDate = new Date(task['Changed Date']).toISOString().split('T')[0];
                 return taskDate === todayStr;
             });
             if (taskChangedToday) hasActivityToday = true;
@@ -1217,6 +1210,7 @@ renderDailyActivity() {
                 id: story.id,
                 title: story.title,
                 branch: story.branch || "غير محدد",
+                area: story.area || "General", // إضافة الـ Area
                 customer: story.customer || "عام",
                 state: story.state,
                 assignedTo: story.assignedTo
@@ -1224,54 +1218,63 @@ renderDailyActivity() {
         }
     });
 
-    // إذا لم توجد بيانات
     if (activities.length === 0) {
-        container.innerHTML = `
-            <div class="bg-white p-10 rounded-xl border-2 border-dashed border-gray-200 text-center">
-                <p class="text-gray-500">لا توجد تحديثات أو نشاطات مسجلة بتاريخ اليوم (${todayStr})</p>
-            </div>`;
+        container.innerHTML = `<div class="bg-white p-10 rounded-xl border-2 border-dashed border-gray-200 text-center">
+            <p class="text-gray-500">لا توجد تحديثات مسجلة بتاريخ اليوم (${todayStr})</p>
+        </div>`;
         return;
     }
 
-    // 2. تجميع البيانات (Grouping) حسب الفرع ثم العميل
+    // 2. التجميع: Branch -> Area -> Customer
     const grouped = activities.reduce((acc, item) => {
         if (!acc[item.branch]) acc[item.branch] = {};
-        if (!acc[item.branch][item.customer]) acc[item.branch][item.customer] = [];
-        acc[item.branch][item.customer].push(item);
+        if (!acc[item.branch][item.area]) acc[item.branch][item.area] = {};
+        if (!acc[item.branch][item.area][item.customer]) acc[item.branch][item.area][item.customer] = [];
+        acc[item.branch][item.area][item.customer].push(item);
         return acc;
     }, {});
 
-    // 3. بناء واجهة العرض (UI)
+    // 3. بناء واجهة العرض
     let html = '';
     for (const branch in grouped) {
         html += `
-            <div class="branch-group mb-6">
-                <div class="bg-slate-800 text-white px-4 py-2 rounded-t-lg font-bold flex justify-between">
-                    <span>الفرع: ${branch}</span>
+            <div class="branch-group mb-8">
+                <div class="bg-slate-800 text-white px-4 py-3 rounded-t-lg font-bold shadow-md flex justify-between items-center">
+                    <span class="text-lg">📁 الفرع: ${branch}</span>
                 </div>
-                <div class="bg-white border border-gray-200 rounded-b-lg p-4 shadow-sm">`;
+                <div class="bg-white border border-gray-200 rounded-b-lg p-5 shadow-sm space-y-6">`;
 
-        for (const customer in grouped[branch]) {
+        for (const area in grouped[branch]) {
             html += `
-                <div class="customer-section mb-4 last:mb-0">
-                    <h4 class="text-amber-700 font-semibold border-b border-amber-100 pb-1 mb-2 italic">العميل: ${customer}</h4>
-                    <div class="space-y-2">
-                        ${grouped[branch][customer].map(item => `
-                            <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded border-r-2 border-slate-300">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xs font-bold bg-slate-100 px-2 py-1 rounded">#${item.id}</span>
-                                    <span class="text-sm font-medium text-gray-700">${item.title}</span>
+                <div class="area-section border-r-4 border-indigo-500 pr-4">
+                    <h3 class="text-indigo-700 font-bold text-md mb-3 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                        المنطقة (Area): ${area}
+                    </h3>`;
+
+            for (const customer in grouped[branch][area]) {
+                html += `
+                    <div class="customer-block mr-4 mb-4 last:mb-0">
+                        <h4 class="text-amber-700 font-semibold text-sm border-b border-amber-100 pb-1 mb-2 italic">العميل: ${customer}</h4>
+                        <div class="grid gap-2">
+                            ${grouped[branch][area][customer].map(item => `
+                                <div class="flex items-center justify-between p-3 bg-slate-50 hover:bg-indigo-50 transition-colors rounded-lg border border-gray-100">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-[10px] font-mono font-bold bg-white border border-slate-200 px-2 py-1 rounded shadow-sm">#${item.id}</span>
+                                        <span class="text-sm font-medium text-slate-800">${item.title}</span>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <span class="text-[11px] font-semibold text-slate-500 bg-white px-2 py-1 rounded border">${item.assignedTo}</span>
+                                        <span class="text-[11px] font-bold text-indigo-600 uppercase">${item.state}</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-4">
-                                    <span class="text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">${item.assignedTo}</span>
-                                    <span class="text-[11px] font-bold text-blue-600">${item.state}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>`;
+                            `).join('')}
+                        </div>
+                    </div>`;
+            }
+            html += `</div>`; // إغلاق area-section
         }
-        html += `</div></div>`;
+        html += `</div></div>`; // إغلاق branch-group
     }
 
     container.innerHTML = html;
