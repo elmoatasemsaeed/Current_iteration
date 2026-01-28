@@ -1189,7 +1189,7 @@ renderDailyActivity() {
     const todayStr = today.toISOString().split('T')[0];
     const activities = [];
 
-    // 1. جمع النشاطات التي تمت اليوم
+    // 1. Collect activities updated today
     currentData.forEach(story => {
         let hasActivityToday = false;
         const storyDate = story.changedDate ? new Date(story.changedDate).toISOString().split('T')[0] : null;
@@ -1209,9 +1209,9 @@ renderDailyActivity() {
             activities.push({
                 id: story.id,
                 title: story.title,
-                branch: story.branch || "غير محدد",
+                branch: story.branch || "N/A",
                 area: story.area || "General",
-                customer: story.customer || "عام",
+                customer: story.customer || "General",
                 state: story.state,
                 assignedTo: story.assignedTo
             });
@@ -1219,13 +1219,14 @@ renderDailyActivity() {
     });
 
     if (activities.length === 0) {
-        container.innerHTML = `<div class="bg-white p-10 rounded-xl border-2 border-dashed border-gray-200 text-center">
-            <p class="text-gray-500">لا توجد تحديثات مسجلة بتاريخ اليوم (${todayStr})</p>
-        </div>`;
+        container.innerHTML = `
+            <div class="bg-white p-10 rounded-xl border-2 border-dashed border-gray-200 text-center">
+                <p class="text-gray-500">No updates recorded for today (${todayStr})</p>
+            </div>`;
         return;
     }
 
-    // 2. التجميع: Branch -> Area -> Customer
+    // 2. Grouping: Branch -> Area -> Customer
     const grouped = activities.reduce((acc, item) => {
         if (!acc[item.branch]) acc[item.branch] = {};
         if (!acc[item.branch][item.area]) acc[item.branch][item.area] = {};
@@ -1234,10 +1235,10 @@ renderDailyActivity() {
         return acc;
     }, {});
 
-    // 3. بناء واجهة العرض مع العدادات
+    // 3. Build UI with Counters
     let html = '';
     for (const branch in grouped) {
-        // حساب إجمالي الفرع
+        // Calculate Branch total count
         let branchCount = 0;
         Object.values(grouped[branch]).forEach(area => {
             Object.values(area).forEach(cust => branchCount += cust.length);
@@ -1246,24 +1247,24 @@ renderDailyActivity() {
         html += `
             <div class="branch-group mb-8">
                 <div class="bg-slate-800 text-white px-4 py-3 rounded-t-lg font-bold shadow-md flex justify-between items-center">
-                    <span class="text-lg">📁 الفرع: ${branch}</span>
-                    <span class="bg-white/20 px-3 py-1 rounded-full text-sm">إجمالي: ${branchCount}</span>
+                    <span class="text-lg">📁 Branch: ${branch}</span>
+                    <span class="bg-white/20 px-3 py-1 rounded-full text-sm">Total: ${branchCount}</span>
                 </div>
                 <div class="bg-white border border-gray-200 rounded-b-lg p-5 shadow-sm space-y-6">`;
 
         for (const area in grouped[branch]) {
-            // حساب إجمالي المنطقة
+            // Calculate Area total count
             let areaCount = 0;
             Object.values(grouped[branch][area]).forEach(cust => areaCount += cust.length);
 
             html += `
-                <div class="area-section border-r-4 border-indigo-500 pr-4">
+                <div class="area-section border-l-4 border-indigo-500 pl-4">
                     <h3 class="text-indigo-700 font-bold text-md mb-3 flex items-center justify-between">
                         <span class="flex items-center gap-2">
                             <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
-                            المنطقة (Area): ${area}
+                            Area: ${area}
                         </span>
-                        <span class="text-xs bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">${areaCount} ستوري</span>
+                        <span class="text-xs bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">${areaCount} Stories</span>
                     </h3>`;
 
             for (const customer in grouped[branch][area]) {
@@ -1271,10 +1272,10 @@ renderDailyActivity() {
                 const customerCount = customerStories.length;
 
                 html += `
-                    <div class="customer-block mr-4 mb-4 last:mb-0">
+                    <div class="customer-block ml-4 mb-4 last:mb-0">
                         <h4 class="text-amber-700 font-semibold text-sm border-b border-amber-100 pb-1 mb-2 italic flex justify-between items-center">
-                            <span>العميل: ${customer}</span>
-                            <span class="text-[10px] text-amber-500 font-bold">${customerCount}</span>
+                            <span>Customer: ${customer}</span>
+                            <span class="text-[10px] text-amber-500 font-bold">${customerCount} Items</span>
                         </h4>
                         <div class="grid gap-2">
                             ${customerStories.map(item => `
@@ -1292,9 +1293,9 @@ renderDailyActivity() {
                         </div>
                     </div>`;
             }
-            html += `</div>`; // إغلاق area-section
+            html += `</div>`; // Close area-section
         }
-        html += `</div></div>`; // إغلاق branch-group
+        html += `</div></div>`; // Close branch-group
     }
 
     container.innerHTML = html;
