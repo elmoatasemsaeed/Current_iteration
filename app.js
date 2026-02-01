@@ -48,8 +48,14 @@ const auth = {
             if (response.ok) {
                 const data = await response.json();
                 // فك التشفير ودعم اللغة العربية
-                const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
-                const remoteDb = JSON.parse(decodedContent);
+                const binaryString = atob(data.content.replace(/\s/g, ''));
+const bytes = new Uint8Array(binaryString.length);
+for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+}
+const decodedContent = new TextDecoder("utf-8").decode(bytes);
+const remoteDb = JSON.parse(decodedContent);
+               
                 
                 // البحث عن المستخدم داخل الملف المجلوب
                 const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
