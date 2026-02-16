@@ -373,6 +373,23 @@ const dateEngine = {
         
         return true;
     },
+    // أضف هذا داخل dateEngine
+countVacationDays(startDate, endDate, person) {
+    if (!(startDate instanceof Date) || !(endDate instanceof Date) || isNaN(startDate) || isNaN(endDate)) return 0;
+    
+    let count = 0;
+    let current = new Date(startDate);
+    
+    // نمر على كل الأيام من البداية للنهاية
+    while (current <= endDate) {
+        // إذا كان اليوم ليس يوم عمل (بناءً على المنطق الموجود مسبقاً)
+        if (!this.isWorkDay(current, person)) {
+            count++;
+        }
+        current.setDate(current.getDate() + 1);
+    }
+    return count;
+},
 
     addWorkingHours(startDate, hours, person) {
         let result = new Date(startDate);
@@ -656,7 +673,16 @@ renderClientRoadmap() {
 
                     let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
                     const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
+                    const devStartObj = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]) : null;
+                    const devVacDays = (devStartObj && s.calc.devEnd instanceof Date) 
+                    ? dateEngine.countVacationDays(devStartObj, s.calc.devEnd, s.assignedTo) 
+                    : 0;
 
+                // حساب إجازات المختبر
+                    const testStartObj = (execTask && execTask['Activated Date']) ? new Date(execTask['Activated Date']) : null;
+                    const testVacDays = (testStartObj && s.calc.testEnd instanceof Date) 
+                    ? dateEngine.countVacationDays(testStartObj, s.calc.testEnd, s.tester) 
+                    : 0;
                     return `
                     <div onclick="ui.openStoryModal('${s.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col mb-4">
                         <div class="p-5 flex-1">
