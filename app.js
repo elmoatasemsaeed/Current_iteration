@@ -373,6 +373,30 @@ const dateEngine = {
         
         return true;
     },
+   
+    countVacationDaysUntilNow(startDate, personName) {
+    if (!startDate) return 0;
+    const start = new Date(startDate);
+    const today = new Date();
+    // ضبط الوقت ليكون بداية اليوم للمقارنة العادلة
+    today.setHours(0, 0, 0, 0);
+    start.setHours(0, 0, 0, 0);
+
+    if (start > today) return 0;
+
+    let count = 0;
+    let current = new Date(start);
+
+    while (current <= today) {
+        // نستخدم isWorkDay الموجودة أصلاً في الكود عندك
+        if (!this.isWorkDay(current, personName)) {
+            count++;
+        }
+        current.setDate(current.getDate() + 1);
+    }
+    return count;
+},
+    
     // أضف هذا داخل dateEngine
 countVacationDays(startDate, endDate, person) {
     if (!(startDate instanceof Date) || !(endDate instanceof Date) || isNaN(startDate) || isNaN(endDate)) return 0;
@@ -574,209 +598,211 @@ renderClientRoadmap() {
 },
     
     renderActiveCards() {
-        const container = document.getElementById('active-cards-container');
-        const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; 
-        
-        const activeStories = currentData.filter(s => {
-            const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
-            const matchesSearch = 
-                s.title.toLowerCase().includes(searchTerm) || 
-                s.id.toString().includes(searchTerm) || 
-                s.tester.toLowerCase().includes(searchTerm) ||
-                s.assignedTo.toLowerCase().includes(searchTerm) ||
-                (s.area && s.area.toLowerCase().includes(searchTerm));
-                
-            return isNotFinished && matchesSearch; 
+    const container = document.getElementById('active-cards-container');
+    const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; 
+    
+    const activeStories = currentData.filter(s => {
+        const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
+        const matchesSearch = 
+            s.title.toLowerCase().includes(searchTerm) || 
+            s.id.toString().includes(searchTerm) || 
+            s.tester.toLowerCase().includes(searchTerm) ||
+            s.assignedTo.toLowerCase().includes(searchTerm) ||
+            (s.area && s.area.toLowerCase().includes(searchTerm));
+            
+        return isNotFinished && matchesSearch; 
+    });
+    
+    if (activeStories.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">
+            ${searchTerm ? 'لا توجد نتائج تطابق بحثك.' : 'No active stories found.'}
+        </div>`;
+        return;
+    }
+
+    const groupedStories = activeStories.reduce((groups, story) => {
+        const area = story.area || "General";
+        if (!groups[area]) groups[area] = [];
+        groups[area].push(story);
+        return groups;
+    }, {});
+
+    container.innerHTML = Object.keys(groupedStories).map(area => {
+        const storiesInArea = groupedStories[area].sort((a, b) => {
+            if (a.priority !== b.priority) return a.priority - b.priority;
+            const isALate = a.calc.finalEnd instanceof Date && new Date() > a.calc.finalEnd;
+            const isBLate = b.calc.finalEnd instanceof Date && new Date() > b.calc.finalEnd;
+            return isBLate - isALate; 
         });
-        
-        if (activeStories.length === 0) {
-            container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">
-                ${searchTerm ? 'لا توجد نتائج تطابق بحثك.' : 'No active stories found.'}
-            </div>`;
-            return;
-        }
 
-        const groupedStories = activeStories.reduce((groups, story) => {
-            const area = story.area || "General";
-            if (!groups[area]) groups[area] = [];
-            groups[area].push(story);
-            return groups;
-        }, {});
+        return `
+            <div class="col-span-full mt-8 mb-4">
+                <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
+                    <span class="w-2 h-6 bg-indigo-600 rounded-full"></span>
+                    ${area} 
+                    <span class="text-sm font-normal text-gray-400">(${storiesInArea.length})</span>
+                </h2>
+            </div>
+            ${storiesInArea.map(s => {
+                const now = new Date();
+                const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
+                const hasError = s.calc.error;
+                
+                // --- حسابات الـ Dev & Estimation ---
+                const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+                const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                let devStartDisplay = "TBD";
+                const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
+                
+                // حساب إجازات الديف (من البداية حتى اليوم)
+                const devVacDaysNow = devActivatedDates.length > 0 
+                    ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) 
+                    : 0;
 
-        container.innerHTML = Object.keys(groupedStories).map(area => {
-            const storiesInArea = groupedStories[area].sort((a, b) => {
-                if (a.priority !== b.priority) return a.priority - b.priority;
-                const isALate = a.calc.finalEnd instanceof Date && new Date() > a.calc.finalEnd;
-                const isBLate = b.calc.finalEnd instanceof Date && new Date() > b.calc.finalEnd;
-                return isBLate - isALate; 
-            });
-
-            return `
-                <div class="col-span-full mt-8 mb-4">
-                    <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
-                        <span class="w-2 h-6 bg-indigo-600 rounded-full"></span>
-                        ${area} 
-                        <span class="text-sm font-normal text-gray-400">(${storiesInArea.length})</span>
-                    </h2>
-                </div>
-                ${storiesInArea.map(s => {
-                    const now = new Date();
-                    const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
-                    const hasError = s.calc.error;
-                    
-                    // --- حسابات الـ Dev & Estimation ---
-                    const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-                    const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                    let devStartDisplay = "TBD";
-                    const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
-                    if (devActivatedDates.length > 0) {
-                        devStartDisplay = new Date(devActivatedDates[0]).toLocaleDateString('en-GB');
-                    }
-                   
-                    let devResolveDate = "N/A";
-                    const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
-                    if (resolvedDevTasks.length > 0) {
+                if (devActivatedDates.length > 0) {
+                    devStartDisplay = new Date(devActivatedDates[0]).toLocaleDateString('en-GB');
+                }
+               
+                let devResolveDate = "N/A";
+                const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
+                if (resolvedDevTasks.length > 0) {
                     const latestTask = resolvedDevTasks.sort((a, b) => new Date(b['Changed Date']) - new Date(a['Changed Date']))[0];
                     devResolveDate = new Date(latestTask['Changed Date']).toLocaleDateString('en-GB');
-                    }
+                }
 
-                    // --- حسابات الـ Tester & Estimation ---
-                    const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
-                    const totalTestEffort = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                    let testStartDisplay = "Waiting";
-                    const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
-                    if (execTask && execTask['Activated Date']) {
-                        testStartDisplay = new Date(execTask['Activated Date']).toLocaleDateString('en-GB');
-                    }
-
-                    // --- لمبات الحالة (ابقاء المنطق القديم) ---
-                    const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && (s.state !== 'Resolved' && s.state !== 'Tested' && s.state !== 'Closed');
-                    const devLightColor = (s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
-
-                    const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && (s.state !== 'Tested' && s.state !== 'Closed');
-                    const testLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
-
-                    // --- عدادات البروجريس بار (إعادة الـ counts المفقودة) ---
-                    const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
-                    const totalDevTasks = nonTestTasks.length;
-                    const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed'].includes(t['State'])).length;
-                    const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
-
-                    const totalBugs = s.bugs ? s.bugs.length : 0;
-                    const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
-                    const fixingProgressPercent = totalBugs > 0 ? Math.round((completedBugs / totalBugs) * 100) : 0;
-
-                    const testCases = s.testCases || [];
-                    const totalTC = testCases.length;
-                    const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
-                    const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
-
-                    let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
-                    const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
-                    const devStartObj = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]) : null;
-                    const devVacDays = (devStartObj && s.calc.devEnd instanceof Date) 
-                    ? dateEngine.countVacationDays(devStartObj, s.calc.devEnd, s.assignedTo) 
+                // --- حسابات الـ Tester & Estimation ---
+                const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
+                const totalTestEffort = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                let testStartDisplay = "Waiting";
+                const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
+                
+                // حساب إجازات التستر (من البداية حتى اليوم)
+                const testVacDaysNow = (execTask && execTask['Activated Date']) 
+                    ? dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) 
                     : 0;
 
-                // حساب إجازات المختبر
-                    const testStartObj = (execTask && execTask['Activated Date']) ? new Date(execTask['Activated Date']) : null;
-                    const testVacDays = (testStartObj && s.calc.testEnd instanceof Date) 
-                    ? dateEngine.countVacationDays(testStartObj, s.calc.testEnd, s.tester) 
-                    : 0;
-                    return `
-                    <div onclick="ui.openStoryModal('${s.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col mb-4">
-                        <div class="p-5 flex-1">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="flex gap-2">
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${statusText}</span>
-                                    <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
-                                </div>
-                                <span class="text-xs font-mono text-gray-400">#${s.id}</span>
-                            </div>
-                                            
-                            <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
+                if (execTask && execTask['Activated Date']) {
+                    testStartDisplay = new Date(execTask['Activated Date']).toLocaleDateString('en-GB');
+                }
 
-                            <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
-                                <div>
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <div class="w-2.5 h-2.5 rounded-full ${devLightColor}"></div>
-                                        <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
-                                    </div>
-                                    <div class="flex flex-col gap-0.5">
-                                        <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                            <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
-                                            ${s.assignedTo}
-                                        </p>
-                                        <div class="ml-8 mt-1">
-                                            <div class="flex justify-between items-center mb-0.5">
-                                                <span class="text-[9px] text-gray-400 font-bold">Tasks: ${completedDevTasks}/${totalDevTasks}</span>
-                                                <span class="text-[9px] text-blue-600 font-bold">${devProgressPercent}%</span>
-                                            </div>
-                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
-                                                <div class="bg-blue-500 h-full" style="width: ${devProgressPercent}%"></div>
-                                            </div>
-                                            ${totalBugs > 0 ? `
-                                                <div class="mb-1">
-                                                    <div class="flex justify-between items-center mb-0.5">
-                                                        <span class="text-[9px] text-gray-400 font-bold">Bugs: ${completedBugs}/${totalBugs}</span>
-                                                        <span class="text-[9px] text-red-600 font-bold">${fixingProgressPercent}%</span>
-                                                    </div>
-                                                    <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                                                        <div class="bg-red-500 h-full" style="width: ${fixingProgressPercent}%"></div>
-                                                    </div>
-                                                </div>
-                                            ` : ''}
-                                            <p class="text-[10px] text-gray-500 mt-1">Start: ${devStartDisplay}</p>
-${devVacDays > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vacations: ${devVacDays} Days</p>` : ''}
-<p class="text-[10px] text-green-600 font-bold">Resolved: ${devResolveDate}</p>
-                                            <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalDevEffort}h</p>
-                                        </div>
-                                    </div>
-                                </div>
+                // --- لمبات الحالة ---
+                const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && (s.state !== 'Resolved' && s.state !== 'Tested' && s.state !== 'Closed');
+                const devLightColor = (s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
-                                <div>
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
-                                        <p class="text-[10px] uppercase text-gray-400 font-bold">Quality Assurance</p>
-                                    </div>
-                                    <div class="flex flex-col gap-0.5">
-                                        <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                            <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
-                                            ${s.tester}
-                                        </p>
-                                        <div class="ml-8 mt-1">
-                                            <div class="flex justify-between items-center mb-0.5">
-                                                <span class="text-[9px] text-gray-400 font-bold">TCs: ${completedTC}/${totalTC}</span>
-                                                <span class="text-[9px] text-indigo-600 font-bold">${progressPercent}%</span>
-                                            </div>
-                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
-                                                <div class="bg-indigo-500 h-full" style="width: ${progressPercent}%"></div>
-                                            </div>
-                                           <p class="text-[10px] text-gray-500 mt-1">Start: ${testStartDisplay}</p>
-${testVacDays > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vacations: ${testVacDays} Days</p>` : ''}
-<p class="text-[10px] text-indigo-600 font-bold">Est: ${totalTestEffort}h</p>
-                                            <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalTestEffort}h</p>
-                                        </div>
-                                    </div>
-                                </div>
+                const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && (s.state !== 'Tested' && s.state !== 'Closed');
+                const testLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+
+                // --- عدادات البروجريس بار ---
+                const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
+                const totalDevTasks = nonTestTasks.length;
+                const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed'].includes(t['State'])).length;
+                const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
+
+                const totalBugs = s.bugs ? s.bugs.length : 0;
+                const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
+                const fixingProgressPercent = totalBugs > 0 ? Math.round((completedBugs / totalBugs) * 100) : 0;
+
+                const testCases = s.testCases || [];
+                const totalTC = testCases.length;
+                const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
+                const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
+
+                let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
+                const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
+
+                return `
+                <div onclick="ui.openStoryModal('${s.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col mb-4">
+                    <div class="p-5 flex-1">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex gap-2">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${statusText}</span>
+                                <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
                             </div>
+                            <span class="text-xs font-mono text-gray-400">#${s.id}</span>
                         </div>
+                                        
+                        <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
 
-                        <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
-                            <div class="flex flex-col">
-                                <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
-                                <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
-                                    ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleDateString('en-GB') : 'Waiting'}
-                                </span>
+                        <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <div class="w-2.5 h-2.5 rounded-full ${devLightColor}"></div>
+                                    <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
+                                </div>
+                                <div class="flex flex-col gap-0.5">
+                                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
+                                        ${s.assignedTo}
+                                    </p>
+                                    <div class="ml-8 mt-1">
+                                        <div class="flex justify-between items-center mb-0.5">
+                                            <span class="text-[9px] text-gray-400 font-bold">Tasks: ${completedDevTasks}/${totalDevTasks}</span>
+                                            <span class="text-[9px] text-blue-600 font-bold">${devProgressPercent}%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
+                                            <div class="bg-blue-500 h-full" style="width: ${devProgressPercent}%"></div>
+                                        </div>
+                                        ${totalBugs > 0 ? `
+                                            <div class="mb-1">
+                                                <div class="flex justify-between items-center mb-0.5">
+                                                    <span class="text-[9px] text-gray-400 font-bold">Bugs: ${completedBugs}/${totalBugs}</span>
+                                                    <span class="text-[9px] text-red-600 font-bold">${fixingProgressPercent}%</span>
+                                                </div>
+                                                <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                                                    <div class="bg-red-500 h-full" style="width: ${fixingProgressPercent}%"></div>
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${devStartDisplay}</p>
+                                        ${devVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${devVacDaysNow} Days</p>` : ''}
+                                        <p class="text-[10px] text-green-600 font-bold">Resolved: ${devResolveDate}</p>
+                                        <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalDevEffort}h</p>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="text-xl">${isLate ? '⚠️' : '🗓️'}</span>
+
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
+                                    <p class="text-[10px] uppercase text-gray-400 font-bold">Quality Assurance</p>
+                                </div>
+                                <div class="flex flex-col gap-0.5">
+                                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
+                                        ${s.tester}
+                                    </p>
+                                    <div class="ml-8 mt-1">
+                                        <div class="flex justify-between items-center mb-0.5">
+                                            <span class="text-[9px] text-gray-400 font-bold">TCs: ${completedTC}/${totalTC}</span>
+                                            <span class="text-[9px] text-indigo-600 font-bold">${progressPercent}%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
+                                            <div class="bg-indigo-500 h-full" style="width: ${progressPercent}%"></div>
+                                        </div>
+                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${testStartDisplay}</p>
+                                        ${testVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${testVacDaysNow} Days</p>` : ''}
+                                        <p class="text-[10px] text-indigo-600 font-bold">Est QA: ${totalTestEffort}h</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    `;
-                }).join('')}
-            `;
-        }).join('');
-    },
+
+                    <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
+                            <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
+                                ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleDateString('en-GB') : 'Waiting'}
+                            </span>
+                        </div>
+                        <span class="text-xl">${isLate ? '⚠️' : '🗓️'}</span>
+                    </div>
+                </div>
+                `;
+            }).join('')}
+        `;
+    }).join('');
+},
 renderDelivery() {
     const container = document.getElementById('delivery-grid');
     // جلب نص البحث وتحويله لحروف صغيرة
