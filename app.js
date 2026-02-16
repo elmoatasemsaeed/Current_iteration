@@ -615,6 +615,13 @@ renderClientRoadmap() {
                     if (devActivatedDates.length > 0) {
                         devStartDisplay = new Date(devActivatedDates[0]).toLocaleDateString('en-GB');
                     }
+                   
+                    let devResolveDate = "N/A";
+                    const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
+                    if (resolvedDevTasks.length > 0) {
+                    const latestTask = resolvedDevTasks.sort((a, b) => new Date(b['Changed Date']) - new Date(a['Changed Date']))[0];
+                    devResolveDate = new Date(latestTask['Changed Date']).toLocaleDateString('en-GB');
+                    }
 
                     // --- حسابات الـ Tester & Estimation ---
                     const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
@@ -694,6 +701,7 @@ renderClientRoadmap() {
                                                 </div>
                                             ` : ''}
                                             <p class="text-[10px] text-gray-500 mt-1">Start: ${devStartDisplay}</p>
+                                            <p class="text-[10px] text-green-600 font-bold">Resolved: ${devResolveDate}</p>
                                             <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalDevEffort}h</p>
                                         </div>
                                     </div>
