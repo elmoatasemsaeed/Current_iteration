@@ -655,7 +655,7 @@ renderClientRoadmap() {
                             <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
                             ${s.tags && s.tags.length > 0 ? `
                                 <div class="flex flex-wrap gap-1 mb-2">
-                                    ${s.tags.map(tag => `<span class="text-[9px] px-2 py-0.5 bg-slate-100 text-slate-500 rounded border border-slate-200">#${tag.trim()}</span>`).join('')}
+                                    ${s.tags.map(tag => `<span class="text-[9px] px-2 py-0.5 bg-orange-100 text-orange-500 rounded border border-orange-200">#${tag.trim()}</span>`).join('')}
                                 </div>
                             ` : ''}
 
