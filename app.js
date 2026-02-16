@@ -727,7 +727,8 @@ renderClientRoadmap() {
                                                 </div>
                                             ` : ''}
                                             <p class="text-[10px] text-gray-500 mt-1">Start: ${devStartDisplay}</p>
-                                            <p class="text-[10px] text-green-600 font-bold">Resolved: ${devResolveDate}</p>
+${devVacDays > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vacations: ${devVacDays} Days</p>` : ''}
+<p class="text-[10px] text-green-600 font-bold">Resolved: ${devResolveDate}</p>
                                             <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalDevEffort}h</p>
                                         </div>
                                     </div>
@@ -751,7 +752,9 @@ renderClientRoadmap() {
                                             <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
                                                 <div class="bg-indigo-500 h-full" style="width: ${progressPercent}%"></div>
                                             </div>
-                                            <p class="text-[10px] text-gray-500 mt-1">Start: ${testStartDisplay}</p>
+                                           <p class="text-[10px] text-gray-500 mt-1">Start: ${testStartDisplay}</p>
+${testVacDays > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vacations: ${testVacDays} Days</p>` : ''}
+<p class="text-[10px] text-indigo-600 font-bold">Est: ${totalTestEffort}h</p>
                                             <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalTestEffort}h</p>
                                         </div>
                                     </div>
