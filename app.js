@@ -607,36 +607,42 @@ renderClientRoadmap() {
                     const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
                     const hasError = s.calc.error;
                     
-                    // --- منطق لمبات الحالة ---
+                    // --- حسابات الـ Dev ---
+                    const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+                    const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                    let devStartDisplay = "TBD";
+                    const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
+                    if (devActivatedDates.length > 0) {
+                        devStartDisplay = new Date(devActivatedDates[0]).toLocaleDateString('en-GB');
+                    }
+
+                    // --- حسابات الـ Tester ---
+                    const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
+                    const totalTestEffort = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                    let testStartDisplay = "Waiting";
+                    // البحث عن تاسك execution (Case-insensitive)
+                    const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
+                    if (execTask && execTask['Activated Date']) {
+                        testStartDisplay = new Date(execTask['Activated Date']).toLocaleDateString('en-GB');
+                    }
+
+                    // --- لمبات الحالة ---
                     const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && (s.state !== 'Resolved' && s.state !== 'Tested' && s.state !== 'Closed');
                     const devLightColor = (s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
                     const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && (s.state !== 'Tested' && s.state !== 'Closed');
                     const testLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
-                    const isReleaseLate = s.expectedRelease instanceof Date && now > s.expectedRelease && (s.state !== 'Tested' && s.state !== 'Closed');
-                    const releaseLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isReleaseLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
-
-                    // --- منطق احتساب التقدم ---
+                    // --- البروجريس بار ---
                     const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
-                    const totalDevTasks = nonTestTasks.length;
                     const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed'].includes(t['State'])).length;
-                    const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
-
-                    const totalBugs = s.bugs ? s.bugs.length : 0;
-                    const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
-                    const fixingProgressPercent = totalBugs > 0 ? Math.round((completedBugs / totalBugs) * 100) : 0;
+                    const devProgressPercent = nonTestTasks.length > 0 ? Math.round((completedDevTasks / nonTestTasks.length) * 100) : 0;
 
                     const testCases = s.testCases || [];
-                    const totalTC = testCases.length;
                     const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
-                    const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
+                    const progressPercent = testCases.length > 0 ? Math.round((completedTC / testCases.length) * 100) : 0;
 
-                    const priorityBadge = `<span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>`;
-
-                    let statusColor = "bg-blue-100 text-blue-700";
-                    if(isLate) statusColor = "bg-red-100 text-red-700";
-                    if(hasError) statusColor = "bg-amber-100 text-amber-700";
+                    let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
                     const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
 
                     return `
@@ -644,25 +650,18 @@ renderClientRoadmap() {
                         <div class="p-5 flex-1">
                             <div class="flex justify-between items-start mb-4">
                                 <div class="flex gap-2">
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">
-                                        ${statusText}
-                                    </span>
-                                    ${priorityBadge}
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${statusText}</span>
+                                    <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
                                 </div>
                                 <span class="text-xs font-mono text-gray-400">#${s.id}</span>
                             </div>
                                             
                             <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
-                            ${s.tags && s.tags.length > 0 ? `
-                                <div class="flex flex-wrap gap-1 mb-2">
-                                    ${s.tags.map(tag => `<span class="text-[9px] px-2 py-0.5 bg-orange-100 text-black-500 rounded border border-orange-200">#${tag.trim()}</span>`).join('')}
-                                </div>
-                            ` : ''}
 
                             <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
-                                <div class="relative">
+                                <div>
                                     <div class="flex items-center gap-2 mb-1">
-                                        <div class="w-2.5 h-2.5 rounded-full ${devLightColor}" title="Dev Status"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full ${devLightColor}"></div>
                                         <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
                                     </div>
                                     <div class="flex flex-col gap-0.5">
@@ -670,35 +669,22 @@ renderClientRoadmap() {
                                             <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
                                             ${s.assignedTo}
                                         </p>
-                                        <div class="ml-8 mt-1 mb-1">
+                                        <div class="ml-8 mt-1">
                                             <div class="flex justify-between items-center mb-0.5">
-                                                <span class="text-[9px] text-gray-400 font-bold">Dev: ${completedDevTasks}/${totalDevTasks}</span>
                                                 <span class="text-[9px] text-blue-600 font-bold">${devProgressPercent}%</span>
                                             </div>
-                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                                                <div class="bg-blue-500 h-full transition-all duration-500" style="width: ${devProgressPercent}%"></div>
+                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
+                                                <div class="bg-blue-500 h-full" style="width: ${devProgressPercent}%"></div>
                                             </div>
+                                            <p class="text-[10px] text-gray-500">Start: ${devStartDisplay}</p>
+                                            <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalDevEffort}h</p>
                                         </div>
-                                        ${totalBugs > 0 ? `
-                                            <div class="ml-8 mt-1 mb-1">
-                                                <div class="flex justify-between items-center mb-0.5">
-                                                    <span class="text-[9px] text-gray-400 font-bold">Fixing: ${completedBugs}/${totalBugs}</span>
-                                                    <span class="text-[9px] text-red-600 font-bold">${fixingProgressPercent}%</span>
-                                                </div>
-                                                <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                                                    <div class="bg-red-500 h-full transition-all duration-500" style="width: ${fixingProgressPercent}%"></div>
-                                                </div>
-                                            </div>
-                                        ` : ''}
-                                        <p class="text-[10px] text-gray-500 ml-8">
-                                            Ends: ${s.calc.devEnd instanceof Date ? s.calc.devEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'TBD'}
-                                        </p>
                                     </div>
                                 </div>
 
-                                <div class="relative">
+                                <div>
                                     <div class="flex items-center gap-2 mb-1">
-                                        <div class="w-2.5 h-2.5 rounded-full ${testLightColor}" title="QA Status"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
                                         <p class="text-[10px] uppercase text-gray-400 font-bold">Quality Assurance</p>
                                     </div>
                                     <div class="flex flex-col gap-0.5">
@@ -706,20 +692,16 @@ renderClientRoadmap() {
                                             <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
                                             ${s.tester}
                                         </p>
-                                        ${totalTC > 0 ? `
-                                            <div class="ml-8 mt-1 mb-1">
-                                                <div class="flex justify-between items-center mb-0.5">
-                                                    <span class="text-[9px] text-gray-400 font-bold">Progress: ${completedTC}/${totalTC}</span>
-                                                    <span class="text-[9px] text-indigo-600 font-bold">${progressPercent}%</span>
-                                                </div>
-                                                <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                                                    <div class="bg-indigo-500 h-full transition-all duration-500" style="width: ${progressPercent}%"></div>
-                                                </div>
+                                        <div class="ml-8 mt-1">
+                                            <div class="flex justify-between items-center mb-0.5">
+                                                <span class="text-[9px] text-indigo-600 font-bold">${progressPercent}%</span>
                                             </div>
-                                        ` : '<p class="text-[9px] text-gray-400 ml-8 italic">No TCs found</p>'}
-                                        <p class="text-[10px] text-gray-500 ml-8">
-                                            Ends: ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting'}
-                                        </p>
+                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
+                                                <div class="bg-indigo-500 h-full" style="width: ${progressPercent}%"></div>
+                                            </div>
+                                            <p class="text-[10px] text-gray-500">Start: ${testStartDisplay}</p>
+                                            <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalTestEffort}h</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -727,12 +709,12 @@ renderClientRoadmap() {
 
                         <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
                             <div class="flex flex-col">
-                                <span class="text-[10px] uppercase font-bold text-gray-400">Final Delivery (Internal)</span>
+                                <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
                                 <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
-                                    ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : 'Waiting for Data'}
+                                    ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleDateString('en-GB') : 'Waiting'}
                                 </span>
                             </div>
-                            ${isLate || isReleaseLate ? '<span class="text-xl animate-bounce">⚠️</span>' : '<span class="text-xl">🗓️</span>'}
+                            <span class="text-xl">${isLate ? '⚠️' : '🗓️'}</span>
                         </div>
                     </div>
                     `;
