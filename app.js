@@ -719,6 +719,9 @@ renderClientRoadmap() {
                                 <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
                             </div>
                             <span class="text-xs font-mono text-gray-400">#${s.id}</span>
+                        <div class="flex flex-wrap gap-1 mt-2">
+    ${s.tags.map(t => `<span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] border border-blue-100">${t}</span>`).join('')}
+</div>
                         </div>
                                         
                         <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
