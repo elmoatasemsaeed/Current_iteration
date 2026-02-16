@@ -607,7 +607,7 @@ renderClientRoadmap() {
                     const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
                     const hasError = s.calc.error;
                     
-                    // --- حسابات الـ Dev ---
+                    // --- حسابات الـ Dev & Estimation ---
                     const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
                     const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                     let devStartDisplay = "TBD";
@@ -616,31 +616,36 @@ renderClientRoadmap() {
                         devStartDisplay = new Date(devActivatedDates[0]).toLocaleDateString('en-GB');
                     }
 
-                    // --- حسابات الـ Tester ---
+                    // --- حسابات الـ Tester & Estimation ---
                     const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
                     const totalTestEffort = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                     let testStartDisplay = "Waiting";
-                    // البحث عن تاسك execution (Case-insensitive)
                     const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
                     if (execTask && execTask['Activated Date']) {
                         testStartDisplay = new Date(execTask['Activated Date']).toLocaleDateString('en-GB');
                     }
 
-                    // --- لمبات الحالة ---
+                    // --- لمبات الحالة (ابقاء المنطق القديم) ---
                     const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && (s.state !== 'Resolved' && s.state !== 'Tested' && s.state !== 'Closed');
                     const devLightColor = (s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
                     const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && (s.state !== 'Tested' && s.state !== 'Closed');
                     const testLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
-                    // --- البروجريس بار ---
+                    // --- عدادات البروجريس بار (إعادة الـ counts المفقودة) ---
                     const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
+                    const totalDevTasks = nonTestTasks.length;
                     const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed'].includes(t['State'])).length;
-                    const devProgressPercent = nonTestTasks.length > 0 ? Math.round((completedDevTasks / nonTestTasks.length) * 100) : 0;
+                    const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
+
+                    const totalBugs = s.bugs ? s.bugs.length : 0;
+                    const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
+                    const fixingProgressPercent = totalBugs > 0 ? Math.round((completedBugs / totalBugs) * 100) : 0;
 
                     const testCases = s.testCases || [];
+                    const totalTC = testCases.length;
                     const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
-                    const progressPercent = testCases.length > 0 ? Math.round((completedTC / testCases.length) * 100) : 0;
+                    const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
 
                     let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
                     const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
@@ -671,12 +676,24 @@ renderClientRoadmap() {
                                         </p>
                                         <div class="ml-8 mt-1">
                                             <div class="flex justify-between items-center mb-0.5">
+                                                <span class="text-[9px] text-gray-400 font-bold">Tasks: ${completedDevTasks}/${totalDevTasks}</span>
                                                 <span class="text-[9px] text-blue-600 font-bold">${devProgressPercent}%</span>
                                             </div>
                                             <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
                                                 <div class="bg-blue-500 h-full" style="width: ${devProgressPercent}%"></div>
                                             </div>
-                                            <p class="text-[10px] text-gray-500">Start: ${devStartDisplay}</p>
+                                            ${totalBugs > 0 ? `
+                                                <div class="mb-1">
+                                                    <div class="flex justify-between items-center mb-0.5">
+                                                        <span class="text-[9px] text-gray-400 font-bold">Bugs: ${completedBugs}/${totalBugs}</span>
+                                                        <span class="text-[9px] text-red-600 font-bold">${fixingProgressPercent}%</span>
+                                                    </div>
+                                                    <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                                                        <div class="bg-red-500 h-full" style="width: ${fixingProgressPercent}%"></div>
+                                                    </div>
+                                                </div>
+                                            ` : ''}
+                                            <p class="text-[10px] text-gray-500 mt-1">Start: ${devStartDisplay}</p>
                                             <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalDevEffort}h</p>
                                         </div>
                                     </div>
@@ -694,12 +711,13 @@ renderClientRoadmap() {
                                         </p>
                                         <div class="ml-8 mt-1">
                                             <div class="flex justify-between items-center mb-0.5">
+                                                <span class="text-[9px] text-gray-400 font-bold">TCs: ${completedTC}/${totalTC}</span>
                                                 <span class="text-[9px] text-indigo-600 font-bold">${progressPercent}%</span>
                                             </div>
                                             <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
                                                 <div class="bg-indigo-500 h-full" style="width: ${progressPercent}%"></div>
                                             </div>
-                                            <p class="text-[10px] text-gray-500">Start: ${testStartDisplay}</p>
+                                            <p class="text-[10px] text-gray-500 mt-1">Start: ${testStartDisplay}</p>
                                             <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalTestEffort}h</p>
                                         </div>
                                     </div>
@@ -722,7 +740,6 @@ renderClientRoadmap() {
             `;
         }).join('');
     },
-
 renderDelivery() {
     const container = document.getElementById('delivery-grid');
     // جلب نص البحث وتحويله لحروف صغيرة
