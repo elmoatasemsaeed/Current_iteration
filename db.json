@@ -906,7 +906,7 @@
       "timestamp": 1771499509477
     }
   ],
-  "sha": "a7432d2fa52d6d742c3470a69a0a8175a78daa4a",
+  "sha": "b82680503f552f6fb37ce61fdfb07b65377e2884",
   "currentStories": [
     {
       "id": "156498",
@@ -1931,7 +1931,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "2",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "0.5",
           "Activated Date": "2/18/2026 2:53:17 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\Candidate CRs",
@@ -1939,11 +1939,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "2/19/2026 1:20:20 PM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "2/19/2026 1:20:20 PM",
+          "Changed Date": "2/19/2026 2:20:14 PM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -2398,7 +2398,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "2/19/2026 2:23:57 AM",
+          "Changed Date": "2/19/2026 2:31:52 PM",
           "Branch": "",
           "Customer": "Alameda_0062"
         },
@@ -6885,11 +6885,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "2/19/2026 12:55:18 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "2/19/2026 12:55:18 PM",
+          "Changed Date": "2/19/2026 2:19:11 PM",
           "Branch": "",
           "Customer": "Baligh labs_344"
         },
@@ -6909,11 +6909,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "2/19/2026 12:55:23 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "2/19/2026 12:55:50 PM",
+          "Changed Date": "2/19/2026 2:19:05 PM",
           "Branch": "",
           "Customer": "Baligh labs_344"
         },
@@ -7018,9 +7018,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-02-22T12:00:00.000Z",
-        "testEnd": "2026-02-23T07:00:00.000Z",
-        "finalEnd": "2026-02-23T07:00:00.000Z"
+        "devEnd": "2026-02-23T10:00:00.000Z",
+        "testEnd": "2026-02-24T07:00:00.000Z",
+        "finalEnd": "2026-02-24T07:00:00.000Z"
       }
     },
     {
@@ -9157,8 +9157,8 @@
       ],
       "calc": {
         "devEnd": "2026-01-20T11:00:00.000Z",
-        "testEnd": "2026-02-23T10:00:00.000Z",
-        "finalEnd": "2026-02-23T10:00:00.000Z"
+        "testEnd": "2026-02-24T10:00:00.000Z",
+        "finalEnd": "2026-02-24T10:00:00.000Z"
       }
     },
     {
@@ -9688,8 +9688,8 @@
       ],
       "calc": {
         "devEnd": "2026-02-18T11:00:00.000Z",
-        "testEnd": "2026-02-25T09:00:00.000Z",
-        "finalEnd": "2026-02-25T09:00:00.000Z"
+        "testEnd": "2026-02-26T09:00:00.000Z",
+        "finalEnd": "2026-02-26T09:00:00.000Z"
       }
     },
     {
@@ -12540,7 +12540,7 @@
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-02-24T08:00:00.000Z",
+        "devEnd": "2026-02-24T14:00:00.000Z",
         "testEnd": "2026-03-11T07:00:00.000Z",
         "finalEnd": "2026-03-11T07:00:00.000Z"
       }
@@ -17972,6 +17972,10 @@
         {
           "id": "161040",
           "state": "Pass"
+        },
+        {
+          "id": "161143",
+          "state": "Design"
         }
       ],
       "calc": {
@@ -22391,6 +22395,30 @@
           "Changed Date": "2/19/2026 1:50:56 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": "161141",
+          "Work Item Type": "Bug",
+          "Title": "Setup >> Price List >> Add/ Edit: Validation messages issues",
+          "Assigned To": "Sherif Eldorf <sherif.eldorf@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "MaterialManagement",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "2/19/2026 2:13:09 PM",
+          "Branch": "",
+          "Customer": "Internal CR_2000"
         }
       ],
       "testCases": [
@@ -22416,19 +22444,19 @@
         },
         {
           "id": "160560",
-          "state": "Ready"
+          "state": "Blocking"
         },
         {
           "id": "160562",
-          "state": "Ready"
+          "state": "Blocking"
         },
         {
           "id": "160563",
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": "160564",
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": "160565",
@@ -22966,12 +22994,12 @@
       "area": "Home Visit",
       "priority": 999,
       "tags": [
-        "Impact on cr 159045"
+        "impact on cr 159047"
       ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-02-19T10:43:35.000Z",
+      "changedDate": "2026-02-19T12:13:51.000Z",
       "tasks": [
         {
           "ID": "160763",
