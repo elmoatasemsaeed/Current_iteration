@@ -1378,7 +1378,7 @@ renderDailyActivity() {
     const todayStr = new Date().toISOString().split('T')[0];
     const activities = [];
 
-    // 1. تجميع الأنشطة التي تمت اليوم (نفس منطق الريندر)
+    // 1. تجميع الأنشطة التي تمت اليوم (نفس منطق العرض في الفيو تماماً)
     currentData.forEach(story => {
         let hasActivityToday = false;
         const storyDate = story.changedDate ? new Date(story.changedDate).toISOString().split('T')[0] : null;
@@ -1408,7 +1408,7 @@ renderDailyActivity() {
 
     if (activities.length === 0) return alert("لا توجد أنشطة مسجلة بتاريخ اليوم لتصديرها");
 
-    // 2. تنظيم البيانات في مجموعات (Grouping)
+    // 2. تنظيم البيانات في مجموعات هرمية (Branch -> Area -> Customer)
     const grouped = activities.reduce((acc, item) => {
         if (!acc[item.branch]) acc[item.branch] = {};
         if (!acc[item.branch][item.area]) acc[item.branch][item.area] = {};
@@ -1417,48 +1417,47 @@ renderDailyActivity() {
         return acc;
     }, {});
 
-    // 3. بناء محتوى CSV مع الملخصات
-    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-    csvContent += "Type,Identifier,Details,Assigned To,Status\n"; // العناوين
+    // 3. بناء محتوى الملف مع دعم اللغة العربية والترتيب الهرمي
+    let csvContent = "\uFEFF"; // BOM لدعم اللغة العربية في Excel
+    csvContent += "Level,Identifier,Details/Title,Owner,Status\n"; 
 
     for (const branch in grouped) {
-        // حساب إجمالي الفرع
         let branchCount = 0;
         Object.values(grouped[branch]).forEach(area => {
             Object.values(area).forEach(cust => branchCount += cust.length);
         });
         
-        // صف الفرع الرئيسي (الملخص)
-        csvContent += `BRANCH,${branch},Total Stories: ${branchCount},,\n`;
+        // إضافة سطر الفرع
+        csvContent += `BRANCH,${branch},Total Items: ${branchCount},,\n`;
 
         for (const area in grouped[branch]) {
             let areaCount = 0;
             Object.values(grouped[branch][area]).forEach(cust => areaCount += cust.length);
             
-            // صف المنطقة (الملخص)
-            csvContent += `AREA,${area},Stories: ${areaCount},,\n`;
+            // إضافة سطر المنطقة
+            csvContent += `AREA,${area},Sub-total: ${areaCount},,\n`;
 
             for (const customer in grouped[branch][area]) {
                 const customerStories = grouped[branch][area][customer];
                 
-                // صف العميل (الملخص)
+                // إضافة سطر العميل
                 csvContent += `CUSTOMER,${customer},Items: ${customerStories.length},,\n`;
 
-                // صفوف الستوريز التابعة للعميل
+                // إضافة الستوريز الخاصة بهذا العميل
                 customerStories.forEach(s => {
                     csvContent += `STORY,#${s.id},"${s.title.replace(/"/g, '""')}",${s.assignedTo},${s.state}\n`;
                 });
             }
         }
-        // سطر فارغ للفصل بين الفروع
-        csvContent += ",,,,\n";
+        csvContent += ",,,,\n"; // سطر فارغ للفصل بين الفروع
     }
 
-    // 4. تحميل الملف
-    const encodedUri = encodeURI(csvContent);
+    // 4. تحميل الملف بصيغة CSV المتوافقة مع Excel
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Daily_Report_Summary_${todayStr}.csv`);
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Daily_Report_${todayStr}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
