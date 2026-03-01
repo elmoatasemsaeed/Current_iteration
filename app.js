@@ -1262,7 +1262,6 @@ renderDailyActivity() {
         const todayStr = today.toISOString().split('T')[0];
         const activities = [];
 
-        // تجميع الأنشطة التي تمت اليوم
         currentData.forEach(story => {
             let hasActivityToday = false;
             const storyDate = story.changedDate ? new Date(story.changedDate).toISOString().split('T')[0] : null;
@@ -1277,23 +1276,16 @@ renderDailyActivity() {
                 if (taskChangedToday) hasActivityToday = true;
             }
 
-            if (hasActivityToday) {
-                activities.push(story);
-            }
+            if (hasActivityToday) activities.push(story);
         });
 
         if (activities.length === 0) {
-            container.innerHTML = `
-                <div class="bg-white p-10 rounded-xl border-2 border-dashed border-gray-200 text-center text-gray-400">
-                    No updates recorded for today (${todayStr})
-                </div>`;
+            container.innerHTML = `<div class="bg-white p-10 rounded-xl border-2 border-dashed border-gray-200 text-center text-gray-400">No updates recorded for today (${todayStr})</div>`;
             return;
         }
 
-        // 1. إنشاء الشارت الملخص في البداية
         let html = this.renderDailyActivitySummary(activities);
 
-        // 2. تجميع البيانات للهيكل التفصيلي (Grouping)
         const grouped = activities.reduce((acc, item) => {
             const branch = item.branch || "N/A";
             const area = item.area || "General";
@@ -1305,31 +1297,22 @@ renderDailyActivity() {
             return acc;
         }, {});
 
-        // 3. بناء محتوى التفاصيل بالكامل دون حذف أي شيء
         html += `<div class="space-y-6 mt-6">`;
         for (const branch in grouped) {
             html += `
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
-                    <span class="font-bold text-slate-700 text-sm">
-                        <i class="fas fa-code-branch mr-2 text-indigo-500"></i>${branch}
-                    </span>
-                    <span class="bg-indigo-100 text-indigo-700 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                        ${Object.values(grouped[branch]).flat(2).length} Items
-                    </span>
+                    <span class="font-bold text-slate-700 text-sm"><i class="fas fa-code-branch mr-2 text-indigo-500"></i>${branch}</span>
+                    <span class="bg-indigo-100 text-indigo-700 text-[10px] px-2 py-0.5 rounded-full font-bold">${Object.values(grouped[branch]).flat(2).length} Items</span>
                 </div>
                 <div class="p-4 space-y-4">`;
 
             for (const area in grouped[branch]) {
                 html += `<div><h4 class="text-xs font-black text-indigo-600 mb-2 uppercase tracking-tighter italic underline">${area}</h4>`;
                 for (const customer in grouped[branch][area]) {
-                    html += `
-                    <div class="ml-2 mb-3">
-                        <div class="text-[11px] font-bold text-slate-400 mb-2 border-l-2 border-slate-200 pl-2 tracking-widest uppercase">
-                            Target: ${customer}
-                        </div>`;
+                    html += `<div class="ml-2 mb-3"><div class="text-[11px] font-bold text-slate-400 mb-2 border-l-2 border-slate-200 pl-2 tracking-widest uppercase">Target: ${customer}</div>`;
                     grouped[branch][area][customer].forEach(story => {
-                        html += this.renderStoryCard(story);
+                        html += this.renderStoryCard(story); // الآن الدالة موجودة ولن يظهر الخطأ
                     });
                     html += `</div>`;
                 }
@@ -1338,28 +1321,13 @@ renderDailyActivity() {
             html += `</div></div>`;
         }
         html += `</div>`;
-
         container.innerHTML = html;
     },
 
-    /**
-     * إنشاء الشارت والملخص الرقمي للنشاط اليومي
-     */
     renderDailyActivitySummary(activities) {
         const total = activities.length;
-        
-        // إحصائيات الحالات (States)
-        const states = activities.reduce((acc, s) => {
-            acc[s.state] = (acc[s.state] || 0) + 1;
-            return acc;
-        }, {});
-
-        // إحصائيات الفروع (Branches)
-        const branches = activities.reduce((acc, s) => {
-            const b = s.branch || "N/A";
-            acc[b] = (acc[b] || 0) + 1;
-            return acc;
-        }, {});
+        const states = activities.reduce((acc, s) => { acc[s.state] = (acc[s.state] || 0) + 1; return acc; }, {});
+        const branches = activities.reduce((acc, s) => { const b = s.branch || "N/A"; acc[b] = (acc[b] || 0) + 1; return acc; }, {});
 
         return `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -1368,7 +1336,6 @@ renderDailyActivity() {
                 <div class="text-5xl font-black mt-2">${total}</div>
                 <div class="text-[10px] mt-3 bg-white/20 w-fit px-2 py-1 rounded-md backdrop-blur-sm">Updated Items Today</div>
             </div>
-
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
                 <div class="text-[10px] text-gray-400 font-bold uppercase mb-3">Activity by Status</div>
                 <div class="flex flex-wrap gap-2">
@@ -1380,9 +1347,8 @@ renderDailyActivity() {
                     `).join('')}
                 </div>
             </div>
-
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                <div class="text-[10px] text-gray-400 font-bold uppercase mb-2 text-center">Top Active Branches</div>
+                <div class="text-[10px] text-gray-400 font-bold uppercase mb-2 text-center text-indigo-600">Testing & Branches Summary</div>
                 <div class="space-y-3 mt-2">
                     ${Object.entries(branches).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([name, count]) => {
                         const width = Math.max(15, (count / total) * 100);
@@ -1404,8 +1370,32 @@ renderDailyActivity() {
             <div class="flex-grow border-t border-slate-200"></div>
             <span class="flex-shrink mx-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Detailed Activity Logs</span>
             <div class="flex-grow border-t border-slate-200"></div>
-        </div>
-        `;
+        </div>`;
+    },
+    renderStoryCard(s) {
+        const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
+        let statusColor = isLate ? "bg-red-100 text-red-700" : "bg-indigo-100 text-indigo-700";
+        
+        return `
+        <div onclick="ui.openStoryModal('${s.id}')" class="group p-3 mb-2 bg-slate-50 border border-slate-100 rounded-xl hover:border-indigo-300 hover:bg-white transition-all cursor-pointer">
+            <div class="flex justify-between items-start mb-2">
+                <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${statusColor} uppercase">
+                    ${s.state}
+                </span>
+                <span class="text-[9px] text-slate-400 font-mono">#${s.id}</span>
+            </div>
+            <h5 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors line-clamp-1">${s.title}</h5>
+            <div class="flex items-center gap-4 mt-2">
+                <div class="flex items-center gap-1">
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Dev:</span>
+                    <span class="text-[10px] font-medium text-slate-600">${s.assignedTo}</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Testing:</span>
+                    <span class="text-[10px] font-medium text-slate-600">${s.tester}</span>
+                </div>
+            </div>
+        </div>`;
     },
     
  exportDailyActivityToExcel() {
