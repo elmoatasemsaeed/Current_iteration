@@ -1262,6 +1262,7 @@ renderDailyActivity() {
         const todayStr = today.toISOString().split('T')[0];
         const activities = [];
 
+        // 1. فلترة البيانات لعرض تحديثات اليوم فقط (Stories أو Tasks)
         currentData.forEach(story => {
             let hasActivityToday = false;
             const storyDate = story.changedDate ? new Date(story.changedDate).toISOString().split('T')[0] : null;
@@ -1284,8 +1285,8 @@ renderDailyActivity() {
             return;
         }
 
-        let html = this.renderDailyActivitySummary(activities);
-
+        // 2. تجميع البيانات للهيكل التفصيلي (Grouping)
+        // نقوم بالتجميع أولاً لنستخدم النتائج في الشارت والتفاصيل معاً
         const grouped = activities.reduce((acc, item) => {
             const branch = item.branch || "N/A";
             const area = item.area || "General";
@@ -1297,13 +1298,24 @@ renderDailyActivity() {
             return acc;
         }, {});
 
+        // 3. إنشاء الشارت العلوي باستخدام البيانات المجمعة لضمان تطابق الأرقام
+        let html = this.renderDailyActivitySummary(activities, grouped);
+
+        // 4. بناء محتوى التفاصيل
         html += `<div class="space-y-6 mt-6">`;
         for (const branch in grouped) {
+            // حساب عدد العناصر في هذا الفرع بناءً على الفلتر اليومي
+            const branchItemsCount = Object.values(grouped[branch]).reduce((sum, area) => {
+                return sum + Object.values(area).reduce((s, cust) => s + cust.length, 0);
+            }, 0);
+
             html += `
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
                     <span class="font-bold text-slate-700 text-sm"><i class="fas fa-code-branch mr-2 text-indigo-500"></i>${branch}</span>
-                    <span class="bg-indigo-100 text-indigo-700 text-[10px] px-2 py-0.5 rounded-full font-bold">${Object.values(grouped[branch]).flat(2).length} Items</span>
+                    <span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        ${branchItemsCount} Today
+                    </span>
                 </div>
                 <div class="p-4 space-y-4">`;
 
@@ -1312,7 +1324,7 @@ renderDailyActivity() {
                 for (const customer in grouped[branch][area]) {
                     html += `<div class="ml-2 mb-3"><div class="text-[11px] font-bold text-slate-400 mb-2 border-l-2 border-slate-200 pl-2 tracking-widest uppercase">Target: ${customer}</div>`;
                     grouped[branch][area][customer].forEach(story => {
-                        html += this.renderStoryCard(story); // الآن الدالة موجودة ولن يظهر الخطأ
+                        html += this.renderStoryCard(story);
                     });
                     html += `</div>`;
                 }
@@ -1324,20 +1336,27 @@ renderDailyActivity() {
         container.innerHTML = html;
     },
 
-    renderDailyActivitySummary(activities) {
+    renderDailyActivitySummary(activities, grouped) {
         const total = activities.length;
         const states = activities.reduce((acc, s) => { acc[s.state] = (acc[s.state] || 0) + 1; return acc; }, {});
-        const branches = activities.reduce((acc, s) => { const b = s.branch || "N/A"; acc[b] = (acc[b] || 0) + 1; return acc; }, {});
+        
+        // حساب إحصائيات الفروع من البيانات المجمعة لضمان التطابق 100%
+        const branchStats = Object.keys(grouped).map(name => {
+            const count = Object.values(grouped[name]).reduce((sum, area) => {
+                return sum + Object.values(area).reduce((s, cust) => s + cust.length, 0);
+            }, 0);
+            return { name, count };
+        }).sort((a, b) => b.count - a.count);
 
         return `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div class="bg-gradient-to-br from-indigo-600 to-blue-700 p-5 rounded-2xl shadow-lg text-white">
-                <div class="text-[10px] opacity-80 font-bold uppercase tracking-widest">Total Daily Activity</div>
-                <div class="text-5xl font-black mt-2">${total}</div>
-                <div class="text-[10px] mt-3 bg-white/20 w-fit px-2 py-1 rounded-md backdrop-blur-sm">Updated Items Today</div>
+                <div class="text-[10px] opacity-80 font-bold uppercase tracking-widest text-center">Active Today</div>
+                <div class="text-5xl font-black mt-2 text-center">${total}</div>
+                <div class="text-[10px] mt-3 bg-white/20 text-center px-2 py-1 rounded-md backdrop-blur-sm">User Stories with progress</div>
             </div>
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
-                <div class="text-[10px] text-gray-400 font-bold uppercase mb-3">Activity by Status</div>
+                <div class="text-[10px] text-gray-400 font-bold uppercase mb-3">Status Breakdown</div>
                 <div class="flex flex-wrap gap-2">
                     ${Object.entries(states).map(([state, count]) => `
                         <div class="bg-slate-50 px-3 py-2 rounded-xl border border-slate-100 flex-1 min-w-[70px]">
@@ -1348,18 +1367,18 @@ renderDailyActivity() {
                 </div>
             </div>
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                <div class="text-[10px] text-gray-400 font-bold uppercase mb-2 text-center text-indigo-600">Testing & Branches Summary</div>
+                <div class="text-[10px] text-gray-400 font-bold uppercase mb-2 text-center text-indigo-600 italic">Testing & Branches (Today Only)</div>
                 <div class="space-y-3 mt-2">
-                    ${Object.entries(branches).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([name, count]) => {
-                        const width = Math.max(15, (count / total) * 100);
+                    ${branchStats.slice(0, 3).map(branch => {
+                        const width = (branch.count / total) * 100;
                         return `
                         <div>
                             <div class="flex justify-between text-[10px] mb-1 font-bold text-slate-600">
-                                <span class="truncate pr-2">${name}</span>
-                                <span>${count}</span>
+                                <span class="truncate pr-2">${branch.name}</span>
+                                <span>${branch.count} Items</span>
                             </div>
                             <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-amber-400 h-full rounded-full" style="width: ${width}%"></div>
+                                <div class="bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: ${width}%"></div>
                             </div>
                         </div>`;
                     }).join('')}
