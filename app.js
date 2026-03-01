@@ -1234,17 +1234,24 @@ renderDailyActivity() {
 
     renderDailyActivitySummary(activities, grouped) {
         const total = activities.length;
-        const states = activities.reduce((acc, s) => { acc[s.state] = (acc[s.state] || 0) + 1; return acc; }, {});
         
-        // 1. حساب إحصائيات الفروع (Branches)
-        const branchStats = Object.keys(grouped).map(name => {
-            const count = Object.values(grouped[name]).reduce((sum, area) => {
-                return sum + Object.values(area).reduce((s, cust) => s + cust.length, 0);
-            }, 0);
-            return { name, count };
-        }).sort((a, b) => b.count - a.count);
+        // 1. حساب الحالات (States)
+        const states = activities.reduce((acc, s) => { 
+            acc[s.state] = (acc[s.state] || 0) + 1; 
+            return acc; 
+        }, {});
 
-        // 2. حساب إحصائيات المناطق (Areas) بشكل منفصل للعرض في الشارت الجديد
+        // 2. حساب إحصائيات الفروع (Branches) من الـ activities مباشرة لضمان التطابق
+        const branchStatsMap = {};
+        activities.forEach(s => {
+            const branchName = s.branch || "Unknown";
+            branchStatsMap[branchName] = (branchStatsMap[branchName] || 0) + 1;
+        });
+        const branchStats = Object.entries(branchStatsMap)
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count);
+
+        // 3. حساب إحصائيات المناطق (Areas) من الـ activities مباشرة
         const areaStatsMap = {};
         activities.forEach(s => {
             const areaName = s.area || "General";
@@ -1257,9 +1264,9 @@ renderDailyActivity() {
         return `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div class="bg-gradient-to-br from-indigo-600 to-blue-700 p-5 rounded-2xl shadow-lg text-white">
-                <div class="text-[10px] opacity-80 font-bold uppercase tracking-widest text-center">Active Today</div>
+                <div class="text-[10px] opacity-80 font-bold uppercase tracking-widest text-center">Total Daily Activities</div>
                 <div class="text-5xl font-black mt-2 text-center">${total}</div>
-                <div class="text-[10px] mt-3 bg-white/20 text-center px-2 py-1 rounded-md backdrop-blur-sm">User Stories with progress</div>
+                <div class="text-[10px] mt-3 bg-white/20 text-center px-2 py-1 rounded-md backdrop-blur-sm">Matching all charts below</div>
             </div>
 
             <div class="col-span-1 md:col-span-2 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
@@ -1277,20 +1284,21 @@ renderDailyActivity() {
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                <div class="text-[10px] text-indigo-600 font-bold uppercase mb-2 flex items-center gap-2">
-                   <span>📊 Branches Activity</span>
+                <div class="text-[10px] text-indigo-600 font-bold uppercase mb-2 flex justify-between">
+                   <span>📊 Branches Summary</span>
+                   <span>Sum: ${branchStats.reduce((a, b) => a + b.count, 0)}</span>
                 </div>
                 <div class="space-y-3 mt-2">
-                    ${branchStats.slice(0, 4).map(branch => {
+                    ${branchStats.slice(0, 5).map(branch => {
                         const width = (branch.count / total) * 100;
                         return `
                         <div>
                             <div class="flex justify-between text-[10px] mb-1 font-bold text-slate-600">
                                 <span class="truncate pr-2">${branch.name}</span>
-                                <span>${branch.count} Items</span>
+                                <span>${branch.count}</span>
                             </div>
                             <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: ${width}%"></div>
+                                <div class="bg-indigo-500 h-full rounded-full" style="width: ${width}%"></div>
                             </div>
                         </div>`;
                     }).join('')}
@@ -1298,32 +1306,28 @@ renderDailyActivity() {
             </div>
 
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                <div class="text-[10px] text-purple-600 font-bold uppercase mb-2 flex items-center gap-2">
-                   <span>📂 Area Summary (Today)</span>
+                <div class="text-[10px] text-purple-600 font-bold uppercase mb-2 flex justify-between">
+                   <span>📂 Areas Summary</span>
+                   <span>Sum: ${areaStats.reduce((a, b) => a + b.count, 0)}</span>
                 </div>
                 <div class="space-y-3 mt-2">
-                    ${areaStats.slice(0, 4).map(area => {
+                    ${areaStats.slice(0, 5).map(area => {
                         const width = (area.count / total) * 100;
                         return `
                         <div>
                             <div class="flex justify-between text-[10px] mb-1 font-bold text-slate-600">
                                 <span class="truncate pr-2">${area.name}</span>
-                                <span>${area.count} Items</span>
+                                <span>${area.count}</span>
                             </div>
                             <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-purple-500 h-full rounded-full transition-all duration-500" style="width: ${width}%"></div>
+                                <div class="bg-purple-500 h-full rounded-full" style="width: ${width}%"></div>
                             </div>
                         </div>`;
                     }).join('')}
                 </div>
             </div>
         </div>
-
-        <div class="relative flex py-2 items-center">
-            <div class="flex-grow border-t border-slate-200"></div>
-            <span class="flex-shrink mx-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Detailed Activity Logs</span>
-            <div class="flex-grow border-t border-slate-200"></div>
-        </div>`;
+        `;
     },
     renderStoryCard(s) {
         const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
