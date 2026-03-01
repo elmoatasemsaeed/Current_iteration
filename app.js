@@ -465,7 +465,6 @@ const ui = {
         this.renderStats();
         this.renderActiveCards();
         this.renderDelivery();
-        this.renderAvailability();
         this.renderSettings();
         this.renderClientRoadmap();
         this.renderWorkload();
@@ -951,110 +950,7 @@ editDelivery(id) {
     }
 },
     
-  renderAvailability() {
-    const container = document.getElementById('availability-container');
-    
-    // 1. استخراج كل المناطق (Areas) الفريدة
-    const areas = [...new Set(currentData.map(s => s.area || "General"))];
-    
-    let html = '';
-
-    areas.forEach(area => {
-        // جميع القصص في هذه المنطقة
-        const allAreaStories = currentData.filter(s => s.area === area);
-        
-        // استخراج قائمة الموظفين (الديف فقط)
-        const staffInArea = {
-            developers: [...new Set(allAreaStories.map(s => s.assignedTo))]
-            // تم حذف التستر من هنا
-        };
-
-        html += `
-            <div class="col-span-full mt-6">
-                <h2 class="text-xl font-bold text-indigo-800 border-b-2 border-indigo-100 pb-2 mb-4 flex items-center gap-2">
-                    📍 Area: ${area}
-                </h2>
-            </div>
-        `;
-
-        const getSortedStaff = (staffList, roleType) => {
-            return staffList.map(person => {
-                const activeTasks = allAreaStories.filter(s => {
-                    const isUserTask = (roleType === 'dev' ? s.assignedTo === person : s.tester === person);
-                    const isActive = !['Resolved', 'Tested', 'Closed', 'On-Hold'].includes(s.state);
-                    return isUserTask && isActive;
-                });
-                
-                let lastDate = null;
-                if (activeTasks.length > 0) {
-                    const sortedTasks = activeTasks.sort((a, b) => {
-                        const getDate = (story) => {
-                            // الحساب يعتمد على devEnd لأننا نهتم بجاهزية المطور
-                            return story.calc.devEnd instanceof Date ? story.calc.devEnd : new Date(0);
-                        };
-                        return getDate(b) - getDate(a);
-                    });
-                    
-                    const topStory = sortedTasks[0];
-                    lastDate = topStory.calc.devEnd;
-                }
-
-                return { 
-                    name: person, 
-                    freeDate: lastDate instanceof Date ? lastDate : null 
-                };
-            }).sort((a, b) => {
-                if (a.freeDate === null && b.freeDate !== null) return -1;
-                if (a.freeDate !== null && b.freeDate === null) return 1;
-                return a.freeDate - b.freeDate;
-            });
-        };
-
-        const sortedDevs = getSortedStaff(staffInArea.developers, 'dev');
-
-        // عرض الديف فقط وحذف الجزء الخاص بالـ Testers
-        if (sortedDevs.length > 0) {
-            html += `<div class="col-span-full mb-2 mt-2 font-bold text-blue-600 text-sm uppercase tracking-widest">Developers</div>`;
-            html += sortedDevs.map(dev => this.generateStaffCard(dev, "🛠", 'dev')).join('');
-        }
-    });
-
-    container.innerHTML = html || '<div class="col-span-full text-center text-gray-400">No staff found.</div>';
-},
-
-// تحديث دالة الكارت لضمان ظهور اللون الأخضر بوضوح للمتاحين
-// تحديث الدالة لتقبل المعطى الثالث role
-generateStaffCard(person, icon, role) {
-    const isFree = person.freeDate === null;
-    const dateString = isFree ? "متاح الآن" : person.freeDate.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-    
-    // الألوان الافتراضية بناءً على الدور (تظهر في حالة الانشغال)
-    let roleClasses = role === 'dev' 
-        ? "border-blue-500 bg-blue-50/50" // لون خلفية زرقاء خفيفة للمطورين
-        : "border-purple-500 bg-purple-50/50"; // لون خلفية بنفسجية خفيفة للتستر
-
-    // إذا كان الموظف متاحاً، نعطيه اللون الأخضر المميز بغض النظر عن دوره
-    const statusClasses = isFree 
-        ? "border-green-500 bg-green-50 shadow-[0_0_10px_rgba(34,197,94,0.1)]" 
-        : roleClasses;
-    
-    const textClasses = isFree ? "text-green-700 font-bold" : "text-slate-600";
-    const iconCircle = isFree ? "bg-green-100" : (role === 'dev' ? "bg-blue-100" : "bg-purple-100");
-
-    return `
-        <div class="p-4 rounded-xl shadow-sm border-l-4 ${statusClasses} flex flex-col justify-center transition-all">
-            <div class="flex items-center gap-2 mb-1">
-                <span class="w-8 h-8 rounded-full ${iconCircle} flex items-center justify-center text-lg">${icon}</span>
-                <span class="font-bold text-slate-800">${person.name}</span>
-            </div>
-            <div class="text-sm ${textClasses} mt-2 flex items-center gap-1">
-                ${isFree ? '<span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>' : '📅 '}
-                ${dateString}
-            </div>
-        </div>
-    `;
-},
-
+  
 renderWorkload() {
     const container = document.getElementById('workload-container');
     if (!container) return;
