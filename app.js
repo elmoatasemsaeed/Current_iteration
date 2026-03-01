@@ -1262,7 +1262,7 @@ renderDailyActivity() {
         const todayStr = today.toISOString().split('T')[0];
         const activities = [];
 
-        // تجميع الأنشطة التي تمت اليوم (نفس المنطق الحالي)
+        // تجميع الأنشطة التي تمت اليوم
         currentData.forEach(story => {
             let hasActivityToday = false;
             const storyDate = story.changedDate ? new Date(story.changedDate).toISOString().split('T')[0] : null;
@@ -1290,7 +1290,7 @@ renderDailyActivity() {
             return;
         }
 
-        // 1. توليد الشارت الملخص (Summary Chart)
+        // 1. إنشاء الشارت الملخص في البداية
         let html = this.renderDailyActivitySummary(activities);
 
         // 2. تجميع البيانات للهيكل التفصيلي (Grouping)
@@ -1305,13 +1305,15 @@ renderDailyActivity() {
             return acc;
         }, {});
 
-        // 3. بناء محتوى التفاصيل (Details) دون حذف أي شيء
+        // 3. بناء محتوى التفاصيل بالكامل دون حذف أي شيء
         html += `<div class="space-y-6 mt-6">`;
         for (const branch in grouped) {
             html += `
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
-                    <span class="font-bold text-slate-700 text-sm"><i class="fas fa-code-branch mr-2"></i>${branch}</span>
+                    <span class="font-bold text-slate-700 text-sm">
+                        <i class="fas fa-code-branch mr-2 text-indigo-500"></i>${branch}
+                    </span>
                     <span class="bg-indigo-100 text-indigo-700 text-[10px] px-2 py-0.5 rounded-full font-bold">
                         ${Object.values(grouped[branch]).flat(2).length} Items
                     </span>
@@ -1321,7 +1323,11 @@ renderDailyActivity() {
             for (const area in grouped[branch]) {
                 html += `<div><h4 class="text-xs font-black text-indigo-600 mb-2 uppercase tracking-tighter italic underline">${area}</h4>`;
                 for (const customer in grouped[branch][area]) {
-                    html += `<div class="ml-2 mb-3"><div class="text-[11px] font-bold text-slate-400 mb-2 border-l-2 border-slate-200 pl-2 tracking-widest uppercase">Target: ${customer}</div>`;
+                    html += `
+                    <div class="ml-2 mb-3">
+                        <div class="text-[11px] font-bold text-slate-400 mb-2 border-l-2 border-slate-200 pl-2 tracking-widest uppercase">
+                            Target: ${customer}
+                        </div>`;
                     grouped[branch][area][customer].forEach(story => {
                         html += this.renderStoryCard(story);
                     });
@@ -1336,7 +1342,9 @@ renderDailyActivity() {
         container.innerHTML = html;
     },
 
-    // دالة جديدة لإنشاء الشارت والملخص البصري
+    /**
+     * إنشاء الشارت والملخص الرقمي للنشاط اليومي
+     */
     renderDailyActivitySummary(activities) {
         const total = activities.length;
         
@@ -1374,14 +1382,14 @@ renderDailyActivity() {
             </div>
 
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                <div class="text-[10px] text-gray-400 font-bold uppercase mb-2">Most Active Branches</div>
+                <div class="text-[10px] text-gray-400 font-bold uppercase mb-2 text-center">Top Active Branches</div>
                 <div class="space-y-3 mt-2">
                     ${Object.entries(branches).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([name, count]) => {
                         const width = Math.max(15, (count / total) * 100);
                         return `
                         <div>
                             <div class="flex justify-between text-[10px] mb-1 font-bold text-slate-600">
-                                <span>${name}</span>
+                                <span class="truncate pr-2">${name}</span>
                                 <span>${count}</span>
                             </div>
                             <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
@@ -1394,12 +1402,11 @@ renderDailyActivity() {
         </div>
         <div class="relative flex py-2 items-center">
             <div class="flex-grow border-t border-slate-200"></div>
-            <span class="flex-shrink mx-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Detailed Timeline</span>
+            <span class="flex-shrink mx-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Detailed Activity Logs</span>
             <div class="flex-grow border-t border-slate-200"></div>
         </div>
         `;
-    }
-};
+    },
     
  exportDailyActivityToExcel() {
     const todayStr = new Date().toISOString().split('T')[0];
