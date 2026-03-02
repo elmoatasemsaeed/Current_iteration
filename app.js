@@ -481,6 +481,10 @@ const ui = {
         if (activeTab && activeTab.id === 'tab-daily-activity') {
             this.renderDailyActivity();
         }
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab && activeTab.id === 'tab-inactive-stories') {
+            this.renderInactiveStories();
+        }
     }, 
 
   renderStats() {
@@ -1443,6 +1447,49 @@ renderDailyActivity() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+},
+    renderInactiveStories() {
+    const container = document.getElementById('inactive-stories-container');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // فلترة القصص النشطة التي لم يتغير تاريخها اليوم
+    const inactive = currentData.filter(s => {
+        const isActive = s.state !== 'Tested' && s.state !== 'Closed';
+        const lastChange = s.changedDate ? new Date(s.changedDate) : null;
+        // نتحقق أن القصة نشطة وأن آخر تغيير كان قبل بداية اليوم
+        return isActive && (!lastChange || lastChange < today);
+    });
+
+    if (inactive.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">All active stories have been updated today! 🎉</div>`;
+        return;
+    }
+
+    container.innerHTML = inactive.map(s => `
+        <div class="bg-white p-5 rounded-xl border-l-4 border-red-400 shadow-sm hover:shadow-md transition-all cursor-pointer" onclick="ui.openStoryModal('${s.id}')">
+            <div class="flex justify-between items-start mb-2">
+                <span class="text-xs font-bold text-gray-400">#${s.id}</span>
+                <span class="px-2 py-0.5 bg-gray-100 text-[10px] font-bold rounded">${s.state}</span>
+            </div>
+            <h3 class="font-bold text-slate-800 mb-3">${s.title}</h3>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="text-gray-500">
+                    <p class="font-semibold text-gray-700">Owner:</p>
+                    <p>${s.assignedTo} (Dev)</p>
+                    <p>${s.tester} (QA)</p>
+                </div>
+                <div class="text-gray-500">
+                    <p class="font-semibold text-gray-700">Last Action:</p>
+                    <p class="text-red-500">${s.changedDate ? new Date(s.changedDate).toLocaleString('en-GB') : 'No date recorded'}</p>
+                    <p class="mt-1 font-semibold text-indigo-600">Priority: P${s.priority}</p>
+                </div>
+            </div>
+            <div class="mt-3 pt-3 border-t border-gray-50 flex items-center gap-2">
+                <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded">${s.area}</span>
+            </div>
+        </div>
+    `).join('');
 },
     
     renderSettings() {
