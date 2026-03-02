@@ -45,6 +45,7 @@
                         <button onclick="ui.switchTab('delivery')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Delivery (Tested)</button>
                         <button onclick="ui.switchTab('workload')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Workload</button>
                         <button onclick="ui.switchTab('daily-activity')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Daily Activity</button>
+                        <button onclick="ui.switchTab('inactive-stories')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Inactive Stories</button>
                         <button onclick="ui.switchTab('settings')" class="nav-btn px-4 py-2 rounded-md hover:bg-blue-50 text-gray-700">Settings</button>
                     </nav>
                 </div>
@@ -126,6 +127,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="availability-container"></div>
             </section>
 
+<section id="tab-inactive-stories" class="tab-content space-y-4">
+    <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+        <h2 class="font-bold text-red-800 text-2xl">Inactive Stories Today</h2>
+        <p class="text-sm text-red-600">Active items with no updates since the start of today</p>
+    </div>
+    <div id="inactive-stories-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+</section>
+            
             <section id="tab-settings" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
     <div class="bg-white p-6 rounded-xl border">
