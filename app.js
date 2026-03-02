@@ -462,30 +462,34 @@ const ui = {
     },
 
     renderAll() {
-        this.renderStats();
-        this.renderActiveCards();
-        this.renderDelivery();
-        this.renderSettings();
-        this.renderClientRoadmap();
-        this.renderWorkload();
+    // 1. استدعاء الوظائف الأساسية
+    this.renderStats();
+    this.renderActiveCards();
+    this.renderDelivery();
+    this.renderSettings();
+    this.renderClientRoadmap();
+    this.renderWorkload();
 
-        if (currentUser && currentUser.role === 'viewer') {
-            const uploadBtn = document.querySelector("button[onclick*='csv-input']");
-            if (uploadBtn) uploadBtn.style.display = 'none';
-            
-            const settingsNav = document.querySelector("button[onclick*='settings']");
-            if (settingsNav) settingsNav.style.display = 'none';
-        }
+    // 2. إدارة الصلاحيات للمشاهد (Viewer)
+    if (currentUser && currentUser.role === 'viewer') {
+        const uploadBtn = document.querySelector("button[onclick*='csv-input']");
+        if (uploadBtn) uploadBtn.style.display = 'none';
+        
+        const settingsNav = document.querySelector("button[onclick*='settings']");
+        if (settingsNav) settingsNav.style.display = 'none';
+    }
 
-        const activeTab = document.querySelector('.tab-content.active');
-        if (activeTab && activeTab.id === 'tab-daily-activity') {
+    // 3. التعامل مع التبويب النشط (بدون تكرار تعريف المتغير)
+    const activeTab = document.querySelector('.tab-content.active');
+    
+    if (activeTab) {
+        if (activeTab.id === 'tab-daily-activity') {
             this.renderDailyActivity();
-        }
-        const activeTab = document.querySelector('.tab-content.active');
-        if (activeTab && activeTab.id === 'tab-inactive-stories') {
+        } else if (activeTab.id === 'tab-inactive-stories') {
             this.renderInactiveStories();
         }
-    }, 
+    }
+},
 
   renderStats() {
     // 1. القصص النشطة (ليست في حالة Tested)
