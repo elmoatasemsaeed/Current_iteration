@@ -857,13 +857,11 @@ renderDelivery() {
         <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
             <div class="flex justify-between items-start mb-2">
                 <span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span>
-                </div>
-                <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
-                 </div>
                 <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">
                     ${isLogged ? '✓ تم التسليم' : '*Tested*'}
                 </span>
             </div>
+            <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
             <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
             
             ${isLogged ? `
