@@ -858,7 +858,7 @@ renderDelivery() {
             <div class="flex justify-between items-start mb-2">
                 <span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span>
                 <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">
-                    ${isLogged ? '✓ تم التسليم' : 'بانتظار التسليم'}
+                    ${isLogged ? '✓ تم التسليم' : '*Tested*'}
                 </span>
             </div>
             <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
@@ -894,7 +894,7 @@ renderDelivery() {
     let html = `
         <div class="col-span-full mb-4">
             <h3 class="text-lg font-bold text-blue-700 flex items-center gap-2">
-                📦 *Tested* (${pendingStories.length})
+                📦 بانتظار التسليم (${pendingStories.length})
             </h3>
         </div>
         ${pendingStories.map(s => createCardHtml(s, false)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
