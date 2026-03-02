@@ -860,6 +860,7 @@ renderDelivery() {
                 
             </div>
             <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
+            </div>
             <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">
                     ${isLogged ? '✓ تم التسليم' : '*Tested*'}
                 </span>
