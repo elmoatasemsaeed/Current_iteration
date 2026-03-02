@@ -894,7 +894,7 @@ renderDelivery() {
     let html = `
         <div class="col-span-full mb-4">
             <h3 class="text-lg font-bold text-blue-700 flex items-center gap-2">
-                📦 بانتظار التسليم (${pendingStories.length})
+                📦 *Tested* (${pendingStories.length})
             </h3>
         </div>
         ${pendingStories.map(s => createCardHtml(s, false)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
