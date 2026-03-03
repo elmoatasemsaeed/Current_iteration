@@ -4,6 +4,7 @@
 const CONFIG = {
     REPO_NAME: "elmoatasemsaeed/Current_iteration",
     FILE_PATH: "db.json",
+    ARCHIVE_PATH: "delivery_archive.json",
     WORKING_HOURS: 5,
     START_HOUR: 9,
     END_HOUR: 17,
@@ -66,6 +67,7 @@ const remoteDb = JSON.parse(decodedContent);
                     sessionStorage.setItem('gh_token', t);
                     if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
                     currentUser = userMatch;
+                    archiver.runAutoArchive();
                     this.startApp();
                 } else {
                     alert("خطأ في اسم المستخدم أو كلمة المرور داخل ملف GitHub");
@@ -148,6 +150,7 @@ db = JSON.parse(decodedContent);
         alert("خطأ في المزامنة مع GitHub"); 
     }
 },
+    
 
 async saveToGitHub() {
     const token = sessionStorage.getItem('gh_token');
@@ -192,6 +195,69 @@ async saveToGitHub() {
                 this.processRows(results.data);
             }
         });
+    const archiver = {
+    async runArchive() {
+        const oneMonthAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+        
+        // 1. تصفية البيانات (القديمة للأرشفة، والجديدة للبقاء)
+        const logsToArchive = db.deliveryLogs.filter(log => log.timestamp < oneMonthAgo);
+        const logsToKeep = db.deliveryLogs.filter(log => log.timestamp >= oneMonthAgo);
+
+        if (logsToArchive.length === 0) return; // لا يوجد شيء لأرشفته
+
+        try {
+            // 2. جلب ملف الأرشيف الحالي من GitHub (أو إنشاء مصفوفة فارغة إذا لم يوجد)
+            let archiveData = [];
+            try {
+                const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.ARCHIVE_PATH}`, {
+                    headers: { 'Authorization': `token ${localStorage.getItem('gh_token')}` }
+                });
+                if (response.ok) {
+                    const file = await response.json();
+                    archiveData = JSON.parse(decodeURIComponent(escape(atob(file.content))));
+                }
+            } catch (e) { console.log("Archive file not found, creating new one."); }
+
+            // 3. دمج البيانات القديمة مع الأرشيف
+            archiveData = [...archiveData, ...logsToArchive];
+
+            // 4. حفظ الأرشيف المحدث على GitHub
+            await this.saveFileToGitHub(CONFIG.ARCHIVE_PATH, archiveData);
+
+            // 5. تحديث ملف db الأساسي (حذف البيانات المؤرشفة منه)
+            db.deliveryLogs = logsToKeep;
+            await dataProcessor.saveToGitHub();
+            
+            console.log(`${logsToArchive.length} records moved to archive.`);
+        } catch (error) {
+            console.error("Archive process failed:", error);
+        }
+    },
+
+    async saveFileToGitHub(path, data) {
+        const token = localStorage.getItem('gh_token');
+        const url = `https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${path}`;
+        
+        // جلب SHA للملف إذا كان موجوداً لتحديثه
+        let sha = "";
+        const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
+        if (res.ok) {
+            const file = await res.json();
+            sha = file.sha;
+        }
+
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+        await fetch(url, {
+            method: 'PUT',
+            headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: `Archive auto-update: ${new Date().toLocaleDateString()}`,
+                content: content,
+                sha: sha
+            })
+        });
+    }
+};
     },
 
 
