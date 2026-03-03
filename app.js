@@ -41,9 +41,10 @@ const auth = {
 
         try {
             // محاولة جلب الملف من GitHub للتحقق من بيانات المستخدمين
-            const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                headers: { 'Authorization': `token ${t}` }
-            });
+           const response = await fetch(`https://raw.githubusercontent.com/${CONFIG.REPO_NAME}/main/${CONFIG.FILE_PATH}`, {
+    headers: { 'Authorization': `token ${t}` }
+});
+const data = await response.json();
 
             if (response.ok) {
                 const data = await response.json();
