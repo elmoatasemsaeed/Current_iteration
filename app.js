@@ -655,13 +655,15 @@ renderClientRoadmap() {
                 const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
                 const hasError = s.calc.error;
                 
+                // جلب الملاحظة المخزنة من db
+                const storedNote = (db.standupNotes && db.standupNotes[s.id]) ? db.standupNotes[s.id] : {text: "", date: ""};
+
                 // --- حسابات الـ Dev & Estimation ---
                 const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
                 const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                 let devStartDisplay = "TBD";
                 const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
                 
-                // حساب إجازات الديف (من البداية حتى اليوم)
                 const devVacDaysNow = devActivatedDates.length > 0 
                     ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) 
                     : 0;
@@ -683,7 +685,6 @@ renderClientRoadmap() {
                 let testStartDisplay = "Waiting";
                 const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
                 
-                // حساب إجازات التستر (من البداية حتى اليوم)
                 const testVacDaysNow = (execTask && execTask['Activated Date']) 
                     ? dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) 
                     : 0;
@@ -726,12 +727,11 @@ renderClientRoadmap() {
                                 <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
                             </div>
                             <span class="text-xs font-mono text-gray-400">#${s.id}</span>
-                       
                         </div>
 
-                         <div class="flex flex-wrap gap-1 mt-2">
-    ${s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${t}</span>`).join('')}
-</div>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            ${s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${t}</span>`).join('')}
+                        </div>
                                         
                         <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
 
@@ -800,6 +800,25 @@ renderClientRoadmap() {
                         </div>
                     </div>
 
+                    <div class="px-5 pb-4 bg-white">
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <label class="text-[10px] font-bold text-indigo-500 uppercase mb-1 block tracking-wider">Standup Notes</label>
+                            <textarea 
+                                id="note-input-${s.id}"
+                                onclick="event.stopPropagation()"
+                                onblur="ui.saveStandupNote('${s.id}')"
+                                class="w-full text-xs p-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none transition-all resize-none shadow-sm"
+                                placeholder="سجل ملاحظاتك هنا..."
+                                rows="2"
+                            >${storedNote.text}</textarea>
+                            ${storedNote.date ? `
+                                <p class="text-[9px] text-gray-400 mt-1 italic flex items-center gap-1">
+                                    <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                    Updated: ${storedNote.date}
+                                </p>
+                            ` : ''}
+                        </div>
+                    </div>
                     <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
                         <div class="flex flex-col">
                             <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
@@ -1495,7 +1514,34 @@ renderDailyActivity() {
         </div>
     `).join('');
 },
-    
+   saveStandupNote(storyId) {
+        const noteText = document.getElementById(`note-input-${storyId}`).value;
+        const now = new Date();
+        const dateStr = now.toLocaleString('en-GB', { 
+            day: '2-digit', month: '2-digit', year: 'numeric', 
+            hour: '2-digit', minute: '2-digit' 
+        });
+
+        // التأكد من وجود الكائن في القاعدة
+        if (!db.standupNotes) db.standupNotes = {};
+
+        // حفظ الملاحظة أو مسحها إذا كان النص فارغاً
+        if (noteText.trim() === "") {
+            delete db.standupNotes[storyId];
+        } else {
+            db.standupNotes[storyId] = {
+                text: noteText,
+                date: dateStr
+            };
+        }
+
+        // حفظ التغييرات في GitHub
+        dataProcessor.saveToGitHub().then(() => {
+            console.log(`Note saved for Story #${storyId}`);
+            // تحديث الإحصائيات أو الواجهة إذا لزم الأمر
+            this.renderActiveCards(); 
+        });
+    }, 
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
         const staffSelect = document.getElementById('staff-select');
