@@ -1164,7 +1164,7 @@
       "timestamp": 1772525363817
     }
   ],
-  "sha": "b34e6334c428bd8d827147bf336c728c4dfa5c8a",
+  "sha": "1c167e38b04c024d6fcf9102b06a88fbcbc4965f",
   "currentStories": [
     {
       "id": "157043",
@@ -2428,12 +2428,13 @@
       "area": "Registration",
       "priority": 1,
       "tags": [
-        "Resolved on local env"
+        "Resolved on local env",
+        " waiting db pr"
       ],
       "expectedRelease": null,
       "branch": "Kuwait",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-03-02T12:34:35.000Z",
+      "changedDate": "2026-03-03T08:30:39.000Z",
       "tasks": [
         {
           "ID": "162163",
@@ -2451,11 +2452,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/1/2026 3:31:22 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/2/2026 2:34:35 PM",
+          "Changed Date": "3/3/2026 10:07:53 AM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -2475,11 +2476,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/2/2026 2:17:35 AM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/2/2026 9:46:38 AM",
+          "Changed Date": "3/3/2026 10:07:58 AM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -2499,11 +2500,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/2/2026 2:35:11 AM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/2/2026 2:34:35 PM",
+          "Changed Date": "3/3/2026 10:08:05 AM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -2514,7 +2515,7 @@
           "Assigned To": "Fatma Fayed <fatma.fayed@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "2.75",
-          "TimeSheet_DevActualTime": "1",
+          "TimeSheet_DevActualTime": "1.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "3/2/2026 9:59:55 AM",
           "Business Area": "",
@@ -2526,8 +2527,8 @@
           "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "3/2/2026 11:11:39 AM",
+          "Tags": "waiting bugs",
+          "Changed Date": "3/3/2026 10:13:00 AM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -2546,12 +2547,12 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "3/3/2026 10:05:38 AM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "liquibase; V.3.1.0; Wait .Net review",
-          "Changed Date": "3/2/2026 2:02:16 PM",
+          "Changed Date": "3/3/2026 10:05:38 AM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         }
@@ -2559,7 +2560,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-03-02T11:00:00.000Z",
+        "devEnd": "2026-03-03T11:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -4123,6 +4124,30 @@
           "Changed Date": "3/2/2026 9:59:27 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": "162485",
+          "Work Item Type": "Task",
+          "Title": "Publish on Stage",
+          "Assigned To": "Reem Ali <reem.abdulmuttalib@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.33",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "3/3/2026 10:06:40 AM",
+          "Business Area": "",
+          "Iteration Path": "Home Visit\\2025\\home_visit January 5-19",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "3/3/2026 10:07:23 AM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/3/2026 10:07:23 AM",
+          "Branch": "",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
@@ -4252,6 +4277,29 @@
       }
     },
     {
+      "id": "162372",
+      "title": "Update Wareed Integration APIs - Collection area display name - version 1.4",
+      "state": "Resolved",
+      "assignedTo": "Yara Mohsen <yara.abdelsalam@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "Home Visit",
+      "priority": 1,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Internal NT",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-03-03T08:19:29.000Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      }
+    },
+    {
       "id": "153880",
       "title": "SKUH - Result Receipt: Customize the result receipt for SKUH as the attached Design",
       "state": "Resolved",
@@ -4263,7 +4311,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "SKUH -  Souad Kafafi Hospital_385",
-      "changedDate": "2026-03-03T08:03:37.000Z",
+      "changedDate": "2026-03-03T08:25:33.000Z",
       "tasks": [
         {
           "ID": "161303",
@@ -4560,7 +4608,7 @@
           "Assigned To": "Fatma Fayed <fatma.fayed@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "2.75",
-          "TimeSheet_DevActualTime": "1.25",
+          "TimeSheet_DevActualTime": "1.75",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "2/24/2026 11:23:49 AM",
           "Business Area": "",
@@ -4573,7 +4621,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "waiting bugs",
-          "Changed Date": "2/25/2026 11:57:02 AM",
+          "Changed Date": "3/3/2026 10:18:30 AM",
           "Branch": "",
           "Customer": "SKUH -  Souad Kafafi Hospital_385"
         },
@@ -4674,9 +4722,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-03-08T10:00:00.000Z",
-        "testEnd": "2026-03-10T07:00:00.000Z",
-        "finalEnd": "2026-03-10T07:00:00.000Z"
+        "devEnd": "2026-03-09T10:00:00.000Z",
+        "testEnd": "2026-03-11T07:00:00.000Z",
+        "finalEnd": "2026-03-11T07:00:00.000Z"
       }
     },
     {
@@ -5996,11 +6044,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/2/2026 12:15:52 AM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/3/2026 8:23:57 AM",
+          "Changed Date": "3/3/2026 10:23:16 AM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -6012,7 +6060,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "0.33",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "0.25",
           "Activated Date": "3/2/2026 12:16:21 AM",
           "Business Area": "",
           "Iteration Path": "LDM\\Candidate CRs",
@@ -6024,7 +6072,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/2/2026 12:17:23 AM",
+          "Changed Date": "3/3/2026 10:29:00 AM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -7638,7 +7686,7 @@
     {
       "id": "159048",
       "title": "Update the log pop-up design to be a screen with the bellow mentioned updates.",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "Reem Ali <reem.abdulmuttalib@nationaltechnology.net>",
       "tester": "Bassant Abdelhamid <bassant.abdelhamid@nationaltechnology.net>",
       "area": "Home Visit",
@@ -7649,7 +7697,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-03-03T01:45:41.000Z",
+      "changedDate": "2026-03-03T08:14:49.000Z",
       "tasks": [
         {
           "ID": "160980",
@@ -13247,9 +13295,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-03-10T14:00:00.000Z",
-        "testEnd": "2026-03-11T07:00:00.000Z",
-        "finalEnd": "2026-03-11T07:00:00.000Z"
+        "devEnd": "2026-03-11T14:00:00.000Z",
+        "testEnd": "2026-03-12T07:00:00.000Z",
+        "finalEnd": "2026-03-12T07:00:00.000Z"
       }
     },
     {
@@ -13487,7 +13535,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Dr Mohamed Khedr Lab_0382",
-      "changedDate": "2026-03-02T21:34:34.000Z",
+      "changedDate": "2026-03-03T08:22:50.000Z",
       "tasks": [
         {
           "ID": "161944",
@@ -19830,7 +19878,7 @@
           "Assigned To": "Reem Ali <reem.abdulmuttalib@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "1.5",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "3",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "3/3/2026 1:05:29 AM",
           "Business Area": "",
@@ -19838,12 +19886,12 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "3/3/2026 10:05:21 AM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/3/2026 10:02:37 AM",
+          "Changed Date": "3/3/2026 10:05:21 AM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -19868,6 +19916,30 @@
           "Business Priority": "",
           "Tags": "",
           "Changed Date": "3/3/2026 10:03:22 AM",
+          "Branch": "",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": "162484",
+          "Work Item Type": "Task",
+          "Title": "Frontend: implement DirtyCheckGuard on Chemist Schedule",
+          "Assigned To": "Yara Mohsen <yara.abdelsalam@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.75",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "Home Visit\\2026\\home_visit February 16-2",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "3/3/2026 10:06:41 AM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/3/2026 10:06:41 AM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         }
@@ -20644,7 +20716,7 @@
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-03-04T12:00:00.000Z",
+        "devEnd": "2026-03-04T09:00:00.000Z",
         "testEnd": "2026-03-11T07:00:00.000Z",
         "finalEnd": "2026-03-11T07:00:00.000Z"
       }
@@ -22821,23 +22893,23 @@
           "ID": "162452",
           "Work Item Type": "Bug",
           "Title": "Receive while  mandatory field not added >> TC02",
-          "Assigned To": "Sherif Eldorf <sherif.eldorf@nationaltechnology.net>",
+          "Assigned To": "Abdullah Nasser <abdullah.nasser@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.37",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "3/3/2026 10:10:35 AM",
           "Business Area": "",
           "Iteration Path": "MaterialManagement",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
+          "Resolved Date": "3/3/2026 10:24:05 AM",
+          "State": "Resolved",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/3/2026 2:57:30 AM",
+          "Changed Date": "3/3/2026 10:24:05 AM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -22959,7 +23031,7 @@
       "calc": {
         "devEnd": "2026-03-01T09:39:01.000Z",
         "testEnd": "2026-03-02T07:00:00.000Z",
-        "finalEnd": "2026-03-02T07:00:00.000Z"
+        "finalEnd": "2026-03-03T09:10:35.000Z"
       }
     },
     {
