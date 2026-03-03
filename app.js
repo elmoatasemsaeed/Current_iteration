@@ -24,11 +24,11 @@ let currentUser = null;
 
 const archiver = {
     async runArchive() {
-        const oneMonthAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+        const TenDaysAgo = Date.now() - (10 * 24 * 60 * 60 * 1000);
         
         // 1. تصفية البيانات (القديمة للأرشفة، والجديدة للبقاء)
-        const logsToArchive = db.deliveryLogs.filter(log => log.timestamp < oneMonthAgo);
-        const logsToKeep = db.deliveryLogs.filter(log => log.timestamp >= oneMonthAgo);
+        const logsToArchive = db.deliveryLogs.filter(log => log.timestamp < TenDaysAgo);
+        const logsToKeep = db.deliveryLogs.filter(log => log.timestamp >= TenDaysAgo);
 
         if (logsToArchive.length === 0) return; // لا يوجد شيء لأرشفته
 
