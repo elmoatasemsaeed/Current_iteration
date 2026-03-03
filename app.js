@@ -130,7 +130,7 @@ const remoteDb = JSON.parse(decodedContent);
                     sessionStorage.setItem('gh_token', t);
                     if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
                     currentUser = userMatch;
-                    archiver.runAutoArchive();
+                    archiver.runArchive();
                     this.startApp();
                 } else {
                     alert("خطأ في اسم المستخدم أو كلمة المرور داخل ملف GitHub");
