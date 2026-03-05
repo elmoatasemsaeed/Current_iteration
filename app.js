@@ -1521,46 +1521,78 @@ renderDailyActivity() {
 },
     renderInactiveStories() {
     const container = document.getElementById('inactive-stories-container');
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    if (!container) return;
 
-    // فلترة القصص النشطة التي لم يتغير تاريخها اليوم
-    const inactive = currentData.filter(s => {
-        const isActive = s.state !== 'Tested' && s.state !== 'Closed';
-        const lastChange = s.changedDate ? new Date(s.changedDate) : null;
-        // نتحقق أن القصة نشطة وأن آخر تغيير كان قبل بداية اليوم
-        return isActive && (!lastChange || lastChange < today);
+    // 1. تحديد القصص غير النشطة (التي لم يتم لمسها منذ فترة أو في حالة الانتظار)
+    // يمكنك تعديل الفلتر بناءً على ما تعتبره "Inactive" في مشروعك
+    const inactiveStories = currentData.filter(s => {
+        const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
+        // لنفترض أننا نعتبر القصة غير نشطة إذا لم تتغير منذ أكثر من يومين أو حسب حالتها
+        return isNotFinished; 
     });
 
-    if (inactive.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">All active stories have been updated today! 🎉</div>`;
+    if (inactiveStories.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">لا توجد قصص غير نشطة حالياً.</div>`;
         return;
     }
 
-    container.innerHTML = inactive.map(s => `
-        <div class="bg-white p-5 rounded-xl border-l-4 border-red-400 shadow-sm hover:shadow-md transition-all cursor-pointer" onclick="ui.openStoryModal('${s.id}')">
-            <div class="flex justify-between items-start mb-2">
-                <span class="text-xs font-bold text-gray-400">#${s.id}</span>
-                <span class="px-2 py-0.5 bg-gray-100 text-[10px] font-bold rounded">${s.state}</span>
+    // 2. التجميع حسب الـ Area
+    const groupedByArea = inactiveStories.reduce((groups, story) => {
+        const area = story.area || "General";
+        if (!groups[area]) groups[area] = [];
+        groups[area].push(story);
+        return groups;
+    }, {});
+
+    // 3. بناء الـ HTML
+    let html = '';
+    const now = new Date();
+
+    for (const area in groupedByArea) {
+        html += `
+            <div class="col-span-full mt-6 mb-2">
+                <h3 class="text-lg font-bold text-slate-700 border-b-2 border-indigo-100 pb-1 flex items-center gap-2">
+                    <span class="w-2 h-5 bg-indigo-400 rounded"></span>
+                    ${area} (${groupedByArea[area].length})
+                </h3>
             </div>
-            <h3 class="font-bold text-slate-800 mb-3">${s.title}</h3>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="text-gray-500">
-                    <p class="font-semibold text-gray-700">Owner:</p>
-                    <p>${s.assignedTo} (Dev)</p>
-                    <p>${s.tester} (QA)</p>
+        `;
+
+        groupedByArea[area].forEach(s => {
+            // حساب فرق الأيام من آخر أكشن (changedDate)
+            const lastAction = s.changedDate ? new Date(s.changedDate) : now;
+            const diffTime = Math.abs(now - lastAction);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            // تحديد اللون بناءً على عدد الأيام
+            let dayColorClass = "text-green-600"; // يوم واحد
+            if (diffDays > 1 && diffDays <= 3) {
+                dayColorClass = "text-amber-500"; // من 2 لـ 3 أيام
+            } else if (diffDays > 3) {
+                dayColorClass = "text-red-600"; // أكثر من 3 أيام
+            }
+
+            html += `
+                <div onclick="ui.openStoryModal('${s.id}')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all flex justify-between items-center">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-[10px] font-mono text-gray-400">#${s.id}</span>
+                            <span class="px-2 py-0.5 rounded bg-slate-100 text-[9px] font-bold text-gray-500 uppercase">${s.state}</span>
+                        </div>
+                        <div class="font-bold text-slate-800 text-sm truncate w-48" title="${s.title}">${s.title}</div>
+                        <div class="text-[10px] text-gray-400 mt-1">Assigned to: ${s.assignedTo}</div>
+                    </div>
+                    
+                    <div class="text-right flex flex-col items-center border-l pl-4 ml-2">
+                        <div class="text-2xl font-black ${dayColorClass}">${diffDays}</div>
+                        <div class="text-[8px] font-bold text-gray-400 uppercase">Days Idle</div>
+                    </div>
                 </div>
-                <div class="text-gray-500">
-                    <p class="font-semibold text-gray-700">Last Action:</p>
-                    <p class="text-red-500">${s.changedDate ? new Date(s.changedDate).toLocaleString('en-GB') : 'No date recorded'}</p>
-                    <p class="mt-1 font-semibold text-indigo-600">Priority: P${s.priority}</p>
-                </div>
-            </div>
-            <div class="mt-3 pt-3 border-t border-gray-50 flex items-center gap-2">
-                <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded">${s.area}</span>
-            </div>
-        </div>
-    `).join('');
+            `;
+        });
+    }
+
+    container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${html}</div>`;
 },
     
     renderSettings() {
