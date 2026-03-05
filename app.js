@@ -1523,13 +1523,8 @@ renderDailyActivity() {
     const container = document.getElementById('inactive-stories-container');
     if (!container) return;
 
-    // 1. تحديد القصص غير النشطة (التي لم يتم لمسها منذ فترة أو في حالة الانتظار)
-    // يمكنك تعديل الفلتر بناءً على ما تعتبره "Inactive" في مشروعك
-    const inactiveStories = currentData.filter(s => {
-        const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
-        // لنفترض أننا نعتبر القصة غير نشطة إذا لم تتغير منذ أكثر من يومين أو حسب حالتها
-        return isNotFinished; 
-    });
+    // 1. فلترة القصص غير النشطة (التي ليست في حالة Tested أو Closed)
+    const inactiveStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
 
     if (inactiveStories.length === 0) {
         container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">لا توجد قصص غير نشطة حالياً.</div>`;
@@ -1544,13 +1539,14 @@ renderDailyActivity() {
         return groups;
     }, {});
 
-    // 3. بناء الـ HTML
     let html = '';
     const now = new Date();
 
+    // 3. بناء الواجهة
     for (const area in groupedByArea) {
+        // عنوان الـ Area
         html += `
-            <div class="col-span-full mt-6 mb-2">
+            <div class="col-span-full mt-6 mb-4">
                 <h3 class="text-lg font-bold text-slate-700 border-b-2 border-indigo-100 pb-1 flex items-center gap-2">
                     <span class="w-2 h-5 bg-indigo-400 rounded"></span>
                     ${area} (${groupedByArea[area].length})
@@ -1558,34 +1554,36 @@ renderDailyActivity() {
             </div>
         `;
 
+        // الكروت داخل الـ Area
         groupedByArea[area].forEach(s => {
-            // حساب فرق الأيام من آخر أكشن (changedDate)
+            // حساب فرق الأيام من تاريخ آخر تغيير (changedDate)
             const lastAction = s.changedDate ? new Date(s.changedDate) : now;
             const diffTime = Math.abs(now - lastAction);
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-            // تحديد اللون بناءً على عدد الأيام
-            let dayColorClass = "text-green-600"; // يوم واحد
+            // تحديد لون الرقم بناءً على عدد الأيام
+            let dayColorClass = "text-green-600"; // يوم واحد أو أقل
             if (diffDays > 1 && diffDays <= 3) {
-                dayColorClass = "text-amber-500"; // من 2 لـ 3 أيام
+                dayColorClass = "text-amber-500"; // 2-3 أيام
             } else if (diffDays > 3) {
                 dayColorClass = "text-red-600"; // أكثر من 3 أيام
             }
 
+            // الكرت بنفس تصميم البزنس القديم والبوب أب
             html += `
-                <div onclick="ui.openStoryModal('${s.id}')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all flex justify-between items-center">
-                    <div class="flex-1">
+                <div onclick="ui.openStoryModal('${s.id}')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all flex justify-between items-center mb-3">
+                    <div class="flex-1 overflow-hidden">
                         <div class="flex items-center gap-2 mb-1">
                             <span class="text-[10px] font-mono text-gray-400">#${s.id}</span>
                             <span class="px-2 py-0.5 rounded bg-slate-100 text-[9px] font-bold text-gray-500 uppercase">${s.state}</span>
                         </div>
-                        <div class="font-bold text-slate-800 text-sm truncate w-48" title="${s.title}">${s.title}</div>
-                        <div class="text-[10px] text-gray-400 mt-1">Assigned to: ${s.assignedTo}</div>
+                        <div class="font-bold text-slate-800 text-sm truncate" title="${s.title}">${s.title}</div>
+                        <div class="text-[10px] text-gray-400 mt-1">Assigned to: <span class="text-indigo-600">${s.assignedTo}</span></div>
                     </div>
                     
-                    <div class="text-right flex flex-col items-center border-l pl-4 ml-2">
-                        <div class="text-2xl font-black ${dayColorClass}">${diffDays}</div>
-                        <div class="text-[8px] font-bold text-gray-400 uppercase">Days Idle</div>
+                    <div class="text-right flex flex-col items-center border-l pl-4 ml-4 min-w-[60px]">
+                        <div class="text-3xl font-black ${dayColorClass} leading-none">${diffDays}</div>
+                        <div class="text-[8px] font-bold text-gray-400 uppercase mt-1">Days Idle</div>
                     </div>
                 </div>
             `;
@@ -1593,8 +1591,7 @@ renderDailyActivity() {
     }
 
     container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${html}</div>`;
-},
-    
+},    
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
         const staffSelect = document.getElementById('staff-select');
