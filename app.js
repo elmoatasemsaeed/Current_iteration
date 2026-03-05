@@ -843,7 +843,7 @@ renderClientRoadmap() {
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
                                     <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
-                                    <p class="text-[10px] uppercase text-gray-400 font-bold">Quality Assurance</p>
+                                    <p class="text-[10px] uppercase text-gray-400 font-bold">QC</p>
                                 </div>
                                 <div class="flex flex-col gap-0.5">
                                     <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
