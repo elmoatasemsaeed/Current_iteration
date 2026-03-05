@@ -1519,14 +1519,14 @@ renderDailyActivity() {
     link.click();
     document.body.removeChild(link);
 },
- renderInactiveStories() {
+renderInactiveStories() {
     const container = document.getElementById('inactive-stories-container');
     if (!container) return;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 1. فلترة القصص غير النشطة (التي لم تتحدث اليوم وليست منتهية)
+    // 1. الفلترة
     const inactive = currentData.filter(s => {
         const isActive = s.state !== 'Tested' && s.state !== 'Closed';
         const lastChange = s.changedDate ? new Date(s.changedDate) : null;
@@ -1549,70 +1549,62 @@ renderDailyActivity() {
     let html = '';
     const now = new Date();
 
-    // 3. بناء الواجهة مع الحفاظ على تفاصيل الكرت القديم
     for (const area in groupedByArea) {
-        // عنوان المجموعة (Area)
+        // عنوان الـ Area بشكل مميز
         html += `
             <div class="col-span-full mt-8 mb-4">
-                <h3 class="text-lg font-bold text-slate-700 border-b-2 border-indigo-100 pb-2 flex items-center gap-2">
-                    <span class="w-3 h-6 bg-indigo-500 rounded-sm"></span>
-                    ${area} <span class="text-sm font-normal text-gray-400 ml-2">(${groupedByArea[area].length} Stories)</span>
-                </h3>
+                <div class="flex items-center gap-3">
+                    <h3 class="text-xl font-extrabold text-slate-800">${area}</h3>
+                    <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold">${groupedByArea[area].length} Stories</span>
+                    <div class="flex-grow h-px bg-slate-200"></div>
+                </div>
             </div>
         `;
 
         groupedByArea[area].forEach(s => {
-            // حساب فرق الأيام
             const lastAction = s.changedDate ? new Date(s.changedDate) : now;
-            const diffTime = Math.abs(now - lastAction);
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const diffDays = Math.floor(Math.abs(now - lastAction) / (1000 * 60 * 60 * 24));
 
-            // تحديد لون الرقم بناءً على القاعدة المطلوبة
-            let dayColorClass = "text-green-600"; // يوم واحد
-            if (diffDays > 1 && diffDays <= 3) {
-                dayColorClass = "text-amber-500"; // 2-3 أيام
-            } else if (diffDays > 3) {
-                dayColorClass = "text-red-600"; // أكثر من 3 أيام
-            }
+            let dayColorClass = "text-green-500 border-green-200 bg-green-50";
+            if (diffDays > 1 && diffDays <= 3) dayColorClass = "text-amber-500 border-amber-200 bg-amber-50";
+            else if (diffDays > 3) dayColorClass = "text-red-500 border-red-200 bg-red-50";
 
-            // الكرت بنفس تفاصيل الكود القديم + الرقم الكبير
             html += `
-                <div class="bg-white p-5 rounded-xl border-l-4 border-red-400 shadow-sm hover:shadow-md transition-all cursor-pointer flex justify-between items-start" onclick="ui.openStoryModal('${s.id}')">
-                    <div class="flex-1">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-xs font-bold text-gray-400">#${s.id}</span>
-                            <span class="px-2 py-0.5 bg-gray-100 text-[10px] font-bold rounded">${s.state}</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 mb-3">${s.title}</h3>
-                        
-                        <div class="grid grid-cols-2 gap-4 text-xs">
-                            <div class="text-gray-500">
-                                <p class="font-semibold text-gray-700 underline mb-1">Owner:</p>
-                                <p><span class="text-indigo-600">Dev:</span> ${s.assignedTo || 'Unassigned'}</p>
-                                <p><span class="text-indigo-600">QA:</span> ${s.tester || 'Unassigned'}</p>
-                            </div>
-                            <div class="text-gray-500">
-                                <p class="font-semibold text-gray-700 underline mb-1">Last Action:</p>
-                                <p class="text-red-500">${s.changedDate ? new Date(s.changedDate).toLocaleString('en-GB', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'No date'}</p>
-                                <p class="mt-1 font-semibold text-indigo-600">Priority: P${s.priority}</p>
-                            </div>
-                        </div>
-
-                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center gap-2">
-                            <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded">${s.area}</span>
-                        </div>
+                <div class="col-span-full lg:col-span-1 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-5" onclick="ui.openStoryModal('${s.id}')">
+                    
+                    <div class="flex flex-col items-center justify-center min-w-[80px] h-[80px] rounded-2xl border-2 ${dayColorClass}">
+                        <span class="text-3xl font-black leading-none">${diffDays}</span>
+                        <span class="text-[9px] font-bold uppercase mt-1">Days</span>
                     </div>
 
-                    <div class="ml-4 flex flex-col items-center justify-center border-l pl-4 self-stretch min-w-[70px]">
-                        <span class="text-4xl font-black ${dayColorClass} leading-none">${diffDays}</span>
-                        <span class="text-[9px] font-bold text-gray-400 uppercase mt-2 text-center">Days<br>Idle</span>
+                    <div class="flex-grow min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-[10px] font-bold text-slate-400">#${s.id}</span>
+                            <span class="px-2 py-0.5 bg-slate-100 text-[9px] font-bold rounded uppercase text-slate-500">${s.state}</span>
+                            <span class="ml-auto font-bold text-indigo-600 text-[10px]">P${s.priority}</span>
+                        </div>
+                        
+                        <h3 class="font-bold text-slate-800 text-sm mb-2 truncate" title="${s.title}">${s.title}</h3>
+                        
+                        <div class="flex flex-wrap gap-y-1 gap-x-4">
+                            <div class="flex items-center gap-1 text-[11px] text-slate-500">
+                                <span class="font-semibold text-slate-700">Dev:</span> ${s.assignedTo || '---'}
+                            </div>
+                            <div class="flex items-center gap-1 text-[11px] text-slate-500">
+                                <span class="font-semibold text-slate-700">QA:</span> ${s.tester || '---'}
+                            </div>
+                            <div class="flex items-center gap-1 text-[11px] text-red-400">
+                                <span class="font-semibold">Last:</span> ${s.changedDate ? new Date(s.changedDate).toLocaleDateString('en-GB') : 'N/A'}
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
         });
     }
 
-    container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">${html}</div>`;
+    // تعديل الـ Grid ليصبح عمود واحد في الموبايل واثنين في الشاشات الكبيرة لراحة العين
+    container.innerHTML = `<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">${html}</div>`;
 },    
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
