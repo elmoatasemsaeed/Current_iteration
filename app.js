@@ -264,53 +264,60 @@ async saveToGitHub() {
 
 
     processRows(rows) {
-        const stories = [];
-        let currentStory = null;
+    const stories = [];
+    let currentStory = null;
 
-        rows.forEach(row => {
-            if (row['Work Item Type'] === 'User Story') {
-                let area = row['Business Area'];
-                if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
-                if (!area || area.trim() === "") {
-                    const path = row['Iteration Path'] || "";
-                    area = path.includes('\\') ? path.split('\\')[0] : path;
-                }
-
-                currentStory = {
-                    id: row['ID'],
-                    title: row['Title'],
-                    state: row['State'],
-                    assignedTo: row['Assigned To'] || "Unassigned",
-                    tester: row['Assigned To Tester'] || "Unassigned",
-                    area: area || "General",
-                    priority: parseInt(row['Business Priority']) || 999,
-                    tags: row['Tags'] ? row['Tags'].split(';').filter(t => t.trim() !== "") : [],
-                    expectedRelease: row['Release Expected Date'] ? new Date(row['Release Expected Date']) : null,
-                    branch: row['Branch'] || "N/A",           // تعريف عمود Branch
-                    customer: row['Customer'] || "General",   // تعريف عمود Customer
-                    changedDate: row['Changed Date'] ? new Date(row['Changed Date']) : null, // تعريف Changed Date
-                    tasks: [],
-                    bugs: [],
-                    testCases: [],
-                    calc: {}
-                };
-                stories.push(currentStory);
-            } else if (row['Work Item Type'] === 'Task' && currentStory) {
-                currentStory.tasks.push(row);
-            } else if (row['Work Item Type'] === 'Bug' && currentStory) {
-                currentStory.bugs.push(row);
-            } else if (row['Work Item Type'] === 'Test Case' && currentStory) {
-                currentStory.testCases.push({
-                    id: row['ID'],
-                    state: row['State']
-                });
+    rows.forEach(row => {
+        // التحديث هنا: التحقق من وجود User Story أو CR لبدء مجموعة جديدة
+        const itemType = row['Work Item Type'];
+        if (itemType === 'User Story' || itemType === 'CR') {
+            let area = row['Business Area'];
+            // المنطق الحالي لمعالجة الـ Area
+            if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
+            if (!area || area.trim() === "") {
+                const path = row['Iteration Path'] || "";
+                area = path.includes('\\') ? path.split('\\')[0] : path;
             }
-        });
 
-        this.calculateTimelines(stories);
-        db.currentStories = stories;
-        this.saveToGitHub().then(() => alert("تم تحديث البيانات بناءً على منطق الأولويات الجديد"));
-    },
+            currentStory = {
+                id: row['ID'],
+                title: row['Title'],
+                // إضافة النوع (US أو CR) للتمييز لاحقاً في العرض إذا أردت
+                type: itemType, 
+                state: row['State'],
+                assignedTo: row['Assigned To'] || "Unassigned",
+                tester: row['Assigned To Tester'] || "Unassigned",
+                area: area || "General",
+                priority: parseInt(row['Business Priority']) || 999,
+                tags: row['Tags'] ? row['Tags'].split(';').filter(t => t.trim() !== "") : [],
+                expectedRelease: row['Release Expected Date'] ? new Date(row['Release Expected Date']) : null,
+                branch: row['Branch'] || "N/A",
+                customer: row['Customer'] || "General",
+                changedDate: row['Changed Date'] ? new Date(row['Changed Date']) : null,
+                tasks: [],
+                bugs: [],
+                testCases: [],
+                calc: {}
+            };
+            stories.push(currentStory);
+        } 
+        // سيستمر الكود في إضافة المهام (Tasks) للعنصر الحالي (سواء كان US أو CR)
+        else if (row['Work Item Type'] === 'Task' && currentStory) {
+            currentStory.tasks.push(row);
+        } else if (row['Work Item Type'] === 'Bug' && currentStory) {
+            currentStory.bugs.push(row);
+        } else if (row['Work Item Type'] === 'Test Case' && currentStory) {
+            currentStory.testCases.push({
+                id: row['ID'],
+                state: row['State']
+            });
+        }
+    });
+
+    this.calculateTimelines(stories);
+    db.currentStories = stories;
+    this.saveToGitHub().then(() => alert("تم تحديث البيانات ومعالجة الـ User Stories والـ CR بنجاح"));
+},
 
     calculateTimelines(stories) {
         // 1. الترتيب الصارم حسب Business Priority (الأقل أولاً)
