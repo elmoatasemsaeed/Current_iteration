@@ -1611,7 +1611,7 @@ renderInactiveStories() {
     }
 
     // تعديل الـ Grid ليصبح عمود واحد في الموبايل واثنين في الشاشات الكبيرة لراحة العين
-    container.innerHTML = `<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">${html}</div>`;
+    container.innerHTML = `<div class="grid grid-cols-1 xl:grid-cols-4 gap-4">${html}</div>`;
 },    
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
