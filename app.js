@@ -1528,79 +1528,93 @@ renderDailyActivity() {
 },
 renderInactiveStories() {
     const container = document.getElementById('inactive-stories-container');
-    const searchTerm = document.getElementById('search-inactive-input')?.value.toLowerCase() || "";
+    if (!container) return;
 
-    // 1. فلترة القصص غير النشطة (Tested أو Closed) مع دعم البحث
-    const inactiveStories = currentData.filter(s => {
-        const isFinished = s.state === 'Tested' || s.state === 'Closed';
-        const matchesSearch = 
-            s.title.toLowerCase().includes(searchTerm) || 
-            s.id.toString().includes(searchTerm) || 
-            (s.area && s.area.toLowerCase().includes(searchTerm));
-            
-        return isFinished && matchesSearch;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 1. الفلترة
+    const inactive = currentData.filter(s => {
+        const isActive = s.state !== 'Tested' && s.state !== 'Closed';
+        const lastChange = s.changedDate ? new Date(s.changedDate) : null;
+        return isActive && (!lastChange || lastChange < today);
     });
 
-    if (inactiveStories.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">
-            ${searchTerm ? 'لا توجد نتائج تطابق بحثك.' : 'No inactive stories found.'}
-        </div>`;
+    if (inactive.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">All active stories have been updated today! 🎉</div>`;
         return;
     }
 
-    // 2. التجميع حسب المنطقة (Group By Area)
-    const groupedStories = inactiveStories.reduce((groups, story) => {
-        const area = story.area || "General";
-        if (!groups[area]) groups[area] = [];
-        groups[area].push(story);
+    // 2. التجميع حسب الـ Area
+    const groupedByArea = inactive.reduce((groups, story) => {
+        const areaName = story.area || "General";
+        if (!groups[areaName]) groups[areaName] = [];
+        groups[areaName].push(story);
         return groups;
     }, {});
 
-    // 3. الريندر النهائي
-    container.innerHTML = Object.keys(groupedStories).map(area => {
-        const storiesInArea = groupedStories[area];
+    let html = '';
+    const now = new Date();
 
-        return `
+    for (const area in groupedByArea) {
+        // عنوان الـ Area
+        html += `
             <div class="col-span-full mt-8 mb-4">
-                <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-gray-400 rounded-full"></span>
-                    ${area} 
-                    <span class="text-sm font-normal text-gray-400">(${storiesInArea.length})</span>
-                </h2>
+                <div class="flex items-center gap-3">
+                    <h3 class="text-xl font-extrabold text-slate-800">${area}</h3>
+                    <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold">${groupedByArea[area].length} Stories</span>
+                    <div class="flex-grow h-px bg-slate-200"></div>
+                </div>
             </div>
-            ${storiesInArea.map(s => {
-                return `
-                <div class="bg-gray-50 rounded-2xl p-5 border border-gray-200 opacity-80 hover:opacity-100 transition-all mb-4">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-gray-200 text-gray-600">${s.state}</span>
-                        <span class="text-xs font-mono text-gray-400">#${s.id}</span>
-                    </div>
+        `;
 
-                    <div class="flex flex-wrap gap-1 mb-3">
-                        ${s.tags && s.tags.length > 0 
-                            ? s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${t}</span>`).join('')
-                            : ''
-                        }
-                    </div>
+        groupedByArea[area].forEach(s => {
+            const lastAction = s.changedDate ? new Date(s.changedDate) : now;
+            const diffDays = Math.floor(Math.abs(now - lastAction) / (1000 * 60 * 60 * 24));
 
-                    <h3 class="text-md font-bold text-slate-700 mb-3">${s.title}</h3>
+            let dayColorClass = "text-green-500 border-green-200 bg-green-50";
+            if (diffDays > 1 && diffDays <= 3) dayColorClass = "text-amber-500 border-amber-200 bg-amber-50";
+            else if (diffDays > 3) dayColorClass = "text-red-500 border-red-200 bg-red-50";
+
+            html += `
+                <div class="col-span-full lg:col-span-1 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-5" onclick="ui.openStoryModal('${s.id}')">
                     
-                    <div class="flex justify-between items-center text-[11px] text-gray-500 pt-3 border-t border-gray-200">
-                        <div>
-                            <span class="font-bold">Dev:</span> ${s.assignedTo}
+                    <div class="flex flex-col items-center justify-center min-w-[80px] h-[80px] rounded-2xl border-2 ${dayColorClass}">
+                        <span class="text-3xl font-black leading-none">${diffDays}</span>
+                        <span class="text-[9px] font-bold uppercase mt-1">Days</span>
+                    </div>
+
+                    <div class="flex-grow min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-[10px] font-bold text-slate-400">#${s.id}</span>
+                            <span class="px-2 py-0.5 bg-slate-100 text-[9px] font-bold rounded uppercase text-slate-500">${s.state}</span>
+                            <span class="ml-auto font-bold text-indigo-600 text-[10px]">P${s.priority}</span>
                         </div>
-                        <div>
-                            <span class="font-bold">QA:</span> ${s.tester}
+                        
+                        <h3 class="font-bold text-slate-800 text-sm mb-1 truncate" title="${s.title}">${s.title}</h3>
+                        
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            ${(s.tags || []).map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[9px] font-semibold">${t}</span>`).join('')}
                         </div>
-                        <div>
-                            <span class="font-bold">Priority:</span> P${s.priority || 999}
+                        
+                        <div class="flex flex-wrap gap-y-1 gap-x-4">
+                            <div class="flex items-center gap-1 text-[11px] text-slate-500">
+                                <span class="font-semibold text-slate-700">Dev:</span> ${s.assignedTo || '---'}
+                            </div>
+                            <div class="flex items-center gap-1 text-[11px] text-slate-500">
+                                <span class="font-semibold text-slate-700">QA:</span> ${s.tester || '---'}
+                            </div>
+                            <div class="flex items-center gap-1 text-[11px] text-red-400">
+                                <span class="font-semibold">Last:</span> ${s.changedDate ? new Date(s.changedDate).toLocaleDateString('en-GB') : 'N/A'}
+                            </div>
                         </div>
                     </div>
                 </div>
-                `;
-            }).join('')}
-        `;
-    }).join('');
+            `;
+        });
+    }
+
+    container.innerHTML = `<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">${html}</div>`;
 },    
     renderSettings() {
         const staff = [...new Set(currentData.map(s => s.assignedTo).concat(currentData.map(s => s.tester)))];
