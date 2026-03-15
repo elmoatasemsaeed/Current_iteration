@@ -215,7 +215,7 @@
       "timestamp": 1773579557360
     }
   ],
-  "sha": "75569d936ecd7500022d3bad054359e83040549b",
+  "sha": "6b8d2b27a0ef97623a59fbfe7e67b642eb8f5964",
   "currentStories": [
     {
       "id": "146195",
@@ -351,6 +351,30 @@
           "Business Priority": "",
           "Tags": "",
           "Changed Date": "3/15/2026 12:39:46 PM",
+          "Branch": "",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": "164009",
+          "Work Item Type": "Task",
+          "Title": "Add ReportGeneratorHelper with EF Core support",
+          "Assigned To": "Yara Mohsen <yara.abdelsalam@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "Home Visit\\2026\\home_visit March 3-17",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "3/15/2026 3:27:58 PM",
+          "State": "To Be Reviewed",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/15/2026 3:27:58 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         }
@@ -3187,7 +3211,7 @@
           "Activity": "Testing",
           "Original Estimation": "32",
           "TimeSheet_DevActualTime": "",
-          "TimeSheet_TestingActualTime": "11",
+          "TimeSheet_TestingActualTime": "12",
           "Activated Date": "3/4/2026 12:40:35 AM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-March 3-17",
@@ -3199,7 +3223,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/12/2026 2:48:53 PM",
+          "Changed Date": "3/15/2026 3:16:38 PM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -4831,6 +4855,22 @@
         {
           "id": "164006",
           "state": "Design"
+        },
+        {
+          "id": "164025",
+          "state": "Design"
+        },
+        {
+          "id": "164026",
+          "state": "Design"
+        },
+        {
+          "id": "164027",
+          "state": "Design"
+        },
+        {
+          "id": "164028",
+          "state": "Design"
         }
       ],
       "calc": {
@@ -5203,8 +5243,8 @@
       "id": "160343",
       "title": "Update App Link APIs - Add Notifications APIs - v1.6 - v1.7",
       "type": "User Story",
-      "state": "Resolved",
-      "assignedTo": "Abdelrahman Elbetar <abdelrahman.elbetar@nationaltechnology.net>",
+      "state": "Active - With Bugs",
+      "assignedTo": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
       "tester": "Abdelrahman Elbetar <abdelrahman.elbetar@nationaltechnology.net>",
       "area": "MobileApp",
       "priority": 2,
@@ -5212,7 +5252,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-03-15T12:42:23.000Z",
+      "changedDate": "2026-03-15T13:26:10.000Z",
       "tasks": [
         {
           "ID": "161843",
@@ -5968,7 +6008,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "1.75",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "1.5",
           "Activated Date": "3/12/2026 12:18:55 PM",
           "Business Area": "",
           "Iteration Path": "LDM",
@@ -5976,11 +6016,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/15/2026 2:41:57 PM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/15/2026 2:43:38 PM",
+          "Changed Date": "3/15/2026 3:16:09 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -6153,30 +6193,6 @@
           "Customer": "Internal CR_2000"
         },
         {
-          "ID": "163965",
-          "Work Item Type": "Bug",
-          "Title": "SetNotificationsSeen API- Failed - Request is query parameters",
-          "Assigned To": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
-          "Activity": "",
-          "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
-          "Business Area": "",
-          "Iteration Path": "MobileApp",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "3/15/2026 1:14:13 PM",
-          "Branch": "",
-          "Customer": "Internal CR_2000"
-        },
-        {
           "ID": "163970",
           "Work Item Type": "Bug",
           "Title": "GetNotificationsByReceiverID API- doesn't obey notifications date from/ to",
@@ -6206,21 +6222,45 @@
           "Title": "Get Notifications By Receiver ID and Get Notifications By Application APIs return unexpected fields (clientId, createdDate) and inconsistent applicationName value",
           "Assigned To": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
+          "Original Estimation": "0.5",
+          "TimeSheet_DevActualTime": "0.5",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "3/15/2026 3:20:09 PM",
           "Business Area": "",
           "Iteration Path": "LDM",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "New",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/15/2026 2:50:19 PM",
+          "Changed Date": "3/15/2026 3:44:10 PM",
+          "Branch": "",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": "164011",
+          "Work Item Type": "Bug",
+          "Title": "SetDeviceNotificationsData API accepts invalid values for deviceLanguage without validation",
+          "Assigned To": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "0.75",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "3/15/2026 3:56:19 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/15/2026 3:56:19 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         }
@@ -6229,7 +6269,31 @@
       "calc": {
         "devEnd": "2026-03-10T14:03:08.000Z",
         "testEnd": "2026-03-11T07:00:00.000Z",
-        "finalEnd": "2026-03-15T12:06:31.000Z"
+        "finalEnd": "2026-03-16T07:00:00.000Z"
+      }
+    },
+    {
+      "id": "163883",
+      "title": "Assuit University - Health Insight HIS Integration",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Tarek Saad <tarek.saad@nationaltechnology.net>",
+      "tester": "Unassigned",
+      "area": "LDM Integration",
+      "priority": 2,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Assuit University Hospitals_412",
+      "changedDate": "2026-03-15T13:08:04.000Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
       }
     },
     {
@@ -10322,7 +10386,7 @@
           "ID": "163294",
           "Work Item Type": "Bug",
           "Title": "162023| Qatar MOI - HIS Integration| Add New Registration- validation issue",
-          "Assigned To": "Mohamed Fawzy <m.basuony@nationaltechnology.net>",
+          "Assigned To": "Tarek Saad <tarek.saad@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "2",
           "TimeSheet_DevActualTime": "6.17",
@@ -10338,7 +10402,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "3 of 6 is done; wait accept pr and pipeline",
-          "Changed Date": "3/15/2026 1:40:43 PM",
+          "Changed Date": "3/15/2026 3:08:26 PM",
           "Branch": "",
           "Customer": "Qatar MOI_96"
         },
@@ -11869,7 +11933,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Dr Mohamed Khedr Lab_0382",
-      "changedDate": "2026-03-15T12:28:33.000Z",
+      "changedDate": "2026-03-15T13:55:24.000Z",
       "tasks": [
         {
           "ID": "163608",
@@ -14113,7 +14177,7 @@
       "id": "153879",
       "title": "Khedr lab - Sample Tracking Report: Update the search criteria to add a new input field \"Urgent\"",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Mohamed Hany <mohamed.tawfik@nationaltechnology.net>",
       "tester": "Dina Ahmed <dina.ahmed@nationaltechnology.net>",
       "area": "Internal lab",
@@ -14122,7 +14186,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Dr Mohamed Khedr Lab_0382",
-      "changedDate": "2026-03-15T08:15:29.000Z",
+      "changedDate": "2026-03-15T13:43:20.000Z",
       "tasks": [
         {
           "ID": "161944",
@@ -14326,7 +14390,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "0.5",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
           "Activated Date": "3/12/2026 10:51:42 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-March 3-17",
@@ -14334,11 +14398,35 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/15/2026 10:15:16 AM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/15/2026 10:15:16 AM",
+          "Changed Date": "3/15/2026 3:43:49 PM",
+          "Branch": "",
+          "Customer": "Dr Mohamed Khedr Lab_0382"
+        },
+        {
+          "ID": "164024",
+          "Work Item Type": "Bug",
+          "Title": "BUG_003: system do not record time in service average time report while service updates",
+          "Assigned To": "Mohamed Hany <mohamed.tawfik@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "1",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-March 3-17",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/15/2026 3:46:04 PM",
           "Branch": "",
           "Customer": "Dr Mohamed Khedr Lab_0382"
         }
@@ -14423,7 +14511,7 @@
       "id": "159330",
       "title": "EBGH HIS - Update HL7 Messages",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Tarek Saad <tarek.saad@nationaltechnology.net>",
       "tester": "Ahmed Alshennawi <ahmed.alshennawi@nationaltechnology.net>",
       "area": "LDM Integration",
@@ -14434,7 +14522,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "EBGH_62",
-      "changedDate": "2026-03-13T12:22:08.000Z",
+      "changedDate": "2026-03-15T13:27:35.000Z",
       "tasks": [
         {
           "ID": "160416",
@@ -14627,6 +14715,30 @@
           "Business Priority": "",
           "Tags": "ldm issu; Waiting DB",
           "Changed Date": "3/11/2026 12:10:57 PM",
+          "Branch": "",
+          "Customer": "EBGH_62"
+        },
+        {
+          "ID": "164013",
+          "Work Item Type": "Bug",
+          "Title": "Error while cancel multi service",
+          "Assigned To": "Tarek Saad <tarek.saad@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/15/2026 3:27:35 PM",
           "Branch": "",
           "Customer": "EBGH_62"
         }
@@ -15855,7 +15967,7 @@
         },
         {
           "id": "163524",
-          "state": "Design"
+          "state": "Ready"
         },
         {
           "id": "163525",
