@@ -566,26 +566,55 @@ const ui = {
 },
 
   renderStats() {
-    // 1. القصص النشطة (ليست في حالة Tested)
+    // --- البيانات الأساسية ---
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    const sevenDaysLater = new Date();
+    sevenDaysLater.setDate(now.getDate() + 7);
+
+    // 1. القصص النشطة (ليست في حالة Tested أو Closed)
     const active = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
     
     // 2. القصص الجاهزة للتسليم (حالتها Tested ولم يتم تسجيل تسليمها بعد)
     const readyForDelivery = currentData.filter(s => 
-    (s.state === 'Tested' || s.state === 'Closed') && 
-    !db.deliveryLogs.some(log => log.storyId === s.id)
-);
+        (s.state === 'Tested' || s.state === 'Closed') && 
+        !db.deliveryLogs.some(log => log.storyId === s.id)
+    );
     
-    // 3. القصص المتأخرة
+    // 3. القصص المتأخرة عن موعدها المحسوب
     const delayed = active.filter(s => {
         return s.calc.finalEnd instanceof Date && 
                !isNaN(s.calc.finalEnd.getTime()) && 
-               new Date() > s.calc.finalEnd;
+               now > s.calc.finalEnd;
     });
 
+    // --- الإحصائيات الجديدة المضافة بناءً على محتوى الفيوز الأخرى ---
+
+    // أ- إجمالي الـ Bugs المفتوحة في القصص النشطة
+    const totalOpenBugs = active.reduce((acc, s) => {
+        const openBugs = s.bugs ? s.bugs.filter(b => b.State !== 'Closed' && b.State !== 'Resolved').length : 0;
+        return acc + openBugs;
+    }, 0);
+
+    // ب- عدد طلبات التغيير (CRs) النشطة
+    const activeCRs = active.filter(s => s.type === 'CR').length;
+
+    // ج- تسليمات العميل المتوقعة خلال 7 أيام (Roadmap Stat)
+    const upcomingClientDeadlines = currentData.filter(s => {
+        return s.expectedRelease instanceof Date && 
+               s.state !== 'Tested' && 
+               s.expectedRelease >= now && 
+               s.expectedRelease <= sevenDaysLater;
+    }).length;
+
+    // د- الموظفين في إجازة اليوم (Settings & Vacations Stat)
+    const onVacationToday = db.vacations ? db.vacations.filter(v => v.date === todayStr).length : 0;
+
+    // --- بناء محتوى الكروت الأساسية (Stats Cards) ---
     const statsHtml = `
         <div class="bg-blue-600 text-white p-4 rounded-xl shadow">
             <div class="text-sm opacity-80">Active Stories</div>
-            <div class="text-2xl font-bold">${active.length}</div>
+            <div class="text-2xl font-bold">${active.length} <span class="text-xs font-normal opacity-70">(${activeCRs} CRs)</span></div>
         </div>
         <div class="bg-green-600 text-white p-4 rounded-xl shadow">
             <div class="text-sm opacity-80">Ready for Delivery</div>
@@ -596,32 +625,44 @@ const ui = {
             <div class="text-2xl font-bold">${delayed.length}</div>
         </div>
         <div class="bg-purple-600 text-white p-4 rounded-xl shadow">
-            <div class="text-sm opacity-80">Delivered</div>
+            <div class="text-sm opacity-80">Delivered Total</div>
             <div class="text-2xl font-bold">${db.deliveryLogs.length}</div>
         </div>
+        
+        <div class="bg-amber-500 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Open Bugs</div>
+            <div class="text-2xl font-bold">${totalOpenBugs}</div>
+        </div>
+        <div class="bg-indigo-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Client Deadlines (7d)</div>
+            <div class="text-2xl font-bold">${upcomingClientDeadlines}</div>
+        </div>
+        <div class="bg-teal-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Staff on Vacation</div>
+            <div class="text-2xl font-bold">${onVacationToday}</div>
+        </div>
     `;
+    
     document.getElementById('stats-cards').innerHTML = statsHtml;
 
-    const today = new Date().toISOString().split('T')[0];
-    
-    // Safety check for the overdue container
+    // --- تحديث قائمة المتأخرات (Overdue Container) ---
     document.getElementById('overdue-container').innerHTML = delayed.map(s => `
         <div class="p-2 border-b text-sm">
             <span class="font-bold">[${s.area}]</span> ${s.title}
             <div class="text-xs text-red-400">Delayed since: ${s.calc.finalEnd.toLocaleDateString()}</div>
         </div>
-    `).join('');
+    `).join('') || '<div class="text-gray-400 text-center py-2">No delayed items</div>';
 
-    // Fix for Line 390: Check if date is valid before calling .toISOString()
+    // --- تحديث قائمة مهام اليوم (Today Container) ---
     document.getElementById('today-container').innerHTML = active.filter(s => {
         return s.calc.finalEnd instanceof Date && 
                !isNaN(s.calc.finalEnd.getTime()) && 
-               s.calc.finalEnd.toISOString().split('T')[0] === today;
+               s.calc.finalEnd.toISOString().split('T')[0] === todayStr;
     }).map(s => `
         <div class="p-2 border-b text-sm">
             <span class="font-bold">[${s.area}]</span> ${s.title} - <span class="text-blue-500">${s.assignedTo}</span>
         </div>
-    `).join('') || '<div class="text-gray-400 text-center">Nothing planned for today</div>';
+    `).join('') || '<div class="text-gray-400 text-center py-2">Nothing planned for today</div>';
 },
 
 renderClientRoadmap() {
