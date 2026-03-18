@@ -233,7 +233,7 @@
       "timestamp": 1773826741185
     }
   ],
-  "sha": "90de63a5f60df39a4af963d279eaf7862a5ef1ad",
+  "sha": "1b412487c27dff4ac8a8f1b2deae3fdaab060956",
   "currentStories": [
     {
       "id": "146195",
@@ -1773,23 +1773,23 @@
           "ID": "154773",
           "Work Item Type": "Task",
           "Title": "DB Modification LDM_DEV : update procedure SP_PAYMENT_DAILY_DETAILS",
-          "Assigned To": "Ahmed Farag Shaban <ahmed.shaban@nationaltechnology.net>",
+          "Assigned To": "Mohamed Qassem <m.qassem@nationaltechnology.net>",
           "Activity": "DB Modification",
           "Original Estimation": "6.5",
           "TimeSheet_DevActualTime": "7.25",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "2/25/2026 12:54:48 PM",
+          "Activated Date": "3/18/2026 1:55:23 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-March 3-17",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "3/3/2026 2:44:22 PM",
-          "State": "Closed",
+          "Resolved Date": "",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "liquibase; v3.1.0; Wait .Net review",
-          "Changed Date": "3/18/2026 12:52:34 PM",
+          "Changed Date": "3/18/2026 1:55:23 PM",
           "Branch": "",
           "Customer": "Al Farabi Lab KSA_283"
         },
@@ -2235,8 +2235,8 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-02-26T14:00:00.000Z",
-        "testEnd": "2026-03-02T07:00:00.000Z",
+        "devEnd": "2026-03-01T08:00:00.000Z",
+        "testEnd": "2026-03-03T07:00:00.000Z",
         "finalEnd": "2026-03-18T12:19:52.000Z"
       }
     },
@@ -6297,11 +6297,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/16/2026 2:20:21 PM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/17/2026 9:40:15 PM",
+          "Changed Date": "3/18/2026 1:44:32 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -6855,11 +6855,13 @@
       "tester": "Nehal Elbana <nehal.elbana@nationaltechnology.net>",
       "area": "MobileApp",
       "priority": 3,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Shalaby Labs_457",
-      "changedDate": "2026-03-15T11:16:27.000Z",
+      "changedDate": "2026-03-18T11:16:34.000Z",
       "tasks": [
         {
           "ID": "159825",
@@ -8926,7 +8928,7 @@
         {
           "ID": "164426",
           "Work Item Type": "Bug",
-          "Title": "Client domain appears in the subdomain column in Client list grid and delay in client search grid response",
+          "Title": "Client Logo image is not displayed in thumbnail in edit client screen and delay in client screens response",
           "Assigned To": "Reem Ali <reem.abdulmuttalib@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "2",
@@ -8943,7 +8945,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/18/2026 11:10:05 AM",
+          "Changed Date": "3/18/2026 1:52:23 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -10843,11 +10845,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/10/2026 2:23:16 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/18/2026 1:11:42 PM",
+          "Changed Date": "3/18/2026 1:13:20 PM",
           "Branch": "",
           "Customer": "Dr Mohamed Khedr Lab_0382"
         },
@@ -10867,11 +10869,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/16/2026 2:18:38 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/16/2026 2:18:38 PM",
+          "Changed Date": "3/18/2026 1:13:25 PM",
           "Branch": "",
           "Customer": "Dr Mohamed Khedr Lab_0382"
         },
@@ -11106,8 +11108,8 @@
       ],
       "calc": {
         "devEnd": "2026-03-12T14:00:00.000Z",
-        "testEnd": "2026-03-15T07:00:00.000Z",
-        "finalEnd": "2026-03-15T07:00:00.000Z"
+        "testEnd": "2026-03-16T07:00:00.000Z",
+        "finalEnd": "2026-03-16T07:00:00.000Z"
       }
     },
     {
@@ -11309,18 +11311,21 @@
       "id": "152838",
       "title": "khedr Lab - Impact of the Activation date at Registration.",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Aya Saed Mustafa Mohamad Bayoumi <aya.bayoumi@nationaltechnology.net>",
       "tester": "Mohamed Elgmmal <mohamed.elgmmal@nationaltechnology.net>",
       "area": "Registration",
       "priority": 6,
       "tags": [
-        "published"
+        "1 test case fail",
+        " execution 80%",
+        " Integration Bug",
+        " published"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Dr Mohamed Khedr Lab_0382",
-      "changedDate": "2026-03-16T10:22:12.000Z",
+      "changedDate": "2026-03-18T12:02:07.000Z",
       "tasks": [
         {
           "ID": "163608",
@@ -11515,7 +11520,32 @@
           "Customer": "Dr Mohamed Khedr Lab_0382"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": "164536",
+          "Work Item Type": "Bug",
+          "Title": "Integration Validation Not Applied During Registration – Services Added Successfully Despite Invalid Conditions",
+          "Assigned To": "Aya Saed Mustafa Mohamad Bayoumi <aya.bayoumi@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-March 3-17",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/18/2026 1:51:56 PM",
+          "Branch": "",
+          "Customer": "Dr Mohamed Khedr Lab_0382"
+        }
+      ],
       "testCases": [
         {
           "id": "163746",
@@ -11608,6 +11638,10 @@
         {
           "id": "164079",
           "state": "Pass"
+        },
+        {
+          "id": "164538",
+          "state": "Fail"
         }
       ],
       "calc": {
@@ -12051,7 +12085,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-03-18T10:50:46.000Z",
+      "changedDate": "2026-03-18T11:57:57.000Z",
       "tasks": [
         {
           "ID": "164250",
@@ -12532,6 +12566,30 @@
           "Changed Date": "3/17/2026 4:25:50 PM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": "164532",
+          "Work Item Type": "Task",
+          "Title": "BD016 | Review ON US149303",
+          "Assigned To": "Fatma Fayed <fatma.fayed@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "5",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-March 3-17",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/18/2026 1:12:57 PM",
+          "Branch": "",
+          "Customer": "Al Borg KSA_530"
         }
       ],
       "bugs": [],
@@ -12598,7 +12656,7 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-03-29T08:00:00.000Z",
+        "devEnd": "2026-03-30T08:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -14264,7 +14322,7 @@
         {
           "ID": "164403",
           "Work Item Type": "Bug",
-          "Title": "BUG_005: system do not record time in service average time report while service updates",
+          "Title": "BUG_005: system retrieve data exceed the selected date from/to selected in service average time report",
           "Assigned To": "Dina Ahmed <dina.ahmed@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "3",
@@ -14277,11 +14335,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/18/2026 9:27:20 AM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/18/2026 12:47:41 PM",
+          "Changed Date": "3/18/2026 1:31:01 PM",
           "Branch": "",
           "Customer": "Dr Mohamed Khedr Lab_0382"
         },
@@ -14646,7 +14704,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-03-18T02:32:58.000Z",
+      "changedDate": "2026-03-18T11:27:53.000Z",
       "tasks": [
         {
           "ID": "158680",
@@ -14668,7 +14726,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "liquibase; v3.1.0; Wait .Net review",
-          "Changed Date": "3/3/2026 2:08:44 PM",
+          "Changed Date": "3/18/2026 1:38:17 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -14873,7 +14931,7 @@
           "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed <mahmoud.ahmed@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "3",
-          "TimeSheet_DevActualTime": "7.5",
+          "TimeSheet_DevActualTime": "8.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "3/9/2026 3:49:31 PM",
           "Business Area": "",
@@ -14886,7 +14944,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/18/2026 4:32:58 AM",
+          "Changed Date": "3/18/2026 1:33:13 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         }
@@ -15169,7 +15227,7 @@
       "id": "146721",
       "title": "Update Notification Events, trigger after results for Enhanced Reports.",
       "type": "User Story",
-      "state": "Active",
+      "state": "Resolved",
       "assignedTo": "Mustafa Ahmed <mustafa.ahmed@nationaltechnology.net>",
       "tester": "Yasmine Abdelwahed <yasmine.abdelwahed@nationaltechnology.net>",
       "area": "Internal lab",
@@ -15184,7 +15242,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-03-17T15:24:26.000Z",
+      "changedDate": "2026-03-18T12:02:23.000Z",
       "tasks": [
         {
           "ID": "158876",
@@ -19951,7 +20009,7 @@
           "Assigned To": "Eslam Saleh <eslam.saleh@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "0.25",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "",
           "Business Area": "",
@@ -19964,7 +20022,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/18/2026 12:59:04 PM",
+          "Changed Date": "3/18/2026 1:50:03 PM",
           "Branch": "",
           "Customer": "Wareed Lab_294"
         },
@@ -19975,7 +20033,7 @@
           "Assigned To": "Eslam Saleh <eslam.saleh@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "1",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "",
           "Business Area": "",
@@ -19988,7 +20046,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/18/2026 12:59:16 PM",
+          "Changed Date": "3/18/2026 1:50:02 PM",
           "Branch": "",
           "Customer": "Wareed Lab_294"
         },
@@ -19996,7 +20054,7 @@
           "ID": "164528",
           "Work Item Type": "Bug",
           "Title": "TEST",
-          "Assigned To": "Eslam Saleh <eslam.saleh@nationaltechnology.net>",
+          "Assigned To": "Sara Mustafa <sara.mustafa@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "",
           "TimeSheet_DevActualTime": "",
@@ -20012,7 +20070,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/18/2026 12:54:21 PM",
+          "Changed Date": "3/18/2026 1:49:55 PM",
           "Branch": "",
           "Customer": "Wareed Lab_294"
         }
@@ -23448,11 +23506,13 @@
       "tester": "Sara Mustafa <sara.mustafa@nationaltechnology.net>",
       "area": "MobileApp",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-03-17T22:01:19.000Z",
+      "changedDate": "2026-03-18T11:16:58.000Z",
       "tasks": [
         {
           "ID": "163622",
