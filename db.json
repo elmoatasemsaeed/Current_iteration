@@ -233,7 +233,7 @@
       "timestamp": 1773826741185
     }
   ],
-  "sha": "b973b102bf7eb495354b2dae00dbd4ed6ecd045f",
+  "sha": "f5eb1940cefec533c4b899086f023a9f19d5d455",
   "currentStories": [
     {
       "id": "146195",
@@ -890,12 +890,13 @@
       "area": "MobileApp",
       "priority": 1,
       "tags": [
-        "Hold on delete validation development"
+        "Hold on delete validation development",
+        " PMD"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-03-17T19:24:13.000Z",
+      "changedDate": "2026-03-18T09:39:52.000Z",
       "tasks": [
         {
           "ID": "162318",
@@ -1734,12 +1735,13 @@
       "area": "LDM Integration",
       "priority": 1,
       "tags": [
-        "waiting live"
+        "PMD",
+        " waiting live"
       ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-03-18T09:33:44.000Z",
+      "changedDate": "2026-03-18T09:39:23.000Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -1754,7 +1756,7 @@
       "id": "151551",
       "title": "Al-Farabi Labs - Payment Daily Details: Update the Search criteria and the Excel sheet",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Karim El-Saeed Gabr Megahed Attia <karim.gabr@nationaltechnology.net>",
       "tester": "Bassem Ayman Morsy <bassem.morsy@nationaltechnology.net>",
       "area": "Front and Financial",
@@ -1765,7 +1767,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-03-18T09:11:44.000Z",
+      "changedDate": "2026-03-18T10:15:50.000Z",
       "tasks": [
         {
           "ID": "154773",
@@ -2152,24 +2154,48 @@
           "Changed Date": "3/9/2026 8:37:53 PM",
           "Branch": "",
           "Customer": "Al Farabi Lab KSA_283"
+        },
+        {
+          "ID": "164519",
+          "Work Item Type": "Bug",
+          "Title": "Mismatch between Payment Search and Report results when filtering by Registration Date and Branch",
+          "Assigned To": "Karim El-Saeed Gabr Megahed Attia <karim.gabr@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "1",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "3/18/2026 12:19:52 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-March 3-17",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/18/2026 12:19:52 PM",
+          "Branch": "",
+          "Customer": "Al Farabi Lab KSA_283"
         }
       ],
       "testCases": [
         {
           "id": "155974",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "155976",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "155978",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "155979",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "155990",
@@ -2181,15 +2207,15 @@
         },
         {
           "id": "155993",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "155995",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "155997",
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": "155998",
@@ -2205,13 +2231,13 @@
         },
         {
           "id": "156006",
-          "state": "Design"
+          "state": "Pass"
         }
       ],
       "calc": {
         "devEnd": "2026-02-26T14:00:00.000Z",
         "testEnd": "2026-03-02T07:00:00.000Z",
-        "finalEnd": "2026-03-09T07:00:00.000Z"
+        "finalEnd": "2026-03-18T12:19:52.000Z"
       }
     },
     {
@@ -6404,21 +6430,21 @@
           "Title": "create Order Lab request inbount",
           "Assigned To": "Tarek Saad <tarek.saad@nationaltechnology.net>",
           "Activity": "Development",
-          "Original Estimation": "",
+          "Original Estimation": "3",
           "TimeSheet_DevActualTime": "",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "3/18/2026 11:43:27 AM",
           "Business Area": "",
           "Iteration Path": "LDM\\Candidate CRs",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "New",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/17/2026 1:29:55 PM",
+          "Changed Date": "3/18/2026 11:43:27 AM",
           "Branch": "",
           "Customer": "Assuit University Hospitals_412"
         },
@@ -6522,7 +6548,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-03-18T08:00:00.000Z",
+        "devEnd": "2026-03-18T13:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -6815,9 +6841,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-03-11T14:00:00.000Z",
-        "testEnd": "2026-03-12T07:00:00.000Z",
-        "finalEnd": "2026-03-12T07:00:00.000Z"
+        "devEnd": "2026-03-19T11:00:00.000Z",
+        "testEnd": "2026-03-22T07:00:00.000Z",
+        "finalEnd": "2026-03-22T07:00:00.000Z"
       }
     },
     {
@@ -7829,11 +7855,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/18/2026 9:55:59 AM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/18/2026 10:53:38 AM",
+          "Changed Date": "3/18/2026 12:22:36 PM",
           "Branch": "",
           "Customer": "Alameda_0062"
         }
@@ -9921,8 +9947,8 @@
       ],
       "calc": {
         "devEnd": "2026-03-17T13:39:19.000Z",
-        "testEnd": "2026-03-18T14:00:00.000Z",
-        "finalEnd": "2026-03-18T14:00:00.000Z"
+        "testEnd": "2026-03-22T14:00:00.000Z",
+        "finalEnd": "2026-03-22T14:00:00.000Z"
       }
     },
     {
@@ -9984,11 +10010,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/16/2026 2:47:37 PM",
-          "State": "Resolved",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "3 of 6 is done; wait accept pr and pipeline",
-          "Changed Date": "3/17/2026 5:40:59 PM",
+          "Changed Date": "3/18/2026 12:12:13 PM",
           "Branch": "",
           "Customer": "Qatar MOI_96"
         },
@@ -10049,18 +10075,18 @@
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "0.33",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "3/15/2026 1:39:05 PM",
+          "Activated Date": "3/18/2026 11:58:36 AM",
           "Business Area": "",
           "Iteration Path": "LDM\\Candidate CRs",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "3/17/2026 1:44:46 AM",
-          "State": "Resolved",
+          "Resolved Date": "",
+          "State": "Reactive",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "No valid services to cancel. Reasons: The service with the LOINC code [Web Result] doesn't exist; same error display",
-          "Changed Date": "3/17/2026 1:44:46 AM",
+          "Changed Date": "3/18/2026 11:58:36 AM",
           "Branch": "",
           "Customer": "Qatar MOI_96"
         },
@@ -13756,12 +13782,13 @@
       "priority": 10,
       "tags": [
         "ldm issue in search result page",
+        " PMD",
         " waiting 161808 ldm development"
       ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "EBGH_62",
-      "changedDate": "2026-03-18T08:21:37.000Z",
+      "changedDate": "2026-03-18T09:39:33.000Z",
       "tasks": [
         {
           "ID": "160416",
@@ -13984,7 +14011,7 @@
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-03-18T08:00:00.000Z",
+        "devEnd": "2026-03-18T13:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -15179,7 +15206,7 @@
           "Assigned To": "Mostafa Mahanna <mostafa.mahanna@nationaltechnology.net>",
           "Activity": "DB Modification",
           "Original Estimation": "1",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "0.75",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "3/18/2026 11:34:15 AM",
           "Business Area": "",
@@ -15191,8 +15218,8 @@
           "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "3/18/2026 11:34:15 AM",
+          "Tags": "liquibase; V.3.2.0; Wait .Net review",
+          "Changed Date": "3/18/2026 12:07:40 PM",
           "Branch": "",
           "Customer": "Alameda_0062"
         }
@@ -15373,7 +15400,7 @@
           "Assigned To": "Mohamed Hany <mohamed.tawfik@nationaltechnology.net>",
           "Activity": "",
           "Original Estimation": "2",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "1",
           "TimeSheet_TestingActualTime": "1",
           "Activated Date": "3/18/2026 10:03:30 AM",
           "Business Area": "",
@@ -15386,7 +15413,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/18/2026 11:20:09 AM",
+          "Changed Date": "3/18/2026 11:57:40 AM",
           "Branch": "",
           "Customer": "Alameda_0062"
         }
@@ -16739,7 +16766,7 @@
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-03-18T08:00:00.000Z",
+        "devEnd": "2026-03-18T13:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -19299,6 +19326,30 @@
           "Business Priority": "",
           "Tags": "",
           "Changed Date": "3/17/2026 12:39:10 PM",
+          "Branch": "",
+          "Customer": "Wareed Lab_294"
+        },
+        {
+          "ID": "164518",
+          "Work Item Type": "Bug",
+          "Title": "Payment- Payment Button & Processing Loader need to handled to displayed above navigation bar",
+          "Assigned To": "Eslam Saleh <eslam.saleh@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "MobileApp",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/18/2026 12:07:59 PM",
           "Branch": "",
           "Customer": "Wareed Lab_294"
         }
