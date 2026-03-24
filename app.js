@@ -847,7 +847,7 @@ renderClientRoadmap() {
 
                 return `
                 <div onclick="ui.openStoryModal('${s.id}')" class="relative cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col mb-4">
-                     </div>
+                     
                     ${activeDaysCount > 0 ? `
                     <div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center ${activeDaysColor} text-white w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10 transition-colors duration-500">
                         <span class="text-xl font-black leading-none">${activeDaysCount}</span>
