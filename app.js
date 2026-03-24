@@ -776,6 +776,21 @@ renderClientRoadmap() {
                 let devStartDisplay = "TBD";
                 const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
                 
+                // --- التعديل الجديد: حساب عدد الأيام النشطة (Active Days) ---
+                let activeDaysCount = 0;
+                if (devActivatedDates.length > 0) {
+                    const startDate = new Date(devActivatedDates[0]);
+                    const today = new Date();
+                    let current = new Date(startDate);
+                    // حساب أيام العمل الفعلية فقط من تاريخ البداية حتى اليوم
+                    while (current <= today) {
+                        if (dateEngine.isWorkDay(current, s.assignedTo)) {
+                            activeDaysCount++;
+                        }
+                        current.setDate(current.getDate() + 1);
+                    }
+                }
+
                 // حساب إجازات الديف (من البداية حتى اليوم)
                 const devVacDaysNow = devActivatedDates.length > 0 
                     ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) 
@@ -839,14 +854,14 @@ renderClientRoadmap() {
                             <div class="flex gap-2">
                                 <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${statusText}</span>
                                 <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
+                                ${activeDaysCount > 0 ? `<span class="px-2 py-0.5 rounded bg-indigo-50 text-[10px] font-bold text-indigo-600">Active: ${activeDaysCount} Days</span>` : ''}
                             </div>
                             <span class="text-xs font-mono text-gray-400">#${s.id}</span>
-                       
                         </div>
 
                          <div class="flex flex-wrap gap-1 mt-2">
-    ${s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${t}</span>`).join('')}
-</div>
+                            ${s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${t}</span>`).join('')}
+                        </div>
                                         
                         <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
 
@@ -891,7 +906,7 @@ renderClientRoadmap() {
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
                                     <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
-                                    <p class="text-[10px] uppercase text-gray-400 font-bold">QC</p>
+                                    <p class="text-[10px] uppercase text-gray-400 font-bold">Testing</p>
                                 </div>
                                 <div class="flex flex-col gap-0.5">
                                     <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
@@ -914,7 +929,7 @@ renderClientRoadmap() {
                             </div>
                         </div>
                     </div>
-
+                    
                     <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
                         <div class="flex flex-col">
                             <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
