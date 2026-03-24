@@ -719,7 +719,7 @@ renderClientRoadmap() {
     }).join('');
 },
     
-    renderActiveCards() {
+   renderActiveCards() {
     const container = document.getElementById('active-cards-container');
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; 
     
@@ -772,11 +772,10 @@ renderClientRoadmap() {
                 
                 const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
                 const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                let devStartDisplay = "TBD";
-                const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
                 
                 // حساب عدد الأيام النشطة
                 let activeDaysCount = 0;
+                const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
                 if (devActivatedDates.length > 0) {
                     const startDate = new Date(devActivatedDates[0]);
                     const today = new Date();
@@ -789,13 +788,19 @@ renderClientRoadmap() {
                     }
                 }
 
+                // تحديد لون الـ Badge بناءً على عدد الأيام
+                let activeDaysColor = "bg-emerald-500"; // أخضر (أقل من 7)
+                if (activeDaysCount >= 7 && activeDaysCount <= 12) {
+                    activeDaysColor = "bg-amber-500"; // أصفر
+                } else if (activeDaysCount > 12) {
+                    activeDaysColor = "bg-rose-600 shadow-rose-200 animate-pulse"; // أحمر مع نبض للتنبيه
+                }
+
                 const devVacDaysNow = devActivatedDates.length > 0 
                     ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) 
                     : 0;
 
-                if (devActivatedDates.length > 0) {
-                    devStartDisplay = new Date(devActivatedDates[0]).toLocaleDateString('en-GB');
-                }
+                let devStartDisplay = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]).toLocaleDateString('en-GB') : "TBD";
                
                 let devResolveDate = "N/A";
                 const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
@@ -844,7 +849,7 @@ renderClientRoadmap() {
                 <div onclick="ui.openStoryModal('${s.id}')" class="relative cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col mb-4">
                     
                     ${activeDaysCount > 0 ? `
-                    <div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center bg-indigo-600 text-white w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10">
+                    <div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center ${activeDaysColor} text-white w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10 transition-colors duration-500">
                         <span class="text-xl font-black leading-none">${activeDaysCount}</span>
                         <span class="text-[8px] uppercase font-bold">Days</span>
                     </div>
