@@ -789,17 +789,21 @@ renderClientRoadmap() {
                 }
 
                 // تحديد لون الـ Badge بناءً على عدد الأيام
-                let activeDaysColor = "bg-emerald-500"; // أخضر (أقل من 7)
+                let activeDaysColor = "bg-emerald-500"; 
                 if (activeDaysCount >= 7 && activeDaysCount <= 12) {
-                    activeDaysColor = "bg-amber-500"; // أصفر
+                    activeDaysColor = "bg-amber-500"; 
                 } else if (activeDaysCount > 12) {
-                    activeDaysColor = "bg-rose-600 shadow-rose-200 animate-pulse"; // أحمر مع نبض للتنبيه
+                    activeDaysColor = "bg-rose-600 shadow-rose-200 animate-pulse"; 
                 }
 
-                const devVacDaysNow = devActivatedDates.length > 0 
-                    ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) 
-                    : 0;
+                // حساب عدد الـ Jobs (المهام) المتبقية
+                const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
+                const totalDevTasks = nonTestTasks.length;
+                const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed'].includes(t['State'])).length;
+                const remainingJobs = totalDevTasks - completedDevTasks;
+                const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
 
+                const devVacDaysNow = devActivatedDates.length > 0 ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) : 0;
                 let devStartDisplay = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]).toLocaleDateString('en-GB') : "TBD";
                
                 let devResolveDate = "N/A";
@@ -813,11 +817,7 @@ renderClientRoadmap() {
                 const totalTestEffort = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                 let testStartDisplay = "Waiting";
                 const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
-                
-                const testVacDaysNow = (execTask && execTask['Activated Date']) 
-                    ? dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) 
-                    : 0;
-
+                const testVacDaysNow = (execTask && execTask['Activated Date']) ? dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) : 0;
                 if (execTask && execTask['Activated Date']) {
                     testStartDisplay = new Date(execTask['Activated Date']).toLocaleDateString('en-GB');
                 }
@@ -827,11 +827,6 @@ renderClientRoadmap() {
 
                 const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && (s.state !== 'Tested' && s.state !== 'Closed');
                 const testLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
-
-                const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
-                const totalDevTasks = nonTestTasks.length;
-                const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed'].includes(t['State'])).length;
-                const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
 
                 const totalBugs = s.bugs ? s.bugs.length : 0;
                 const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
@@ -848,12 +843,19 @@ renderClientRoadmap() {
                 return `
                 <div onclick="ui.openStoryModal('${s.id}')" class="relative cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col mb-4">
                     
-                    ${activeDaysCount > 0 ? `
-                    <div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center ${activeDaysColor} text-white w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10 transition-colors duration-500">
-                        <span class="text-xl font-black leading-none">${activeDaysCount}</span>
-                        <span class="text-[8px] uppercase font-bold">Days</span>
+                    <div class="absolute top-0 right-0 mt-4 mr-4 flex flex-col gap-2 z-10">
+                        ${activeDaysCount > 0 ? `
+                        <div class="flex flex-col items-center justify-center ${activeDaysColor} text-white w-14 h-14 rounded-xl shadow-lg transform rotate-3 transition-colors duration-500">
+                            <span class="text-xl font-black leading-none">${activeDaysCount}</span>
+                            <span class="text-[8px] uppercase font-bold">Days</span>
+                        </div>
+                        ` : ''}
+
+                        <div class="flex flex-col items-center justify-center bg-indigo-600 text-white w-14 h-14 rounded-xl shadow-lg transform -rotate-2">
+                            <span class="text-xl font-black leading-none">${remainingJobs}</span>
+                            <span class="text-[8px] uppercase font-bold">Jobs</span>
+                        </div>
                     </div>
-                    ` : ''}
 
                     <div class="p-5 flex-1">
                         <div class="flex justify-between items-start mb-4">
@@ -878,7 +880,8 @@ renderClientRoadmap() {
                                 </div>
                                 <div class="flex flex-col gap-0.5">
                                     <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span> ${s.assignedTo}
+                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span>
+                                        ${s.assignedTo}
                                     </p>
                                     <div class="ml-8 mt-1">
                                         <div class="flex justify-between items-center mb-0.5">
@@ -906,6 +909,7 @@ renderClientRoadmap() {
                                     </div>
                                 </div>
                             </div>
+
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
                                     <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
@@ -913,7 +917,8 @@ renderClientRoadmap() {
                                 </div>
                                 <div class="flex flex-col gap-0.5">
                                     <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span> ${s.tester}
+                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span>
+                                        ${s.tester}
                                     </p>
                                     <div class="ml-8 mt-1">
                                         <div class="flex justify-between items-center mb-0.5">
@@ -931,6 +936,7 @@ renderClientRoadmap() {
                             </div>
                         </div>
                     </div>
+
                     <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
                         <div class="flex flex-col">
                             <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
