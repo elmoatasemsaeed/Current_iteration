@@ -843,7 +843,7 @@ renderClientRoadmap() {
                 const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
 
                 let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
-                const statusText = hasError ? 'Action Required' : (isLate ? `Overdue ⚠️ (${s.state})` : s.state);
+                const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
 
                 return `
                 <div onclick="ui.openStoryModal('${s.id}')" class="relative cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col mb-4">
