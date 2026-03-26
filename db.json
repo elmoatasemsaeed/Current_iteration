@@ -140,7 +140,7 @@
       "timestamp": 1774533415392
     }
   ],
-  "sha": "ee49c6ba9304167f1473c39108568bcfcd56af46",
+  "sha": "fa2e43ba992a686ee96a90b1fe3ecf24beff3746",
   "currentStories": [
     {
       "id": "146195",
@@ -4532,6 +4532,10 @@
         {
           "id": "163827",
           "state": "Pass"
+        },
+        {
+          "id": "164987",
+          "state": "Pass"
         }
       ],
       "calc": {
@@ -8108,7 +8112,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "liquibase; V.3.2.0; Wait .Net review",
-          "Changed Date": "3/25/2026 6:17:29 PM",
+          "Changed Date": "3/26/2026 4:12:36 PM",
           "Branch": "",
           "Customer": "Alameda_0062"
         },
@@ -8301,30 +8305,6 @@
           "Business Priority": "",
           "Tags": "",
           "Changed Date": "3/25/2026 6:42:29 PM",
-          "Branch": "",
-          "Customer": "Alameda_0062"
-        },
-        {
-          "ID": "164976",
-          "Work Item Type": "Task",
-          "Title": "Modify sp_GetCRReportHeader",
-          "Assigned To": "Mostafa Mahanna <mostafa.mahanna@nationaltechnology.net>",
-          "Activity": "DB Modification",
-          "Original Estimation": "",
-          "TimeSheet_DevActualTime": "",
-          "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
-          "Business Area": "",
-          "Iteration Path": "LDM\\Candidate CRs",
-          "CustomResolvedDate": "",
-          "Tested Date": "",
-          "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "New",
-          "Release Expected Date": "",
-          "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "3/26/2026 3:41:29 PM",
           "Branch": "",
           "Customer": "Alameda_0062"
         }
@@ -10415,7 +10395,7 @@
       "expectedRelease": null,
       "branch": "Qatar",
       "customer": "Qatar MOI_96",
-      "changedDate": "2026-03-26T13:12:33.000Z",
+      "changedDate": "2026-03-26T14:16:20.000Z",
       "tasks": [
         {
           "ID": "162578",
@@ -10634,7 +10614,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-03-25T20:49:02.000Z",
+      "changedDate": "2026-03-26T14:18:04.000Z",
       "tasks": [
         {
           "ID": "163121",
@@ -11208,7 +11188,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/26/2026 4:06:42 PM",
+          "Changed Date": "3/26/2026 4:18:04 PM",
           "Branch": "",
           "Customer": "Al Farabi Lab KSA_283"
         }
@@ -14668,11 +14648,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/24/2026 8:40:25 AM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/24/2026 1:12:42 PM",
+          "Changed Date": "3/26/2026 4:15:19 PM",
           "Branch": "",
           "Customer": "Alameda_0062"
         },
@@ -14692,11 +14672,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "3/24/2026 5:15:32 PM",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/24/2026 5:15:32 PM",
+          "Changed Date": "3/26/2026 4:15:31 PM",
           "Branch": "",
           "Customer": "Alameda_0062"
         },
@@ -14740,11 +14720,11 @@
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "Active",
+          "State": "Closed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/25/2026 2:41:53 PM",
+          "Changed Date": "3/26/2026 4:15:07 PM",
           "Branch": "",
           "Customer": "Alameda_0062"
         }
@@ -15059,8 +15039,8 @@
       ],
       "calc": {
         "devEnd": "2026-03-29T07:00:00.000Z",
-        "testEnd": "2026-03-30T08:00:00.000Z",
-        "finalEnd": "2026-03-30T08:00:00.000Z"
+        "testEnd": "2026-04-02T08:00:00.000Z",
+        "finalEnd": "2026-04-02T08:00:00.000Z"
       }
     },
     {
@@ -15531,8 +15511,8 @@
       ],
       "calc": {
         "devEnd": "2026-02-05T07:00:00.000Z",
-        "testEnd": "2026-04-05T08:00:00.000Z",
-        "finalEnd": "2026-04-05T08:00:00.000Z"
+        "testEnd": "2026-04-08T08:00:00.000Z",
+        "finalEnd": "2026-04-08T08:00:00.000Z"
       }
     },
     {
@@ -15994,12 +15974,36 @@
           "Changed Date": "3/26/2026 3:50:20 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": "164988",
+          "Work Item Type": "Task",
+          "Title": "BD009 --> Update save/update data flow to persist ARABICDISCRIPTION and IncludeArabicDescription",
+          "Assigned To": "Mohamed Hany <mohamed.tawfik@nationaltechnology.net>",
+          "Activity": "Development",
+          "Original Estimation": "2",
+          "TimeSheet_DevActualTime": "1.5",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "3/26/2026 4:15:58 PM",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-March 24-7",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "Active",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "3/26/2026 4:17:36 PM",
+          "Branch": "",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-04-01T08:00:00.000Z",
+        "devEnd": "2026-04-01T11:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       }
@@ -21337,7 +21341,7 @@
           "Activity": "",
           "Original Estimation": "1",
           "TimeSheet_DevActualTime": "1",
-          "TimeSheet_TestingActualTime": "",
+          "TimeSheet_TestingActualTime": "0.5",
           "Activated Date": "3/26/2026 3:31:11 PM",
           "Business Area": "",
           "Iteration Path": "Home Visit\\2026\\home_visit March 3-17",
@@ -21349,7 +21353,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "3/26/2026 3:47:04 PM",
+          "Changed Date": "3/26/2026 4:17:38 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         }
