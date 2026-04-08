@@ -863,7 +863,7 @@ renderClientRoadmap() {
                 let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
                 const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
 
-                // منطق عرض الـ Custom Tags
+                // منطق عرض الـ Custom Tags المختارة فقط
                 const customTagsList = db.customTags || [];
                 const storyTags = s.customTags || [];
 
@@ -890,19 +890,30 @@ renderClientRoadmap() {
                             ${s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${t}</span>`).join('')}
                         </div>
 
-                        <div class="flex flex-wrap gap-1 mb-4 border-b border-dashed border-gray-100 pb-3">
-                            ${customTagsList.map(tag => {
-                                const isSelected = storyTags.includes(tag);
-                                return `
-                                    <button 
-                                        onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')"
-                                        class="px-2 py-1 rounded-md text-[10px] font-bold transition-all border ${isSelected 
-                                            ? 'bg-purple-600 text-white border-purple-700' 
-                                            : 'bg-white text-gray-400 border-gray-200 hover:border-purple-300'}">
-                                        ${tag}
-                                    </button>
-                                `;
-                            }).join('')}
+                        <div class="flex flex-wrap items-center gap-1.5 mb-4 border-b border-dashed border-gray-100 pb-3">
+                            ${storyTags.map(tag => `
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
+                                    ${tag}
+                                    <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black">×</button>
+                                </span>
+                            `).join('')}
+                            
+                            <div class="relative inline-block group">
+                                <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-all">
+                                    <span class="text-sm font-bold">+</span>
+                                </button>
+                                <div class="hidden group-hover:block absolute left-0 bottom-full mb-2 w-40 bg-white border border-gray-100 shadow-xl rounded-lg z-[100] py-1 overflow-hidden">
+                                    <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Add Custom Tag</div>
+                                    ${customTagsList.length > 0 ? customTagsList.map(tag => `
+                                        <button 
+                                            onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')"
+                                            class="w-full text-left px-3 py-2 text-[11px] font-medium text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center justify-between">
+                                            ${tag}
+                                            ${storyTags.includes(tag) ? '<span class="text-green-500 font-bold">✓</span>' : ''}
+                                        </button>
+                                    `).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags in settings</div>'}
+                                </div>
+                            </div>
                         </div>
 
                         <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${s.title}</h3>
