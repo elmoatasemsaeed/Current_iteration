@@ -225,25 +225,27 @@ async saveToGitHub() {
     if(!token) return;
 
     try {
-        // 1. جلب أحدث SHA من GitHub قبل الرفع مباشرة لمنع التعارض
-        const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+        // إضافة طابع زمني للرابط لتجنب الكاش بدون استخدام Cache-Control header
+        const timestamp = new Date().getTime();
+        const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}?t=${timestamp}`, {
             headers: { 
-                'Authorization': `token ${token}`,
-                'Cache-Control': 'no-cache' // لضمان عدم جلب نسخة قديمة مخزنة
+                'Authorization': `token ${token}`
             }
         });
+        
         const metaData = await metaRes.json();
         const latestSha = metaData.sha;
 
-        // 2. تجهيز البيانات (حذف الـ sha الداخلي إذا وجد لتنظيف الملف)
+        if (!latestSha) {
+            throw new Error("Could not retrieve file SHA from GitHub");
+        }
+
         const dataToSave = { ...db };
         delete dataToSave.sha; 
 
-        // 3. التشفير بطريقة آمنة تدعم النصوص العربية والأحجام الكبيرة
         const jsonString = JSON.stringify(dataToSave, null, 2);
         const content = btoa(unescape(encodeURIComponent(jsonString)));
 
-        // 4. إرسال طلب التحديث مع الـ SHA الجديد
         const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
             method: 'PUT',
             headers: { 'Authorization': `token ${token}` },
@@ -256,8 +258,8 @@ async saveToGitHub() {
 
         if (response.ok) {
             const result = await response.json();
-            db.sha = result.content.sha; // تحديث الـ SHA محلياً للعملية القادمة
-            console.log("تم الحفظ بنجاح");
+            db.sha = result.content.sha;
+            console.log("Saved successfully with new SHA");
         } else {
             const errorDetails = await response.json();
             throw new Error(errorDetails.message);
