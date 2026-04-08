@@ -222,36 +222,49 @@ const dataProcessor = {
 
 async saveToGitHub() {
     const token = sessionStorage.getItem('gh_token');
-    
-    // تحويل البيانات لـ Base64 بشكل يدعم اللغة العربية
-    const jsonString = JSON.stringify(db, null, 2);
-    const content = btoa(unescape(encodeURIComponent(jsonString)));
-    
+    if(!token) return;
+
     try {
+        // 1. جلب أحدث SHA من GitHub قبل الرفع مباشرة لمنع التعارض
+        const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+            headers: { 
+                'Authorization': `token ${token}`,
+                'Cache-Control': 'no-cache' // لضمان عدم جلب نسخة قديمة مخزنة
+            }
+        });
+        const metaData = await metaRes.json();
+        const latestSha = metaData.sha;
+
+        // 2. تجهيز البيانات (حذف الـ sha الداخلي إذا وجد لتنظيف الملف)
+        const dataToSave = { ...db };
+        delete dataToSave.sha; 
+
+        // 3. التشفير بطريقة آمنة تدعم النصوص العربية والأحجام الكبيرة
+        const jsonString = JSON.stringify(dataToSave, null, 2);
+        const content = btoa(unescape(encodeURIComponent(jsonString)));
+
+        // 4. إرسال طلب التحديث مع الـ SHA الجديد
         const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
             method: 'PUT',
-            headers: { 
-                'Authorization': `token ${token}`, 
-                'Content-Type': 'application/json' 
-            },
+            headers: { 'Authorization': `token ${token}` },
             body: JSON.stringify({
-                message: "Update Database",
+                message: `Update db.json [${new Date().toLocaleString()}]`,
                 content: content,
-                sha: db.sha || undefined
+                sha: latestSha 
             })
         });
 
         if (response.ok) {
             const result = await response.json();
-            // تحديث الـ sha فوراً بعد نجاح الحفظ لمنع تعارض الـ 409
-            db.sha = result.content.sha; 
-            console.log("تم تحديث الملف بنجاح، SHA الجديد:", db.sha);
-        } else if (response.status === 409) {
-            alert("حدث تعارض في البيانات! سيتم إعادة تحميل الصفحة لمزامنة أحدث نسخة.");
-            location.reload(); 
+            db.sha = result.content.sha; // تحديث الـ SHA محلياً للعملية القادمة
+            console.log("تم الحفظ بنجاح");
+        } else {
+            const errorDetails = await response.json();
+            throw new Error(errorDetails.message);
         }
-    } catch (error) {
-        console.error("Error saving to GitHub:", error);
+    } catch (e) {
+        console.error("Save Error:", e);
+        alert("فشل الحفظ: " + e.message);
     }
 },
     handleCSV(event) {
