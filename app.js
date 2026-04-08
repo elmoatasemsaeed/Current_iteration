@@ -751,8 +751,9 @@ renderClientRoadmap() {
             s.tester.toLowerCase().includes(searchTerm) ||
             s.assignedTo.toLowerCase().includes(searchTerm) ||
             (s.area && s.area.toLowerCase().includes(searchTerm));
+        const matchesTags = tagSearchTerm === "" || (s.customTags && s.customTags.some(tag => tag.toLowerCase().includes(tagSearchTerm)));
             
-        return isNotFinished && matchesSearch; 
+        return isNotFinished && matchesSearch && matchesTags; 
     });
     
     if (activeStories.length === 0) {
