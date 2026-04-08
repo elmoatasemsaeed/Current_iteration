@@ -178,7 +178,17 @@
                         </div>
                         <div id="holidays-list" class="mt-6 flex flex-wrap gap-2"></div>
                     </div>
-                </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 mt-6">
+    <h3 class="text-xl font-bold mb-4 text-purple-800 flex items-center gap-2">
+        🏷️ إعدادات التصنيفات (Tags)
+    </h3>
+    <div class="flex gap-2 mb-4">
+        <input type="text" id="new-tag-input" placeholder="اسم التصنيف الجديد..." class="flex-1 border rounded-lg px-4 py-2">
+        <button onclick="tagManager.addTag()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">إضافة</button>
+    </div>
+    <div id="tags-list" class="flex flex-wrap gap-2">
+        </div>
+</div>
             </section>
             <section id="tab-workload" class="tab-content">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="workload-container">
