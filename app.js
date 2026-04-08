@@ -105,34 +105,34 @@ const auth = {
 
         try {
             // محاولة جلب الملف من GitHub للتحقق من بيانات المستخدمين
-            const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                headers: { 'Authorization': `token ${t}` }
-            });
+           const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+    headers: { 
+        'Authorization': `token ${t}`,
+        'Accept': 'application/vnd.github.v3.raw' // هذا السطر يحل مشكلة الـ 1MB
+    }
+});
 
-            if (response.ok) {
-                const data = await response.json();
-                // فك التشفير ودعم اللغة العربية
-                const binaryString = atob(data.content.replace(/\s/g, ''));
-const bytes = new Uint8Array(binaryString.length);
-for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-}
-const decodedContent = new TextDecoder("utf-8").decode(bytes);
-const remoteDb = JSON.parse(decodedContent);
-               
-                
-                // البحث عن المستخدم داخل الملف المجلوب
-                const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
-                
-                if (userMatch) {
-                    db = remoteDb; // تحديث قاعدة البيانات المحلية
-                    db.sha = data.sha;
-                    sessionStorage.setItem('gh_token', t);
-                    if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
-                    currentUser = userMatch;
-                    archiver.runArchive();
-                    this.startApp();
-                } else {
+if (response.ok) {
+    // بما أننا طلبنا المحتوى الخام، الاستجابة ستكون نص الـ JSON مباشرة
+    const remoteDb = await response.json(); 
+    
+    // نحتاج للـ SHA للتحديث لاحقاً، لذا سنقوم بطلبه في طلب منفصل سريع (Metadata only)
+    const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+        headers: { 'Authorization': `token ${t}` }
+    });
+    const metaData = await metaRes.json();
+
+    const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
+    
+    if (userMatch) {
+        db = remoteDb;
+        db.sha = metaData.sha; // حفظ الـ SHA من بيانات الميتا
+        sessionStorage.setItem('gh_token', t);
+        if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
+        currentUser = userMatch;
+        archiver.runArchive();
+        this.startApp();
+    } else {
                     alert("خطأ في اسم المستخدم أو كلمة المرور داخل ملف GitHub");
                 }
             } else {
