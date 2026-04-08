@@ -793,7 +793,6 @@ renderClientRoadmap() {
                 const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
                 const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                 
-                // حساب عدد الأيام النشطة
                 let activeDaysCount = 0;
                 const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
                 if (devActivatedDates.length > 0) {
@@ -808,12 +807,11 @@ renderClientRoadmap() {
                     }
                 }
 
-                // تحديد لون الـ Badge بناءً على عدد الأيام
-                let activeDaysColor = "bg-emerald-500"; // أخضر (أقل من 7)
+                let activeDaysColor = "bg-emerald-500";
                 if (activeDaysCount >= 7 && activeDaysCount <= 12) {
-                    activeDaysColor = "bg-amber-500"; // أصفر
+                    activeDaysColor = "bg-amber-500";
                 } else if (activeDaysCount > 12) {
-                    activeDaysColor = "bg-rose-600 shadow-rose-200 animate-pulse"; // أحمر مع نبض للتنبيه
+                    activeDaysColor = "bg-rose-600 shadow-rose-200 animate-pulse";
                 }
 
                 const devVacDaysNow = devActivatedDates.length > 0 
@@ -865,8 +863,12 @@ renderClientRoadmap() {
                 let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
                 const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
 
+                // منطق عرض الـ Custom Tags
+                const customTagsList = db.customTags || [];
+                const storyTags = s.customTags || [];
+
                 return `
-                <div onclick="ui.openStoryModal('${s.id}')" class="relative cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col mb-4">
+                <div class="relative bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-hidden flex flex-col mb-4">
                      
                     ${activeDaysCount > 0 ? `
                     <div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center ${activeDaysColor} text-white w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10 transition-colors duration-500">
@@ -881,14 +883,29 @@ renderClientRoadmap() {
                                 <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${statusText}</span>
                                 <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
                             </div>
-                            <span class="text-xs font-mono text-gray-400">#${s.id}</span>
+                            <span onclick="ui.openStoryModal('${s.id}')" class="text-xs font-mono text-gray-400 cursor-pointer hover:text-indigo-600">#${s.id} 🔍</span>
                         </div>
 
-                         <div class="flex flex-wrap gap-1 mt-2">
+                        <div class="flex flex-wrap gap-1 mt-2 mb-3">
                             ${s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${t}</span>`).join('')}
                         </div>
-                                        
-                        <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight">${s.title}</h3>
+
+                        <div class="flex flex-wrap gap-1 mb-4 border-b border-dashed border-gray-100 pb-3">
+                            ${customTagsList.map(tag => {
+                                const isSelected = storyTags.includes(tag);
+                                return `
+                                    <button 
+                                        onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')"
+                                        class="px-2 py-1 rounded-md text-[10px] font-bold transition-all border ${isSelected 
+                                            ? 'bg-purple-600 text-white border-purple-700' 
+                                            : 'bg-white text-gray-400 border-gray-200 hover:border-purple-300'}">
+                                        ${tag}
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${s.title}</h3>
 
                         <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
                             <div>
@@ -926,6 +943,7 @@ renderClientRoadmap() {
                                     </div>
                                 </div>
                             </div>
+
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
                                     <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
@@ -951,6 +969,7 @@ renderClientRoadmap() {
                             </div>
                         </div>
                     </div>
+
                     <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
                         <div class="flex flex-col">
                             <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
