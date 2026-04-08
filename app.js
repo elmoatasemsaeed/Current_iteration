@@ -1864,21 +1864,33 @@ const tagManager = {
         `).join('');
     },
     toggleTagInStory(storyId, tagName) {
-        const story = db.currentStories.find(s => (s.id || s.ID) == storyId);
-        if (story) {
-            if (!story.customTags) story.customTags = []; // التأكد من وجود مصفوفة
-            
-            const index = story.customTags.indexOf(tagName);
-            if (index > -1) {
-                story.customTags.splice(index, 1); // إزالة إذا كان موجوداً
-            } else {
-                story.customTags.push(tagName); // إضافة إذا لم يكن موجوداً
-            }
-            
-            dataProcessor.saveToGitHub();
-            ui.renderActiveCards(); // إعادة ريندر الكروت لتحديث الشكل
+    // البحث عن الـ Story باستخدام الـ ID في قاعدة البيانات المركزية
+    const story = db.currentStories.find(s => (s.id || s.ID || s.idReadable) == storyId);
+    
+    if (story) {
+        // التأكد من وجود مصفوفة الوسوم في كائن الـ Story
+        if (!story.customTags) {
+            story.customTags = [];
         }
+        
+        const index = story.customTags.indexOf(tagName);
+        if (index > -1) {
+            // إذا كان التاج موجوداً بالفعل، نقوم بإزالته
+            story.customTags.splice(index, 1);
+        } else {
+            // إذا لم يكن موجوداً، نقوم بإضافته
+            story.customTags.push(tagName);
+        }
+        
+        // استدعاء وظيفة الحفظ المباشر إلى GitHub لضمان الاستمرارية
+        dataProcessor.saveToGitHub();
+        
+        // تحديث الواجهة فوراً ليعكس التغيير
+        ui.renderActiveCards(); 
+    } else {
+        console.error("Story not found in database for ID:", storyId);
     }
+}
 };
 
 // استدعاء الرندر عند تحميل الإعدادات
