@@ -180,40 +180,45 @@ if (response.ok) {
  */
 const dataProcessor = {
     async sync() {
-        const token = sessionStorage.getItem('gh_token');
-        try {
-            const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+    const token = sessionStorage.getItem('gh_token');
+    try {
+        // 1. طلب المحتوى الخام (Raw) لتجاوز حد الـ 1MB
+        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+            headers: { 
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3.raw' // ضروري جداً لقراءة الملفات الكبيرة
+            }
+        });
+
+        if (response.ok) {
+            // البيانات تعود كنص JSON مباشر وليس Base64
+            db = await response.json(); 
+            
+            // 2. طلب الـ SHA بشكل منفصل (Metadata) لاستخدامه عند الحفظ لاحقاً
+            const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                 headers: { 'Authorization': `token ${token}` }
             });
-            if (response.ok) {
-                const data = await response.json();
-               const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
-db = JSON.parse(decodedContent);
-                db.sha = data.sha; 
-                
-                // إذا كان هناك بيانات مخزنة مسبقاً، قم بتحميلها في التطبيق
-               if (db.currentStories && db.currentStories.length > 0) {
-    // تحويل نصوص التواريخ إلى Objects لضمان عمل الحسابات والـ UI
-    db.currentStories.forEach(s => {
-        if (s.expectedRelease) {
-            s.expectedRelease = new Date(s.expectedRelease);
-            if (s.changedDate) s.changedDate = new Date(s.changedDate);
-        }
-    });
-    this.calculateTimelines(db.currentStories);
-}
+            const metaData = await metaRes.json();
+            db.sha = metaData.sha; 
             
+            // 3. معالجة البيانات وتحميلها في الـ UI
+            if (db.currentStories && db.currentStories.length > 0) {
+                db.currentStories.forEach(s => {
+                    if (s.expectedRelease) s.expectedRelease = new Date(s.expectedRelease);
+                    if (s.changedDate) s.changedDate = new Date(s.changedDate);
+                });
+                this.calculateTimelines(db.currentStories);
+            }
             ui.renderAll();
         } else {
             console.log("File not found, creating new DB...");
             this.saveToGitHub();
         }
     } catch (e) { 
-        console.error(e);
-        alert("خطأ في المزامنة مع GitHub"); 
+        console.error("Sync Error:", e);
+        alert("خطأ في المزامنة مع GitHub: " + e.message); 
     }
-},
-    
+},    
 
 async saveToGitHub() {
     const token = sessionStorage.getItem('gh_token');
