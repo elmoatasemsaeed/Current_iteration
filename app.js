@@ -1791,7 +1791,7 @@ const tagManager = {
         input.value = '';
         dataProcessor.saveToGitHub();
         this.renderTagsSettings();
-        ui.renderDashboard(); // لتحديث القوائم في الكروت
+        ui.renderAll(); // لتحديث القوائم في الكروت
     },
 
     // حذف تاج من السيستم
@@ -1801,7 +1801,7 @@ const tagManager = {
         db.currentStories.forEach(s => { if(s.customTag === tagName) delete s.customTag; });
         dataProcessor.saveToGitHub();
         this.renderTagsSettings();
-        ui.renderDashboard();
+       ui.renderAll();
     },
 
     // ربط تاج بستوري معينة
