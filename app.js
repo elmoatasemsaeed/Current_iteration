@@ -1780,6 +1780,54 @@ const settings = {
         ui.renderSettings();
     }
 };
+const tagManager = {
+    // إضافة تاج جديد للسيستم
+    addTag() {
+        const input = document.getElementById('new-tag-input');
+        const tagName = input.value.trim();
+        if(!tagName || db.customTags.includes(tagName)) return;
+        
+        db.customTags.push(tagName);
+        input.value = '';
+        dataProcessor.saveToGitHub();
+        this.renderTagsSettings();
+        ui.renderDashboard(); // لتحديث القوائم في الكروت
+    },
+
+    // حذف تاج من السيستم
+    removeTag(tagName) {
+        db.customTags = db.customTags.filter(t => t !== tagName);
+        // مسح التاج من أي ستوري كانت مرتبطة به
+        db.currentStories.forEach(s => { if(s.customTag === tagName) delete s.customTag; });
+        dataProcessor.saveToGitHub();
+        this.renderTagsSettings();
+        ui.renderDashboard();
+    },
+
+    // ربط تاج بستوري معينة
+    assignTagToStory(storyId, tagName) {
+        const story = db.currentStories.find(s => s.ID == storyId);
+        if(story) {
+            story.customTag = tagName;
+            dataProcessor.saveToGitHub();
+        }
+    },
+
+    // عرض التاجز في صفحة الإعدادات
+    renderTagsSettings() {
+        const container = document.getElementById('tags-list');
+        if(!container) return;
+        container.innerHTML = db.customTags.map(tag => `
+            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+                ${tag}
+                <button onclick="tagManager.removeTag('${tag}')" class="text-red-500 hover:text-red-700 font-bold">×</button>
+            </span>
+        `).join('');
+    }
+};
+
+// استدعاء الرندر عند تحميل الإعدادات
+// أضف tagManager.renderTagsSettings() داخل وظيفة ui.renderSettings
 
 /**
  * Initialize
