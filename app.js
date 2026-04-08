@@ -283,16 +283,14 @@ async saveToGitHub() {
 
 
 
-    processRows(rows) {
-    const stories = [];
+   processRows(rows) {
+    const newStories = []; // سنقوم بتجميع القصص الجديدة هنا أولاً
     let currentStory = null;
 
     rows.forEach(row => {
-        // التحديث هنا: التحقق من وجود User Story أو CR لبدء مجموعة جديدة
         const itemType = row['Work Item Type'];
         if (itemType === 'User Story' || itemType === 'CR') {
             let area = row['Business Area'];
-            // المنطق الحالي لمعالجة الـ Area
             if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
             if (!area || area.trim() === "") {
                 const path = row['Iteration Path'] || "";
@@ -302,7 +300,6 @@ async saveToGitHub() {
             currentStory = {
                 id: row['ID'],
                 title: row['Title'],
-                // إضافة النوع (US أو CR) للتمييز لاحقاً في العرض إذا أردت
                 type: itemType, 
                 state: row['State'],
                 assignedTo: row['Assigned To'] || "Unassigned",
@@ -317,11 +314,21 @@ async saveToGitHub() {
                 tasks: [],
                 bugs: [],
                 testCases: [],
-                calc: {}
+                calc: {},
+                customTags: [] // قيمة افتراضية
             };
-            stories.push(currentStory);
+
+            // --- التعديل الجوهري هنا ---
+            // ابحث عن القصة القديمة في قاعدة البيانات الحالية باستخدام الـ ID
+            const existingStory = db.currentStories.find(s => s.id == currentStory.id);
+            if (existingStory && existingStory.customTags) {
+                // إذا كانت موجودة ولديها كستم تاتش، قم بنقلها للنسخة الجديدة
+                currentStory.customTags = existingStory.customTags;
+            }
+            // ---------------------------
+
+            newStories.push(currentStory);
         } 
-        // سيستمر الكود في إضافة المهام (Tasks) للعنصر الحالي (سواء كان US أو CR)
         else if (row['Work Item Type'] === 'Task' && currentStory) {
             currentStory.tasks.push(row);
         } else if (row['Work Item Type'] === 'Bug' && currentStory) {
@@ -334,11 +341,10 @@ async saveToGitHub() {
         }
     });
 
-    this.calculateTimelines(stories);
-    db.currentStories = stories;
-    this.saveToGitHub().then(() => alert("تم تحديث البيانات ومعالجة الـ User Stories والـ CR بنجاح"));
+    this.calculateTimelines(newStories);
+    db.currentStories = newStories; // الآن المصفوفة تحتوي على القصص المحدثة مع الحفاظ على التاجات
+    this.saveToGitHub().then(() => alert("تم تحديث البيانات مع الحفاظ على الكستم تاج بنجاح"));
 },
-
     calculateTimelines(stories) {
         // 1. الترتيب الصارم حسب Business Priority (الأقل أولاً)
         stories.sort((a, b) => (a.priority || 999) - (b.priority || 999));
