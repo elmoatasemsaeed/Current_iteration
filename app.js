@@ -742,6 +742,7 @@ renderClientRoadmap() {
    renderActiveCards() {
     const container = document.getElementById('active-cards-container');
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; 
+    const tagSearchTerm = document.getElementById('tag-search-input')?.value.toLowerCase() || "";
     
     const activeStories = currentData.filter(s => {
         const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
