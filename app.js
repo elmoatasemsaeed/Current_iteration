@@ -880,7 +880,6 @@ renderActiveCards() {
                 const customTagsList = db.customTags || [];
                 const storyTags = s.customTags || [];
 
-                // --- استدعاء الكومنتات للـ Log ---
                 const comments = s.standupComments || [];
 
                 return `
@@ -899,7 +898,7 @@ renderActiveCards() {
                                 <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${statusText}</span>
                                 <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
                             </div>
-                            <span class="text-xs font-mono text-gray-400">#${s.id}</span>
+                            <span onclick="ui.openStoryModal('${s.id}')" class="text-xs font-mono text-gray-400 cursor-pointer hover:text-indigo-600">#${s.id} 🔍</span>
                         </div>
 
                         <div class="flex flex-wrap gap-1 mt-2 mb-3">
@@ -1010,10 +1009,10 @@ renderActiveCards() {
                                 <input type="text" 
                                        placeholder="Add comment and press Enter..." 
                                        class="flex-1 text-[11px] p-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none"
-                                       onkeypress="if(event.key === 'Enter') { commentManager.addComment('${s.id}', this.value); this.value=''; }">
+                                       onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; }">
                             </div>
 
-                            <div class="space-y-2 max-h-28 overflow-y-auto pr-1 custom-scrollbar">
+                            <div class="space-y-2 max-h-28 overflow-y-auto pr-1">
                                 ${comments.slice().reverse().map(c => `
                                     <div class="bg-white p-2 rounded-lg border border-indigo-100/50 shadow-sm">
                                         <div class="flex justify-between items-center mb-1">
@@ -1022,7 +1021,7 @@ renderActiveCards() {
                                         <p class="text-[11px] text-slate-600 leading-tight italic">"${c.text}"</p>
                                     </div>
                                 `).join('')}
-                                ${comments.length === 0 ? '<p class="text-[10px] text-gray-400 italic py-1">No updates recorded for this story yet.</p>' : ''}
+                                ${comments.length === 0 ? '<p class="text-[10px] text-gray-400 italic py-1">No updates recorded yet.</p>' : ''}
                             </div>
                         </div>
                     </div>
