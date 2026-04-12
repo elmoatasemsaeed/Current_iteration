@@ -756,7 +756,6 @@ renderActiveCards() {
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; 
     const tagSearchTerm = document.getElementById('tag-search-input')?.value.toLowerCase() || "";
     
-    // 1. فلترة البيانات (نفس المنطق الحالي)
     const activeStories = currentData.filter(s => {
         const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
         const matchesSearch = 
@@ -777,7 +776,6 @@ renderActiveCards() {
         return;
     }
 
-    // 2. التجميع حسب المنطقة (Area)
     const groupedStories = activeStories.reduce((groups, story) => {
         const area = story.area || "General";
         if (!groups[area]) groups[area] = [];
@@ -785,7 +783,6 @@ renderActiveCards() {
         return groups;
     }, {});
 
-    // 3. بناء واجهة المستخدم
     container.innerHTML = Object.keys(groupedStories).map(area => {
         const storiesInArea = groupedStories[area].sort((a, b) => {
             if (a.priority !== b.priority) return a.priority - b.priority;
@@ -795,177 +792,248 @@ renderActiveCards() {
         });
 
         return `
-            <div class="col-span-full mt-6 mb-2">
-                <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2 px-2">
-                    <span class="w-1.5 h-5 bg-indigo-600 rounded-full"></span>
+            <div class="col-span-full mt-8 mb-4">
+                <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
+                    <span class="w-2 h-6 bg-indigo-600 rounded-full"></span>
                     ${area} 
-                    <span class="text-xs font-normal text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">${storiesInArea.length}</span>
+                    <span class="text-sm font-normal text-gray-400">(${storiesInArea.length})</span>
                 </h2>
             </div>
             ${storiesInArea.map(s => {
                 const now = new Date();
                 const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
+                const hasError = s.calc.error;
                 
-                // --- Business Logic: الحسابات البرمجية الأساسية ---
                 const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+                const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                
                 let activeDaysCount = 0;
                 const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
                 if (devActivatedDates.length > 0) {
-                    let current = new Date(devActivatedDates[0]);
-                    while (current <= now) {
-                        if (dateEngine.isWorkDay(current, s.assignedTo)) activeDaysCount++;
+                    const startDate = new Date(devActivatedDates[0]);
+                    const today = new Date();
+                    let current = new Date(startDate);
+                    while (current <= today) {
+                        if (dateEngine.isWorkDay(current, s.assignedTo)) {
+                            activeDaysCount++;
+                        }
                         current.setDate(current.getDate() + 1);
                     }
                 }
 
                 let activeDaysColor = "bg-emerald-500";
-                if (activeDaysCount >= 7 && activeDaysCount <= 12) activeDaysColor = "bg-amber-500";
-                else if (activeDaysCount > 12) activeDaysColor = "bg-rose-600 animate-pulse";
+                if (activeDaysCount >= 7 && activeDaysCount <= 12) {
+                    activeDaysColor = "bg-amber-500";
+                } else if (activeDaysCount > 12) {
+                    activeDaysColor = "bg-rose-600 shadow-rose-200 animate-pulse";
+                }
 
-                const devVacDaysNow = devActivatedDates.length > 0 ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) : 0;
-                const completedDevTasks = devTasks.filter(t => t['State'] === 'To Be Reviewed' || t['State'] === 'Closed').length;
-                const devProgressPercent = devTasks.length > 0 ? Math.round((completedDevTasks / devTasks.length) * 100) : 0;
+                const devVacDaysNow = devActivatedDates.length > 0 
+                    ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) 
+                    : 0;
 
-                const totalBugs = s.bugs ? s.bugs.length : 0;
-                const completedBugs = s.bugs ? s.bugs.filter(b => b.State === 'Closed' || b.State === 'Resolved').length : 0;
+                let devStartDisplay = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]).toLocaleDateString('en-GB') : "TBD";
+               
+                let devResolveDate = "N/A";
+                const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
+                if (resolvedDevTasks.length > 0) {
+                    const latestTask = resolvedDevTasks.sort((a, b) => new Date(b['Changed Date']) - new Date(a['Changed Date']))[0];
+                    devResolveDate = new Date(latestTask['Changed Date']).toLocaleDateString('en-GB');
+                }
 
                 const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
+                const totalTestEffort = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                let testStartDisplay = "Waiting";
                 const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
-                const testVacDaysNow = (execTask && execTask['Activated Date']) ? dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) : 0;
                 
-                const totalTC = s.testCases ? s.testCases.length : 0;
-                const completedTC = s.testCases ? s.testCases.filter(tc => tc.state === 'Passed' || tc.state === 'Closed').length : 0;
+                const testVacDaysNow = (execTask && execTask['Activated Date']) 
+                    ? dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) 
+                    : 0;
+
+                if (execTask && execTask['Activated Date']) {
+                    testStartDisplay = new Date(execTask['Activated Date']).toLocaleDateString('en-GB');
+                }
+
+                const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && (s.state !== 'Resolved' && s.state !== 'Tested' && s.state !== 'Closed');
+                const devLightColor = (s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+
+                const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && (s.state !== 'Tested' && s.state !== 'Closed');
+                const testLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+
+                const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
+                const totalDevTasks = nonTestTasks.length;
+                const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed', 'Resolved'].includes(t['State'])).length;
+                const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
+
+                const totalBugs = s.bugs ? s.bugs.length : 0;
+                const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
+                const fixingProgressPercent = totalBugs > 0 ? Math.round((completedBugs / totalBugs) * 100) : 0;
+
+                const testCases = s.testCases || [];
+                const totalTC = testCases.length;
+                const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
                 const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
 
-                const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && !['Resolved', 'Tested', 'Closed'].includes(s.state);
-                const devLightColor = ['Resolved', 'Tested', 'Closed'].includes(s.state) ? 'bg-green-500 shadow-lg' : (isDevLate ? 'bg-red-500 animate-pulse' : 'bg-gray-300');
-                
-                const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && !['Tested', 'Closed'].includes(s.state);
-                const testLightColor = ['Tested', 'Closed'].includes(s.state) ? 'bg-green-500 shadow-lg' : (isTestLate ? 'bg-red-500 animate-pulse' : 'bg-gray-300');
+                let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
+                const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
 
-                const storyTags = (db.customTags || []).filter(tag => s.customTags && s.customTags.includes(tag));
-                
-                let statusColor = "bg-slate-100 text-slate-600";
-                if (s.state === 'Resolved') statusColor = "bg-green-100 text-green-700";
-                else if (isLate) statusColor = "bg-rose-100 text-rose-700";
+                const customTagsList = db.customTags || [];
+                const storyTags = s.customTags || [];
+
+                const comments = s.standupComments || [];
 
                 return `
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col mb-4">
-                    <div class="bg-slate-50/50 px-4 py-3 flex justify-between items-center border-b border-slate-100">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-mono font-bold text-slate-400">#${s.id}</span>
-                            <span class="px-2 py-0.5 rounded text-[9px] font-black bg-indigo-100 text-indigo-700">P${s.priority || 999}</span>
-                            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${statusColor} uppercase tracking-tight">${s.state}</span>
-                        </div>
-                        <button onclick="ui.openStoryModal('${s.id}')" class="text-slate-400 hover:text-indigo-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </button>
+                <div class="relative bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-visible flex flex-col mb-4">
+                     
+                    ${activeDaysCount > 0 ? `
+                    <div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center ${activeDaysColor} text-white w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10 transition-colors duration-500">
+                        <span class="text-xl font-black leading-none">${activeDaysCount}</span>
+                        <span class="text-[8px] uppercase font-bold">Days</span>
                     </div>
+                    ` : ''}
 
-                    <div class="p-4 flex-1">
-                        <h3 class="font-bold text-slate-800 text-sm leading-snug mb-3" title="${s.title}">${s.title}</h3>
+                    <div class="p-5 flex-1">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex gap-2">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${statusText}</span>
+                                <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
+                            </div>
+                            <span onclick="ui.openStoryModal('${s.id}')" class="text-xs font-mono text-gray-400 cursor-pointer hover:text-indigo-600">#${s.id} 🔍</span>
+                        </div>
 
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            ${s.tags.map(t => `<span class="px-1.5 py-0.5 bg-red-50 text-red-600 border border-red-100 rounded text-[9px] font-semibold">${t}</span>`).join('')}
+                        <div class="flex flex-wrap gap-1 mt-2 mb-3">
+                            ${s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${t}</span>`).join('')}
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-1.5 mb-4 border-b border-dashed border-gray-100 pb-3 overflow-visible">
                             ${storyTags.map(tag => `
-                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-purple-50 text-purple-600 border border-purple-100 rounded text-[9px] font-bold">
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
                                     ${tag}
-                                    <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 ml-0.5">×</button>
+                                    <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
                                 </span>
                             `).join('')}
-                            <div class="relative inline-block group">
-                                <button class="w-5 h-5 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-indigo-100 hover:text-indigo-600 text-xs font-bold transition-all">+</button>
-                                <div class="hidden group-hover:block absolute left-0 top-full mt-1 w-40 z-50">
-                                    <div class="bg-white border border-slate-200 shadow-xl rounded-lg py-1 max-h-48 overflow-y-auto">
-                                        ${(db.customTags || []).map(tag => `
-                                            <div onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="px-3 py-1.5 text-[10px] hover:bg-slate-50 cursor-pointer flex justify-between items-center">
-                                                ${tag} ${s.customTags?.includes(tag) ? '✓' : ''}
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4 mb-4 bg-slate-50 rounded-xl p-3">
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-1.5">
-                                    <div class="w-2 h-2 rounded-full ${devLightColor}"></div>
-                                    <span class="text-[10px] font-bold text-slate-500 uppercase">Dev Status</span>
-                                </div>
-                                <div class="text-xs font-bold text-slate-700 truncate">${s.assignedTo}</div>
-                                <div class="space-y-1">
-                                    <div class="w-full bg-slate-200 h-1 rounded-full overflow-hidden">
-                                        <div class="bg-indigo-500 h-full transition-all" style="width: ${devProgressPercent}%"></div>
-                                    </div>
-                                    <div class="flex justify-between text-[8px] font-bold text-indigo-600">
-                                        <span>Progress</span><span>${devProgressPercent}%</span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-1 mt-1">
-                                    <span class="${activeDaysColor} w-2 h-2 rounded-full"></span>
-                                    <span class="text-[9px] font-bold text-slate-600">${activeDaysCount} Days</span>
-                                    ${devVacDaysNow > 0 ? `<span class="text-[9px] text-amber-600 font-bold">🏖 ${devVacDaysNow}d</span>` : ''}
-                                </div>
-                            </div>
-
-                            <div class="space-y-2 border-l border-slate-200 pl-4">
-                                <div class="flex items-center gap-1.5">
-                                    <div class="w-2 h-2 rounded-full ${testLightColor}"></div>
-                                    <span class="text-[10px] font-bold text-slate-500 uppercase">QA Status</span>
-                                </div>
-                                <div class="text-xs font-bold text-slate-700 truncate">${s.tester}</div>
-                                <div class="space-y-1">
-                                    <div class="w-full bg-slate-200 h-1 rounded-full overflow-hidden">
-                                        <div class="bg-emerald-500 h-full transition-all" style="width: ${progressPercent}%"></div>
-                                    </div>
-                                    <div class="flex justify-between text-[8px] font-bold text-emerald-600">
-                                        <span>TCs</span><span>${progressPercent}%</span>
-                                    </div>
-                                </div>
-                                <div class="mt-1 flex flex-wrap gap-1">
-                                    ${totalBugs > 0 ? `<span class="text-[9px] font-bold text-rose-500">🐞 ${completedBugs}/${totalBugs}</span>` : ''}
-                                    ${testVacDaysNow > 0 ? `<span class="text-[9px] text-amber-600 font-bold">🏖 ${testVacDaysNow}d</span>` : ''}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-slate-100">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Latest Update</label>
                             
-                            ${s.standupComments && s.standupComments.length > 0 ? `
-                                <div class="mb-3 p-2.5 bg-indigo-50/50 rounded-lg border border-indigo-100/50 text-[11px] text-slate-600 italic relative group/comment">
-                                    <span class="text-[8px] font-bold text-indigo-300 block mb-0.5">${s.standupComments[s.standupComments.length-1].date}</span>
-                                    "${s.standupComments[s.standupComments.length-1].text}"
-                                    <div class="hidden group-hover/comment:block absolute top-full left-0 right-0 z-50 mt-1 bg-white shadow-xl border border-slate-100 rounded-lg p-2 max-h-32 overflow-y-auto not-italic">
-                                        <div class="font-bold text-[9px] text-slate-400 mb-1 border-b pb-1">History</div>
-                                        ${s.standupComments.slice(0, -1).reverse().map(c => `
-                                            <div class="mb-2 last:mb-0 border-b border-slate-50 pb-1">
-                                                <div class="text-[8px] font-bold text-slate-400">${c.date}</div>
-                                                <div class="text-[10px] text-slate-500">${c.text}</div>
-                                            </div>
-                                        `).join('')}
+                            <div class="relative inline-block group">
+                                <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
+                                    <span class="text-sm font-bold">+</span>
+                                </button>
+                                
+                                <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
+                                    <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
+                                        <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
+                                        <div class="max-h-40 overflow-y-auto">
+                                            ${customTagsList.length > 0 ? customTagsList.map(tag => {
+                                                const isPicked = storyTags.includes(tag);
+                                                return `
+                                                <button 
+                                                    onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')"
+                                                    class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
+                                                    ${tag}
+                                                    ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
+                                                </button>`;
+                                            }).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags defined</div>'}
+                                        </div>
                                     </div>
                                 </div>
-                            ` : ''}
+                            </div>
+                        </div>
 
-                            <div class="flex gap-2">
+                        <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${s.title}</h3>
+
+                        <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <div class="w-2.5 h-2.5 rounded-full ${devLightColor}"></div>
+                                    <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
+                                </div>
+                                <div class="flex flex-col gap-0.5">
+                                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span> ${s.assignedTo}
+                                    </p>
+                                    <div class="ml-8 mt-1">
+                                        <div class="flex justify-between items-center mb-0.5">
+                                            <span class="text-[9px] text-gray-400 font-bold">Tasks: ${completedDevTasks}/${totalDevTasks}</span>
+                                            <span class="text-[9px] text-blue-600 font-bold">${devProgressPercent}%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
+                                            <div class="bg-blue-500 h-full" style="width: ${devProgressPercent}%"></div>
+                                        </div>
+                                        ${totalBugs > 0 ? `
+                                        <div class="mb-1">
+                                            <div class="flex justify-between items-center mb-0.5">
+                                                <span class="text-[9px] text-gray-400 font-bold">Bugs: ${completedBugs}/${totalBugs}</span>
+                                                <span class="text-[9px] text-red-600 font-bold">${fixingProgressPercent}%</span>
+                                            </div>
+                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                                                <div class="bg-red-500 h-full" style="width: ${fixingProgressPercent}%"></div>
+                                            </div>
+                                        </div>
+                                        ` : ''}
+                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${devStartDisplay}</p>
+                                        ${devVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${devVacDaysNow} Days</p>` : ''}
+                                        <p class="text-[10px] text-green-600 font-bold">Resolved: ${devResolveDate}</p>
+                                        <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalDevEffort}h</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
+                                    <p class="text-[10px] uppercase text-gray-400 font-bold">Testing</p>
+                                </div>
+                                <div class="flex flex-col gap-0.5">
+                                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span> ${s.tester}
+                                    </p>
+                                    <div class="ml-8 mt-1">
+                                        <div class="flex justify-between items-center mb-0.5">
+                                            <span class="text-[9px] text-gray-400 font-bold">TCs: ${completedTC}/${totalTC}</span>
+                                            <span class="text-[9px] text-indigo-600 font-bold">${progressPercent}%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
+                                            <div class="bg-indigo-500 h-full" style="width: ${progressPercent}%"></div>
+                                        </div>
+                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${testStartDisplay}</p>
+                                        ${testVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${testVacDaysNow} Days</p>` : ''}
+                                        <p class="text-[10px] text-indigo-600 font-bold">Est QA: ${totalTestEffort}h</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-2 pt-4 border-t border-gray-50 bg-slate-50/30 -mx-5 px-5">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2 block">Standup Updates</label>
+                            
+                            <div class="flex gap-2 mb-3">
                                 <input type="text" 
-                                    id="comment-input-${s.id}"
-                                    placeholder="Add standup update..." 
-                                    class="flex-1 text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all outline-none"
-                                    onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; }">
-                                <button onclick="const inp = document.getElementById('comment-input-${s.id}'); commentManager.updateComment('${s.id}', inp.value); inp.value='';" 
-                                    class="bg-indigo-600 text-white p-2 rounded-xl hover:bg-indigo-700 active:scale-95 transition-all">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                </button>
+                                       placeholder="Add comment and press Enter..." 
+                                       class="flex-1 text-[11px] p-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none"
+                                       onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; }">
+                            </div>
+
+                            <div class="space-y-2 max-h-28 overflow-y-auto pr-1">
+                                ${comments.slice().reverse().map(c => `
+                                    <div class="bg-white p-2 rounded-lg border border-indigo-100/50 shadow-sm">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">${c.date}</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-600 leading-tight italic">"${c.text}"</p>
+                                    </div>
+                                `).join('')}
+                                ${comments.length === 0 ? '<p class="text-[10px] text-gray-400 italic py-1">No updates recorded yet.</p>' : ''}
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="px-4 py-2 bg-slate-50/30 border-t border-slate-50 flex justify-between items-center text-[9px] font-bold">
-                        <div class="text-slate-400">Target: <span class="text-indigo-600">${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleDateString('en-GB') : '---'}</span></div>
-                        <div class="text-slate-400">Release: <span class="text-slate-600">${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : '---'}</span></div>
+
+                    <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
+                            <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">
+                                ${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleDateString('en-GB') : 'Waiting'}
+                            </span>
+                        </div>
+                        <span class="text-xl">${isLate ? '⚠️' : '🗓️'}</span>
                     </div>
                 </div>
                 `;
