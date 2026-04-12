@@ -315,16 +315,22 @@ async saveToGitHub() {
                 bugs: [],
                 testCases: [],
                 calc: {},
-                customTags: [] // قيمة افتراضية
+                customTags: [], 
+                standupComments: []
             };
 
             // --- التعديل الجوهري هنا ---
             // ابحث عن القصة القديمة في قاعدة البيانات الحالية باستخدام الـ ID
-            const existingStory = db.currentStories.find(s => s.id == currentStory.id);
-            if (existingStory && existingStory.customTags) {
-                // إذا كانت موجودة ولديها كستم تاتش، قم بنقلها للنسخة الجديدة
-                currentStory.customTags = existingStory.customTags;
-            }
+          const existingStory = db.currentStories.find(s => s.id == currentStory.id);
+if (existingStory) {
+    if (existingStory.customTags) {
+        currentStory.customTags = existingStory.customTags;
+    }
+    // حفظ التعليقات القديمة عند التحديث
+    if (existingStory.standupComments) {
+        currentStory.standupComments = existingStory.standupComments;
+    }
+}
             // ---------------------------
 
             newStories.push(currentStory);
@@ -745,7 +751,7 @@ renderClientRoadmap() {
     }).join('');
 },
     
-   renderActiveCards() {
+renderActiveCards() {
     const container = document.getElementById('active-cards-container');
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; 
     const tagSearchTerm = document.getElementById('tag-search-input')?.value.toLowerCase() || "";
@@ -856,7 +862,7 @@ renderClientRoadmap() {
 
                 const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
                 const totalDevTasks = nonTestTasks.length;
-                const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed'].includes(t['State'])).length;
+                const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed', 'Resolved'].includes(t['State'])).length;
                 const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
 
                 const totalBugs = s.bugs ? s.bugs.length : 0;
@@ -871,9 +877,11 @@ renderClientRoadmap() {
                 let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
                 const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
 
-                // التاجات المختارة
                 const customTagsList = db.customTags || [];
                 const storyTags = s.customTags || [];
+
+                // --- استدعاء الكومنتات للـ Log ---
+                const comments = s.standupComments || [];
 
                 return `
                 <div class="relative bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-visible flex flex-col mb-4">
@@ -891,7 +899,7 @@ renderClientRoadmap() {
                                 <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${statusText}</span>
                                 <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
                             </div>
-                            <span onclick="ui.openStoryModal('${s.id}')" class="text-xs font-mono text-gray-400 cursor-pointer hover:text-indigo-600">#${s.id} 🔍</span>
+                            <span class="text-xs font-mono text-gray-400">#${s.id}</span>
                         </div>
 
                         <div class="flex flex-wrap gap-1 mt-2 mb-3">
@@ -992,6 +1000,29 @@ renderClientRoadmap() {
                                         <p class="text-[10px] text-indigo-600 font-bold">Est QA: ${totalTestEffort}h</p>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-2 pt-4 border-t border-gray-50 bg-slate-50/30 -mx-5 px-5">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2 block">Standup Updates</label>
+                            
+                            <div class="flex gap-2 mb-3">
+                                <input type="text" 
+                                       placeholder="Add comment and press Enter..." 
+                                       class="flex-1 text-[11px] p-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none"
+                                       onkeypress="if(event.key === 'Enter') { commentManager.addComment('${s.id}', this.value); this.value=''; }">
+                            </div>
+
+                            <div class="space-y-2 max-h-28 overflow-y-auto pr-1 custom-scrollbar">
+                                ${comments.slice().reverse().map(c => `
+                                    <div class="bg-white p-2 rounded-lg border border-indigo-100/50 shadow-sm">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">${c.date}</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-600 leading-tight italic">"${c.text}"</p>
+                                    </div>
+                                `).join('')}
+                                ${comments.length === 0 ? '<p class="text-[10px] text-gray-400 italic py-1">No updates recorded for this story yet.</p>' : ''}
                             </div>
                         </div>
                     </div>
@@ -1898,7 +1929,30 @@ const tagManager = {
     }
 }
 };
+const commentManager = {
+    updateComment(storyId, text) {
+        const story = db.currentStories.find(s => (s.id || s.ID) == storyId);
+        if (story) {
+            if (!story.standupComments) story.standupComments = [];
+            
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-GB'); // بصيغة DD/MM/YYYY
+            
+            // إضافة التعليق الجديد مع التاريخ
+            story.standupComments.push({
+                text: text,
+                date: now.toLocaleString('en-GB'),
+                timestamp: now.getTime()
+            });
 
+            // حفظ التغييرات فوراً إلى GitHub
+            dataProcessor.saveToGitHub();
+            
+            // تحديث الواجهة لإظهار التعليق في الـ Log
+            ui.renderActiveCards(); 
+        }
+    }
+};
 // استدعاء الرندر عند تحميل الإعدادات
 // أضف tagManager.renderTagsSettings() داخل وظيفة ui.renderSettings
 
