@@ -1193,45 +1193,30 @@ renderWorkload() {
     const areaGroups = {};
     const MAX_HOURS = 50;
 
-    // 1. تجميع كل العناصر في مصفوفة واحدة (Stories + أي Bugs مستقلة)
-    // نضمن هنا أننا ننظر لـ db.currentStories بالكامل
+    // 1. تجميع كل العناصر
     const allItems = [...(db.currentStories || [])];
 
     allItems.forEach(item => {
-        // التأكد من استخراج المنطقة بشكل صحيح
         const area = item.area || item.Area || "General Business Area";
         
         if (!areaGroups[area]) {
             areaGroups[area] = { 
                 developers: {}, 
                 testers: {}, 
-                bugWorkers: new Set(),
                 allDevsInArea: new Set(), 
                 allTestersInArea: new Set() 
             };
         }
 
-        // 2. تحديد الأسماء (بناءً على الأعمدة المتاحة في ملفك)
+        // 2. تحديد الأسماء
         const assigned = item.assignedTo || item['Assigned To'];
         const testerName = item.tester || item['Assigned To Tester'] || item.Tester;
-        const itemType = item.type || item.Type || item['Work Item Type'];
-        const itemState = item.state || item.State;
 
-        // تسجيل الموظفين في المنطقة لظهورهم في الـ Available
+        // تسجيل الموظفين في المنطقة
         if (assigned && assigned !== "Unassigned") areaGroups[area].allDevsInArea.add(assigned);
         if (testerName && testerName !== "Unassigned") areaGroups[area].allTestersInArea.add(testerName);
 
-        // 3. منطق الباجات المنفصل (أي عنصر نوعه Bug وحالته نشطة)
-        const isBug = (itemType === 'Bug');
-        const isActive = ['Active', 'New', 'In Progress'].includes(itemState);
-
-        if (isBug && isActive) {
-            if (assigned) areaGroups[area].bugWorkers.add(assigned);
-            if (testerName) areaGroups[area].bugWorkers.add(testerName);
-            // لاحظ: لا نخرج من الـ loop هنا، نكمل لحساب الساعات إذا كان للبج ساعات مهام
-        }
-
-        // 4. حساب الساعات النشطة للمهام (Tasks) التابعة لهذا العنصر
+        // 3. حساب الساعات النشطة للمهام (Tasks)
         if (item.tasks && Array.isArray(item.tasks)) {
             // مهام التطوير
             const dTasks = item.tasks.filter(t => 
@@ -1254,13 +1239,13 @@ renderWorkload() {
             }
         }
     });
+
     let html = `<div class="space-y-12 w-full px-4">`; 
 
     Object.entries(areaGroups).forEach(([areaName, data]) => {
-        // الفلترة: (في المنطقة) و (ليس لديه ساعات نشطة) و (ليس لديه باجات نشطة)
-        const availableDevs = [...data.allDevsInArea].filter(name => !data.developers[name] && !data.bugWorkers.has(name));
-        const availableTesters = [...data.allTestersInArea].filter(name => !data.testers[name] && !data.bugWorkers.has(name));
-        const bugWorkersList = [...data.bugWorkers];
+        // الفلترة للموظفين المتاحين (الذين ليس لديهم ساعات مهام نشطة)
+        const availableDevs = [...data.allDevsInArea].filter(name => !data.developers[name]);
+        const availableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]);
 
         html += `
             <div class="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 overflow-hidden w-full transition-all hover:shadow-2xl">
@@ -1271,7 +1256,7 @@ renderWorkload() {
                     </h2>
                 </div>
 
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+                <div class="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
                     <div class="space-y-6">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-indigo-100">
@@ -1287,20 +1272,6 @@ renderWorkload() {
                             <h3 class="text-slate-800 font-black text-[11px] uppercase tracking-tighter">Active Testers</h3>
                         </div>
                         ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
-                    </div>
-
-                    <div class="bg-amber-50/40 rounded-[2rem] p-6 border border-amber-100">
-                        <div class="flex items-center gap-2 mb-5">
-                            <i class="fas fa-bug text-amber-600 text-sm"></i>
-                            <h3 class="text-amber-900 font-black text-[11px] uppercase tracking-wider">Working on Bugs</h3>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            ${bugWorkersList.length > 0 ? bugWorkersList.map(name => `
-                                <span class="px-3 py-1.5 bg-white border border-amber-200 text-amber-700 rounded-xl text-[10px] font-bold shadow-sm flex items-center gap-2">
-                                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span> ${name}
-                                </span>
-                            `).join('') : '<span class="text-slate-300 text-[10px] italic">No active bugs</span>'}
-                        </div>
                     </div>
 
                     <div class="bg-slate-50/80 rounded-[2rem] p-6 border-2 border-dashed border-slate-200">
