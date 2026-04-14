@@ -1193,8 +1193,14 @@ renderWorkload() {
     const areaGroups = {};
     const MAX_HOURS = 50;
 
-    currentData.forEach(story => {
-        const area = story.area || "General Business Area";
+    // 1. تجميع كل العناصر في مصفوفة واحدة (Stories + أي Bugs مستقلة)
+    // نضمن هنا أننا ننظر لـ db.currentStories بالكامل
+    const allItems = [...(db.currentStories || [])];
+
+    allItems.forEach(item => {
+        // التأكد من استخراج المنطقة بشكل صحيح
+        const area = item.area || item.Area || "General Business Area";
+        
         if (!areaGroups[area]) {
             areaGroups[area] = { 
                 developers: {}, 
@@ -1205,41 +1211,49 @@ renderWorkload() {
             };
         }
 
-        // تسجيل الموظفين في المنطقة
-        if (story.assignedTo && story.assignedTo !== "Unassigned") areaGroups[area].allDevsInArea.add(story.assignedTo);
-        if (story.tester && story.tester !== "Unassigned") areaGroups[area].allTestersInArea.add(story.tester);
+        // 2. تحديد الأسماء (بناءً على الأعمدة المتاحة في ملفك)
+        const assigned = item.assignedTo || item['Assigned To'];
+        const testerName = item.tester || item['Assigned To Tester'] || item.Tester;
+        const itemType = item.type || item.Type || item['Work Item Type'];
+        const itemState = item.state || item.State;
 
-        // منطق الباجات (Active/New)
-       // دالة مساعدة للوصول للقيمة بغض النظر عن حالة الأحرف
-const getVal = (obj, key) => obj[key] || obj[key.charAt(0).toUpperCase() + key.slice(1)] || obj[key.replace(' ', '')];
+        // تسجيل الموظفين في المنطقة لظهورهم في الـ Available
+        if (assigned && assigned !== "Unassigned") areaGroups[area].allDevsInArea.add(assigned);
+        if (testerName && testerName !== "Unassigned") areaGroups[area].allTestersInArea.add(testerName);
 
-const isBugActive = (story.type === 'Bug' || story.Type === 'Bug' || story['Work Item Type'] === 'Bug') && 
-                    ['Active', 'New'].includes(story.state || story.State);
+        // 3. منطق الباجات المنفصل (أي عنصر نوعه Bug وحالته نشطة)
+        const isBug = (itemType === 'Bug');
+        const isActive = ['Active', 'New', 'In Progress'].includes(itemState);
 
-if (isBugActive) {
-    // محاولة قراءة الاسم من كذا مصدر (assignedTo أو Assigned To)
-    const developer = story.assignedTo || story['Assigned To'];
-    const tester = story.tester || story['Assigned To Tester'] || story.Tester;
+        if (isBug && isActive) {
+            if (assigned) areaGroups[area].bugWorkers.add(assigned);
+            if (testerName) areaGroups[area].bugWorkers.add(testerName);
+            // لاحظ: لا نخرج من الـ loop هنا، نكمل لحساب الساعات إذا كان للبج ساعات مهام
+        }
 
-    if (developer) areaGroups[area].bugWorkers.add(developer);
-    if (tester) areaGroups[area].bugWorkers.add(tester);
-}
-        // حساب الساعات النشطة (ليست Closed وليست To Be Reviewed)
-        const activeDevTasks = (story.tasks || []).filter(t => 
-            ["Development", "DB Modification"].includes(t['Activity']) && 
-            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
-        );
-        const dHours = activeDevTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        if (dHours > 0) areaGroups[area].developers[story.assignedTo] = (areaGroups[area].developers[story.assignedTo] || 0) + dHours;
+        // 4. حساب الساعات النشطة للمهام (Tasks) التابعة لهذا العنصر
+        if (item.tasks && Array.isArray(item.tasks)) {
+            // مهام التطوير
+            const dTasks = item.tasks.filter(t => 
+                ["Development", "DB Modification"].includes(t['Activity']) && 
+                t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
+            );
+            const dHours = dTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+            if (dHours > 0 && assigned) {
+                areaGroups[area].developers[assigned] = (areaGroups[area].developers[assigned] || 0) + dHours;
+            }
 
-        const activeTestTasks = (story.tasks || []).filter(t => 
-            t['Activity'] === 'Testing' && 
-            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
-        );
-        const tHours = activeTestTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        if (tHours > 0) areaGroups[area].testers[story.tester] = (areaGroups[area].testers[story.tester] || 0) + tHours;
+            // مهام التست
+            const tTasks = item.tasks.filter(t => 
+                t['Activity'] === 'Testing' && 
+                t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
+            );
+            const tHours = tTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+            if (tHours > 0 && testerName) {
+                areaGroups[area].testers[testerName] = (areaGroups[area].testers[testerName] || 0) + tHours;
+            }
+        }
     });
-
     let html = `<div class="space-y-12 w-full px-4">`; 
 
     Object.entries(areaGroups).forEach(([areaName, data]) => {
