@@ -1190,94 +1190,88 @@ renderWorkload() {
     const container = document.getElementById('workload-container');
     if (!container) return;
 
-    const staffWorkload = {};
-    const areaWorkload = {}; // تعريف المتغير لتجنب الـ ReferenceError
+    const devData = {};  // { 'DevName': { 'Area1': hours, 'Area2': hours } }
+    const testData = {}; // { 'TesterName': { 'Area1': hours, 'Area2': hours } }
     const MAX_HOURS = 50;
 
-    // 1. معالجة البيانات واستثناء المهام المنتهية
+    // 1. معالجة البيانات وتوزيع الساعات حسب الشخص والمنطقة
     currentData.forEach(story => {
-        // استثناء القصص المنتهية تماماً من الحساب الإجمالي للأمان
         if (story.state === 'Closed') return;
 
-        // حساب ساعات التطوير (استثناء المراجعة والإغلاق)
+        const area = story.area || "General";
+
+        // حساب ساعات التطوير المتبقية (تجاهل المنتهي)
         const devTasks = (story.tasks || []).filter(t => 
             ["Development", "DB Modification"].includes(t['Activity']) &&
-            t['State'] !== 'To Be Reviewed' && 
-            t['State'] !== 'Closed'
+            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
         );
-        const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        const dHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
-        // حساب ساعات الاختبار (استثناء المراجعة والإغلاق)
+        if (dHours > 0) {
+            if (!devData[story.assignedTo]) devData[story.assignedTo] = {};
+            devData[story.assignedTo][area] = (devData[story.assignedTo][area] || 0) + dHours;
+        }
+
+        // حساب ساعات التست المتبقية (تجاهل المنتهي)
         const testTasks = (story.tasks || []).filter(t => 
             t['Activity'] === 'Testing' &&
-            t['State'] !== 'To Be Reviewed' && 
-            t['State'] !== 'Closed'
+            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
         );
-        const testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        const tHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
-        // تجميع البيانات للموظفين
-        if (devHours > 0) {
-            staffWorkload[story.assignedTo] = (staffWorkload[story.assignedTo] || 0) + devHours;
-            areaWorkload[story.area] = (areaWorkload[story.area] || 0) + devHours;
-        }
-        if (testHours > 0) {
-            staffWorkload[story.tester] = (staffWorkload[story.tester] || 0) + testHours;
-            areaWorkload[story.area] = (areaWorkload[story.area] || 0) + testHours;
+        if (tHours > 0) {
+            if (!testData[story.tester]) testData[story.tester] = {};
+            testData[story.tester][area] = (testData[story.tester][area] || 0) + tHours;
         }
     });
 
-    // 2. بناء واجهة العرض (UI)
-    let html = `
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+    // دالة مساعدة لإنشاء HTML لكل قسم (ديف أو تستر)
+    const generateSectionHtml = (title, data, color) => {
+        return `
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-indigo-600 rounded-full"></span>
-                    Staff Capacity (Max ${MAX_HOURS}h)
+                    <span class="w-2 h-6 bg-${color}-600 rounded-full"></span>
+                    ${title} Workload
                 </h3>
-                <div class="space-y-6">
-                    ${Object.entries(staffWorkload).sort((a,b) => b[1] - a[1]).map(([name, hours]) => {
-                        const percentage = Math.min((hours / MAX_HOURS) * 100, 100);
-                        const colorClass = percentage > 90 ? 'bg-red-500' : percentage > 70 ? 'bg-orange-500' : 'bg-emerald-500';
+                <div class="space-y-8">
+                    ${Object.entries(data).map(([name, areas]) => {
+                        const totalHours = Object.values(areas).reduce((a, b) => a + b, 0);
+                        const percentage = Math.min((totalHours / MAX_HOURS) * 100, 100);
+                        const barColor = percentage > 90 ? 'bg-red-500' : percentage > 70 ? 'bg-orange-500' : `bg-${color}-500`;
+                        
                         return `
-                            <div>
-                                <div class="flex justify-between mb-1 text-sm font-medium">
-                                    <span>${name}</span>
-                                    <span class="${percentage > 100 ? 'text-red-600' : 'text-gray-600'}">${hours.toFixed(1)} / ${MAX_HOURS}h</span>
+                            <div class="border-b border-gray-50 pb-4 last:border-0">
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-bold text-slate-700">${name}</span>
+                                    <span class="text-sm font-mono ${totalHours > MAX_HOURS ? 'text-red-600 font-black' : 'text-slate-500'}">
+                                        ${totalHours.toFixed(1)} / ${MAX_HOURS}h
+                                    </span>
                                 </div>
-                                <div class="w-full bg-gray-100 rounded-full h-3">
-                                    <div class="${colorClass} h-3 rounded-full transition-all duration-500" style="width: ${percentage}%"></div>
+                                <div class="w-full bg-gray-100 rounded-full h-2.5 mb-3">
+                                    <div class="${barColor} h-2.5 rounded-full transition-all duration-700 shadow-sm" style="width: ${percentage}%"></div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    ${Object.entries(areas).map(([areaName, areaHours]) => `
+                                        <div class="bg-gray-50 px-2 py-1 rounded text-[10px] flex justify-between border border-gray-100">
+                                            <span class="text-gray-500 truncate mr-1">${areaName}</span>
+                                            <span class="font-bold text-slate-700">${areaHours.toFixed(1)}h</span>
+                                        </div>
+                                    `).join('')}
                                 </div>
                             </div>
                         `;
                     }).join('')}
                 </div>
             </div>
+        `;
+    };
 
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-emerald-600 rounded-full"></span>
-                    Business Area Distribution
-                </h3>
-                <div class="space-y-4">
-                    ${Object.entries(areaWorkload).sort((a,b) => b[1] - a[1]).map(([area, hours]) => `
-                        <div class="flex items-center gap-4">
-                            <div class="flex-1">
-                                <div class="flex justify-between mb-1 text-sm">
-                                    <span class="font-medium">${area || 'Uncategorized'}</span>
-                                    <span class="font-bold text-indigo-600">${hours.toFixed(1)}h</span>
-                                </div>
-                                <div class="w-full bg-gray-50 border border-gray-100 rounded-full h-2">
-                                    <div class="bg-indigo-400 h-2 rounded-full" style="width: ${Math.min((hours/Object.values(areaWorkload).reduce((a,b)=>a+b,0))*100, 100)}%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
+    container.innerHTML = `
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            ${generateSectionHtml('Developers', devData, 'indigo')}
+            ${generateSectionHtml('Testers', testData, 'emerald')}
         </div>
     `;
-
-    container.innerHTML = html;
 },
 
    
