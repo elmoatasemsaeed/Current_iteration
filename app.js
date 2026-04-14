@@ -1188,43 +1188,43 @@ editDelivery(id) {
   
 renderWorkload() {
     const container = document.getElementById('workload-container');
-    if (!container) return;
+    const staffWorkload = {};
 
-    // 1. فلترة القصص النشطة فقط
-    const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
+    // 1. فلترة البيانات لاستبعاد القصص المنتهية (Closed) أو التي تحت المراجعة (To Be Reviewed)
+    // ملاحظة: نركز هنا على حالة الـ Story نفسها وحالة التاسكات بداخلها
+    const activeDataForWorkload = currentData.filter(s => 
+        s.state !== 'Closed' && 
+        s.state !== 'To Be Reviewed' && 
+        s.state !== 'Tested' // يفضل أيضاً استبعاد المختبرة فعلياً
+    );
 
-    // 2. تجميع البيانات حسب Area -> Role -> Staff
-    const areaWorkload = {};
-    const MAX_HOURS = 50;
-
-    activeStories.forEach(s => {
-        const area = s.area || "General";
-        if (!areaWorkload[area]) {
-            areaWorkload[area] = { devs: {}, testers: {} };
+    activeDataForWorkload.forEach(story => {
+        // حساب ساعات التطوير المتبقية (فقط للتاسكات التي ليست To Be Reviewed أو Closed)
+        const devTasks = story.tasks.filter(t => 
+            ["Development", "DB Modification"].includes(t['Activity']) &&
+            t['State'] !== 'To Be Reviewed' && 
+            t['State'] !== 'Closed'
+        );
+        
+        const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        
+        if (devHours > 0) {
+            if (!staffWorkload[story.assignedTo]) staffWorkload[story.assignedTo] = 0;
+            staffWorkload[story.assignedTo] += devHours;
         }
 
-        // حساب ساعات التطوير
-        const devHours = s.tasks
-            .filter(t => ["Development", "DB Modification"].includes(t['Activity']))
-            .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-
-        // حساب ساعات الاختبار
-        const testHours = s.tasks
-            .filter(t => t['Activity'] === 'Testing' || t['Activity'] === 'Preparation')
-            .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-
-        // إضافة للمطور
-        if (s.assignedTo && s.assignedTo !== "Unassigned") {
-            if (!areaWorkload[area].devs[s.assignedTo]) areaWorkload[area].devs[s.assignedTo] = { hours: 0, items: [] };
-            areaWorkload[area].devs[s.assignedTo].hours += devHours;
-            areaWorkload[area].devs[s.assignedTo].items.push(s);
-        }
-
-        // إضافة للمختبر
-        if (s.tester && s.tester !== "Unassigned") {
-            if (!areaWorkload[area].testers[s.tester]) areaWorkload[area].testers[s.tester] = { hours: 0, items: [] };
-            areaWorkload[area].testers[s.tester].hours += testHours;
-            areaWorkload[area].testers[s.tester].items.push(s);
+        // حساب ساعات الاختبار المتبقية
+        const testTasks = story.tasks.filter(t => 
+            t['Activity'] === 'Testing' &&
+            t['State'] !== 'To Be Reviewed' && 
+            t['State'] !== 'Closed'
+        );
+        
+        const testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        
+        if (testHours > 0) {
+            if (!staffWorkload[story.tester]) staffWorkload[story.tester] = 0;
+            staffWorkload[story.tester] += testHours;
         }
     });
 
