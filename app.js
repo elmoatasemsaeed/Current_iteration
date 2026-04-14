@@ -1210,12 +1210,20 @@ renderWorkload() {
         if (story.tester && story.tester !== "Unassigned") areaGroups[area].allTestersInArea.add(story.tester);
 
         // منطق الباجات (Active/New)
-        const isBugActive = (story.type === 'Bug' || story.Type === 'Bug') && ['Active', 'New'].includes(story.state);
-        if (isBugActive) {
-            if (story.assignedTo) areaGroups[area].bugWorkers.add(story.assignedTo);
-            if (story.tester) areaGroups[area].bugWorkers.add(story.tester);
-        }
+       // دالة مساعدة للوصول للقيمة بغض النظر عن حالة الأحرف
+const getVal = (obj, key) => obj[key] || obj[key.charAt(0).toUpperCase() + key.slice(1)] || obj[key.replace(' ', '')];
 
+const isBugActive = (story.type === 'Bug' || story.Type === 'Bug' || story['Work Item Type'] === 'Bug') && 
+                    ['Active', 'New'].includes(story.state || story.State);
+
+if (isBugActive) {
+    // محاولة قراءة الاسم من كذا مصدر (assignedTo أو Assigned To)
+    const developer = story.assignedTo || story['Assigned To'];
+    const tester = story.tester || story['Assigned To Tester'] || story.Tester;
+
+    if (developer) areaGroups[area].bugWorkers.add(developer);
+    if (tester) areaGroups[area].bugWorkers.add(tester);
+}
         // حساب الساعات النشطة (ليست Closed وليست To Be Reviewed)
         const activeDevTasks = (story.tasks || []).filter(t => 
             ["Development", "DB Modification"].includes(t['Activity']) && 
