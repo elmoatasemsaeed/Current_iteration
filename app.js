@@ -1188,79 +1188,96 @@ editDelivery(id) {
   
 renderWorkload() {
     const container = document.getElementById('workload-container');
-    if (!container) return; // تأكد من وجود الكونتينر
+    if (!container) return;
 
     const staffWorkload = {};
-    const areaWorkload = {}; // حل مشكلة ReferenceError: areaWorkload is not defined
+    const areaWorkload = {}; // تعريف المتغير لتجنب الـ ReferenceError
+    const MAX_HOURS = 50;
 
-    // 1. فلترة القصص النشطة فقط واستثناء المنتهي تماماً
-    const activeStories = currentData.filter(s => 
-        s.state !== 'Closed' && 
-        s.state !== 'Tested'
-    );
+    // 1. معالجة البيانات واستثناء المهام المنتهية
+    currentData.forEach(story => {
+        // استثناء القصص المنتهية تماماً من الحساب الإجمالي للأمان
+        if (story.state === 'Closed') return;
 
-    activeStories.forEach(story => {
-        // --- حساب ضغط عمل المطور (Dev Workload) ---
-        // استثناء المهام التي انتهت (Closed / To Be Reviewed)
-        const devTasks = story.tasks.filter(t => 
+        // حساب ساعات التطوير (استثناء المراجعة والإغلاق)
+        const devTasks = (story.tasks || []).filter(t => 
             ["Development", "DB Modification"].includes(t['Activity']) &&
             t['State'] !== 'To Be Reviewed' && 
             t['State'] !== 'Closed'
         );
-        
         const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        
-        if (devHours > 0) {
-            staffWorkload[story.assignedTo] = (staffWorkload[story.assignedTo] || 0) + devHours;
-            areaWorkload[story.area] = (areaWorkload[story.area] || 0) + devHours;
-        }
 
-        // --- حساب ضغط عمل التستر (Test Workload) ---
-        // استثناء المهام التي انتهت (Closed / To Be Reviewed)
-        const testTasks = story.tasks.filter(t => 
+        // حساب ساعات الاختبار (استثناء المراجعة والإغلاق)
+        const testTasks = (story.tasks || []).filter(t => 
             t['Activity'] === 'Testing' &&
             t['State'] !== 'To Be Reviewed' && 
             t['State'] !== 'Closed'
         );
-        
         const testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        
+
+        // تجميع البيانات للموظفين
+        if (devHours > 0) {
+            staffWorkload[story.assignedTo] = (staffWorkload[story.assignedTo] || 0) + devHours;
+            areaWorkload[story.area] = (areaWorkload[story.area] || 0) + devHours;
+        }
         if (testHours > 0) {
             staffWorkload[story.tester] = (staffWorkload[story.tester] || 0) + testHours;
             areaWorkload[story.area] = (areaWorkload[story.area] || 0) + testHours;
         }
     });
 
-    // 2. كود الرندر (HTML) لعرض النتائج
-    this.renderWorkloadUI(staffWorkload, areaWorkload);
-},
-
-renderWorkloadUI(staffWorkload, areaWorkload) {
-    const container = document.getElementById('workload-container');
-    // هنا تضع كود الـ HTML الخاص بك لعرض البيانات...
-    // مثال بسيط للرندر:
-    container.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="font-bold mb-3 border-b pb-2">Staff Workload (Remaining Hours)</h3>
-                ${Object.entries(staffWorkload).map(([name, hours]) => `
-                    <div class="flex justify-between py-1 border-b border-gray-50 text-sm">
-                        <span>${name}</span>
-                        <span class="font-bold text-indigo-600">${hours.toFixed(1)}h</span>
-                    </div>
-                `).join('')}
+    // 2. بناء واجهة العرض (UI)
+    let html = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                    <span class="w-2 h-6 bg-indigo-600 rounded-full"></span>
+                    Staff Capacity (Max ${MAX_HOURS}h)
+                </h3>
+                <div class="space-y-6">
+                    ${Object.entries(staffWorkload).sort((a,b) => b[1] - a[1]).map(([name, hours]) => {
+                        const percentage = Math.min((hours / MAX_HOURS) * 100, 100);
+                        const colorClass = percentage > 90 ? 'bg-red-500' : percentage > 70 ? 'bg-orange-500' : 'bg-emerald-500';
+                        return `
+                            <div>
+                                <div class="flex justify-between mb-1 text-sm font-medium">
+                                    <span>${name}</span>
+                                    <span class="${percentage > 100 ? 'text-red-600' : 'text-gray-600'}">${hours.toFixed(1)} / ${MAX_HOURS}h</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-3">
+                                    <div class="${colorClass} h-3 rounded-full transition-all duration-500" style="width: ${percentage}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
             </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="font-bold mb-3 border-b pb-2">Area Distribution</h3>
-                ${Object.entries(areaWorkload).map(([area, hours]) => `
-                    <div class="flex justify-between py-1 border-b border-gray-50 text-sm">
-                        <span>${area}</span>
-                        <span class="font-bold text-emerald-600">${hours.toFixed(1)}h</span>
-                    </div>
-                `).join('')}
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                    <span class="w-2 h-6 bg-emerald-600 rounded-full"></span>
+                    Business Area Distribution
+                </h3>
+                <div class="space-y-4">
+                    ${Object.entries(areaWorkload).sort((a,b) => b[1] - a[1]).map(([area, hours]) => `
+                        <div class="flex items-center gap-4">
+                            <div class="flex-1">
+                                <div class="flex justify-between mb-1 text-sm">
+                                    <span class="font-medium">${area || 'Uncategorized'}</span>
+                                    <span class="font-bold text-indigo-600">${hours.toFixed(1)}h</span>
+                                </div>
+                                <div class="w-full bg-gray-50 border border-gray-100 rounded-full h-2">
+                                    <div class="bg-indigo-400 h-2 rounded-full" style="width: ${Math.min((hours/Object.values(areaWorkload).reduce((a,b)=>a+b,0))*100, 100)}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
             </div>
         </div>
     `;
+
+    container.innerHTML = html;
 },
 
    
