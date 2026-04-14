@@ -1190,15 +1190,13 @@ renderWorkload() {
     const container = document.getElementById('workload-container');
     if (!container) return;
 
+    // تجميع البيانات حسب المنطقة: { "AreaName": { developers: {}, testers: {}, availableDevs: Set, availableTesters: Set } }
     const areaGroups = {};
     const MAX_HOURS = 50;
 
-    // 1. تجميع كل العناصر
-    const allItems = [...(db.currentStories || [])];
-
-    allItems.forEach(item => {
-        const area = item.area || item.Area || "General Business Area";
-        
+    currentData.forEach(story => {
+        // لا نتوقف عند Closed هنا لأننا نحتاج معرفة من "كان" يعمل في المنطقة وأصبح متاحاً
+        const area = story.area || "General Business Area";
         if (!areaGroups[area]) {
             areaGroups[area] = { 
                 developers: {}, 
@@ -1208,103 +1206,109 @@ renderWorkload() {
             };
         }
 
-        // 2. تحديد الأسماء
-        const assigned = item.assignedTo || item['Assigned To'];
-        const testerName = item.tester || item['Assigned To Tester'] || item.Tester;
+        // تسجيل كل من له علاقة بهذه المنطقة (لتحديد المتاحين لاحقاً)
+        if (story.assignedTo && story.assignedTo !== "Unassigned") areaGroups[area].allDevsInArea.add(story.assignedTo);
+        if (story.tester && story.tester !== "Unassigned") areaGroups[area].allTestersInArea.add(story.tester);
 
-        // تسجيل الموظفين في المنطقة
-        if (assigned && assigned !== "Unassigned") areaGroups[area].allDevsInArea.add(assigned);
-        if (testerName && testerName !== "Unassigned") areaGroups[area].allTestersInArea.add(testerName);
+        // 1. حساب ساعات التطوير النشطة (استثناء To Be Reviewed و Closed)
+        const activeDevTasks = (story.tasks || []).filter(t => 
+            ["Development", "DB Modification"].includes(t['Activity']) && 
+            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
+        );
+        const dHours = activeDevTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        
+        if (dHours > 0) {
+            areaGroups[area].developers[story.assignedTo] = (areaGroups[area].developers[story.assignedTo] || 0) + dHours;
+        }
 
-        // 3. حساب الساعات النشطة للمهام (Tasks)
-        if (item.tasks && Array.isArray(item.tasks)) {
-            // مهام التطوير
-            const dTasks = item.tasks.filter(t => 
-                ["Development", "DB Modification"].includes(t['Activity']) && 
-                t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
-            );
-            const dHours = dTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-            if (dHours > 0 && assigned) {
-                areaGroups[area].developers[assigned] = (areaGroups[area].developers[assigned] || 0) + dHours;
-            }
-
-            // مهام التست
-            const tTasks = item.tasks.filter(t => 
-                t['Activity'] === 'Testing' && 
-                t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
-            );
-            const tHours = tTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-            if (tHours > 0 && testerName) {
-                areaGroups[area].testers[testerName] = (areaGroups[area].testers[testerName] || 0) + tHours;
-            }
+        // 2. حساب ساعات التست النشطة (استثناء To Be Reviewed و Closed)
+        const activeTestTasks = (story.tasks || []).filter(t => 
+            t['Activity'] === 'Testing' && 
+            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
+        );
+        const tHours = activeTestTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        
+        if (tHours > 0) {
+            areaGroups[area].testers[story.tester] = (areaGroups[area].testers[story.tester] || 0) + tHours;
         }
     });
 
+    // بناء الواجهة مع توسيع المربعات وتقسيمها لـ 3 أعمدة
     let html = `<div class="space-y-12 w-full px-4">`; 
 
     Object.entries(areaGroups).forEach(([areaName, data]) => {
-        // الفلترة للموظفين المتاحين (الذين ليس لديهم ساعات مهام نشطة)
+        // تحديد المتاحين: هم من وجدوا في المنطقة ولكن ليس لديهم ساعات نشطة حالياً
         const availableDevs = [...data.allDevsInArea].filter(name => !data.developers[name]);
         const availableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]);
 
+        const hasAnyData = Object.keys(data.developers).length > 0 || 
+                           Object.keys(data.testers).length > 0 || 
+                           availableDevs.length > 0 || 
+                           availableTesters.length > 0;
+
+        if (!hasAnyData) return;
+
         html += `
-            <div class="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 overflow-hidden w-full transition-all hover:shadow-2xl">
-                <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 px-10">
-                    <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3">
-                        <span class="w-4 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>
-                        ${areaName}
-                    </h2>
+            <div class="bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden w-full transition-all hover:shadow-2xl">
+                <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 px-10 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+                            <span class="w-4 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>
+                            ${areaName}
+                        </h2>
+                        <p class="text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Resource Allocation & Availability</p>
+                    </div>
                 </div>
 
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    
+                <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
                     <div class="space-y-6">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-indigo-100">
-                            <i class="fas fa-code text-indigo-600 text-xs"></i>
-                            <h3 class="text-slate-800 font-black text-[11px] uppercase tracking-tighter">Active Developers</h3>
+                            <i class="fas fa-code text-indigo-600"></i>
+                            <h3 class="text-slate-800 font-black text-sm uppercase">Active Developers</h3>
                         </div>
                         ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS)}
                     </div>
 
                     <div class="space-y-6">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-emerald-100">
-                            <i class="fas fa-vial text-emerald-600 text-xs"></i>
-                            <h3 class="text-slate-800 font-black text-[11px] uppercase tracking-tighter">Active Testers</h3>
+                            <i class="fas fa-vial text-emerald-600"></i>
+                            <h3 class="text-slate-800 font-black text-sm uppercase">Active Testers</h3>
                         </div>
                         ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
                     </div>
 
-                    <div class="bg-slate-50/80 rounded-[2rem] p-6 border-2 border-dashed border-slate-200">
+                    <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200">
                         <div class="flex items-center gap-2 mb-6">
-                            <i class="fas fa-user-check text-emerald-600 text-sm"></i>
-                            <h3 class="text-slate-700 font-black text-[11px] uppercase tracking-wider">Available For Tasks</h3>
+                            <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                <i class="fas fa-user-check text-xs"></i>
+                            </div>
+                            <h3 class="text-slate-700 font-black text-sm uppercase tracking-wider">Available For Tasks</h3>
                         </div>
                         
-                        <div class="space-y-5">
+                        <div class="space-y-6">
                             <div>
-                                <p class="text-[9px] font-black text-slate-400 uppercase mb-2 tracking-[0.15em] border-l-2 border-emerald-400 pl-2">Developers</p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest">Developers</p>
                                 <div class="flex flex-wrap gap-2">
                                     ${availableDevs.length > 0 ? availableDevs.map(name => `
-                                        <span class="px-3 py-1 bg-white border border-slate-200 text-slate-600 rounded-lg text-[10px] font-bold shadow-sm">
-                                            ${name}
+                                        <span class="px-3 py-1.5 bg-white border border-emerald-200 text-emerald-700 rounded-xl text-xs font-bold shadow-sm flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> ${name}
                                         </span>
-                                    `).join('') : '<span class="text-slate-300 text-[10px] italic">None available</span>'}
+                                    `).join('') : '<span class="text-slate-300 text-[11px] italic">No free devs in this area</span>'}
                                 </div>
                             </div>
                             
                             <div>
-                                <p class="text-[9px] font-black text-slate-400 uppercase mb-2 tracking-[0.15em] border-l-2 border-indigo-400 pl-2">Testers</p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest">Testers</p>
                                 <div class="flex flex-wrap gap-2">
                                     ${availableTesters.length > 0 ? availableTesters.map(name => `
-                                        <span class="px-3 py-1 bg-white border border-slate-200 text-slate-600 rounded-lg text-[10px] font-bold shadow-sm">
-                                            ${name}
+                                        <span class="px-3 py-1.5 bg-white border border-indigo-200 text-indigo-700 rounded-xl text-xs font-bold shadow-sm flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></span> ${name}
                                         </span>
-                                    `).join('') : '<span class="text-slate-300 text-[10px] italic">None available</span>'}
+                                    `).join('') : '<span class="text-slate-300 text-[11px] italic">No free testers in this area</span>'}
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         `;
