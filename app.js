@@ -1190,86 +1190,100 @@ renderWorkload() {
     const container = document.getElementById('workload-container');
     if (!container) return;
 
-    const devData = {};  // { 'DevName': { 'Area1': hours, 'Area2': hours } }
-    const testData = {}; // { 'TesterName': { 'Area1': hours, 'Area2': hours } }
+    // تجميع البيانات بصيغة: { "اسم الموظف": { "المنطقة": ساعات } }
+    const devWorkload = {}; 
+    const testWorkload = {};
     const MAX_HOURS = 50;
 
-    // 1. معالجة البيانات وتوزيع الساعات حسب الشخص والمنطقة
+    // 1. معالجة البيانات وتصفية المنتهي
     currentData.forEach(story => {
+        // استبعاد الاستوريز المغلقة نهائياً
         if (story.state === 'Closed') return;
 
         const area = story.area || "General";
 
-        // حساب ساعات التطوير المتبقية (تجاهل المنتهي)
-        const devTasks = (story.tasks || []).filter(t => 
+        // --- حساب ضغط عمل المطور ---
+        const activeDevTasks = (story.tasks || []).filter(t => 
             ["Development", "DB Modification"].includes(t['Activity']) &&
-            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
+            t['State'] !== 'To Be Reviewed' && 
+            t['State'] !== 'Closed'
         );
-        const dHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        const dHours = activeDevTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
         if (dHours > 0) {
-            if (!devData[story.assignedTo]) devData[story.assignedTo] = {};
-            devData[story.assignedTo][area] = (devData[story.assignedTo][area] || 0) + dHours;
+            if (!devWorkload[story.assignedTo]) devWorkload[story.assignedTo] = {};
+            devWorkload[story.assignedTo][area] = (devWorkload[story.assignedTo][area] || 0) + dHours;
         }
 
-        // حساب ساعات التست المتبقية (تجاهل المنتهي)
-        const testTasks = (story.tasks || []).filter(t => 
+        // --- حساب ضغط عمل التستر ---
+        const activeTestTasks = (story.tasks || []).filter(t => 
             t['Activity'] === 'Testing' &&
-            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
+            t['State'] !== 'To Be Reviewed' && 
+            t['State'] !== 'Closed'
         );
-        const tHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        const tHours = activeTestTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
         if (tHours > 0) {
-            if (!testData[story.tester]) testData[story.tester] = {};
-            testData[story.tester][area] = (testData[story.tester][area] || 0) + tHours;
+            if (!testWorkload[story.tester]) testWorkload[story.tester] = {};
+            testWorkload[story.tester][area] = (testWorkload[story.tester][area] || 0) + tHours;
         }
     });
 
-    // دالة مساعدة لإنشاء HTML لكل قسم (ديف أو تستر)
-    const generateSectionHtml = (title, data, color) => {
+    // دالة مساعدة لإنشاء HTML للقسم (Developer أو Tester)
+    const createSection = (title, data, themeColor) => {
         return `
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
                 <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-${color}-600 rounded-full"></span>
-                    ${title} Workload
+                    <span class="w-2 h-6 bg-${themeColor}-600 rounded-full"></span>
+                    ${title} Capacity
                 </h3>
                 <div class="space-y-8">
-                    ${Object.entries(data).map(([name, areas]) => {
-                        const totalHours = Object.values(areas).reduce((a, b) => a + b, 0);
+                    ${Object.entries(data).sort((a,b) => {
+                        const totalA = Object.values(a[1]).reduce((sum, h) => sum + h, 0);
+                        const totalB = Object.values(b[1]).reduce((sum, h) => sum + h, 0);
+                        return totalB - totalA;
+                    }).map(([name, areas]) => {
+                        const totalHours = Object.values(areas).reduce((sum, h) => sum + h, 0);
                         const percentage = Math.min((totalHours / MAX_HOURS) * 100, 100);
-                        const barColor = percentage > 90 ? 'bg-red-500' : percentage > 70 ? 'bg-orange-500' : `bg-${color}-500`;
+                        const barColor = totalHours > MAX_HOURS ? 'bg-red-500' : (percentage > 75 ? 'bg-orange-500' : `bg-${themeColor}-500`);
                         
                         return `
-                            <div class="border-b border-gray-50 pb-4 last:border-0">
-                                <div class="flex justify-between mb-2">
-                                    <span class="font-bold text-slate-700">${name}</span>
-                                    <span class="text-sm font-mono ${totalHours > MAX_HOURS ? 'text-red-600 font-black' : 'text-slate-500'}">
-                                        ${totalHours.toFixed(1)} / ${MAX_HOURS}h
-                                    </span>
+                            <div class="group">
+                                <div class="flex justify-between mb-2 items-end">
+                                    <div>
+                                        <div class="font-bold text-slate-800 leading-none mb-1">${name}</div>
+                                        <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Remaining Effort</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm font-mono font-bold ${totalHours > MAX_HOURS ? 'text-red-600' : 'text-slate-600'}">
+                                            ${totalHours.toFixed(1)}h
+                                        </span>
+                                        <span class="text-[10px] text-gray-400 block">/ ${MAX_HOURS}h Limit</span>
+                                    </div>
                                 </div>
-                                <div class="w-full bg-gray-100 rounded-full h-2.5 mb-3">
-                                    <div class="${barColor} h-2.5 rounded-full transition-all duration-700 shadow-sm" style="width: ${percentage}%"></div>
+                                <div class="w-full bg-gray-100 rounded-full h-2.5 mb-3 overflow-hidden">
+                                    <div class="${barColor} h-full rounded-full transition-all duration-1000" style="width: ${percentage}%"></div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    ${Object.entries(areas).map(([areaName, areaHours]) => `
-                                        <div class="bg-gray-50 px-2 py-1 rounded text-[10px] flex justify-between border border-gray-100">
-                                            <span class="text-gray-500 truncate mr-1">${areaName}</span>
-                                            <span class="font-bold text-slate-700">${areaHours.toFixed(1)}h</span>
+                                <div class="flex flex-wrap gap-2">
+                                    ${Object.entries(areas).map(([areaName, hours]) => `
+                                        <div class="flex items-center bg-gray-50 border border-gray-100 rounded-md px-2 py-1">
+                                            <span class="text-[9px] font-bold text-gray-500 mr-2 uppercase">${areaName}:</span>
+                                            <span class="text-[10px] font-black text-slate-700">${hours.toFixed(1)}h</span>
                                         </div>
                                     `).join('')}
                                 </div>
                             </div>
                         `;
-                    }).join('')}
+                    }).join('') || '<div class="text-center text-gray-400 py-10">No active work found.</div>'}
                 </div>
             </div>
         `;
     };
 
     container.innerHTML = `
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            ${generateSectionHtml('Developers', devData, 'indigo')}
-            ${generateSectionHtml('Testers', testData, 'emerald')}
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
+            ${createSection('Developers', devWorkload, 'indigo')}
+            ${createSection('Testers', testWorkload, 'emerald')}
         </div>
     `;
 },
