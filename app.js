@@ -1190,7 +1190,6 @@ renderWorkload() {
     const container = document.getElementById('workload-container');
     if (!container) return;
 
-    // تجميع البيانات حسب المنطقة
     const areaGroups = {};
     const MAX_HOURS = 50;
 
@@ -1200,25 +1199,24 @@ renderWorkload() {
             areaGroups[area] = { 
                 developers: {}, 
                 testers: {}, 
-                bugWorkers: new Set(), // الناس اللي شغالين على باجز
+                bugWorkers: new Set(),
                 allDevsInArea: new Set(), 
                 allTestersInArea: new Set() 
             };
         }
 
-        // تسجيل كل الموظفين المرتبطين بالمنطقة
+        // تسجيل الموظفين في المنطقة
         if (story.assignedTo && story.assignedTo !== "Unassigned") areaGroups[area].allDevsInArea.add(story.assignedTo);
         if (story.tester && story.tester !== "Unassigned") areaGroups[area].allTestersInArea.add(story.tester);
 
-        // منطق الـ Bugs: لو الاستوري نوعها Bug وحالتها Active أو New
+        // منطق الباجات (Active/New)
         const isBugActive = (story.type === 'Bug' || story.Type === 'Bug') && ['Active', 'New'].includes(story.state);
         if (isBugActive) {
             if (story.assignedTo) areaGroups[area].bugWorkers.add(story.assignedTo);
             if (story.tester) areaGroups[area].bugWorkers.add(story.tester);
         }
 
-        // حساب ساعات الشغل النشطة (فقط للاستوريز اللي مش باجز أو لو عايز تفصلهم)
-        // ملاحظة: لو الباج ليها ساعات، الكود الحالي هيحسبها في الـ Workload برضه كضغط عمل
+        // حساب الساعات النشطة (ليست Closed وليست To Be Reviewed)
         const activeDevTasks = (story.tasks || []).filter(t => 
             ["Development", "DB Modification"].includes(t['Activity']) && 
             t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
@@ -1237,13 +1235,13 @@ renderWorkload() {
     let html = `<div class="space-y-12 w-full px-4">`; 
 
     Object.entries(areaGroups).forEach(([areaName, data]) => {
-        // تحديد المتاحين: (موجودين في المنطقة) و (معندهمش ساعات شغل) و (مش شغالين على باجز)
+        // الفلترة: (في المنطقة) و (ليس لديه ساعات نشطة) و (ليس لديه باجات نشطة)
         const availableDevs = [...data.allDevsInArea].filter(name => !data.developers[name] && !data.bugWorkers.has(name));
         const availableTesters = [...data.allTestersInArea].filter(name => !data.testers[name] && !data.bugWorkers.has(name));
         const bugWorkersList = [...data.bugWorkers];
 
         html += `
-            <div class="bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden w-full transition-all hover:shadow-2xl">
+            <div class="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 overflow-hidden w-full transition-all hover:shadow-2xl">
                 <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 px-10">
                     <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3">
                         <span class="w-4 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>
@@ -1251,52 +1249,64 @@ renderWorkload() {
                     </h2>
                 </div>
 
-                <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+                <div class="p-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
                     
                     <div class="space-y-6">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-indigo-100">
-                            <i class="fas fa-code text-indigo-600"></i>
-                            <h3 class="text-slate-800 font-black text-xs uppercase">Active Devs</h3>
+                            <i class="fas fa-code text-indigo-600 text-xs"></i>
+                            <h3 class="text-slate-800 font-black text-[11px] uppercase tracking-tighter">Active Developers</h3>
                         </div>
                         ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS)}
                     </div>
 
                     <div class="space-y-6">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-emerald-100">
-                            <i class="fas fa-vial text-emerald-600"></i>
-                            <h3 class="text-slate-800 font-black text-xs uppercase">Active Testers</h3>
+                            <i class="fas fa-vial text-emerald-600 text-xs"></i>
+                            <h3 class="text-slate-800 font-black text-[11px] uppercase tracking-tighter">Active Testers</h3>
                         </div>
                         ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
                     </div>
 
-                    <div class="bg-amber-50/50 rounded-3xl p-5 border border-amber-100">
-                        <div class="flex items-center gap-2 mb-4">
+                    <div class="bg-amber-50/40 rounded-[2rem] p-6 border border-amber-100">
+                        <div class="flex items-center gap-2 mb-5">
                             <i class="fas fa-bug text-amber-600 text-sm"></i>
-                            <h3 class="text-amber-800 font-black text-xs uppercase tracking-wider">Working on Bugs</h3>
+                            <h3 class="text-amber-900 font-black text-[11px] uppercase tracking-wider">Working on Bugs</h3>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             ${bugWorkersList.length > 0 ? bugWorkersList.map(name => `
-                                <span class="px-3 py-1 bg-white border border-amber-200 text-amber-700 rounded-lg text-[11px] font-bold shadow-sm flex items-center gap-2">
-                                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping"></span> ${name}
+                                <span class="px-3 py-1.5 bg-white border border-amber-200 text-amber-700 rounded-xl text-[10px] font-bold shadow-sm flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span> ${name}
                                 </span>
                             `).join('') : '<span class="text-slate-300 text-[10px] italic">No active bugs</span>'}
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 rounded-3xl p-5 border-2 border-dashed border-slate-200">
-                        <div class="flex items-center gap-2 mb-4">
+                    <div class="bg-slate-50/80 rounded-[2rem] p-6 border-2 border-dashed border-slate-200">
+                        <div class="flex items-center gap-2 mb-6">
                             <i class="fas fa-user-check text-emerald-600 text-sm"></i>
-                            <h3 class="text-slate-700 font-black text-xs uppercase tracking-wider">Available</h3>
+                            <h3 class="text-slate-700 font-black text-[11px] uppercase tracking-wider">Available For Tasks</h3>
                         </div>
-                        <div class="space-y-4">
+                        
+                        <div class="space-y-5">
                             <div>
-                                <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Free Resources</p>
+                                <p class="text-[9px] font-black text-slate-400 uppercase mb-2 tracking-[0.15em] border-l-2 border-emerald-400 pl-2">Developers</p>
                                 <div class="flex flex-wrap gap-2">
-                                    ${[...availableDevs, ...availableTesters].length > 0 ? [...new Set([...availableDevs, ...availableTesters])].map(name => `
-                                        <span class="px-3 py-1 bg-white border border-emerald-100 text-slate-600 rounded-lg text-[11px] font-medium shadow-sm">
+                                    ${availableDevs.length > 0 ? availableDevs.map(name => `
+                                        <span class="px-3 py-1 bg-white border border-slate-200 text-slate-600 rounded-lg text-[10px] font-bold shadow-sm">
                                             ${name}
                                         </span>
-                                    `).join('') : '<span class="text-slate-300 text-[10px] italic">All resources occupied</span>'}
+                                    `).join('') : '<span class="text-slate-300 text-[10px] italic">None available</span>'}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <p class="text-[9px] font-black text-slate-400 uppercase mb-2 tracking-[0.15em] border-l-2 border-indigo-400 pl-2">Testers</p>
+                                <div class="flex flex-wrap gap-2">
+                                    ${availableTesters.length > 0 ? availableTesters.map(name => `
+                                        <span class="px-3 py-1 bg-white border border-slate-200 text-slate-600 rounded-lg text-[10px] font-bold shadow-sm">
+                                            ${name}
+                                        </span>
+                                    `).join('') : '<span class="text-slate-300 text-[10px] italic">None available</span>'}
                                 </div>
                             </div>
                         </div>
