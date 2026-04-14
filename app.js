@@ -1188,18 +1188,20 @@ editDelivery(id) {
   
 renderWorkload() {
     const container = document.getElementById('workload-container');
-    const staffWorkload = {};
+    if (!container) return; // تأكد من وجود الكونتينر
 
-    // 1. فلترة البيانات لاستبعاد القصص المنتهية (Closed) أو التي تحت المراجعة (To Be Reviewed)
-    // ملاحظة: نركز هنا على حالة الـ Story نفسها وحالة التاسكات بداخلها
-    const activeDataForWorkload = currentData.filter(s => 
+    const staffWorkload = {};
+    const areaWorkload = {}; // حل مشكلة ReferenceError: areaWorkload is not defined
+
+    // 1. فلترة القصص النشطة فقط واستثناء المنتهي تماماً
+    const activeStories = currentData.filter(s => 
         s.state !== 'Closed' && 
-        s.state !== 'To Be Reviewed' && 
-        s.state !== 'Tested' // يفضل أيضاً استبعاد المختبرة فعلياً
+        s.state !== 'Tested'
     );
 
-    activeDataForWorkload.forEach(story => {
-        // حساب ساعات التطوير المتبقية (فقط للتاسكات التي ليست To Be Reviewed أو Closed)
+    activeStories.forEach(story => {
+        // --- حساب ضغط عمل المطور (Dev Workload) ---
+        // استثناء المهام التي انتهت (Closed / To Be Reviewed)
         const devTasks = story.tasks.filter(t => 
             ["Development", "DB Modification"].includes(t['Activity']) &&
             t['State'] !== 'To Be Reviewed' && 
@@ -1209,11 +1211,12 @@ renderWorkload() {
         const devHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
         
         if (devHours > 0) {
-            if (!staffWorkload[story.assignedTo]) staffWorkload[story.assignedTo] = 0;
-            staffWorkload[story.assignedTo] += devHours;
+            staffWorkload[story.assignedTo] = (staffWorkload[story.assignedTo] || 0) + devHours;
+            areaWorkload[story.area] = (areaWorkload[story.area] || 0) + devHours;
         }
 
-        // حساب ساعات الاختبار المتبقية
+        // --- حساب ضغط عمل التستر (Test Workload) ---
+        // استثناء المهام التي انتهت (Closed / To Be Reviewed)
         const testTasks = story.tasks.filter(t => 
             t['Activity'] === 'Testing' &&
             t['State'] !== 'To Be Reviewed' && 
@@ -1223,71 +1226,41 @@ renderWorkload() {
         const testHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
         
         if (testHours > 0) {
-            if (!staffWorkload[story.tester]) staffWorkload[story.tester] = 0;
-            staffWorkload[story.tester] += testHours;
+            staffWorkload[story.tester] = (staffWorkload[story.tester] || 0) + testHours;
+            areaWorkload[story.area] = (areaWorkload[story.area] || 0) + testHours;
         }
     });
 
-    // 3. دالة فرعية لإنشاء بلوك الموظف (Progress Bar)
-    const generateStaffProgress = (staff, data, color) => {
-        const totalHours = data.hours;
-        const percentage = Math.min((totalHours / MAX_HOURS) * 100, 100);
-        const isOverloaded = totalHours > MAX_HOURS;
-        const barColor = isOverloaded ? 'bg-red-500' : `bg-${color}-500`;
-        const textColor = isOverloaded ? 'text-red-600 bg-red-50' : `text-${color}-600 bg-${color}-50`;
+    // 2. كود الرندر (HTML) لعرض النتائج
+    this.renderWorkloadUI(staffWorkload, areaWorkload);
+},
 
-        return `
-            <div class="mb-4">
-                <div class="flex justify-between items-center mb-1">
-                    <span class="text-sm font-semibold text-slate-700">${staff}</span>
-                    <span class="text-[11px] font-bold ${textColor} px-2 py-0.5 rounded">
-                        ${totalHours.toFixed(1)} / ${MAX_HOURS}h
-                    </span>
-                </div>
-                <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div class="${barColor} h-full transition-all duration-500" style="width: ${percentage}%"></div>
-                </div>
-                <div class="mt-1 flex flex-wrap gap-1">
-                    ${data.items.map(s => `<span class="text-[8px] px-1 bg-white border border-gray-100 text-gray-400 rounded">#${s.id}</span>`).join('')}
-                </div>
-            </div>
-        `;
-    };
-
-    // 4. بناء الـ HTML النهائي
-    let finalHtml = '';
-    const sortedAreas = Object.keys(areaWorkload).sort();
-
-    sortedAreas.forEach(area => {
-        const devs = areaWorkload[area].devs;
-        const testers = areaWorkload[area].testers;
-
-        finalHtml += `
-            <div class="col-span-full mb-8">
-                <h2 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2">
-                    <span class="p-1.5 bg-indigo-100 rounded-lg text-indigo-600">📂</span>
-                    Area: ${area}
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                        <h4 class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-blue-500"></span> Developers
-                        </h4>
-                        ${Object.keys(devs).map(name => generateStaffProgress(name, devs[name], 'blue')).join('') || '<p class="text-xs text-gray-400">No active dev tasks</p>'}
+renderWorkloadUI(staffWorkload, areaWorkload) {
+    const container = document.getElementById('workload-container');
+    // هنا تضع كود الـ HTML الخاص بك لعرض البيانات...
+    // مثال بسيط للرندر:
+    container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="font-bold mb-3 border-b pb-2">Staff Workload (Remaining Hours)</h3>
+                ${Object.entries(staffWorkload).map(([name, hours]) => `
+                    <div class="flex justify-between py-1 border-b border-gray-50 text-sm">
+                        <span>${name}</span>
+                        <span class="font-bold text-indigo-600">${hours.toFixed(1)}h</span>
                     </div>
-                    
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                        <h4 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-purple-500"></span> QA Testers
-                        </h4>
-                        ${Object.keys(testers).map(name => generateStaffProgress(name, testers[name], 'purple')).join('') || '<p class="text-xs text-gray-400">No active test tasks</p>'}
-                    </div>
-                </div>
+                `).join('')}
             </div>
-        `;
-    });
-
-    container.innerHTML = finalHtml || '<div class="col-span-full text-center py-20 text-gray-400">No workload data available.</div>';
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="font-bold mb-3 border-b pb-2">Area Distribution</h3>
+                ${Object.entries(areaWorkload).map(([area, hours]) => `
+                    <div class="flex justify-between py-1 border-b border-gray-50 text-sm">
+                        <span>${area}</span>
+                        <span class="font-bold text-emerald-600">${hours.toFixed(1)}h</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
 },
 
    
