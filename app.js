@@ -1190,102 +1190,103 @@ renderWorkload() {
     const container = document.getElementById('workload-container');
     if (!container) return;
 
-    // تجميع البيانات بصيغة: { "اسم الموظف": { "المنطقة": ساعات } }
-    const devWorkload = {}; 
-    const testWorkload = {};
+    // تجميع البيانات حسب المنطقة: { "AreaName": { developers: {}, testers: {} } }
+    const areaGroups = {};
     const MAX_HOURS = 50;
 
-    // 1. معالجة البيانات وتصفية المنتهي
     currentData.forEach(story => {
-        // استبعاد الاستوريز المغلقة نهائياً
         if (story.state === 'Closed') return;
 
-        const area = story.area || "General";
-
-        // --- حساب ضغط عمل المطور ---
-        const activeDevTasks = (story.tasks || []).filter(t => 
-            ["Development", "DB Modification"].includes(t['Activity']) &&
-            t['State'] !== 'To Be Reviewed' && 
-            t['State'] !== 'Closed'
-        );
-        const dHours = activeDevTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-
-        if (dHours > 0) {
-            if (!devWorkload[story.assignedTo]) devWorkload[story.assignedTo] = {};
-            devWorkload[story.assignedTo][area] = (devWorkload[story.assignedTo][area] || 0) + dHours;
+        const area = story.area || "General Business Area";
+        if (!areaGroups[area]) {
+            areaGroups[area] = { developers: {}, testers: {} };
         }
 
-        // --- حساب ضغط عمل التستر ---
-        const activeTestTasks = (story.tasks || []).filter(t => 
-            t['Activity'] === 'Testing' &&
-            t['State'] !== 'To Be Reviewed' && 
-            t['State'] !== 'Closed'
+        // 1. حساب ساعات التطوير (استثناء المنتهي)
+        const devTasks = (story.tasks || []).filter(t => 
+            ["Development", "DB Modification"].includes(t['Activity']) &&
+            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
         );
-        const tHours = activeTestTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        const dHours = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        if (dHours > 0) {
+            areaGroups[area].developers[story.assignedTo] = (areaGroups[area].developers[story.assignedTo] || 0) + dHours;
+        }
 
+        // 2. حساب ساعات التست (استثناء المنتهي)
+        const testTasks = (story.tasks || []).filter(t => 
+            t['Activity'] === 'Testing' &&
+            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
+        );
+        const tHours = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
         if (tHours > 0) {
-            if (!testWorkload[story.tester]) testWorkload[story.tester] = {};
-            testWorkload[story.tester][area] = (testWorkload[story.tester][area] || 0) + tHours;
+            areaGroups[area].testers[story.tester] = (areaGroups[area].testers[story.tester] || 0) + tHours;
         }
     });
 
-    // دالة مساعدة لإنشاء HTML للقسم (Developer أو Tester)
-    const createSection = (title, data, themeColor) => {
-        return `
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-                <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-${themeColor}-600 rounded-full"></span>
-                    ${title} Capacity
-                </h3>
-                <div class="space-y-8">
-                    ${Object.entries(data).sort((a,b) => {
-                        const totalA = Object.values(a[1]).reduce((sum, h) => sum + h, 0);
-                        const totalB = Object.values(b[1]).reduce((sum, h) => sum + h, 0);
-                        return totalB - totalA;
-                    }).map(([name, areas]) => {
-                        const totalHours = Object.values(areas).reduce((sum, h) => sum + h, 0);
-                        const percentage = Math.min((totalHours / MAX_HOURS) * 100, 100);
-                        const barColor = totalHours > MAX_HOURS ? 'bg-red-500' : (percentage > 75 ? 'bg-orange-500' : `bg-${themeColor}-500`);
-                        
-                        return `
-                            <div class="group">
-                                <div class="flex justify-between mb-2 items-end">
-                                    <div>
-                                        <div class="font-bold text-slate-800 leading-none mb-1">${name}</div>
-                                        <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Remaining Effort</div>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="text-sm font-mono font-bold ${totalHours > MAX_HOURS ? 'text-red-600' : 'text-slate-600'}">
-                                            ${totalHours.toFixed(1)}h
-                                        </span>
-                                        <span class="text-[10px] text-gray-400 block">/ ${MAX_HOURS}h Limit</span>
-                                    </div>
-                                </div>
-                                <div class="w-full bg-gray-100 rounded-full h-2.5 mb-3 overflow-hidden">
-                                    <div class="${barColor} h-full rounded-full transition-all duration-1000" style="width: ${percentage}%"></div>
-                                </div>
-                                <div class="flex flex-wrap gap-2">
-                                    ${Object.entries(areas).map(([areaName, hours]) => `
-                                        <div class="flex items-center bg-gray-50 border border-gray-100 rounded-md px-2 py-1">
-                                            <span class="text-[9px] font-bold text-gray-500 mr-2 uppercase">${areaName}:</span>
-                                            <span class="text-[10px] font-black text-slate-700">${hours.toFixed(1)}h</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        `;
-                    }).join('') || '<div class="text-center text-gray-400 py-10">No active work found.</div>'}
+    // بناء الواجهة
+    let html = `<div class="space-y-10 w-full px-2">`; // مسافات واسعة بين المربعات
+
+    Object.entries(areaGroups).forEach(([areaName, staff]) => {
+        const hasData = Object.keys(staff.developers).length > 0 || Object.keys(staff.testers).length > 0;
+        if (!hasData) return;
+
+        html += `
+            <div class="bg-white rounded-3xl shadow-md border border-gray-200 overflow-hidden w-full">
+                <div class="bg-slate-800 p-5 px-8 flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-3 h-3 bg-indigo-400 rounded-full animate-pulse"></span>
+                        ${areaName}
+                    </h2>
+                    <span class="text-slate-400 text-sm font-medium">Business Area Workload</span>
+                </div>
+
+                <div class="p-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div class="space-y-6">
+                        <h3 class="text-indigo-600 font-black text-sm uppercase tracking-widest flex items-center gap-2 mb-4">
+                            <i class="fas fa-code"></i> Developers
+                        </h3>
+                        ${this.generateStaffBars(staff.developers, 'indigo', MAX_HOURS)}
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="text-emerald-600 font-black text-sm uppercase tracking-widest flex items-center gap-2 mb-4">
+                            <i class="fas fa-vial"></i> Testers
+                        </h3>
+                        ${this.generateStaffBars(staff.testers, 'emerald', MAX_HOURS)}
+                    </div>
                 </div>
             </div>
         `;
-    };
+    });
 
-    container.innerHTML = `
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
-            ${createSection('Developers', devWorkload, 'indigo')}
-            ${createSection('Testers', testWorkload, 'emerald')}
-        </div>
-    `;
+    html += `</div>`;
+    container.innerHTML = html;
+},
+
+// دالة مساعدة لرسم الأعمدة داخل كل منطقة
+generateStaffBars(staffData, color, max) {
+    const entries = Object.entries(staffData);
+    if (entries.length === 0) return `<div class="text-gray-300 text-sm italic italic">No active tasks</div>`;
+
+    return entries.sort((a,b) => b[1] - a[1]).map(([name, hours]) => {
+        const perc = Math.min((hours / max) * 100, 100);
+        const isOver = hours > max;
+        const barColor = isOver ? 'bg-red-500' : (perc > 80 ? 'bg-orange-500' : `bg-${color}-500`);
+
+        return `
+            <div class="relative">
+                <div class="flex justify-between mb-1.5 items-end">
+                    <span class="font-bold text-slate-700">${name}</span>
+                    <span class="text-xs font-mono ${isOver ? 'text-red-600 font-black' : 'text-slate-500'}">
+                        ${hours.toFixed(1)} <span class="text-[10px]">/ ${max}h</span>
+                    </span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-3">
+                    <div class="${barColor} h-3 rounded-full transition-all duration-1000 shadow-sm" style="width: ${perc}%"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
 },
 
    
