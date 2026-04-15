@@ -1193,7 +1193,21 @@ renderWorkload() {
     const areaGroups = {};
     const MAX_HOURS = 50;
 
-    // 1. تجميع البيانات وتحديد العاملين على البجات النشطة عبر كل القصص
+    // --- 1. حساب الانشغال العالمي (Global Tracking) ---
+    // تتبع الأشخاص الذين لديهم ساعات عمل نشطة في أي مكان في النظام
+    const globalTaskWorkers = new Set();
+    currentData.forEach(story => {
+        const activeTasks = (story.tasks || []).filter(t => 
+            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed' && 
+            parseFloat(t['Original Estimation'] || 0) > 0
+        );
+        activeTasks.forEach(t => {
+            const worker = (t['Activity'] === 'Testing') ? story.tester : story.assignedTo;
+            if (worker && worker !== "Unassigned") globalTaskWorkers.add(worker);
+        });
+    });
+
+    // --- 2. تجميع البيانات الأصلية وتحديد العاملين على البجات ---
     const bugWorkersGlobal = new Set();
     currentData.forEach(story => {
         const area = story.area || "General Business Area";
@@ -1206,11 +1220,9 @@ renderWorkload() {
             };
         }
 
-        // تسجيل كل الموظفين المنتمين لهذه المنطقة
         if (story.assignedTo && story.assignedTo !== "Unassigned") areaGroups[area].allDevsInArea.add(story.assignedTo);
         if (story.tester && story.tester !== "Unassigned") areaGroups[area].allTestersInArea.add(story.tester);
 
-        // حساب ساعات التطوير النشطة (استثناء To Be Reviewed و Closed)
         const activeDevTasks = (story.tasks || []).filter(t => 
             ["Development", "DB Modification"].includes(t['Activity']) && 
             t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
@@ -1220,7 +1232,6 @@ renderWorkload() {
             areaGroups[area].developers[story.assignedTo] = (areaGroups[area].developers[story.assignedTo] || 0) + dHours;
         }
 
-        // حساب ساعات التست النشطة
         const activeTestTasks = (story.tasks || []).filter(t => 
             t['Activity'] === 'Testing' && 
             t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
@@ -1230,7 +1241,6 @@ renderWorkload() {
             areaGroups[area].testers[story.tester] = (areaGroups[area].testers[story.tester] || 0) + tHours;
         }
 
-        // تتبع أي شخص لديه بجز نشطة أو جديدة (New / Active)
         if (story.bugs && story.bugs.length > 0) {
             story.bugs.forEach(bug => {
                 if (['New', 'Active'].includes(bug['State'])) {
@@ -1241,13 +1251,11 @@ renderWorkload() {
         }
     });
 
-    // 2. بناء واجهة العرض لكل منطقة
+    // --- 3. بناء واجهة العرض ---
     container.innerHTML = Object.entries(areaGroups).map(([areaName, data]) => {
-        // تحديد المتاحين مبدئياً (من ليس لديهم مهام نشطة في الـ Developers أو Testers)
         const rawAvailableDevs = [...data.allDevsInArea].filter(name => !data.developers[name]);
         const rawAvailableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]);
 
-        // فرز المتاحين: من لديه بجز يُنقل لعمود "شغال على بجز"، والبقية يبقون في "المتاحين"
         const workingOnBugs = [];
         const finalAvailableDevs = [];
         const finalAvailableTesters = [];
@@ -1261,6 +1269,20 @@ renderWorkload() {
             if (bugWorkersGlobal.has(name)) workingOnBugs.push({ name, role: 'Tester' });
             else finalAvailableTesters.push(name);
         });
+
+        // وظيفة مساعدة لإنشاء تاج الشخص المتاح مع الفلاج
+        const renderAvailableTag = (name) => {
+            // الشخص يعتبر مشغول في مكان آخر إذا كان لديه بجات عالمياً أو تاسكات عالمياً
+            const isBusyElsewhere = bugWorkersGlobal.has(name) || globalTaskWorkers.has(name);
+            const flag = isBusyElsewhere 
+                ? `<span class="ml-1.5 text-[8px] bg-amber-100 text-amber-600 px-1 rounded shadow-sm italic font-black ring-1 ring-amber-200">BUSY</span>` 
+                : '';
+            
+            return `
+                <span class="px-3 py-1 bg-white border ${isBusyElsewhere ? 'border-amber-200 shadow-amber-50' : 'border-slate-200'} text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center">
+                    ${name}${flag}
+                </span>`;
+        };
 
         return `
             <div class="mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100">
@@ -1326,21 +1348,13 @@ renderWorkload() {
                             <div>
                                 <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Developers</p>
                                 <div class="flex flex-wrap gap-2">
-                                    ${finalAvailableDevs.length > 0 ? finalAvailableDevs.map(name => `
-                                        <span class="px-3 py-1 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors">
-                                            ${name}
-                                        </span>
-                                    `).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                                    ${finalAvailableDevs.length > 0 ? finalAvailableDevs.map(name => renderAvailableTag(name)).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
                                 </div>
                             </div>
                             <div>
                                 <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Testers</p>
                                 <div class="flex flex-wrap gap-2">
-                                    ${finalAvailableTesters.length > 0 ? finalAvailableTesters.map(name => `
-                                        <span class="px-3 py-1 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors">
-                                            ${name}
-                                        </span>
-                                    `).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                                    ${finalAvailableTesters.length > 0 ? finalAvailableTesters.map(name => renderAvailableTag(name)).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
                                 </div>
                             </div>
                         </div>
