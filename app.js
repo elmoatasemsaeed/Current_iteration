@@ -1190,12 +1190,12 @@ renderWorkload() {
     const container = document.getElementById('workload-container');
     if (!container) return;
 
-    // تجميع البيانات حسب المنطقة: { "AreaName": { developers: {}, testers: {}, availableDevs: Set, availableTesters: Set } }
     const areaGroups = {};
     const MAX_HOURS = 50;
 
+    // 1. تجميع البيانات وتحديد العاملين على البجات النشطة عبر كل القصص
+    const bugWorkersGlobal = new Set();
     currentData.forEach(story => {
-        // لا نتوقف عند Closed هنا لأننا نحتاج معرفة من "كان" يعمل في المنطقة وأصبح متاحاً
         const area = story.area || "General Business Area";
         if (!areaGroups[area]) {
             areaGroups[area] = { 
@@ -1206,50 +1206,64 @@ renderWorkload() {
             };
         }
 
-        // تسجيل كل من له علاقة بهذه المنطقة (لتحديد المتاحين لاحقاً)
+        // تسجيل كل الموظفين المنتمين لهذه المنطقة
         if (story.assignedTo && story.assignedTo !== "Unassigned") areaGroups[area].allDevsInArea.add(story.assignedTo);
         if (story.tester && story.tester !== "Unassigned") areaGroups[area].allTestersInArea.add(story.tester);
 
-        // 1. حساب ساعات التطوير النشطة (استثناء To Be Reviewed و Closed)
+        // حساب ساعات التطوير النشطة (استثناء To Be Reviewed و Closed)
         const activeDevTasks = (story.tasks || []).filter(t => 
             ["Development", "DB Modification"].includes(t['Activity']) && 
             t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
         );
         const dHours = activeDevTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        
         if (dHours > 0) {
             areaGroups[area].developers[story.assignedTo] = (areaGroups[area].developers[story.assignedTo] || 0) + dHours;
         }
 
-        // 2. حساب ساعات التست النشطة (استثناء To Be Reviewed و Closed)
+        // حساب ساعات التست النشطة
         const activeTestTasks = (story.tasks || []).filter(t => 
             t['Activity'] === 'Testing' && 
             t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
         );
         const tHours = activeTestTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        
         if (tHours > 0) {
             areaGroups[area].testers[story.tester] = (areaGroups[area].testers[story.tester] || 0) + tHours;
         }
+
+        // تتبع أي شخص لديه بجز نشطة أو جديدة (New / Active)
+        if (story.bugs && story.bugs.length > 0) {
+            story.bugs.forEach(bug => {
+                if (['New', 'Active'].includes(bug['State'])) {
+                    const worker = bug['Assigned To'];
+                    if (worker && worker !== "Unassigned") bugWorkersGlobal.add(worker);
+                }
+            });
+        }
     });
 
-    // بناء الواجهة مع توسيع المربعات وتقسيمها لـ 3 أعمدة
-    let html = `<div class="space-y-12 w-full px-4">`; 
+    // 2. بناء واجهة العرض لكل منطقة
+    container.innerHTML = Object.entries(areaGroups).map(([areaName, data]) => {
+        // تحديد المتاحين مبدئياً (من ليس لديهم مهام نشطة في الـ Developers أو Testers)
+        const rawAvailableDevs = [...data.allDevsInArea].filter(name => !data.developers[name]);
+        const rawAvailableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]);
 
-    Object.entries(areaGroups).forEach(([areaName, data]) => {
-        // تحديد المتاحين: هم من وجدوا في المنطقة ولكن ليس لديهم ساعات نشطة حالياً
-        const availableDevs = [...data.allDevsInArea].filter(name => !data.developers[name]);
-        const availableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]);
+        // فرز المتاحين: من لديه بجز يُنقل لعمود "شغال على بجز"، والبقية يبقون في "المتاحين"
+        const workingOnBugs = [];
+        const finalAvailableDevs = [];
+        const finalAvailableTesters = [];
 
-        const hasAnyData = Object.keys(data.developers).length > 0 || 
-                           Object.keys(data.testers).length > 0 || 
-                           availableDevs.length > 0 || 
-                           availableTesters.length > 0;
+        rawAvailableDevs.forEach(name => {
+            if (bugWorkersGlobal.has(name)) workingOnBugs.push({ name, role: 'Developer' });
+            else finalAvailableDevs.push(name);
+        });
 
-        if (!hasAnyData) return;
+        rawAvailableTesters.forEach(name => {
+            if (bugWorkersGlobal.has(name)) workingOnBugs.push({ name, role: 'Tester' });
+            else finalAvailableTesters.push(name);
+        });
 
-        html += `
-            <div class="bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden w-full transition-all hover:shadow-2xl">
+        return `
+            <div class="mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100">
                 <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 px-10 flex justify-between items-center">
                     <div>
                         <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3">
@@ -1260,7 +1274,7 @@ renderWorkload() {
                     </div>
                 </div>
 
-                <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
+                <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
                     <div class="space-y-6">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-indigo-100">
                             <i class="fas fa-code text-indigo-600"></i>
@@ -1277,34 +1291,56 @@ renderWorkload() {
                         ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
                     </div>
 
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-2 pb-2 border-b-2 border-amber-100">
+                            <i class="fas fa-bug text-amber-600"></i>
+                            <h3 class="text-slate-800 font-black text-sm uppercase">شغال على بجز</h3>
+                        </div>
+                        <div class="space-y-3">
+                            ${workingOnBugs.length > 0 ? workingOnBugs.map(worker => `
+                                <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-100">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-amber-600 font-bold text-xs border border-amber-200">
+                                            ${worker.name.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <div class="text-xs font-bold text-slate-700">${worker.name}</div>
+                                            <div class="text-[9px] text-amber-600 uppercase font-bold">${worker.role}</div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-bold">Bugs Found</span>
+                                </div>
+                            `).join('') : '<div class="text-slate-400 text-xs italic p-4 text-center">لا يوجد أحد</div>'}
+                        </div>
+                    </div>
+
                     <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200">
                         <div class="flex items-center gap-2 mb-6">
                             <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
                                 <i class="fas fa-user-check text-xs"></i>
                             </div>
-                            <h3 class="text-slate-700 font-black text-sm uppercase tracking-wider">Available For Tasks</h3>
+                            <h3 class="text-slate-800 font-black text-sm uppercase">Available For Tasks</h3>
                         </div>
                         
-                        <div class="space-y-6">
+                        <div class="space-y-4">
                             <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest">Developers</p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Developers</p>
                                 <div class="flex flex-wrap gap-2">
-                                    ${availableDevs.length > 0 ? availableDevs.map(name => `
-                                        <span class="px-3 py-1.5 bg-white border border-emerald-200 text-emerald-700 rounded-xl text-xs font-bold shadow-sm flex items-center gap-2">
-                                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> ${name}
+                                    ${finalAvailableDevs.length > 0 ? finalAvailableDevs.map(name => `
+                                        <span class="px-3 py-1 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors">
+                                            ${name}
                                         </span>
-                                    `).join('') : '<span class="text-slate-300 text-[11px] italic">No free devs in this area</span>'}
+                                    `).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
                                 </div>
                             </div>
-                            
                             <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest">Testers</p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Testers</p>
                                 <div class="flex flex-wrap gap-2">
-                                    ${availableTesters.length > 0 ? availableTesters.map(name => `
-                                        <span class="px-3 py-1.5 bg-white border border-indigo-200 text-indigo-700 rounded-xl text-xs font-bold shadow-sm flex items-center gap-2">
-                                            <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></span> ${name}
+                                    ${finalAvailableTesters.length > 0 ? finalAvailableTesters.map(name => `
+                                        <span class="px-3 py-1 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors">
+                                            ${name}
                                         </span>
-                                    `).join('') : '<span class="text-slate-300 text-[11px] italic">No free testers in this area</span>'}
+                                    `).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
                                 </div>
                             </div>
                         </div>
@@ -1312,10 +1348,7 @@ renderWorkload() {
                 </div>
             </div>
         `;
-    });
-
-    html += `</div>`;
-    container.innerHTML = html;
+    }).join('');
 },
 
 // دالة مساعدة لرسم الأعمدة داخل كل منطقة
