@@ -5289,21 +5289,21 @@
           "Title": "Management- Services - Bulk Operation",
           "Assigned To": "Saleh Abdulrahim Attia <saleh.attia@nationaltechnology.net>",
           "Activity": "",
-          "Original Estimation": "",
+          "Original Estimation": "0.5",
           "TimeSheet_DevActualTime": "",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "4/15/2026 12:29:01 PM",
           "Business Area": "",
           "Iteration Path": "MobileApp",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "New",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "4/15/2026 12:00:36 PM",
+          "Changed Date": "4/15/2026 12:29:01 PM",
           "Branch": "",
           "Customer": ""
         }
@@ -5373,7 +5373,7 @@
       "calc": {
         "devEnd": "2026-03-16T07:00:00.000Z",
         "testEnd": "2026-03-26T11:00:00.000Z",
-        "finalEnd": "2026-04-12T10:38:07.000Z"
+        "finalEnd": "2026-04-15T11:29:01.000Z"
       },
       "customTags": [],
       "standupComments": []
@@ -5518,7 +5518,32 @@
           "Customer": "Jeddah MOH Cluster_171"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": "168245",
+          "Work Item Type": "Bug",
+          "Title": "When register any patient from lab to lab give an Error",
+          "Assigned To": "Ibrahim Ahmed Abo El-Fadl Ahmed <ibrahim.ahmed@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 8-23",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "generic bug",
+          "Changed Date": "4/15/2026 12:29:37 PM",
+          "Branch": "",
+          "Customer": "Jeddah MOH Cluster_171"
+        }
+      ],
       "testCases": [
         {
           "id": "167943",
@@ -12538,11 +12563,13 @@
       "tester": "Bassant Abdelhamid <bassant.abdelhamid@nationaltechnology.net>",
       "area": "Home Visit",
       "priority": 2,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-04-15T09:35:47.000Z",
+      "changedDate": "2026-04-15T10:25:17.000Z",
       "tasks": [
         {
           "ID": "166984",
@@ -14992,7 +15019,7 @@
       "id": "64800",
       "title": "Alex University - Search: Add \"Total Registrations\" above both grids to display total number of accessions displayed at the grid, if the search results retrieved more than 30,000 reports records show an error message and don't display the data",
       "type": "User Story",
-      "state": "Active",
+      "state": "Resolved",
       "assignedTo": "Mohamed Hany <mohamed.tawfik@nationaltechnology.net>",
       "tester": "Mahmoud Ab Omar <mahmoud.aboomar@nationaltechnology.net>",
       "area": "Internal lab",
@@ -15001,7 +15028,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alex University Hospitals_413",
-      "changedDate": "2026-04-15T10:06:06.000Z",
+      "changedDate": "2026-04-15T10:34:54.000Z",
       "tasks": [
         {
           "ID": "167593",
@@ -15228,18 +15255,18 @@
           "Original Estimation": "5",
           "TimeSheet_DevActualTime": "",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "4/15/2026 12:25:27 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 8-23",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "New",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "4/15/2026 12:17:55 PM",
+          "Changed Date": "4/15/2026 12:25:27 PM",
           "Branch": "",
           "Customer": "Alex University Hospitals_413"
         },
@@ -15268,7 +15295,56 @@
           "Customer": "Alex University Hospitals_413"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": "168215",
+          "Work Item Type": "Bug",
+          "Title": "#CR64800: Search Blocked when using Patient No. without Dates",
+          "Assigned To": "Mohamed Hany <mohamed.tawfik@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 8-23",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "4/15/2026 12:27:01 PM",
+          "Branch": "",
+          "Customer": "Alex University Hospitals_413"
+        },
+        {
+          "ID": "168246",
+          "Work Item Type": "Bug",
+          "Title": "#CR64800: Missing Sequential Labels/Formatting in Result Counts",
+          "Assigned To": "Mohamed Hany <mohamed.tawfik@nationaltechnology.net>",
+          "Activity": "",
+          "Original Estimation": "",
+          "TimeSheet_DevActualTime": "",
+          "TimeSheet_TestingActualTime": "",
+          "Activated Date": "",
+          "Business Area": "",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 8-23",
+          "CustomResolvedDate": "",
+          "Tested Date": "",
+          "Assigned To Tester": "",
+          "Resolved Date": "",
+          "State": "New",
+          "Release Expected Date": "",
+          "Business Priority": "",
+          "Tags": "",
+          "Changed Date": "4/15/2026 12:40:03 PM",
+          "Branch": "",
+          "Customer": "Alex University Hospitals_413"
+        }
+      ],
       "testCases": [
         {
           "id": "168200",
@@ -15812,7 +15888,7 @@
           "Assigned To": "Mohamed Abdelghany <mohamed.abdelghany@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "5.25",
-          "TimeSheet_DevActualTime": "2.5",
+          "TimeSheet_DevActualTime": "4.75",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "4/14/2026 12:03:14 PM",
           "Business Area": "",
@@ -15825,7 +15901,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "4/15/2026 9:11:37 AM",
+          "Changed Date": "4/15/2026 12:34:42 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -15859,8 +15935,8 @@
           "Title": "BD006: Clear all ordering for accession number",
           "Assigned To": "Mohamed Abdelghany <mohamed.abdelghany@nationaltechnology.net>",
           "Activity": "Development",
-          "Original Estimation": "5.25",
-          "TimeSheet_DevActualTime": "",
+          "Original Estimation": "1.75",
+          "TimeSheet_DevActualTime": "1",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "4/15/2026 11:00:58 AM",
           "Business Area": "",
@@ -15868,12 +15944,12 @@
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
-          "Resolved Date": "",
-          "State": "Active",
+          "Resolved Date": "4/15/2026 12:37:28 PM",
+          "State": "To Be Reviewed",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "4/15/2026 11:21:06 AM",
+          "Changed Date": "4/15/2026 12:37:28 PM",
           "Branch": "",
           "Customer": "Internal CR_2000"
         },
@@ -16062,9 +16138,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-04-16T07:00:00.000Z",
-        "testEnd": "2026-04-19T14:00:00.000Z",
-        "finalEnd": "2026-04-19T14:00:00.000Z"
+        "devEnd": "2026-04-14T14:00:00.000Z",
+        "testEnd": "2026-04-15T14:00:00.000Z",
+        "finalEnd": "2026-04-15T14:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -17059,9 +17135,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-04-19T07:00:00.000Z",
-        "testEnd": "2026-04-20T13:00:00.000Z",
-        "finalEnd": "2026-04-20T13:00:00.000Z"
+        "devEnd": "2026-04-15T14:00:00.000Z",
+        "testEnd": "2026-04-16T13:00:00.000Z",
+        "finalEnd": "2026-04-16T13:00:00.000Z"
       },
       "customTags": [
         "Ayman_CRs"
@@ -17078,7 +17154,7 @@
       "id": "161907",
       "title": "Alborg KSA - Patient Reports: Create new Stool Report; Report Code: STOOL",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Ola Gamal <ola.gamal@nationaltechnology.net>",
       "tester": "Ammar Yasser Ahmed <Ammar.Ahmed@nationaltechnology.net>",
       "area": "Internal lab",
@@ -17090,7 +17166,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-04-15T09:31:58.000Z",
+      "changedDate": "2026-04-15T10:32:56.000Z",
       "tasks": [
         {
           "ID": "166171",
@@ -19314,12 +19390,14 @@
       "area": "Registration",
       "priority": 8,
       "tags": [
-        "Finish waiting review"
+        "change periorty for developer he fixes bugs now",
+        " finish review",
+        " waiting pr"
       ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-04-15T08:31:07.000Z",
+      "changedDate": "2026-04-15T10:36:20.000Z",
       "tasks": [
         {
           "ID": "168017",
@@ -19448,20 +19526,20 @@
           "Assigned To": "Fatma Fayed <fatma.fayed@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "1",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "0.17",
           "TimeSheet_TestingActualTime": "",
-          "Activated Date": "",
+          "Activated Date": "4/15/2026 12:32:18 PM",
           "Business Area": "",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 8-23",
           "CustomResolvedDate": "",
           "Tested Date": "",
           "Assigned To Tester": "",
           "Resolved Date": "",
-          "State": "New",
+          "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "4/15/2026 10:29:46 AM",
+          "Changed Date": "4/15/2026 12:33:35 PM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -19472,7 +19550,7 @@
           "Assigned To": "Fatma Fayed <fatma.fayed@nationaltechnology.net>",
           "Activity": "Development",
           "Original Estimation": "1",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "0.25",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "4/15/2026 12:08:11 PM",
           "Business Area": "",
@@ -19485,7 +19563,7 @@
           "Release Expected Date": "",
           "Business Priority": "",
           "Tags": "",
-          "Changed Date": "4/15/2026 12:08:11 PM",
+          "Changed Date": "4/15/2026 12:32:12 PM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         }
@@ -23551,11 +23629,13 @@
       "tester": "Ammar Yasser Ahmed <Ammar.Ahmed@nationaltechnology.net>",
       "area": "Internal lab",
       "priority": 15,
-      "tags": [],
+      "tags": [
+        "Preparation in Progress"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-04-15T10:14:48.000Z",
+      "changedDate": "2026-04-15T10:32:20.000Z",
       "tasks": [
         {
           "ID": "168168",
@@ -23588,7 +23668,7 @@
           "Assigned To": "Ahmed Farag Shaban <ahmed.shaban@nationaltechnology.net>",
           "Activity": "DB Modification",
           "Original Estimation": "0.5",
-          "TimeSheet_DevActualTime": "",
+          "TimeSheet_DevActualTime": "0.5",
           "TimeSheet_TestingActualTime": "",
           "Activated Date": "4/15/2026 11:31:07 AM",
           "Business Area": "",
@@ -23600,8 +23680,8 @@
           "State": "Active",
           "Release Expected Date": "",
           "Business Priority": "",
-          "Tags": "",
-          "Changed Date": "4/15/2026 11:31:07 AM",
+          "Tags": "liquibase; V3.4.0; Wait .Net review",
+          "Changed Date": "4/15/2026 12:26:04 PM",
           "Branch": "",
           "Customer": "Al Borg KSA_530"
         },
@@ -23727,7 +23807,120 @@
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": "168216",
+          "state": "Design"
+        },
+        {
+          "id": "168217",
+          "state": "Design"
+        },
+        {
+          "id": "168218",
+          "state": "Design"
+        },
+        {
+          "id": "168219",
+          "state": "Design"
+        },
+        {
+          "id": "168220",
+          "state": "Design"
+        },
+        {
+          "id": "168221",
+          "state": "Design"
+        },
+        {
+          "id": "168222",
+          "state": "Design"
+        },
+        {
+          "id": "168223",
+          "state": "Design"
+        },
+        {
+          "id": "168224",
+          "state": "Design"
+        },
+        {
+          "id": "168225",
+          "state": "Design"
+        },
+        {
+          "id": "168226",
+          "state": "Design"
+        },
+        {
+          "id": "168227",
+          "state": "Design"
+        },
+        {
+          "id": "168228",
+          "state": "Design"
+        },
+        {
+          "id": "168229",
+          "state": "Design"
+        },
+        {
+          "id": "168230",
+          "state": "Design"
+        },
+        {
+          "id": "168231",
+          "state": "Design"
+        },
+        {
+          "id": "168232",
+          "state": "Design"
+        },
+        {
+          "id": "168233",
+          "state": "Design"
+        },
+        {
+          "id": "168234",
+          "state": "Design"
+        },
+        {
+          "id": "168235",
+          "state": "Design"
+        },
+        {
+          "id": "168236",
+          "state": "Design"
+        },
+        {
+          "id": "168237",
+          "state": "Design"
+        },
+        {
+          "id": "168238",
+          "state": "Design"
+        },
+        {
+          "id": "168239",
+          "state": "Design"
+        },
+        {
+          "id": "168240",
+          "state": "Design"
+        },
+        {
+          "id": "168241",
+          "state": "Design"
+        },
+        {
+          "id": "168242",
+          "state": "Design"
+        },
+        {
+          "id": "168243",
+          "state": "Design"
+        }
+      ],
       "calc": {
         "devEnd": "2026-04-16T09:00:00.000Z",
         "testEnd": "2026-04-23T10:00:00.000Z",
