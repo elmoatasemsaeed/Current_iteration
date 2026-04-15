@@ -1294,7 +1294,7 @@ renderWorkload() {
                     <div class="space-y-6">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-amber-100">
                             <i class="fas fa-bug text-amber-600"></i>
-                            <h3 class="text-slate-800 font-black text-sm uppercase">شغال على بجز</h3>
+                            <h3 class="text-slate-800 font-black text-sm uppercase">Working On Bugs</h3>
                         </div>
                         <div class="space-y-3">
                             ${workingOnBugs.length > 0 ? workingOnBugs.map(worker => `
