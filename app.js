@@ -1366,25 +1366,32 @@ renderWorkload() {
     }).join('');
 },
 // دالة مساعدة لرسم الأعمدة داخل كل منطقة
-generateStaffBars(staffData, color, max) {
-    const entries = Object.entries(staffData);
-    if (entries.length === 0) return `<div class="text-gray-300 text-sm italic italic">No active tasks</div>`;
-
-    return entries.sort((a,b) => b[1] - a[1]).map(([name, hours]) => {
-        const perc = Math.min((hours / max) * 100, 100);
-        const isOver = hours > max;
-        const barColor = isOver ? 'bg-red-500' : (perc > 80 ? 'bg-orange-500' : `bg-${color}-500`);
+generateStaffBars(staffObject, color, maxHours) {
+    return Object.entries(staffObject).map(([name, hours]) => {
+        const percent = Math.min((hours / maxHours) * 100, 100);
+        
+        // البحث عن الـ Story ID المرتبط بهذا الشخص من db.currentStories
+        // ملاحظة: بما أن الشخص قد يكون لديه عدة ستوريز، نأخذ أول واحدة للترتيب
+        const story = db.currentStories.find(s => s.assignedTo === name || s.tester === name);
+        const storyId = story ? (story.id || story.ID) : '';
 
         return `
-            <div class="relative">
-                <div class="flex justify-between mb-1.5 items-end">
-                    <span class="font-bold text-slate-700">${name}</span>
-                    <span class="text-xs font-mono ${isOver ? 'text-red-600 font-black' : 'text-slate-500'}">
-                        ${hours.toFixed(1)} <span class="text-[10px]">/ ${max}h</span>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md"
+                 draggable="true" 
+                 data-id="${storyId}"
+                 ondragstart="dragDropManager.handleDragStart(event)"
+                 ondrop="dragDropManager.handleDrop(event, '${name}')"
+                 ondragover="dragDropManager.handleDragOver(event)">
+                
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-black text-slate-700">${name}</span>
+                    <span class="text-[10px] font-bold text-${color}-600 bg-${color}-50 px-2 py-0.5 rounded-full">
+                        ${hours}h
                     </span>
                 </div>
-                <div class="w-full bg-gray-100 rounded-full h-3">
-                    <div class="${barColor} h-3 rounded-full transition-all duration-1000 shadow-sm" style="width: ${perc}%"></div>
+                
+                <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-${color}-500 transition-all duration-500" style="width: ${percent}%"></div>
                 </div>
             </div>
         `;
