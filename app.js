@@ -1194,7 +1194,6 @@ renderWorkload() {
     const MAX_HOURS = 50;
 
     // --- 1. حساب الانشغال العالمي (Global Tracking) ---
-    // تتبع الأشخاص الذين لديهم ساعات عمل نشطة في أي مكان في النظام
     const globalTaskWorkers = new Set();
     currentData.forEach(story => {
         const activeTasks = (story.tasks || []).filter(t => 
@@ -1251,8 +1250,20 @@ renderWorkload() {
         }
     });
 
-    // --- 3. بناء واجهة العرض ---
-    container.innerHTML = Object.entries(areaGroups).map(([areaName, data]) => {
+    // --- 3. التعامل مع ترتيب الـ Areas (دعم السحب والإفلات) ---
+    // إذا لم يكن هناك ترتيب مخزن مسبقاً، نستخدم الترتيب الافتراضي
+    if (!db.areaOrder) {
+        db.areaOrder = Object.keys(areaGroups);
+    }
+    
+    // تأكد من إضافة أي Area جديدة قد تظهر في البيانات ولم تكن في الترتيب المخزن
+    Object.keys(areaGroups).forEach(area => {
+        if (!db.areaOrder.includes(area)) db.areaOrder.push(area);
+    });
+
+    // --- 4. بناء واجهة العرض ---
+    container.innerHTML = db.areaOrder.filter(areaName => areaGroups[areaName]).map(areaName => {
+        const data = areaGroups[areaName];
         const rawAvailableDevs = [...data.allDevsInArea].filter(name => !data.developers[name]);
         const rawAvailableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]);
 
@@ -1270,9 +1281,7 @@ renderWorkload() {
             else finalAvailableTesters.push(name);
         });
 
-        // وظيفة مساعدة لإنشاء تاج الشخص المتاح مع الفلاج
         const renderAvailableTag = (name) => {
-            // الشخص يعتبر مشغول في مكان آخر إذا كان لديه بجات عالمياً أو تاسكات عالمياً
             const isBusyElsewhere = bugWorkersGlobal.has(name) || globalTaskWorkers.has(name);
             const flag = isBusyElsewhere 
                 ? `<span class="ml-1.5 text-[8px] bg-amber-100 text-amber-600 px-1 rounded shadow-sm italic font-black ring-1 ring-amber-200">BUSY</span>` 
@@ -1285,10 +1294,18 @@ renderWorkload() {
         };
 
         return `
-            <div class="mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100">
-                <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 px-10 flex justify-between items-center">
+            <div class="workload-area-card mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 transition-all duration-300"
+                 draggable="true" 
+                 data-area-name="${areaName}"
+                 onsubmit="return false;"
+                 ondragstart="ui.handleAreaDragStart(event)" 
+                 ondragover="ui.handleAreaDragOver(event)" 
+                 ondrop="ui.handleAreaDrop(event)">
+                
+                <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 px-10 flex justify-between items-center cursor-move">
                     <div>
                         <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+                            <i class="fas fa-grip-vertical text-slate-500 text-xs mr-2"></i>
                             <span class="w-4 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>
                             ${areaName}
                         </h2>
@@ -1296,8 +1313,8 @@ renderWorkload() {
                     </div>
                 </div>
 
-                <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-                    <div class="space-y-6">
+                <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 pointer-events-none child-pointer-events-auto">
+                    <div class="space-y-6 pointer-events-auto">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-indigo-100">
                             <i class="fas fa-code text-indigo-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Active Developers</h3>
@@ -1305,7 +1322,7 @@ renderWorkload() {
                         ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS)}
                     </div>
 
-                    <div class="space-y-6">
+                    <div class="space-y-6 pointer-events-auto">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-emerald-100">
                             <i class="fas fa-vial text-emerald-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Active Testers</h3>
@@ -1313,7 +1330,7 @@ renderWorkload() {
                         ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
                     </div>
 
-                    <div class="space-y-6">
+                    <div class="space-y-6 pointer-events-auto">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-amber-100">
                             <i class="fas fa-bug text-amber-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Working On Bugs</h3>
@@ -1336,14 +1353,13 @@ renderWorkload() {
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200">
+                    <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200 pointer-events-auto">
                         <div class="flex items-center gap-2 mb-6">
                             <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
                                 <i class="fas fa-user-check text-xs"></i>
                             </div>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Available For Tasks</h3>
                         </div>
-                        
                         <div class="space-y-4">
                             <div>
                                 <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Developers</p>
@@ -1364,7 +1380,6 @@ renderWorkload() {
         `;
     }).join('');
 },
-
 // دالة مساعدة لرسم الأعمدة داخل كل منطقة
 generateStaffBars(staffData, color, max) {
     const entries = Object.entries(staffData);
@@ -2051,6 +2066,44 @@ const commentManager = {
             // تحديث الواجهة لإظهار التعليق في الـ Log
             ui.renderActiveCards(); 
         }
+    }
+};
+      handleDragStart(e) {
+        // تخزين اسم الـ Area التي يتم سحبها
+        e.dataTransfer.setData("text/plain", e.currentTarget.getAttribute("data-area"));
+        e.currentTarget.style.opacity = "0.4";
+    },
+
+    handleDragOver(e) {
+        // السماح بالإفلات
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+    },
+
+    handleDrop(e) {
+        e.preventDefault();
+        const draggedArea = e.dataTransfer.getData("text/plain");
+        const targetArea = e.currentTarget.getAttribute("data-area");
+        
+        if (draggedArea !== targetArea) {
+            this.reorderAreas(draggedArea, targetArea);
+        }
+        e.currentTarget.style.opacity = "1";
+    },
+
+    reorderAreas(draggedArea, targetArea) {
+        // منطق إعادة الترتيب في قاعدة البيانات
+        // إذا كنت تعتمد على مصفوفة معينة للترتيب في db، قم بتحديثها هنا
+        console.log(`Moving ${draggedArea} to ${targetArea}`);
+        
+        // مثال: إذا كان لديك مصفوفة ترتيب في الـ db
+        // const index1 = db.areaOrder.indexOf(draggedArea);
+        // const index2 = db.areaOrder.indexOf(targetArea);
+        // db.areaOrder.splice(index2, 0, db.areaOrder.splice(index1, 1)[0]);
+        
+        // بعد التغيير، قم بحفظ البيانات ورندر الواجهة مرة أخرى
+        // dataProcessor.saveToGitHub();
+        this.renderWorkload();
     }
 };
 // استدعاء الرندر عند تحميل الإعدادات
