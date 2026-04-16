@@ -1194,6 +1194,7 @@ renderWorkload() {
     const MAX_HOURS = 50;
 
     // --- 1. حساب الانشغال العالمي (Global Tracking) ---
+    // تتبع الأشخاص الذين لديهم ساعات عمل نشطة في أي مكان في النظام
     const globalTaskWorkers = new Set();
     currentData.forEach(story => {
         const activeTasks = (story.tasks || []).filter(t => 
@@ -1269,7 +1270,9 @@ renderWorkload() {
             else finalAvailableTesters.push(name);
         });
 
+        // وظيفة مساعدة لإنشاء تاج الشخص المتاح مع الفلاج
         const renderAvailableTag = (name) => {
+            // الشخص يعتبر مشغول في مكان آخر إذا كان لديه بجات عالمياً أو تاسكات عالمياً
             const isBusyElsewhere = bugWorkersGlobal.has(name) || globalTaskWorkers.has(name);
             const flag = isBusyElsewhere 
                 ? `<span class="ml-1.5 text-[8px] bg-amber-100 text-amber-600 px-1 rounded shadow-sm italic font-black ring-1 ring-amber-200">BUSY</span>` 
@@ -1299,9 +1302,7 @@ renderWorkload() {
                             <i class="fas fa-code text-indigo-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Active Developers</h3>
                         </div>
-                        <div class="staff-list" ondragover="event.preventDefault()">
-                            ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS)}
-                        </div>
+                        ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS)}
                     </div>
 
                     <div class="space-y-6">
@@ -1309,9 +1310,7 @@ renderWorkload() {
                             <i class="fas fa-vial text-emerald-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Active Testers</h3>
                         </div>
-                        <div class="staff-list" ondragover="event.preventDefault()">
-                            ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
-                        </div>
+                        ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
                     </div>
 
                     <div class="space-y-6">
@@ -1365,33 +1364,27 @@ renderWorkload() {
         `;
     }).join('');
 },
+
 // دالة مساعدة لرسم الأعمدة داخل كل منطقة
-generateStaffBars(staffObject, color, maxHours) {
-    return Object.entries(staffObject).map(([name, hours]) => {
-        const percent = Math.min((hours / maxHours) * 100, 100);
-        
-        // البحث عن الـ Story ID المرتبط بهذا الشخص من db.currentStories
-        // ملاحظة: بما أن الشخص قد يكون لديه عدة ستوريز، نأخذ أول واحدة للترتيب
-        const story = db.currentStories.find(s => s.assignedTo === name || s.tester === name);
-        const storyId = story ? (story.id || story.ID) : '';
+generateStaffBars(staffData, color, max) {
+    const entries = Object.entries(staffData);
+    if (entries.length === 0) return `<div class="text-gray-300 text-sm italic italic">No active tasks</div>`;
+
+    return entries.sort((a,b) => b[1] - a[1]).map(([name, hours]) => {
+        const perc = Math.min((hours / max) * 100, 100);
+        const isOver = hours > max;
+        const barColor = isOver ? 'bg-red-500' : (perc > 80 ? 'bg-orange-500' : `bg-${color}-500`);
 
         return `
-            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md"
-                 draggable="true" 
-                 data-id="${storyId}"
-                 ondragstart="dragDropManager.handleDragStart(event)"
-                 ondrop="dragDropManager.handleDrop(event, '${name}')"
-                 ondragover="dragDropManager.handleDragOver(event)">
-                
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-black text-slate-700">${name}</span>
-                    <span class="text-[10px] font-bold text-${color}-600 bg-${color}-50 px-2 py-0.5 rounded-full">
-                        ${hours}h
+            <div class="relative">
+                <div class="flex justify-between mb-1.5 items-end">
+                    <span class="font-bold text-slate-700">${name}</span>
+                    <span class="text-xs font-mono ${isOver ? 'text-red-600 font-black' : 'text-slate-500'}">
+                        ${hours.toFixed(1)} <span class="text-[10px]">/ ${max}h</span>
                     </span>
                 </div>
-                
-                <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-${color}-500 transition-all duration-500" style="width: ${percent}%"></div>
+                <div class="w-full bg-gray-100 rounded-full h-3">
+                    <div class="${barColor} h-3 rounded-full transition-all duration-1000 shadow-sm" style="width: ${perc}%"></div>
                 </div>
             </div>
         `;
@@ -1908,45 +1901,7 @@ renderInactiveStories() {
     }
         }
 };
-/**
- * Drag and Drop Logic for Workload Sorting
- */
-const dragDropManager = {
-    handleDragStart(e) {
-        e.dataTransfer.setData("storyId", e.target.getAttribute("data-id"));
-        e.target.style.opacity = "0.5";
-    },
 
-    handleDragOver(e) {
-        e.preventDefault(); // ضروري للسماح بالإفلات
-    },
-
-    async handleDrop(e, person) {
-        e.preventDefault();
-        const draggedId = e.dataTransfer.getData("storyId");
-        const targetId = e.target.closest('[data-id]').getAttribute("data-id");
-
-        if (draggedId === targetId) return;
-
-        // 1. العثور على أماكن الكروت في المصفوفة
-        const draggedIndex = db.currentStories.findIndex(s => s.id == draggedId);
-        const targetIndex = db.currentStories.findIndex(s => s.id == targetId);
-
-        // 2. إعادة ترتيب المصفوفة (تغيير الـ Priority)
-        // ملاحظة: الكود الحالي يعتمد على Priority في الترتيب
-        const draggedStory = db.currentStories.splice(draggedIndex, 1)[0];
-        db.currentStories.splice(targetIndex, 0, draggedStory);
-
-        // 3. تحديث الـ Priority بناءً على الترتيب الجديد
-        db.currentStories.forEach((story, index) => {
-            story.priority = (index + 1) * 10; // تعيين أولوية جديدة متسلسلة
-        });
-
-        // 4. حفظ التغييرات وإعادة الرندر
-        ui.renderWorkload(); // تحديث فوري للواجهة
-        await dataProcessor.saveToGitHub(); // حفظ في السحابة
-    }
-};
 
 /**
  * Settings Management
