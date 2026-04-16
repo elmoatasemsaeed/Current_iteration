@@ -1194,7 +1194,6 @@ renderWorkload() {
     const MAX_HOURS = 50;
 
     // --- 1. حساب الانشغال العالمي (Global Tracking) ---
-    // تتبع الأشخاص الذين لديهم ساعات عمل نشطة في أي مكان في النظام
     const globalTaskWorkers = new Set();
     currentData.forEach(story => {
         const activeTasks = (story.tasks || []).filter(t => 
@@ -1270,9 +1269,7 @@ renderWorkload() {
             else finalAvailableTesters.push(name);
         });
 
-        // وظيفة مساعدة لإنشاء تاج الشخص المتاح مع الفلاج
         const renderAvailableTag = (name) => {
-            // الشخص يعتبر مشغول في مكان آخر إذا كان لديه بجات عالمياً أو تاسكات عالمياً
             const isBusyElsewhere = bugWorkersGlobal.has(name) || globalTaskWorkers.has(name);
             const flag = isBusyElsewhere 
                 ? `<span class="ml-1.5 text-[8px] bg-amber-100 text-amber-600 px-1 rounded shadow-sm italic font-black ring-1 ring-amber-200">BUSY</span>` 
@@ -1302,7 +1299,9 @@ renderWorkload() {
                             <i class="fas fa-code text-indigo-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Active Developers</h3>
                         </div>
-                        ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS)}
+                        <div class="staff-list" ondragover="event.preventDefault()">
+                            ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS)}
+                        </div>
                     </div>
 
                     <div class="space-y-6">
@@ -1310,7 +1309,9 @@ renderWorkload() {
                             <i class="fas fa-vial text-emerald-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Active Testers</h3>
                         </div>
-                        ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
+                        <div class="staff-list" ondragover="event.preventDefault()">
+                            ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
+                        </div>
                     </div>
 
                     <div class="space-y-6">
@@ -1364,7 +1365,6 @@ renderWorkload() {
         `;
     }).join('');
 },
-
 // دالة مساعدة لرسم الأعمدة داخل كل منطقة
 generateStaffBars(staffData, color, max) {
     const entries = Object.entries(staffData);
@@ -1901,7 +1901,45 @@ renderInactiveStories() {
     }
         }
 };
+/**
+ * Drag and Drop Logic for Workload Sorting
+ */
+const dragDropManager = {
+    handleDragStart(e) {
+        e.dataTransfer.setData("storyId", e.target.getAttribute("data-id"));
+        e.target.style.opacity = "0.5";
+    },
 
+    handleDragOver(e) {
+        e.preventDefault(); // ضروري للسماح بالإفلات
+    },
+
+    async handleDrop(e, person) {
+        e.preventDefault();
+        const draggedId = e.dataTransfer.getData("storyId");
+        const targetId = e.target.closest('[data-id]').getAttribute("data-id");
+
+        if (draggedId === targetId) return;
+
+        // 1. العثور على أماكن الكروت في المصفوفة
+        const draggedIndex = db.currentStories.findIndex(s => s.id == draggedId);
+        const targetIndex = db.currentStories.findIndex(s => s.id == targetId);
+
+        // 2. إعادة ترتيب المصفوفة (تغيير الـ Priority)
+        // ملاحظة: الكود الحالي يعتمد على Priority في الترتيب
+        const draggedStory = db.currentStories.splice(draggedIndex, 1)[0];
+        db.currentStories.splice(targetIndex, 0, draggedStory);
+
+        // 3. تحديث الـ Priority بناءً على الترتيب الجديد
+        db.currentStories.forEach((story, index) => {
+            story.priority = (index + 1) * 10; // تعيين أولوية جديدة متسلسلة
+        });
+
+        // 4. حفظ التغييرات وإعادة الرندر
+        ui.renderWorkload(); // تحديث فوري للواجهة
+        await dataProcessor.saveToGitHub(); // حفظ في السحابة
+    }
+};
 
 /**
  * Settings Management
