@@ -1187,199 +1187,231 @@ editDelivery(id) {
     
   
 renderWorkload() {
-    const container = document.getElementById('workload-container');
-    if (!container) return;
+        const container = document.getElementById('workload-container');
+        if (!container) return;
 
-    const areaGroups = {};
-    const MAX_HOURS = 50;
+        const areaGroups = {};
+        const MAX_HOURS = 50;
 
-    // --- 1. حساب الانشغال العالمي (Global Tracking) ---
-    const globalTaskWorkers = new Set();
-    currentData.forEach(story => {
-        const activeTasks = (story.tasks || []).filter(t => 
-            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed' && 
-            parseFloat(t['Original Estimation'] || 0) > 0
-        );
-        activeTasks.forEach(t => {
-            const worker = (t['Activity'] === 'Testing') ? story.tester : story.assignedTo;
-            if (worker && worker !== "Unassigned") globalTaskWorkers.add(worker);
-        });
-    });
-
-    // --- 2. تجميع البيانات الأصلية وتحديد العاملين على البجات ---
-    const bugWorkersGlobal = new Set();
-    currentData.forEach(story => {
-        const area = story.area || "General Business Area";
-        if (!areaGroups[area]) {
-            areaGroups[area] = { 
-                developers: {}, 
-                testers: {}, 
-                allDevsInArea: new Set(), 
-                allTestersInArea: new Set() 
-            };
-        }
-
-        if (story.assignedTo && story.assignedTo !== "Unassigned") areaGroups[area].allDevsInArea.add(story.assignedTo);
-        if (story.tester && story.tester !== "Unassigned") areaGroups[area].allTestersInArea.add(story.tester);
-
-        const activeDevTasks = (story.tasks || []).filter(t => 
-            ["Development", "DB Modification"].includes(t['Activity']) && 
-            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
-        );
-        const dHours = activeDevTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        if (dHours > 0) {
-            areaGroups[area].developers[story.assignedTo] = (areaGroups[area].developers[story.assignedTo] || 0) + dHours;
-        }
-
-        const activeTestTasks = (story.tasks || []).filter(t => 
-            t['Activity'] === 'Testing' && 
-            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
-        );
-        const tHours = activeTestTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        if (tHours > 0) {
-            areaGroups[area].testers[story.tester] = (areaGroups[area].testers[story.tester] || 0) + tHours;
-        }
-
-        if (story.bugs && story.bugs.length > 0) {
-            story.bugs.forEach(bug => {
-                if (['New', 'Active'].includes(bug['State'])) {
-                    const worker = bug['Assigned To'];
-                    if (worker && worker !== "Unassigned") bugWorkersGlobal.add(worker);
-                }
+        // --- 1. حساب الانشغال العالمي (Global Tracking) ---
+        const globalTaskWorkers = new Set();
+        currentData.forEach(story => {
+            const activeTasks = (story.tasks || []).filter(t => 
+                t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed' && 
+                parseFloat(t['Original Estimation'] || 0) > 0
+            );
+            activeTasks.forEach(t => {
+                const worker = (t['Activity'] === 'Testing') ? story.tester : story.assignedTo;
+                if (worker && worker !== "Unassigned") globalTaskWorkers.add(worker);
             });
-        }
-    });
-
-    // --- 3. التعامل مع ترتيب الـ Areas (دعم السحب والإفلات) ---
-    // إذا لم يكن هناك ترتيب مخزن مسبقاً، نستخدم الترتيب الافتراضي
-    if (!db.areaOrder) {
-        db.areaOrder = Object.keys(areaGroups);
-    }
-    
-    // تأكد من إضافة أي Area جديدة قد تظهر في البيانات ولم تكن في الترتيب المخزن
-    Object.keys(areaGroups).forEach(area => {
-        if (!db.areaOrder.includes(area)) db.areaOrder.push(area);
-    });
-
-    // --- 4. بناء واجهة العرض ---
-    container.innerHTML = db.areaOrder.filter(areaName => areaGroups[areaName]).map(areaName => {
-        const data = areaGroups[areaName];
-        const rawAvailableDevs = [...data.allDevsInArea].filter(name => !data.developers[name]);
-        const rawAvailableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]);
-
-        const workingOnBugs = [];
-        const finalAvailableDevs = [];
-        const finalAvailableTesters = [];
-
-        rawAvailableDevs.forEach(name => {
-            if (bugWorkersGlobal.has(name)) workingOnBugs.push({ name, role: 'Developer' });
-            else finalAvailableDevs.push(name);
         });
 
-        rawAvailableTesters.forEach(name => {
-            if (bugWorkersGlobal.has(name)) workingOnBugs.push({ name, role: 'Tester' });
-            else finalAvailableTesters.push(name);
+        // --- 2. تجميع البيانات الأصلية وتحديد العاملين على البجات ---
+        const bugWorkersGlobal = new Set();
+        currentData.forEach(story => {
+            const area = story.area || "General Business Area";
+            if (!areaGroups[area]) {
+                areaGroups[area] = { 
+                    developers: {}, 
+                    testers: {}, 
+                    allDevsInArea: new Set(), 
+                    allTestersInArea: new Set() 
+                };
+            }
+
+            if (story.assignedTo && story.assignedTo !== "Unassigned") areaGroups[area].allDevsInArea.add(story.assignedTo);
+            if (story.tester && story.tester !== "Unassigned") areaGroups[area].allTestersInArea.add(story.tester);
+
+            const activeDevTasks = (story.tasks || []).filter(t => 
+                ["Development", "DB Modification"].includes(t['Activity']) && 
+                t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
+            );
+            const dHours = activeDevTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+            if (dHours > 0) {
+                areaGroups[area].developers[story.assignedTo] = (areaGroups[area].developers[story.assignedTo] || 0) + dHours;
+            }
+
+            const activeTestTasks = (story.tasks || []).filter(t => 
+                t['Activity'] === 'Testing' && 
+                t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
+            );
+            const tHours = activeTestTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+            if (tHours > 0) {
+                areaGroups[area].testers[story.tester] = (areaGroups[area].testers[story.tester] || 0) + tHours;
+            }
+
+            if (story.bugs && story.bugs.length > 0) {
+                story.bugs.forEach(bug => {
+                    if (['New', 'Active'].includes(bug['State'])) {
+                        const worker = bug['Assigned To'];
+                        if (worker && worker !== "Unassigned") bugWorkersGlobal.add(worker);
+                    }
+                });
+            }
         });
 
-        const renderAvailableTag = (name) => {
-            const isBusyElsewhere = bugWorkersGlobal.has(name) || globalTaskWorkers.has(name);
-            const flag = isBusyElsewhere 
-                ? `<span class="ml-1.5 text-[8px] bg-amber-100 text-amber-600 px-1 rounded shadow-sm italic font-black ring-1 ring-amber-200">BUSY</span>` 
-                : '';
-            
-            return `
-                <span class="px-3 py-1 bg-white border ${isBusyElsewhere ? 'border-amber-200 shadow-amber-50' : 'border-slate-200'} text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center">
-                    ${name}${flag}
-                </span>`;
-        };
+        // --- 3. بناء واجهة العرض مع دعم السحب والإفلات ---
+        const areaEntries = Object.entries(areaGroups);
 
-        return `
-            <div class="workload-area-card mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 transition-all duration-300"
-                 draggable="true" 
-                 data-area-name="${areaName}"
-                 onsubmit="return false;"
-                 ondragstart="ui.handleAreaDragStart(event)" 
-                 ondragover="ui.handleAreaDragOver(event)" 
-                 ondrop="ui.handleAreaDrop(event)">
+        container.innerHTML = areaEntries.map(([areaName, data], index) => {
+            const rawAvailableDevs = [...data.allDevsInArea].filter(name => !data.developers[name]);
+            const rawAvailableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]);
+
+            const workingOnBugs = [];
+            const finalAvailableDevs = [];
+            const finalAvailableTesters = [];
+
+            rawAvailableDevs.forEach(name => {
+                if (bugWorkersGlobal.has(name)) workingOnBugs.push({ name, role: 'Developer' });
+                else finalAvailableDevs.push(name);
+            });
+
+            rawAvailableTesters.forEach(name => {
+                if (bugWorkersGlobal.has(name)) workingOnBugs.push({ name, role: 'Tester' });
+                else finalAvailableTesters.push(name);
+            });
+
+            const renderAvailableTag = (name) => {
+                const isBusyElsewhere = bugWorkersGlobal.has(name) || globalTaskWorkers.has(name);
+                const flag = isBusyElsewhere 
+                    ? `<span class="ml-1.5 text-[8px] bg-amber-100 text-amber-600 px-1 rounded shadow-sm italic font-black ring-1 ring-amber-200">BUSY</span>` 
+                    : '';
                 
-                <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 px-10 flex justify-between items-center cursor-move">
-                    <div>
-                        <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3">
-                            <i class="fas fa-grip-vertical text-slate-500 text-xs mr-2"></i>
-                            <span class="w-4 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>
-                            ${areaName}
-                        </h2>
-                        <p class="text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Resource Allocation & Availability</p>
-                    </div>
-                </div>
+                return `
+                    <span class="px-3 py-1 bg-white border ${isBusyElsewhere ? 'border-amber-200 shadow-amber-50' : 'border-slate-200'} text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center">
+                        ${name}${flag}
+                    </span>`;
+            };
 
-                <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 pointer-events-none child-pointer-events-auto">
-                    <div class="space-y-6 pointer-events-auto">
-                        <div class="flex items-center gap-2 pb-2 border-b-2 border-indigo-100">
-                            <i class="fas fa-code text-indigo-600"></i>
-                            <h3 class="text-slate-800 font-black text-sm uppercase">Active Developers</h3>
+            return `
+                <div class="mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 cursor-move transition-all duration-300 hover:shadow-indigo-100/50"
+                     draggable="true"
+                     ondragstart="ui.handleAreaDragStart(event, ${index})"
+                     ondragover="ui.handleAreaDragOver(event)"
+                     ondrop="ui.handleAreaDrop(event, ${index})">
+                    
+                    <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 px-10 flex justify-between items-center pointer-events-none">
+                        <div>
+                            <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+                                <span class="w-4 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>
+                                ${areaName}
+                            </h2>
+                            <p class="text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Resource Allocation & Availability (Drag to Reorder)</p>
                         </div>
-                        ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS)}
-                    </div>
-
-                    <div class="space-y-6 pointer-events-auto">
-                        <div class="flex items-center gap-2 pb-2 border-b-2 border-emerald-100">
-                            <i class="fas fa-vial text-emerald-600"></i>
-                            <h3 class="text-slate-800 font-black text-sm uppercase">Active Testers</h3>
-                        </div>
-                        ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
+                        <i class="fas fa-grip-vertical text-slate-600 text-xl"></i>
                     </div>
 
-                    <div class="space-y-6 pointer-events-auto">
-                        <div class="flex items-center gap-2 pb-2 border-b-2 border-amber-100">
-                            <i class="fas fa-bug text-amber-600"></i>
-                            <h3 class="text-slate-800 font-black text-sm uppercase">Working On Bugs</h3>
+                    <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 pointer-events-none">
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-2 pb-2 border-b-2 border-indigo-100">
+                                <i class="fas fa-code text-indigo-600"></i>
+                                <h3 class="text-slate-800 font-black text-sm uppercase">Active Developers</h3>
+                            </div>
+                            ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS)}
                         </div>
-                        <div class="space-y-3">
-                            ${workingOnBugs.length > 0 ? workingOnBugs.map(worker => `
-                                <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-100">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-amber-600 font-bold text-xs border border-amber-200">
-                                            ${worker.name.charAt(0)}
+
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-2 pb-2 border-b-2 border-emerald-100">
+                                <i class="fas fa-vial text-emerald-600"></i>
+                                <h3 class="text-slate-800 font-black text-sm uppercase">Active Testers</h3>
+                            </div>
+                            ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS)}
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-2 pb-2 border-b-2 border-amber-100">
+                                <i class="fas fa-bug text-amber-600"></i>
+                                <h3 class="text-slate-800 font-black text-sm uppercase">Working On Bugs</h3>
+                            </div>
+                            <div class="space-y-3">
+                                ${workingOnBugs.length > 0 ? workingOnBugs.map(worker => `
+                                    <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-100">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-amber-600 font-bold text-xs border border-amber-200">
+                                                ${worker.name.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <div class="text-xs font-bold text-slate-700">${worker.name}</div>
+                                                <div class="text-[9px] text-amber-600 uppercase font-bold">${worker.role}</div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div class="text-xs font-bold text-slate-700">${worker.name}</div>
-                                            <div class="text-[9px] text-amber-600 uppercase font-bold">${worker.role}</div>
-                                        </div>
+                                        <span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-bold">Bugs Found</span>
                                     </div>
-                                    <span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-bold">Bugs Found</span>
-                                </div>
-                            `).join('') : '<div class="text-slate-400 text-xs italic p-4 text-center">لا يوجد أحد</div>'}
+                                `).join('') : '<div class="text-slate-400 text-xs italic p-4 text-center">لا يوجد أحد</div>'}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200 pointer-events-auto">
-                        <div class="flex items-center gap-2 mb-6">
-                            <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                <i class="fas fa-user-check text-xs"></i>
-                            </div>
-                            <h3 class="text-slate-800 font-black text-sm uppercase">Available For Tasks</h3>
-                        </div>
-                        <div class="space-y-4">
-                            <div>
-                                <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Developers</p>
-                                <div class="flex flex-wrap gap-2">
-                                    ${finalAvailableDevs.length > 0 ? finalAvailableDevs.map(name => renderAvailableTag(name)).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                        <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200">
+                            <div class="flex items-center gap-2 mb-6">
+                                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                    <i class="fas fa-user-check text-xs"></i>
                                 </div>
+                                <h3 class="text-slate-800 font-black text-sm uppercase">Available For Tasks</h3>
                             </div>
-                            <div>
-                                <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Testers</p>
-                                <div class="flex flex-wrap gap-2">
-                                    ${finalAvailableTesters.length > 0 ? finalAvailableTesters.map(name => renderAvailableTag(name)).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Developers</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${finalAvailableDevs.length > 0 ? finalAvailableDevs.map(name => renderAvailableTag(name)).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Testers</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${finalAvailableTesters.length > 0 ? finalAvailableTesters.map(name => renderAvailableTag(name)).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
-    }).join('');
-},
+            `;
+        }).join('');
+    },
+
+    // --- وظائف السحب والإفلات ---
+
+    handleAreaDragStart(event, index) {
+        event.dataTransfer.setData('text/plain', index);
+        // إضافة تأثير بصري عند السحب
+        setTimeout(() => {
+            event.target.classList.add('opacity-40');
+        }, 0);
+    },
+
+    handleAreaDragOver(event) {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+    },
+
+    handleAreaDrop(event, targetIndex) {
+        event.preventDefault();
+        const sourceIndex = parseInt(event.dataTransfer.getData('text/plain'));
+        
+        if (sourceIndex === targetIndex) return;
+
+        // 1. الحصول على قائمة بأسماء المناطق الحالية بالترتيب الحالي
+        const currentAreas = Array.from(new Set(currentData.map(s => s.area || "General Business Area")));
+        
+        // 2. إعادة ترتيب الأسماء في المصفوفة
+        const movedAreaName = currentAreas.splice(sourceIndex, 1)[0];
+        currentAreas.splice(targetIndex, 0, movedAreaName);
+
+        // 3. إعادة ترتيب currentData بناءً على ترتيب الأسماء الجديد
+        const reorderedData = [];
+        currentAreas.forEach(areaName => {
+            const storiesInArea = currentData.filter(s => (s.area || "General Business Area") === areaName);
+            reorderedData.push(...storiesInArea);
+        });
+
+        // 4. تحديث البيانات وإعادة الرندر
+        currentData = reorderedData;
+        this.renderWorkload();
+        
+        // اختياري: حفظ الترتيب في السيرفر/GitHub إذا أردت استمراريته
+        // dataProcessor.saveToGitHub();
+    },
 // دالة مساعدة لرسم الأعمدة داخل كل منطقة
 generateStaffBars(staffData, color, max) {
     const entries = Object.entries(staffData);
@@ -2066,44 +2098,6 @@ const commentManager = {
             // تحديث الواجهة لإظهار التعليق في الـ Log
             ui.renderActiveCards(); 
         }
-    }
-};
-      handleDragStart(e) {
-        // تخزين اسم الـ Area التي يتم سحبها
-        e.dataTransfer.setData("text/plain", e.currentTarget.getAttribute("data-area"));
-        e.currentTarget.style.opacity = "0.4";
-    },
-
-    handleDragOver(e) {
-        // السماح بالإفلات
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-    },
-
-    handleDrop(e) {
-        e.preventDefault();
-        const draggedArea = e.dataTransfer.getData("text/plain");
-        const targetArea = e.currentTarget.getAttribute("data-area");
-        
-        if (draggedArea !== targetArea) {
-            this.reorderAreas(draggedArea, targetArea);
-        }
-        e.currentTarget.style.opacity = "1";
-    },
-
-    reorderAreas(draggedArea, targetArea) {
-        // منطق إعادة الترتيب في قاعدة البيانات
-        // إذا كنت تعتمد على مصفوفة معينة للترتيب في db، قم بتحديثها هنا
-        console.log(`Moving ${draggedArea} to ${targetArea}`);
-        
-        // مثال: إذا كان لديك مصفوفة ترتيب في الـ db
-        // const index1 = db.areaOrder.indexOf(draggedArea);
-        // const index2 = db.areaOrder.indexOf(targetArea);
-        // db.areaOrder.splice(index2, 0, db.areaOrder.splice(index1, 1)[0]);
-        
-        // بعد التغيير، قم بحفظ البيانات ورندر الواجهة مرة أخرى
-        // dataProcessor.saveToGitHub();
-        this.renderWorkload();
     }
 };
 // استدعاء الرندر عند تحميل الإعدادات
