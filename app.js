@@ -600,232 +600,154 @@ const ui = {
     }
 },
 
- renderStats() {
+  renderStats() {
+    // --- البيانات الأساسية ---
     const now = new Date();
     const todayStr = now.toISOString().split('T')[0];
-    const isValidDate = (d) => d instanceof Date && !isNaN(d.getTime());
+    const sevenDaysLater = new Date();
+    sevenDaysLater.setDate(now.getDate() + 7);
 
-    // 1. الإحصائيات العامة (Summary)
+    // 1. القصص النشطة (ليست في حالة Tested أو Closed)
     const active = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
-    const delayed = active.filter(s => isValidDate(s.calc?.finalEnd) && now > s.calc.finalEnd);
-
-    // 2. تحليل عميق لكل Business Area (المحتوى المطلوب)
-    const areaSummary = {};
-    currentData.forEach(s => {
-        const areaName = s['Business Area'] || "General";
-        if (!areaSummary[areaName]) {
-            areaSummary[areaName] = {
-                name: areaName,
-                total: 0,
-                states: { 'New': 0, 'Active': 0, 'Resolved': 0, 'Tested': 0, 'Closed': 0 },
-                devs: new Set(),
-                actionsToday: 0,
-                weight: 0 // لحساب نسبة الإنجاز الحقيقية
-            };
-        }
-        
-        const stats = areaSummary[areaName];
-        stats.total++;
-        
-        // تسجيل الحالة (State Distribution)
-        if (stats.states.hasOwnProperty(s.state)) {
-            stats.states[s.state]++;
-        } else {
-            stats.states[s.state] = (stats.states[s.state] || 0) + 1;
-        }
-
-        // إضافة الموظفين
-        if (s.assignedTo && s.assignedTo !== "Unassigned") stats.devs.add(s.assignedTo);
-
-        // حساب الوزن (الإنجاز): Tested/Closed = 100%, Resolved = 80%, Active = 30%
-        if (s.state === 'Tested' || s.state === 'Closed') stats.weight += 100;
-        else if (s.state === 'Resolved') stats.weight += 80;
-        else if (s.state === 'Active') stats.weight += 30;
-
-        // الأكشن اليومي
-        if (isValidDate(s.changedDate) && s.changedDate.toISOString().split('T')[0] === todayStr) {
-            stats.actionsToday++;
-        }
+    
+    // 2. القصص الجاهزة للتسليم (حالتها Tested ولم يتم تسجيل تسليمها بعد)
+    const readyForDelivery = currentData.filter(s => 
+        (s.state === 'Tested' || s.state === 'Closed') && 
+        !db.deliveryLogs.some(log => log.storyId === s.id)
+    );
+    
+    // 3. القصص المتأخرة عن موعدها المحسوب
+    const delayed = active.filter(s => {
+        return s.calc.finalEnd instanceof Date && 
+               !isNaN(s.calc.finalEnd.getTime()) && 
+               now > s.calc.finalEnd;
     });
 
-    // --- رسم الكروت العلوية (نفس ستايل الصورة) ---
-    this.renderTopCards(active.length, delayed.length);
+    // --- الإحصائيات الجديدة المضافة بناءً على محتوى الفيوز الأخرى ---
 
-    // --- بناء جدول التوزيع (Area vs Status Matrix) ---
-    let tableRowsHtml = Object.values(areaSummary).map(area => {
-        const progressPercent = Math.round(area.weight / area.total);
-        
-        return `
-            <tr class="border-b border-slate-50 hover:bg-slate-50/80 transition">
-                <td class="p-4">
-                    <div class="font-black text-slate-700 text-sm">${area.name}</div>
-                    <div class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">${area.total} Total Stories</div>
-                </td>
-                <td class="p-4">
-                    <div class="flex gap-2">
-                        <div class="flex-1 text-center p-1 rounded bg-slate-100 border border-slate-200">
-                            <div class="text-[9px] text-slate-400 font-bold uppercase">New</div>
-                            <div class="text-xs font-black text-slate-600">${area.states['New'] || 0}</div>
-                        </div>
-                        <div class="flex-1 text-center p-1 rounded bg-orange-50 border border-orange-100 text-orange-600">
-                            <div class="text-[9px] font-bold uppercase">Active</div>
-                            <div class="text-xs font-black">${area.states['Active'] || 0}</div>
-                        </div>
-                        <div class="flex-1 text-center p-1 rounded bg-blue-50 border border-blue-100 text-blue-600">
-                            <div class="text-[9px] font-bold uppercase">Resolv</div>
-                            <div class="text-xs font-black">${area.states['Resolved'] || 0}</div>
-                        </div>
-                        <div class="flex-1 text-center p-1 rounded bg-emerald-50 border border-emerald-100 text-emerald-600">
-                            <div class="text-[9px] font-bold uppercase">Done</div>
-                            <div class="text-xs font-black">${(area.states['Tested'] || 0) + (area.states['Closed'] || 0)}</div>
-                        </div>
-                    </div>
-                </td>
-                <td class="p-4">
-                    <div class="flex items-center gap-2">
-                        <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-indigo-500" style="width: ${progressPercent}%"></div>
-                        </div>
-                        <span class="text-[10px] font-black text-slate-500">${progressPercent}%</span>
-                    </div>
-                </td>
-                <td class="p-4 text-center">
-                    <div class="flex justify-center -space-x-2">
-                         ${Array.from(area.devs).slice(0, 3).map(d => `<div title="${d}" class="w-6 h-6 rounded-full bg-indigo-600 border-2 border-white text-white text-[8px] flex items-center justify-center font-bold">${d[0]}</div>`).join('')}
-                         ${area.devs.size > 3 ? `<div class="w-6 h-6 rounded-full bg-slate-200 border-2 border-white text-slate-500 text-[8px] flex items-center justify-center font-bold">+${area.devs.size - 3}</div>` : ''}
-                    </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
+    // أ- إجمالي الـ Bugs المفتوحة في القصص النشطة
+    const totalOpenBugs = active.reduce((acc, s) => {
+        const openBugs = s.bugs ? s.bugs.filter(b => b.State !== 'Closed' && b.State !== 'Resolved').length : 0;
+        return acc + openBugs;
+    }, 0);
 
-    document.getElementById('business-area-table-container').innerHTML = `
-        <table class="w-full">
-            <thead class="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase">
-                <tr>
-                    <th class="p-4 text-left">Business Area</th>
-                    <th class="p-4 text-center w-1/3">Status Distribution (The Matrix)</th>
-                    <th class="p-4 text-left w-1/4">Overall Progress</th>
-                    <th class="p-4 text-center">Team Size</th>
-                </tr>
-            </thead>
-            <tbody>${tableRowsHtml}</tbody>
-        </table>
-    `;
+    // ب- عدد طلبات التغيير (CRs) النشطة
+    const activeCRs = active.filter(s => s.type === 'CR').length;
 
-    this.renderClientRoadmap();
-},
-
-renderTopCards(activeCount, delayedCount) {
-    const todayAction = currentData.filter(s => {
-        const todayStr = new Date().toISOString().split('T')[0];
-        return s.changedDate instanceof Date && s.changedDate.toISOString().split('T')[0] === todayStr;
+    // ج- تسليمات العميل المتوقعة خلال 7 أيام (Roadmap Stat)
+    const upcomingClientDeadlines = currentData.filter(s => {
+        return s.expectedRelease instanceof Date && 
+               s.state !== 'Tested' && 
+               s.expectedRelease >= now && 
+               s.expectedRelease <= sevenDaysLater;
     }).length;
 
-    document.getElementById('stats-cards').innerHTML = `
-        <div class="bg-indigo-600 p-6 rounded-[2.5rem] text-white shadow-2xl shadow-indigo-200 relative overflow-hidden">
-            <div class="relative z-10 text-xs font-bold opacity-70 mb-1">TOTAL SCOPE</div>
-            <div class="relative z-10 text-4xl font-black">${currentData.length}</div>
-            <i class="fas fa-project-diagram absolute bottom-4 right-4 text-6xl opacity-10"></i>
+    // د- الموظفين في إجازة اليوم (Settings & Vacations Stat)
+    const onVacationToday = db.vacations ? db.vacations.filter(v => v.date === todayStr).length : 0;
+
+    // --- بناء محتوى الكروت الأساسية (Stats Cards) ---
+    const statsHtml = `
+        <div class="bg-blue-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Active Stories</div>
+            <div class="text-2xl font-bold">${active.length} <span class="text-xs font-normal opacity-70">(${activeCRs} CRs)</span></div>
         </div>
-        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100 relative overflow-hidden">
-            <div class="text-xs font-black text-slate-400 mb-1">IN PROGRESS</div>
-            <div class="text-4xl font-black text-slate-800">${activeCount}</div>
-            <div class="mt-2 text-[10px] font-bold text-orange-500 bg-orange-50 px-2 py-1 rounded-full inline-block">LIVE TRACKING</div>
+        <div class="bg-green-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Ready for Delivery</div>
+            <div class="text-2xl font-bold">${readyForDelivery.length}</div>
         </div>
-        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100">
-            <div class="text-xs font-black text-slate-400 mb-1">DONE TODAY</div>
-            <div class="text-4xl font-black text-emerald-500">${todayAction}</div>
-            <div class="mt-2 text-[10px] font-bold text-slate-400 italic">LAST 24 HOURS</div>
+        <div class="bg-red-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Delayed</div>
+            <div class="text-2xl font-bold">${delayed.length}</div>
         </div>
-        <div class="bg-rose-500 p-6 rounded-[2.5rem] text-white shadow-xl shadow-rose-100">
-            <div class="text-xs font-bold opacity-70 mb-1">DELAYED / RISK</div>
-            <div class="text-4xl font-black">${delayedCount}</div>
-            <i class="fas fa-exclamation-triangle absolute top-6 right-6 opacity-20"></i>
+        <div class="bg-purple-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Delivered Total</div>
+            <div class="text-2xl font-bold">${db.deliveryLogs.length}</div>
+        </div>
+        
+        <div class="bg-amber-500 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Open Bugs</div>
+            <div class="text-2xl font-bold">${totalOpenBugs}</div>
+        </div>
+        <div class="bg-indigo-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Client Deadlines (7d)</div>
+            <div class="text-2xl font-bold">${upcomingClientDeadlines}</div>
+        </div>
+        <div class="bg-teal-600 text-white p-4 rounded-xl shadow">
+            <div class="text-sm opacity-80">Staff on Vacation</div>
+            <div class="text-2xl font-bold">${onVacationToday}</div>
         </div>
     `;
-},
-renderSidebars(delayed, active, todayStr) {
-    const isValidDate = (d) => d instanceof Date && !isNaN(d.getTime());
-
-    const overdueHtml = delayed.map(s => `
-        <div class="p-3 mb-2 bg-rose-50 border-r-4 border-rose-500 rounded-lg">
-            <div class="text-[10px] font-bold text-rose-600 uppercase">${s.area}</div>
-            <div class="text-xs font-semibold text-slate-800 line-clamp-1">${s.title}</div>
-            <div class="text-[10px] text-rose-400 mt-1">Expected: ${isValidDate(s.calc?.finalEnd) ? s.calc.finalEnd.toLocaleDateString() : 'N/A'}</div>
-        </div>
-    `).join('') || '<div class="text-slate-400 text-center py-4 italic">No overdue items</div>';
     
-    document.getElementById('overdue-container').innerHTML = overdueHtml;
+    document.getElementById('stats-cards').innerHTML = statsHtml;
 
-    const todayHtml = active.filter(s => {
-        // حماية عند فلترة مهام اليوم
-        return isValidDate(s.calc?.finalEnd) && s.calc.finalEnd.toISOString().split('T')[0] === todayStr;
-    }).map(s => `
-        <div class="p-3 mb-2 bg-indigo-50 border-r-4 border-indigo-500 rounded-lg">
-            <div class="text-[10px] font-bold text-indigo-600 uppercase">${s.area}</div>
-            <div class="text-xs font-semibold text-slate-800 line-clamp-1">${s.title}</div>
-            <div class="text-[10px] text-slate-500 mt-1">Assignee: ${s.assignedTo}</div>
+    // --- تحديث قائمة المتأخرات (Overdue Container) ---
+    document.getElementById('overdue-container').innerHTML = delayed.map(s => `
+        <div class="p-2 border-b text-sm">
+            <span class="font-bold">[${s.area}]</span> ${s.title}
+            <div class="text-xs text-red-400">Delayed since: ${s.calc.finalEnd.toLocaleDateString()}</div>
         </div>
-    `).join('') || '<div class="text-slate-400 text-center py-4 italic">Nothing due today</div>';
+    `).join('') || '<div class="text-gray-400 text-center py-2">No delayed items</div>';
 
-    document.getElementById('today-container').innerHTML = todayHtml;
+    // --- تحديث قائمة مهام اليوم (Today Container) ---
+    document.getElementById('today-container').innerHTML = active.filter(s => {
+        return s.calc.finalEnd instanceof Date && 
+               !isNaN(s.calc.finalEnd.getTime()) && 
+               s.calc.finalEnd.toISOString().split('T')[0] === todayStr;
+    }).map(s => `
+        <div class="p-2 border-b text-sm">
+            <span class="font-bold">[${s.area}]</span> ${s.title} - <span class="text-blue-500">${s.assignedTo}</span>
+        </div>
+    `).join('') || '<div class="text-gray-400 text-center py-2">Nothing planned for today</div>';
 },
 
 renderClientRoadmap() {
     const container = document.getElementById('roadmap-container');
     const today = new Date();
-    const roadmapDays = 14;
-    const futureLimit = new Date();
-    futureLimit.setDate(today.getDate() + roadmapDays);
+    const fourteenDaysLater = new Date();
+    fourteenDaysLater.setDate(today.getDate() + 14);
 
-    const upcoming = currentData.filter(s => {
-        return s.expectedRelease instanceof Date && 
-               s.state !== 'Tested' && s.state !== 'Closed' &&
-               s.expectedRelease >= today && s.expectedRelease <= futureLimit;
-    }).sort((a, b) => a.expectedRelease - b.expectedRelease);
+    // 1. فلترة القصص التي لها تاريخ تسليم متوقع خلال الـ 14 يوم القادمين وليست منتهية
+    const upcomingDeliveries = currentData.filter(s => {
+        if (!s.expectedRelease || !(s.expectedRelease instanceof Date)) return false;
+        
+        // تصفية المهام التي لم تنتهِ بعد (أو انتهت مؤخراً وتريد عرضها)
+        const isNotDone = s.state !== 'Tested'; 
+        const isWithinRange = s.expectedRelease >= today && s.expectedRelease <= fourteenDaysLater;
+        
+        return isNotDone && isWithinRange;
+    });
 
-    if (upcoming.length === 0) {
-        container.innerHTML = `<div class="col-span-full py-10 text-center text-slate-400 border-2 border-dashed rounded-2xl">No major releases scheduled for the next 2 weeks</div>`;
+    // ترتيب حسب التاريخ الأقرب
+    upcomingDeliveries.sort((a, b) => a.expectedRelease - b.expectedRelease);
+
+    if (upcomingDeliveries.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-8 bg-white rounded-xl border border-dashed text-gray-400">No client deliveries expected in the next 14 days.</div>`;
         return;
     }
 
-    container.innerHTML = upcoming.map(s => {
-        const daysLeft = Math.ceil((s.expectedRelease - today) / (1000 * 60 * 60 * 24));
-        const statusColors = {
-            'Resolved': 'bg-blue-500',
-            'Active': 'bg-amber-500',
-            'New': 'bg-slate-400'
-        };
+    container.innerHTML = upcomingDeliveries.map(s => {
+        const diffTime = Math.abs(s.expectedRelease - today);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
+        // تحديد لون الكارت بناءً على قرب الموعد
+        let urgencyClass = "border-blue-200 bg-white";
+        if (diffDays <= 3) urgencyClass = "border-amber-400 bg-amber-50";
+        if (diffDays <= 1) urgencyClass = "border-red-400 bg-red-50";
+
         return `
-            <div class="relative bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                <div class="absolute -top-2 -right-2 bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg">
-                    D-${daysLeft}
+            <div class="p-4 rounded-xl border-2 ${urgencyClass} shadow-sm">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">In ${diffDays} Days</span>
+                    <span class="text-[10px] text-gray-400">#${s.id}</span>
                 </div>
-                <div class="flex items-center gap-2 mb-3">
-                    <span class="w-2 h-2 rounded-full ${statusColors[s.state] || 'bg-slate-300'}"></span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">${s.area}</span>
+                <div class="text-sm font-bold text-slate-800 truncate" title="${s.title}">${s.title}</div>
+                <div class="text-[11px] text-gray-500 mt-1">Area: ${s.area}</div>
+                <div class="mt-3 flex justify-between items-center">
+                    <div class="text-[10px] font-bold uppercase text-gray-400">Release:</div>
+                    <div class="text-xs font-bold text-slate-700">${s.expectedRelease.toLocaleDateString('en-GB')}</div>
                 </div>
-                <div class="text-sm font-bold text-slate-800 mb-4 h-10 line-clamp-2">${s.title}</div>
-                <div class="flex justify-between items-end">
-                    <div>
-                        <div class="text-[9px] text-slate-400 uppercase">Release Date</div>
-                        <div class="text-xs font-black text-slate-700">${s.expectedRelease.toLocaleDateString('en-GB', {day:'2-digit', month:'short'})}</div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-[9px] text-slate-400 uppercase">Dev Lead</div>
-                        <div class="text-xs font-bold text-indigo-600">${s.assignedTo.split(' ')[0]}</div>
-                    </div>
-                </div>
-                <div class="mt-4 pt-3 border-t border-slate-50">
-                    <div class="flex justify-between text-[10px] mb-1">
-                        <span class="text-slate-400">Progress Estimate</span>
-                        <span class="font-bold text-slate-700">${s.state === 'Resolved' ? '85%' : '45%'}</span>
-                    </div>
-                    <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div class="h-full ${daysLeft <= 3 ? 'bg-rose-500' : 'bg-indigo-500'}" style="width: ${s.state === 'Resolved' ? '85%' : '45%'}"></div>
-                    </div>
+                <div class="mt-2 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-indigo-500" style="width: ${s.state === 'Resolved' ? '80%' : '40%'}"></div>
                 </div>
             </div>
         `;
