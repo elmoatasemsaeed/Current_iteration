@@ -600,150 +600,144 @@ const ui = {
     }
 },
 
-  renderStats() {
+ renderStats() {
     const now = new Date();
     const todayStr = now.toISOString().split('T')[0];
     
     // دالة مساعدة للتأكد من صحة التاريخ
     const isValidDate = (d) => d instanceof Date && !isNaN(d.getTime());
 
-    // 1. حساب الإحصائيات العامة مع التحقق من التواريخ
+    // 1. حساب الإحصائيات العامة
     const active = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
-    
-    const delayed = active.filter(s => 
-        isValidDate(s.calc?.finalEnd) && now > s.calc.finalEnd
-    );
-
+    const delayed = active.filter(s => isValidDate(s.calc?.finalEnd) && now > s.calc.finalEnd);
     const readyForDelivery = currentData.filter(s => 
         (s.state === 'Tested' || s.state === 'Closed') && 
         !db.deliveryLogs.some(log => log.storyId === s.id)
     );
 
-    // 2. تجميع البيانات حسب Business Area
+    // 2. تجميع البيانات حسب Business Area (استخدام الاسم الصحيح للحقل)
     const areaSummary = {};
     currentData.forEach(s => {
-        const area = s.area || "General";
-        if (!areaSummary[area]) {
-            areaSummary[area] = {
-                name: area,
+        // تنبيه: الحقل في المابير يسمى 'Business Area'
+        const areaName = s['Business Area'] || "General"; 
+        
+        if (!areaSummary[areaName]) {
+            areaSummary[areaName] = {
+                name: areaName,
                 total: 0,
                 byState: {},
                 devs: new Set(),
                 testers: new Set(),
                 actionToday: 0,
-                upcomingDeadlines: 0,
                 delayedCount: 0
             };
         }
-        const stats = areaSummary[area];
+        
+        const stats = areaSummary[areaName];
         stats.total++;
+        
+        // توزيع الحالات
         stats.byState[s.state] = (stats.byState[s.state] || 0) + 1;
         
+        // الموظفين
         if (s.assignedTo && s.assignedTo !== "Unassigned") stats.devs.add(s.assignedTo);
-        if (s.tester && s.tester !== "Unassigned") stats.testers.add(s.tester);
+        if (s['Assigned To Tester'] && s['Assigned To Tester'] !== "Unassigned") stats.testers.add(s['Assigned To Tester']);
         
-        // حماية عند فحص الأكشن اليوم
-        if (isValidDate(s.changedDate)) {
-            if (s.changedDate.toISOString().split('T')[0] === todayStr) {
-                stats.actionToday++;
-            }
+        // الأكشن اليومي (بناءً على Changed Date)
+        if (isValidDate(s.changedDate) && s.changedDate.toISOString().split('T')[0] === todayStr) {
+            stats.actionToday++;
         }
 
-        // حماية عند فحص التأخير
+        // التأخير
         if (active.includes(s) && isValidDate(s.calc?.finalEnd) && now > s.calc.finalEnd) {
             stats.delayedCount++;
         }
-
-        // مواعيد تسليم قريبة (7 أيام)
-        if (isValidDate(s.expectedRelease)) {
-            const diff = (s.expectedRelease - now) / (1000 * 60 * 60 * 24);
-            if (diff >= 0 && diff <= 7) stats.upcomingDeadlines++;
-        }
     });
 
-    // --- بناء الـ UI (Stats Cards) ---
+    // --- بناء كروت الإحصائيات العلوية ---
     const statsHtml = `
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-5 rounded-2xl shadow-lg">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="text-xs uppercase tracking-wider opacity-80 font-semibold">Active Pipeline</div>
-                        <div class="text-3xl font-black mt-1">${active.length}</div>
-                    </div>
-                    <div class="p-2 bg-white/20 rounded-lg"><i class="fas fa-tasks"></i></div>
+        <div class="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-5 rounded-2xl shadow-lg transform hover:scale-105 transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="text-xs uppercase opacity-80 font-bold">Active Pipeline</div>
+                    <div class="text-3xl font-black mt-1">${active.length}</div>
                 </div>
+                <i class="fas fa-layer-group opacity-30 text-2xl"></i>
             </div>
-            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5 rounded-2xl shadow-lg">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="text-xs uppercase tracking-wider opacity-80 font-semibold">Ready for Client</div>
-                        <div class="text-3xl font-black mt-1">${readyForDelivery.length}</div>
-                    </div>
-                    <div class="p-2 bg-white/20 rounded-lg"><i class="fas fa-shipping-fast"></i></div>
+        </div>
+        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5 rounded-2xl shadow-lg transform hover:scale-105 transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="text-xs uppercase opacity-80 font-bold">Ready to Deliver</div>
+                    <div class="text-3xl font-black mt-1">${readyForDelivery.length}</div>
                 </div>
+                <i class="fas fa-truck-loading opacity-30 text-2xl"></i>
             </div>
-            <div class="bg-gradient-to-br from-rose-500 to-red-600 text-white p-5 rounded-2xl shadow-lg">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="text-xs uppercase tracking-wider opacity-80 font-semibold">Delayed Items</div>
-                        <div class="text-3xl font-black mt-1">${delayed.length}</div>
-                    </div>
-                    <div class="p-2 bg-white/20 rounded-lg"><i class="fas fa-exclamation-triangle"></i></div>
+        </div>
+        <div class="bg-gradient-to-br from-rose-500 to-red-600 text-white p-5 rounded-2xl shadow-lg transform hover:scale-105 transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="text-xs uppercase opacity-80 font-bold">Overdue</div>
+                    <div class="text-3xl font-black mt-1">${delayed.length}</div>
                 </div>
+                <i class="fas fa-clock opacity-30 text-2xl"></i>
             </div>
-            <div class="bg-gradient-to-br from-amber-400 to-orange-500 text-white p-5 rounded-2xl shadow-lg">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="text-xs uppercase tracking-wider opacity-80 font-semibold">Action Today</div>
-                        <div class="text-3xl font-black mt-1">${Object.values(areaSummary).reduce((a, b) => a + b.actionToday, 0)}</div>
-                    </div>
-                    <div class="p-2 bg-white/20 rounded-lg"><i class="fas fa-bolt"></i></div>
+        </div>
+        <div class="bg-gradient-to-br from-amber-400 to-orange-500 text-white p-5 rounded-2xl shadow-lg transform hover:scale-105 transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="text-xs uppercase opacity-80 font-bold">Actions Today</div>
+                    <div class="text-3xl font-black mt-1">${Object.values(areaSummary).reduce((a, b) => a + b.actionToday, 0)}</div>
                 </div>
+                <i class="fas fa-bolt opacity-30 text-2xl"></i>
             </div>
         </div>
     `;
     document.getElementById('stats-cards').innerHTML = statsHtml;
 
-    // جدول الـ Business Areas
-    const areaGridHtml = `
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
-            <div class="p-4 border-b border-slate-50 bg-slate-50/50 flex justify-between items-center">
-                <h3 class="font-bold text-slate-800">Business Areas Breakdown</h3>
+    // --- بناء جدول الـ Business Areas ---
+    const tableHtml = `
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 bg-slate-50 border-b flex justify-between items-center">
+                <h3 class="font-bold text-slate-700"><i class="fas fa-chart-pie mr-2 text-indigo-500"></i>Business Area Distribution</h3>
+                <span class="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full font-bold">LIVE STATUS</span>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase tracking-widest">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50 text-slate-400 text-[11px] uppercase">
                         <tr>
-                            <th class="p-4">Area Name</th>
-                            <th class="p-4 text-center">Stories</th>
-                            <th class="p-4 text-center">Staff (Dev/Test)</th>
-                            <th class="p-4 text-center">Actions Today</th>
+                            <th class="p-4 text-left">Area</th>
+                            <th class="p-4 text-center">Total Stories</th>
+                            <th class="p-4 text-center">States</th>
+                            <th class="p-4 text-center">Dev/Test Team</th>
+                            <th class="p-4 text-center">Today's Activity</th>
                             <th class="p-4 text-center">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-50 text-sm">
+                    <tbody class="divide-y divide-slate-100">
                         ${Object.values(areaSummary).map(area => `
-                            <tr class="hover:bg-slate-50/80">
+                            <tr class="hover:bg-slate-50 transition">
                                 <td class="p-4 font-bold text-slate-700">${area.name}</td>
-                                <td class="p-4 text-center">
-                                    <span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded-md font-bold">${area.total}</span>
-                                </td>
-                                <td class="p-4 text-center">
-                                    <div class="flex justify-center gap-2">
-                                        <span class="text-blue-600 font-semibold"><i class="fas fa-code mr-1"></i>${area.devs.size}</span>
-                                        <span class="text-purple-600 font-semibold"><i class="fas fa-vial mr-1"></i>${area.testers.size}</span>
+                                <td class="p-4 text-center"><span class="bg-slate-100 px-2 py-1 rounded font-mono">${area.total}</span></td>
+                                <td class="p-4">
+                                    <div class="flex flex-wrap justify-center gap-1">
+                                        ${Object.entries(area.byState).map(([state, count]) => `
+                                            <span class="text-[9px] px-1.5 py-0.5 rounded-md border border-slate-200 bg-white" title="${state}">
+                                                ${state.charAt(0)}:${count}
+                                            </span>
+                                        `).join('')}
                                     </div>
                                 </td>
-                                <td class="p-4 text-center">
-                                    <span class="${area.actionToday > 0 ? 'bg-orange-100 text-orange-600 font-bold' : 'text-slate-300'} px-2 py-1 rounded-lg">
-                                        ${area.actionToday}
-                                    </span>
+                                <td class="p-4 text-center text-xs">
+                                    <span class="text-blue-600 font-bold"><i class="fas fa-user-code"></i> ${area.devs.size}</span>
+                                    <span class="mx-2 text-slate-300">|</span>
+                                    <span class="text-purple-600 font-bold"><i class="fas fa-user-check"></i> ${area.testers.size}</span>
                                 </td>
                                 <td class="p-4 text-center">
-                                    ${area.delayedCount > 0 
-                                        ? `<span class="text-rose-500 font-bold"><i class="fas fa-clock mr-1"></i>${area.delayedCount} Delayed</span>`
-                                        : `<span class="text-emerald-500"><i class="fas fa-check-circle"></i></span>`
-                                    }
+                                    ${area.actionToday > 0 ? `<span class="bg-orange-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold animation-pulse">${area.actionToday} New</span>` : '<span class="text-slate-300">-</span>'}
+                                </td>
+                                <td class="p-4 text-center">
+                                    ${area.delayedCount > 0 ? `<span class="text-rose-500 font-bold text-xs"><i class="fas fa-exclamation-circle"></i> ${area.delayedCount} Delayed</span>` : '<span class="text-emerald-500 text-xs font-bold"><i class="fas fa-check-circle"></i> Healthy</span>'}
                                 </td>
                             </tr>
                         `).join('')}
@@ -753,19 +747,9 @@ const ui = {
         </div>
     `;
     
-    // حقن الجدول في بداية الحاوية الرئيسية
-    const container = document.getElementById('active-cards-container');
-    if (container) {
-        // تأكد من مسح المحتوى القديم أو وضع الجدول في مكان مخصص
-        const existingTable = document.getElementById('area-breakdown-table');
-        if (existingTable) existingTable.remove();
-        
-        const tableDiv = document.createElement('div');
-        tableDiv.id = 'area-breakdown-table';
-        tableDiv.innerHTML = areaGridHtml;
-        container.prepend(tableDiv);
-    }
-    
+    const tableContainer = document.getElementById('business-area-table-container');
+    if (tableContainer) tableContainer.innerHTML = tableHtml;
+
     this.renderSidebars(delayed, active, todayStr);
 },
 
