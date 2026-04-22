@@ -8436,14 +8436,14 @@
           "Title": "preparation",
           "Assigned To": "Dina Ahmed",
           "Activity": "Testing",
-          "Original Estimation": 1,
+          "Original Estimation": 0.45,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-04-22T09:33:23.31Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-April 8-23",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-04-22T09:33:23.31Z",
+          "Changed Date": "2026-04-22T09:40:18.87Z",
           "Customer": "Wareed Lab_294"
         }
       ],
@@ -8500,8 +8500,8 @@
       ],
       "calc": {
         "devEnd": "2026-04-19T15:47:36.007Z",
-        "testEnd": "2026-04-20T09:00:00.000Z",
-        "finalEnd": "2026-04-20T09:00:00.000Z"
+        "testEnd": "2026-04-20T08:00:00.000Z",
+        "finalEnd": "2026-04-20T08:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -9469,7 +9469,7 @@
       "id": 164498,
       "title": "Wareed - Loyalty Coupons: Enhance the loyalty module to support Coupon Multi Use",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Mahmoud Ahmed Mahmoud Ahmed",
       "tester": "Bassem Ayman Morsy",
       "area": "Front and Financial",
@@ -9478,7 +9478,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-04-21T18:44:58.987Z",
+      "changedDate": "2026-04-22T10:23:51.940Z",
       "tasks": [
         {
           "ID": 166161,
@@ -9972,7 +9972,39 @@
           "Customer": "Wareed Lab_294"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": 169201,
+          "Work Item Type": "Bug",
+          "Title": "Incorrect validation message for large numeric input in Coupon Count per Patient & Value",
+          "Assigned To": "Bassem Ayman Morsy",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-April 8-23",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Tags": "DONE",
+          "Changed Date": "2026-04-22T10:38:04.35Z",
+          "Customer": "Wareed Lab_294"
+        },
+        {
+          "ID": 169242,
+          "Work Item Type": "Bug",
+          "Title": "Clinical Group dropdown is not searchable",
+          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-April 8-23",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-04-22T10:35:03.297Z",
+          "Customer": "Wareed Lab_294"
+        }
+      ],
       "testCases": [
         {
           "id": 166300,
@@ -10599,16 +10631,18 @@
       "id": 156402,
       "title": "Nile labs - Add new input field “Display the unreserved services in the job order at edit mode” check box, at the registration parameters screen.",
       "type": "User Story",
-      "state": "Active",
+      "state": "Resolved",
       "assignedTo": "Ibrahim Ahmed Abo El-Fadl Ahmed",
       "tester": "Mohamed Elgmmal",
       "area": "Registration",
       "priority": 5,
-      "tags": [],
+      "tags": [
+        "published"
+      ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Nile Lab_1111111",
-      "changedDate": "2026-04-22T01:37:42.833Z",
+      "changedDate": "2026-04-22T09:54:17.350Z",
       "tasks": [
         {
           "ID": 169097,
@@ -10623,8 +10657,8 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 8-23",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-21T17:12:20.613Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-22T01:37:42.833Z",
+          "State": "Closed",
+          "Changed Date": "2026-04-22T09:42:11.39Z",
           "Customer": "Nile Lab_1111111"
         },
         {
@@ -10640,8 +10674,8 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 8-23",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-21T17:12:08.25Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-22T01:37:42.833Z",
+          "State": "Closed",
+          "Changed Date": "2026-04-22T09:41:36.44Z",
           "Customer": "Nile Lab_1111111"
         },
         {
@@ -10657,8 +10691,8 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 8-23",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-21T17:12:15.09Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-22T01:37:42.833Z",
+          "State": "Closed",
+          "Changed Date": "2026-04-22T09:40:56.95Z",
           "Customer": "Nile Lab_1111111"
         },
         {
@@ -10668,7 +10702,7 @@
           "Assigned To": "Mostafa Mahanna",
           "Activity": "DB Modification",
           "Original Estimation": 1.5,
-          "TimeSheet_DevActualTime": 1.75,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-04-21T13:29:10.587Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 8-23",
@@ -10676,7 +10710,7 @@
           "Resolved Date": "2026-04-22T09:23:33.023Z",
           "State": "To Be Reviewed",
           "Tags": "liquibase; v.3.4.0; Wait .Net review",
-          "Changed Date": "2026-04-22T09:23:33.023Z",
+          "Changed Date": "2026-04-22T10:02:05.803Z",
           "Customer": "Nile Lab_1111111"
         },
         {
@@ -10686,13 +10720,13 @@
           "Assigned To": "Fatma Fayed",
           "Activity": "Development",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.17,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-04-22T09:35:24.343Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 8-23",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-04-22T09:35:24.343Z",
+          "Changed Date": "2026-04-22T09:40:23.233Z",
           "Customer": "Nile Lab_1111111"
         },
         {
@@ -10834,9 +10868,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-05-25T08:00:00.000Z",
-        "testEnd": "2026-05-26T06:00:00.000Z",
-        "finalEnd": "2026-05-26T06:00:00.000Z"
+        "devEnd": "2026-05-26T07:00:00.000Z",
+        "testEnd": "2026-05-27T06:00:00.000Z",
+        "finalEnd": "2026-05-27T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": []
@@ -13137,7 +13171,7 @@
           "ID": 168176,
           "Work Item Type": "Task",
           "Title": "DB Work: Update NOTIFICATION_PKG.GETNOTIFICATIONPENDINGQUEUEREG to return new value",
-          "Assigned To": "Ahmed Attia Mohamed Al-Qashit",
+          "Assigned To": "Mostafa Mahanna",
           "Activity": "Development",
           "Original Estimation": 3,
           "TimeSheet_DevActualTime": 4.75,
@@ -13145,9 +13179,10 @@
           "Activated Date": "2026-04-21T17:48:17.237Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-04-22T09:51:19.61Z",
+          "State": "To Be Reviewed",
           "Tags": "liquibase; v.3.4.0; Wait .Net review",
-          "Changed Date": "2026-04-21T17:48:17.237Z",
+          "Changed Date": "2026-04-22T09:51:19.61Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -13383,9 +13418,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-04-19T11:00:00.000Z",
-        "testEnd": "2026-04-28T06:00:00.000Z",
-        "finalEnd": "2026-04-28T06:00:00.000Z"
+        "devEnd": "2026-04-16T14:29:00.257Z",
+        "testEnd": "2026-04-27T06:00:00.000Z",
+        "finalEnd": "2026-04-27T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -15129,8 +15164,8 @@
       ],
       "calc": {
         "devEnd": "2026-04-19T10:39:06.787Z",
-        "testEnd": "2026-05-03T13:00:00.000Z",
-        "finalEnd": "2026-05-03T13:00:00.000Z"
+        "testEnd": "2026-04-30T13:00:00.000Z",
+        "finalEnd": "2026-04-30T13:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -16523,6 +16558,21 @@
           "Resolved Date": "2026-04-22T07:39:45.387Z",
           "State": "Resolved",
           "Changed Date": "2026-04-22T07:39:45.387Z",
+          "Customer": "Qatar MOI_96"
+        },
+        {
+          "ID": 169237,
+          "Work Item Type": "Bug",
+          "Title": "Header Logo need to be fit the Report Header",
+          "Assigned To": "Esraa Abdelsalam",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 8-23",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-04-22T09:59:41.29Z",
           "Customer": "Qatar MOI_96"
         }
       ],
