@@ -2116,6 +2116,7 @@ window.onload = () => {
         document.getElementById('username').value = creds.u;
         document.getElementById('password').value = creds.p;
         document.getElementById('gh-token').value = creds.t;
+        document.getElementById('az-pat').value = creds.azPat;
         auth.handleLogin();
     }
 };
