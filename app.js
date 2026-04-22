@@ -93,9 +93,11 @@ const auth = {
         const u = document.getElementById('username').value;
         const p = document.getElementById('password').value;
         const t = document.getElementById('gh-token').value;
+        const azPat = document.getElementById('az-pat').value;
         const rem = document.getElementById('remember-me').checked;
 
-        if(!u || !p || !t) return alert("برجاء ملء جميع البيانات");
+      if(!u || !p || !t || !azPat) return alert("برجاء ملء جميع البيانات بما في ذلك Azure PAT");
+sessionStorage.setItem('az_pat', azPat);
 
         // إظهار رسالة تحميل بسيطة على الزر
         const loginBtn = document.querySelector("button[onclick='auth.handleLogin()']");
@@ -2114,5 +2116,123 @@ window.onload = () => {
         document.getElementById('password').value = creds.p;
         document.getElementById('gh-token').value = creds.t;
         auth.handleLogin();
+    }
+};
+const azureDevOps = {
+    async sync() {
+        const pat = sessionStorage.getItem('az_pat');
+        const settings = JSON.parse(localStorage.getItem('az_settings')) || {
+            org: "NTDotNet",
+            project: "LDM",
+            queryId: "8a732680-07a6-4dff-bdbd-7800644f61b9"
+        };
+
+        if (!pat) return alert("Azure PAT is missing. Please login again.");
+
+        const syncBtn = document.querySelector("button[onclick='azureDevOps.sync()']");
+        syncBtn.innerText = "⏳ Syncing...";
+        syncBtn.disabled = true;
+
+        try {
+            const authHeader = 'Basic ' + btoa(':' + pat);
+            
+            // 1. Get Work Item IDs from Query
+            const queryUrl = `https://dev.azure.com/${settings.org}/${settings.project}/_apis/wit/wiql/${settings.queryId}?api-version=6.0`;
+            const queryRes = await fetch(queryUrl, { headers: { 'Authorization': authHeader } });
+            const queryData = await queryRes.json();
+
+            // التعرف على العلاقات (Work Item Relations) كما في ملف الـ TXT
+            const relations = queryData.workItemRelations || [];
+            const allIds = [...new Set(relations.map(r => r.target ? r.target.id : null).filter(id => id))];
+
+            if (allIds.length === 0) throw new Error("No items found in the specified query.");
+
+            // 2. Fetch Details in Batches (Max 200 per request)
+            const chunkSize = 200;
+            let allDetails = [];
+            for (let i = 0; i < allIds.length; i += chunkSize) {
+                const chunk = allIds.slice(i, i + chunkSize);
+                const batchUrl = `https://dev.azure.com/${settings.org}/_apis/wit/workitemsbatch?api-version=6.0`;
+                const batchRes = await fetch(batchUrl, {
+                    method: 'POST',
+                    headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: chunk, fields: this.getRequiredFields() })
+                });
+                const batchData = await batchRes.json();
+                allDetails = allDetails.concat(batchData.value);
+            }
+
+            // 3. Map Azure Fields to Internal Format
+            const rows = this.buildRowsFromRelations(relations, allDetails);
+            dataProcessor.processRows(rows);
+
+        } catch (error) {
+            console.error("Azure Sync Error:", error);
+            alert("فشل الاتصال بـ Azure: " + error.message);
+        } finally {
+            syncBtn.innerHTML = "🔄 <span class='hidden md:inline'>Sync from Azure</span>";
+            syncBtn.disabled = false;
+        }
+    },
+
+    getRequiredFields() {
+        return [
+            "System.Id", "System.WorkItemType", "System.Title", "System.AssignedTo",
+            "Microsoft.VSTS.Common.Activity", "NT.OriginalEstimation",
+            "Custom.TimeSheet_DevActualTime", "Custom.TimeSheet_TestingActualTime",
+            "Microsoft.VSTS.Common.ActivatedDate", "MyCompany.MyProcess.BusinessArea",
+            "System.IterationPath", "Custom.CustomResolvedDate", "MyCompany.MyProcess.TestedDate",
+            "MyCompany.MyProcess.Tester", "Microsoft.VSTS.Common.ResolvedDate",
+            "System.State", "MyCompany.MyProcess.Release", "MyCompany.MyProcess.BusinessPriority",
+            "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer"
+        ];
+    },
+
+    buildRowsFromRelations(relations, details) {
+        const detailsMap = new Map(details.map(d => [d.id, d.fields]));
+        const rows = [];
+
+        // نقوم بترتيب الصفوف بناءً على تسلسل العلاقات (Parent then Children)
+        relations.forEach(rel => {
+            if (!rel.target) return;
+            const fields = detailsMap.get(rel.target.id);
+            if (!fields) return;
+
+            rows.push({
+                'ID': rel.target.id,
+                'Work Item Type': fields["System.WorkItemType"],
+                'Title': fields["System.Title"],
+                'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
+                'Activity': fields["Microsoft.VSTS.Common.Activity"] || "",
+                'Original Estimation': fields["NT.OriginalEstimation"] || 0,
+                'TimeSheet_DevActualTime': fields["Custom.TimeSheet_DevActualTime"] || 0,
+                'TimeSheet_TestingActualTime': fields["Custom.TimeSheet_TestingActualTime"] || 0,
+                'Activated Date': fields["Microsoft.VSTS.Common.ActivatedDate"],
+                'Business Area': fields["MyCompany.MyProcess.BusinessArea"],
+                'Iteration Path': fields["System.IterationPath"],
+                'CustomResolvedDate': fields["Custom.CustomResolvedDate"],
+                'Tested Date': fields["MyCompany.MyProcess.TestedDate"],
+                'Assigned To Tester': fields["MyCompany.MyProcess.Tester"]?.displayName || "Unassigned",
+                'Resolved Date': fields["Microsoft.VSTS.Common.ResolvedDate"],
+                'State': fields["System.State"],
+                'Release Expected Date': fields["MyCompany.MyProcess.Release"],
+                'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"],
+                'Tags': fields["System.Tags"],
+                'Changed Date': fields["System.ChangedDate"],
+                'Branch': fields["NT.Branch"],
+                'Customer': fields["Nt.Customer"]
+            });
+        });
+        return rows;
+    },
+
+    saveSettings() {
+        const settings = {
+            org: document.getElementById('az-org').value,
+            project: document.getElementById('az-project').value,
+            queryId: document.getElementById('az-query-id').value
+        };
+        localStorage.setItem('az_settings', JSON.stringify(settings));
+        alert("تم حفظ إعدادات Azure بنجاح");
     }
 };
