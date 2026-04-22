@@ -604,9 +604,16 @@ const ui = {
     const now = new Date();
     const todayStr = now.toISOString().split('T')[0];
     
-    // 1. حساب الإحصائيات العامة (Summary Stats)
+    // دالة مساعدة للتأكد من صحة التاريخ
+    const isValidDate = (d) => d instanceof Date && !isNaN(d.getTime());
+
+    // 1. حساب الإحصائيات العامة مع التحقق من التواريخ
     const active = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
-    const delayed = active.filter(s => s.calc.finalEnd instanceof Date && now > s.calc.finalEnd);
+    
+    const delayed = active.filter(s => 
+        isValidDate(s.calc?.finalEnd) && now > s.calc.finalEnd
+    );
+
     const readyForDelivery = currentData.filter(s => 
         (s.state === 'Tested' || s.state === 'Closed') && 
         !db.deliveryLogs.some(log => log.storyId === s.id)
@@ -635,18 +642,20 @@ const ui = {
         if (s.assignedTo && s.assignedTo !== "Unassigned") stats.devs.add(s.assignedTo);
         if (s.tester && s.tester !== "Unassigned") stats.testers.add(s.tester);
         
-        // التحقق من الأكشن اليوم (بناءً على تاريخ التغيير)
-        if (s.changedDate && s.changedDate.toISOString().split('T')[0] === todayStr) {
-            stats.actionToday++;
+        // حماية عند فحص الأكشن اليوم
+        if (isValidDate(s.changedDate)) {
+            if (s.changedDate.toISOString().split('T')[0] === todayStr) {
+                stats.actionToday++;
+            }
         }
 
-        // التحقق من التأخير
-        if (active.includes(s) && s.calc.finalEnd instanceof Date && now > s.calc.finalEnd) {
+        // حماية عند فحص التأخير
+        if (active.includes(s) && isValidDate(s.calc?.finalEnd) && now > s.calc.finalEnd) {
             stats.delayedCount++;
         }
 
         // مواعيد تسليم قريبة (7 أيام)
-        if (s.expectedRelease && s.expectedRelease instanceof Date) {
+        if (isValidDate(s.expectedRelease)) {
             const diff = (s.expectedRelease - now) / (1000 * 60 * 60 * 24);
             if (diff >= 0 && diff <= 7) stats.upcomingDeadlines++;
         }
@@ -695,12 +704,11 @@ const ui = {
     `;
     document.getElementById('stats-cards').innerHTML = statsHtml;
 
-    // --- بناء جدول الـ Business Areas التفصيلي ---
+    // جدول الـ Business Areas
     const areaGridHtml = `
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
             <div class="p-4 border-b border-slate-50 bg-slate-50/50 flex justify-between items-center">
                 <h3 class="font-bold text-slate-800">Business Areas Breakdown</h3>
-                <span class="text-xs text-slate-400">Live Status from Azure DevOps</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -708,32 +716,22 @@ const ui = {
                         <tr>
                             <th class="p-4">Area Name</th>
                             <th class="p-4 text-center">Stories</th>
-                            <th class="p-4 text-center">Status Distribution</th>
                             <th class="p-4 text-center">Staff (Dev/Test)</th>
                             <th class="p-4 text-center">Actions Today</th>
-                            <th class="p-4 text-center">Risk</th>
+                            <th class="p-4 text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50 text-sm">
                         ${Object.values(areaSummary).map(area => `
-                            <tr class="hover:bg-slate-50/80 transition-colors">
+                            <tr class="hover:bg-slate-50/80">
                                 <td class="p-4 font-bold text-slate-700">${area.name}</td>
                                 <td class="p-4 text-center">
                                     <span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded-md font-bold">${area.total}</span>
                                 </td>
-                                <td class="p-4">
-                                    <div class="flex justify-center gap-1">
-                                        ${Object.entries(area.byState).map(([state, count]) => `
-                                            <span class="text-[9px] px-1.5 py-0.5 rounded-full border border-slate-200 bg-white" title="${state}">
-                                                ${state.substring(0, 1)}:${count}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </td>
                                 <td class="p-4 text-center">
-                                    <div class="flex justify-center items-center gap-2">
-                                        <span class="text-blue-600 font-semibold" title="Developers"><i class="fas fa-code mr-1"></i>${area.devs.size}</span>
-                                        <span class="text-purple-600 font-semibold" title="Testers"><i class="fas fa-vial mr-1"></i>${area.testers.size}</span>
+                                    <div class="flex justify-center gap-2">
+                                        <span class="text-blue-600 font-semibold"><i class="fas fa-code mr-1"></i>${area.devs.size}</span>
+                                        <span class="text-purple-600 font-semibold"><i class="fas fa-vial mr-1"></i>${area.testers.size}</span>
                                     </div>
                                 </td>
                                 <td class="p-4 text-center">
@@ -743,7 +741,7 @@ const ui = {
                                 </td>
                                 <td class="p-4 text-center">
                                     ${area.delayedCount > 0 
-                                        ? `<span class="flex items-center justify-center text-rose-500 font-bold"><i class="fas fa-clock mr-1"></i>${area.delayedCount} Delayed</span>`
+                                        ? `<span class="text-rose-500 font-bold"><i class="fas fa-clock mr-1"></i>${area.delayedCount} Delayed</span>`
                                         : `<span class="text-emerald-500"><i class="fas fa-check-circle"></i></span>`
                                     }
                                 </td>
@@ -755,34 +753,38 @@ const ui = {
         </div>
     `;
     
-    // حقن الجدول في الحاوية المناسبة (يمكنك إنشاء div جديد باسم dashboard-main-content)
-    const dashboardContainer = document.getElementById('active-cards-container');
-    if (dashboardContainer) {
-        // إذا كنا في تبويب الداشبورد، نعرض هذا الجدول أولاً
-        const activeTab = document.querySelector('.tab-content.active');
-        if (activeTab && activeTab.id === 'tab-active') {
-             // إضافة الجدول فوق كروت الستوريز
-             // dashboardContainer.insertAdjacentHTML('afterbegin', areaGridHtml); 
-        }
+    // حقن الجدول في بداية الحاوية الرئيسية
+    const container = document.getElementById('active-cards-container');
+    if (container) {
+        // تأكد من مسح المحتوى القديم أو وضع الجدول في مكان مخصص
+        const existingTable = document.getElementById('area-breakdown-table');
+        if (existingTable) existingTable.remove();
+        
+        const tableDiv = document.createElement('div');
+        tableDiv.id = 'area-breakdown-table';
+        tableDiv.innerHTML = areaGridHtml;
+        container.prepend(tableDiv);
     }
     
-    // تحديث الحاويات الجانبية (Today & Overdue) كما هي مع تحسين الشكل
     this.renderSidebars(delayed, active, todayStr);
 },
 
 renderSidebars(delayed, active, todayStr) {
+    const isValidDate = (d) => d instanceof Date && !isNaN(d.getTime());
+
     const overdueHtml = delayed.map(s => `
         <div class="p-3 mb-2 bg-rose-50 border-r-4 border-rose-500 rounded-lg">
             <div class="text-[10px] font-bold text-rose-600 uppercase">${s.area}</div>
             <div class="text-xs font-semibold text-slate-800 line-clamp-1">${s.title}</div>
-            <div class="text-[10px] text-rose-400 mt-1">Expected: ${s.calc.finalEnd.toLocaleDateString()}</div>
+            <div class="text-[10px] text-rose-400 mt-1">Expected: ${isValidDate(s.calc?.finalEnd) ? s.calc.finalEnd.toLocaleDateString() : 'N/A'}</div>
         </div>
     `).join('') || '<div class="text-slate-400 text-center py-4 italic">No overdue items</div>';
     
     document.getElementById('overdue-container').innerHTML = overdueHtml;
 
     const todayHtml = active.filter(s => {
-        return s.calc.finalEnd instanceof Date && s.calc.finalEnd.toISOString().split('T')[0] === todayStr;
+        // حماية عند فلترة مهام اليوم
+        return isValidDate(s.calc?.finalEnd) && s.calc.finalEnd.toISOString().split('T')[0] === todayStr;
     }).map(s => `
         <div class="p-3 mb-2 bg-indigo-50 border-r-4 border-indigo-500 rounded-lg">
             <div class="text-[10px] font-bold text-indigo-600 uppercase">${s.area}</div>
