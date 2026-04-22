@@ -130,7 +130,7 @@ if (response.ok) {
         db = remoteDb;
         db.sha = metaData.sha; // حفظ الـ SHA من بيانات الميتا
         sessionStorage.setItem('gh_token', t);
-        if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t}));
+        if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t, azPat}));
         currentUser = userMatch;
         archiver.runArchive();
         this.startApp();
