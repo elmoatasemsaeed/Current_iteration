@@ -603,156 +603,148 @@ const ui = {
  renderStats() {
     const now = new Date();
     const todayStr = now.toISOString().split('T')[0];
-    
-    // دالة مساعدة للتأكد من صحة التاريخ
     const isValidDate = (d) => d instanceof Date && !isNaN(d.getTime());
 
-    // 1. حساب الإحصائيات العامة
+    // 1. الإحصائيات العامة (Summary)
     const active = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
     const delayed = active.filter(s => isValidDate(s.calc?.finalEnd) && now > s.calc.finalEnd);
-    const readyForDelivery = currentData.filter(s => 
-        (s.state === 'Tested' || s.state === 'Closed') && 
-        !db.deliveryLogs.some(log => log.storyId === s.id)
-    );
 
-    // 2. تجميع البيانات حسب Business Area (استخدام الاسم الصحيح للحقل)
+    // 2. تحليل عميق لكل Business Area (المحتوى المطلوب)
     const areaSummary = {};
     currentData.forEach(s => {
-        // تنبيه: الحقل في المابير يسمى 'Business Area'
-        const areaName = s['Business Area'] || "General"; 
-        
+        const areaName = s['Business Area'] || "General";
         if (!areaSummary[areaName]) {
             areaSummary[areaName] = {
                 name: areaName,
                 total: 0,
-                byState: {},
+                states: { 'New': 0, 'Active': 0, 'Resolved': 0, 'Tested': 0, 'Closed': 0 },
                 devs: new Set(),
-                testers: new Set(),
-                actionToday: 0,
-                delayedCount: 0
+                actionsToday: 0,
+                weight: 0 // لحساب نسبة الإنجاز الحقيقية
             };
         }
         
         const stats = areaSummary[areaName];
         stats.total++;
         
-        // توزيع الحالات
-        stats.byState[s.state] = (stats.byState[s.state] || 0) + 1;
-        
-        // الموظفين
-        if (s.assignedTo && s.assignedTo !== "Unassigned") stats.devs.add(s.assignedTo);
-        if (s['Assigned To Tester'] && s['Assigned To Tester'] !== "Unassigned") stats.testers.add(s['Assigned To Tester']);
-        
-        // الأكشن اليومي (بناءً على Changed Date)
-        if (isValidDate(s.changedDate) && s.changedDate.toISOString().split('T')[0] === todayStr) {
-            stats.actionToday++;
+        // تسجيل الحالة (State Distribution)
+        if (stats.states.hasOwnProperty(s.state)) {
+            stats.states[s.state]++;
+        } else {
+            stats.states[s.state] = (stats.states[s.state] || 0) + 1;
         }
 
-        // التأخير
-        if (active.includes(s) && isValidDate(s.calc?.finalEnd) && now > s.calc.finalEnd) {
-            stats.delayedCount++;
+        // إضافة الموظفين
+        if (s.assignedTo && s.assignedTo !== "Unassigned") stats.devs.add(s.assignedTo);
+
+        // حساب الوزن (الإنجاز): Tested/Closed = 100%, Resolved = 80%, Active = 30%
+        if (s.state === 'Tested' || s.state === 'Closed') stats.weight += 100;
+        else if (s.state === 'Resolved') stats.weight += 80;
+        else if (s.state === 'Active') stats.weight += 30;
+
+        // الأكشن اليومي
+        if (isValidDate(s.changedDate) && s.changedDate.toISOString().split('T')[0] === todayStr) {
+            stats.actionsToday++;
         }
     });
 
-    // --- بناء كروت الإحصائيات العلوية ---
-    const statsHtml = `
-        <div class="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-5 rounded-2xl shadow-lg transform hover:scale-105 transition">
-            <div class="flex justify-between items-start">
-                <div>
-                    <div class="text-xs uppercase opacity-80 font-bold">Active Pipeline</div>
-                    <div class="text-3xl font-black mt-1">${active.length}</div>
-                </div>
-                <i class="fas fa-layer-group opacity-30 text-2xl"></i>
-            </div>
-        </div>
-        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5 rounded-2xl shadow-lg transform hover:scale-105 transition">
-            <div class="flex justify-between items-start">
-                <div>
-                    <div class="text-xs uppercase opacity-80 font-bold">Ready to Deliver</div>
-                    <div class="text-3xl font-black mt-1">${readyForDelivery.length}</div>
-                </div>
-                <i class="fas fa-truck-loading opacity-30 text-2xl"></i>
-            </div>
-        </div>
-        <div class="bg-gradient-to-br from-rose-500 to-red-600 text-white p-5 rounded-2xl shadow-lg transform hover:scale-105 transition">
-            <div class="flex justify-between items-start">
-                <div>
-                    <div class="text-xs uppercase opacity-80 font-bold">Overdue</div>
-                    <div class="text-3xl font-black mt-1">${delayed.length}</div>
-                </div>
-                <i class="fas fa-clock opacity-30 text-2xl"></i>
-            </div>
-        </div>
-        <div class="bg-gradient-to-br from-amber-400 to-orange-500 text-white p-5 rounded-2xl shadow-lg transform hover:scale-105 transition">
-            <div class="flex justify-between items-start">
-                <div>
-                    <div class="text-xs uppercase opacity-80 font-bold">Actions Today</div>
-                    <div class="text-3xl font-black mt-1">${Object.values(areaSummary).reduce((a, b) => a + b.actionToday, 0)}</div>
-                </div>
-                <i class="fas fa-bolt opacity-30 text-2xl"></i>
-            </div>
-        </div>
-    `;
-    document.getElementById('stats-cards').innerHTML = statsHtml;
+    // --- رسم الكروت العلوية (نفس ستايل الصورة) ---
+    this.renderTopCards(active.length, delayed.length);
 
-    // --- بناء جدول الـ Business Areas ---
-    const tableHtml = `
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-4 bg-slate-50 border-b flex justify-between items-center">
-                <h3 class="font-bold text-slate-700"><i class="fas fa-chart-pie mr-2 text-indigo-500"></i>Business Area Distribution</h3>
-                <span class="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full font-bold">LIVE STATUS</span>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-slate-50 text-slate-400 text-[11px] uppercase">
-                        <tr>
-                            <th class="p-4 text-left">Area</th>
-                            <th class="p-4 text-center">Total Stories</th>
-                            <th class="p-4 text-center">States</th>
-                            <th class="p-4 text-center">Dev/Test Team</th>
-                            <th class="p-4 text-center">Today's Activity</th>
-                            <th class="p-4 text-center">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        ${Object.values(areaSummary).map(area => `
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="p-4 font-bold text-slate-700">${area.name}</td>
-                                <td class="p-4 text-center"><span class="bg-slate-100 px-2 py-1 rounded font-mono">${area.total}</span></td>
-                                <td class="p-4">
-                                    <div class="flex flex-wrap justify-center gap-1">
-                                        ${Object.entries(area.byState).map(([state, count]) => `
-                                            <span class="text-[9px] px-1.5 py-0.5 rounded-md border border-slate-200 bg-white" title="${state}">
-                                                ${state.charAt(0)}:${count}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </td>
-                                <td class="p-4 text-center text-xs">
-                                    <span class="text-blue-600 font-bold"><i class="fas fa-user-code"></i> ${area.devs.size}</span>
-                                    <span class="mx-2 text-slate-300">|</span>
-                                    <span class="text-purple-600 font-bold"><i class="fas fa-user-check"></i> ${area.testers.size}</span>
-                                </td>
-                                <td class="p-4 text-center">
-                                    ${area.actionToday > 0 ? `<span class="bg-orange-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold animation-pulse">${area.actionToday} New</span>` : '<span class="text-slate-300">-</span>'}
-                                </td>
-                                <td class="p-4 text-center">
-                                    ${area.delayedCount > 0 ? `<span class="text-rose-500 font-bold text-xs"><i class="fas fa-exclamation-circle"></i> ${area.delayedCount} Delayed</span>` : '<span class="text-emerald-500 text-xs font-bold"><i class="fas fa-check-circle"></i> Healthy</span>'}
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-    
-    const tableContainer = document.getElementById('business-area-table-container');
-    if (tableContainer) tableContainer.innerHTML = tableHtml;
+    // --- بناء جدول التوزيع (Area vs Status Matrix) ---
+    let tableRowsHtml = Object.values(areaSummary).map(area => {
+        const progressPercent = Math.round(area.weight / area.total);
+        
+        return `
+            <tr class="border-b border-slate-50 hover:bg-slate-50/80 transition">
+                <td class="p-4">
+                    <div class="font-black text-slate-700 text-sm">${area.name}</div>
+                    <div class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">${area.total} Total Stories</div>
+                </td>
+                <td class="p-4">
+                    <div class="flex gap-2">
+                        <div class="flex-1 text-center p-1 rounded bg-slate-100 border border-slate-200">
+                            <div class="text-[9px] text-slate-400 font-bold uppercase">New</div>
+                            <div class="text-xs font-black text-slate-600">${area.states['New'] || 0}</div>
+                        </div>
+                        <div class="flex-1 text-center p-1 rounded bg-orange-50 border border-orange-100 text-orange-600">
+                            <div class="text-[9px] font-bold uppercase">Active</div>
+                            <div class="text-xs font-black">${area.states['Active'] || 0}</div>
+                        </div>
+                        <div class="flex-1 text-center p-1 rounded bg-blue-50 border border-blue-100 text-blue-600">
+                            <div class="text-[9px] font-bold uppercase">Resolv</div>
+                            <div class="text-xs font-black">${area.states['Resolved'] || 0}</div>
+                        </div>
+                        <div class="flex-1 text-center p-1 rounded bg-emerald-50 border border-emerald-100 text-emerald-600">
+                            <div class="text-[9px] font-bold uppercase">Done</div>
+                            <div class="text-xs font-black">${(area.states['Tested'] || 0) + (area.states['Closed'] || 0)}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="p-4">
+                    <div class="flex items-center gap-2">
+                        <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-indigo-500" style="width: ${progressPercent}%"></div>
+                        </div>
+                        <span class="text-[10px] font-black text-slate-500">${progressPercent}%</span>
+                    </div>
+                </td>
+                <td class="p-4 text-center">
+                    <div class="flex justify-center -space-x-2">
+                         ${Array.from(area.devs).slice(0, 3).map(d => `<div title="${d}" class="w-6 h-6 rounded-full bg-indigo-600 border-2 border-white text-white text-[8px] flex items-center justify-center font-bold">${d[0]}</div>`).join('')}
+                         ${area.devs.size > 3 ? `<div class="w-6 h-6 rounded-full bg-slate-200 border-2 border-white text-slate-500 text-[8px] flex items-center justify-center font-bold">+${area.devs.size - 3}</div>` : ''}
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
 
-    this.renderSidebars(delayed, active, todayStr);
+    document.getElementById('business-area-table-container').innerHTML = `
+        <table class="w-full">
+            <thead class="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase">
+                <tr>
+                    <th class="p-4 text-left">Business Area</th>
+                    <th class="p-4 text-center w-1/3">Status Distribution (The Matrix)</th>
+                    <th class="p-4 text-left w-1/4">Overall Progress</th>
+                    <th class="p-4 text-center">Team Size</th>
+                </tr>
+            </thead>
+            <tbody>${tableRowsHtml}</tbody>
+        </table>
+    `;
+
+    this.renderClientRoadmap();
 },
 
+renderTopCards(activeCount, delayedCount) {
+    const todayAction = currentData.filter(s => {
+        const todayStr = new Date().toISOString().split('T')[0];
+        return s.changedDate instanceof Date && s.changedDate.toISOString().split('T')[0] === todayStr;
+    }).length;
+
+    document.getElementById('stats-cards').innerHTML = `
+        <div class="bg-indigo-600 p-6 rounded-[2.5rem] text-white shadow-2xl shadow-indigo-200 relative overflow-hidden">
+            <div class="relative z-10 text-xs font-bold opacity-70 mb-1">TOTAL SCOPE</div>
+            <div class="relative z-10 text-4xl font-black">${currentData.length}</div>
+            <i class="fas fa-project-diagram absolute bottom-4 right-4 text-6xl opacity-10"></i>
+        </div>
+        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100 relative overflow-hidden">
+            <div class="text-xs font-black text-slate-400 mb-1">IN PROGRESS</div>
+            <div class="text-4xl font-black text-slate-800">${activeCount}</div>
+            <div class="mt-2 text-[10px] font-bold text-orange-500 bg-orange-50 px-2 py-1 rounded-full inline-block">LIVE TRACKING</div>
+        </div>
+        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100">
+            <div class="text-xs font-black text-slate-400 mb-1">DONE TODAY</div>
+            <div class="text-4xl font-black text-emerald-500">${todayAction}</div>
+            <div class="mt-2 text-[10px] font-bold text-slate-400 italic">LAST 24 HOURS</div>
+        </div>
+        <div class="bg-rose-500 p-6 rounded-[2.5rem] text-white shadow-xl shadow-rose-100">
+            <div class="text-xs font-bold opacity-70 mb-1">DELAYED / RISK</div>
+            <div class="text-4xl font-black">${delayedCount}</div>
+            <i class="fas fa-exclamation-triangle absolute top-6 right-6 opacity-20"></i>
+        </div>
+    `;
+},
 renderSidebars(delayed, active, todayStr) {
     const isValidDate = (d) => d instanceof Date && !isNaN(d.getTime());
 
