@@ -3949,7 +3949,7 @@
       "id": 160343,
       "title": "Update App Link APIs - Add Notifications APIs - v1.6 - v1.7",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Saleh Abdulrahim Attia",
       "tester": "Abdelrahman Elbetar",
       "area": "MobileApp",
@@ -3958,7 +3958,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-04-15T16:05:59.207Z",
+      "changedDate": "2026-04-26T07:43:41.183Z",
       "tasks": [
         {
           "ID": 161843,
@@ -5502,6 +5502,21 @@
           "State": "Closed",
           "Changed Date": "2026-04-21T07:08:12.68Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 169494,
+          "Work Item Type": "Bug",
+          "Title": "Notification APIs – Add Notification API Returns 500 Internal Server Error When Sending Large Receiver IDs Data Without Proper Validation",
+          "Assigned To": "Saleh Abdulrahim Attia",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-04-26T07:38:52.89Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "testCases": [],
@@ -6101,7 +6116,7 @@
       "id": 167203,
       "title": "Al Borg KSA - Extra Service Integration",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "Tarek Saad",
       "tester": "Unassigned",
       "area": "LDM Integration",
@@ -6112,7 +6127,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-04-23T16:11:37.303Z",
+      "changedDate": "2026-04-26T07:20:18.957Z",
       "tasks": [
         {
           "ID": 168372,
@@ -6171,7 +6186,7 @@
           "ID": 169355,
           "Work Item Type": "Bug",
           "Title": "AL_BORG_KSA_check and response this CURL cant add extra service",
-          "Assigned To": "Tarek Saad",
+          "Assigned To": "Mohamed Sayed Masry Rezk",
           "Activity": "",
           "Original Estimation": 2,
           "TimeSheet_DevActualTime": 2,
@@ -6179,9 +6194,10 @@
           "Activated Date": "2026-04-23T10:56:02.73Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-04-26T07:20:06.617Z",
+          "State": "Resolved",
           "Tags": "wait accept pr and pipeline",
-          "Changed Date": "2026-04-23T11:03:15.583Z",
+          "Changed Date": "2026-04-26T07:20:06.617Z",
           "Customer": "Al Borg KSA_530"
         }
       ],
@@ -9180,7 +9196,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Nile Lab_1111111",
-      "changedDate": "2026-04-24T00:04:52.180Z",
+      "changedDate": "2026-04-26T07:41:56.290Z",
       "tasks": [
         {
           "ID": 169267,
@@ -9373,7 +9389,7 @@
           "ID": 167813,
           "Work Item Type": "Task",
           "Title": "Preparation Task CR164500",
-          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed",
+          "Assigned To": "Bassem Ayman Morsy",
           "Activity": "Testing",
           "Original Estimation": 2.25,
           "TimeSheet_DevActualTime": 0,
@@ -9382,7 +9398,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-April 8-23",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-04-12T16:16:11.73Z",
+          "Changed Date": "2026-04-26T07:32:26.697Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -21097,6 +21113,21 @@
           "State": "Closed",
           "Changed Date": "2026-04-20T09:34:29.057Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 169491,
+          "Work Item Type": "Bug",
+          "Title": "Add Visit Saved patient path - Patient number is not saved in visit table when adding new visit for existing patient",
+          "Assigned To": "Yara Mohsen",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Home Visit",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-04-26T07:19:56.497Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "testCases": [],
@@ -21132,6 +21163,96 @@
         "devEnd": "TBD",
         "testEnd": "---",
         "finalEnd": "---"
+      },
+      "customTags": [],
+      "standupComments": []
+    },
+    {
+      "id": 169372,
+      "title": "MM: Front Enhancement and Angular version updates",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Mostafa Torad",
+      "tester": "Unassigned",
+      "area": "MaterialManagement",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-04-26T07:36:34.827Z",
+      "tasks": [
+        {
+          "ID": 169422,
+          "Work Item Type": "Task",
+          "Title": "subscribtion and destroy \"add cursor rules - handle it in batch receive - create base destroy class - handle it in pricelist\"",
+          "Assigned To": "Mostafa Torad",
+          "Activity": "Development",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 1.12,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MaterialManagement\\2026\\MM March 1-13",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-04-23T16:00:41.787Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-04-23T16:00:41.787Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 169423,
+          "Work Item Type": "Task",
+          "Title": "upgrade project to v 14",
+          "Assigned To": "Mostafa Torad",
+          "Activity": "Development",
+          "Original Estimation": 8,
+          "TimeSheet_DevActualTime": 7.32,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MaterialManagement\\2026\\MM March 1-13",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-04-23T16:01:15.003Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-04-23T16:01:15.003Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 169424,
+          "Work Item Type": "Task",
+          "Title": "handle unsubscribe  in (receive item - location details)",
+          "Assigned To": "Mostafa Torad",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0.33,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MaterialManagement\\2026\\MM March 1-13",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-04-23T16:00:49.9Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-04-23T16:00:49.9Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 169493,
+          "Work Item Type": "Task",
+          "Title": "upgrade to v 15",
+          "Assigned To": "Mostafa Torad",
+          "Activity": "Development",
+          "Original Estimation": 8,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-04-26T07:37:26.157Z",
+          "Iteration Path": "MaterialManagement\\2026\\MM March 1-13",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-04-26T07:37:27.11Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-04-27T12:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
       },
       "customTags": [],
       "standupComments": []
