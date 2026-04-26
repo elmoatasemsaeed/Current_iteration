@@ -596,6 +596,8 @@ const ui = {
             this.renderDailyActivity();
         } else if (activeTab.id === 'tab-inactive-stories') {
             this.renderInactiveStories();
+        } else if (activeTab.id === 'tab-kanban') { // أضف هذا الجزء
+            this.renderKanban();
         }
     }
 },
@@ -1044,6 +1046,69 @@ renderActiveCards() {
         `;
     }).join('');
 },
+    renderKanban() {
+    const container = document.getElementById('kanban-container');
+    const filterSelect = document.getElementById('kanban-ba-filter');
+    
+    if (!currentData || currentData.length === 0) return;
+
+    // 1. ملء الفلتر بـ Business Areas الفريدة
+    const areas = [...new Set(currentData.map(s => s.area || "General"))].sort();
+    if (filterSelect.options.length <= 1) { // التحديث فقط لو كان فارغاً
+        filterSelect.innerHTML = areas.map(a => `<option value="${a}">${a}</option>`).join('');
+    }
+
+    const selectedArea = filterSelect.value || areas[0];
+    const filteredStories = currentData.filter(s => (s.area || "General") === selectedArea);
+
+    // 2. تعريف الحالات (الأعمدة)
+    const states = ["New", "Active", "Resolved", "Tested", "Closed"];
+    
+    // 3. بناء الأعمدة
+    container.innerHTML = states.map(state => {
+        const storiesInState = filteredStories.filter(s => s.state === state);
+        
+        return `
+            <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
+                <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
+                    <h3 class="font-bold text-slate-700">${state}</h3>
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
+                </div>
+                <div class="p-2 space-y-3 overflow-y-auto">
+                    ${storiesInState.map(s => {
+                        // حساب الاستميشن
+                        const devEst = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']))
+                                             .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                        const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
+                                              .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                        
+                        return `
+                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+                                <div class="text-[10px] font-bold text-blue-600 mb-1">#${s.id}</div>
+                                <div class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2">${s.title}</div>
+                                
+                                <div class="grid grid-cols-2 gap-2 border-t pt-2">
+                                    <div class="text-[11px]">
+                                        <div class="text-gray-400 uppercase font-bold">Dev</div>
+                                        <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
+                                        <div class="text-blue-500 font-bold">${devEst}h</div>
+                                    </div>
+                                    <div class="text-[11px]">
+                                        <div class="text-gray-400 uppercase font-bold">Tester</div>
+                                        <div class="text-slate-700 truncate font-medium">${s.tester}</div>
+                                        <div class="text-green-500 font-bold">${testEst}h</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                    ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+},
+    
 renderDelivery() {
     const container = document.getElementById('delivery-grid');
     // جلب نص البحث وتحويله لحروف صغيرة
