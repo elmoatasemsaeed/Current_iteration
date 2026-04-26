@@ -1046,7 +1046,7 @@ renderActiveCards() {
         `;
     }).join('');
 },
-    renderKanban() {
+renderKanban() {
     const container = document.getElementById('kanban-container');
     const filterSelect = document.getElementById('kanban-ba-filter');
     
@@ -1061,7 +1061,7 @@ renderActiveCards() {
     const selectedArea = filterSelect.value || areas[0];
     const filteredStories = currentData.filter(s => (s.area || "General") === selectedArea);
 
-    // 2. تعريف الحالات (الأعمدة) - كما هي في الكود الأصلي
+    // 2. تعريف الحالات (الأعمدة)
     const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];    
     
     // 3. بناء الأعمدة
@@ -1082,22 +1082,24 @@ renderActiveCards() {
                         const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
                                               .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                         
-                        // معالجة التاجز (تحويل النص إلى مصفوفة إذا لزم الأمر)
+                        // معالجة التاجز (Tags)
                         const tagsList = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
 
-                        // حساب البجز (Resolved/Total)
+                        // منطق البجز الصحيح (بناءً على b['State'])
                         const totalBugs = s.bugs ? s.bugs.length : 0;
-                        const resolvedBugs = s.bugs ? s.bugs.filter(b => ['Resolved', 'Closed', 'Cancel'].includes(b.state)).length : 0;
+                        const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
 
-                        // حساب التست كيسز (Passed/Total)
-                        const totalTCs = s.testCases ? s.testCases.length : 0;
-                        const passedTCs = s.testCases ? s.testCases.filter(tc => ['Pass', 'Closed'].includes(tc.state)).length : 0;
+                        // منطق التست كيسز الصحيح (بناءً على tc.state والحالات المحددة)
+                        const testCases = s.testCases || [];
+                        const totalTC = testCases.length;
+                        const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
 
                         return `
                             <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+                                ${tagsList.length > 0 ? `
                                 <div class="flex flex-wrap gap-1 mb-2">
                                     ${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
-                                </div>
+                                </div>` : ''}
 
                                 <div class="text-[10px] font-bold text-blue-600 mb-1">#${s.id}</div>
                                 <div class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2">${s.title}</div>
@@ -1106,17 +1108,17 @@ renderActiveCards() {
                                     <div class="text-[11px]">
                                         <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
                                         <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
-                                        <div class="flex justify-between mt-1">
+                                        <div class="flex justify-between items-center mt-1">
                                             <span class="text-blue-500 font-bold">${devEst}h</span>
-                                            <span class="text-red-500 text-[10px] font-bold">🐞${resolvedBugs}/${totalBugs}</span>
+                                            <span class="text-red-500 text-[10px] font-bold" title="Completed Bugs">🐞${completedBugs}/${totalBugs}</span>
                                         </div>
                                     </div>
                                     <div class="text-[11px] border-l pl-2">
                                         <div class="text-gray-400 uppercase font-bold text-[9px]">Tester</div>
                                         <div class="text-slate-700 truncate font-medium">${s.tester}</div>
-                                        <div class="flex justify-between mt-1">
+                                        <div class="flex justify-between items-center mt-1">
                                             <span class="text-green-500 font-bold">${testEst}h</span>
-                                            <span class="text-indigo-500 text-[10px] font-bold">📋${passedTCs}/${totalTCs}</span>
+                                            <span class="text-indigo-500 text-[10px] font-bold" title="Completed Test Cases">📋${completedTC}/${totalTC}</span>
                                         </div>
                                     </div>
                                 </div>
