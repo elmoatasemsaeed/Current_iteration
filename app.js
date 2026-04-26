@@ -1047,102 +1047,66 @@ renderActiveCards() {
     }).join('');
 },
     renderKanban() {
-        const container = document.getElementById('kanban-board');
-        if (!container) return;
+    const container = document.getElementById('kanban-container');
+    const filterSelect = document.getElementById('kanban-ba-filter');
+    
+    if (!currentData || currentData.length === 0) return;
 
-        const states = ['New', 'Active', 'Resolved', 'Tested', 'Closed'];
-        const columns = {
-            'New': [],
-            'Active': [],
-            'Resolved': [],
-            'Tested': [],
-            'Closed': []
-        };
+    // 1. ملء الفلتر بـ Business Areas الفريدة
+    const areas = [...new Set(currentData.map(s => s.area || "General"))].sort();
+    if (filterSelect.options.length <= 1) { // التحديث فقط لو كان فارغاً
+        filterSelect.innerHTML = areas.map(a => `<option value="${a}">${a}</option>`).join('');
+    }
 
-        // توزيع الستوريز على الأعمدة
-        currentData.forEach(s => {
-            if (columns[s.state]) {
-                columns[s.state].push(s);
-            }
-        });
+    const selectedArea = filterSelect.value || areas[0];
+    const filteredStories = currentData.filter(s => (s.area || "General") === selectedArea);
 
-        container.innerHTML = states.map(state => {
-            const stories = columns[state];
-            return `
-                <div class="kanban-column bg-gray-50 rounded-xl p-4 min-w-[300px] flex-1 flex flex-col border border-gray-200">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-slate-700 uppercase text-sm tracking-wider flex items-center gap-2">
-                            ${state}
-                            <span class="bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full text-[10px]">${stories.length}</span>
-                        </h3>
-                    </div>
-                    
-                    <div class="flex-1 space-y-3 overflow-y-auto max-h-[calc(100vh-300px)]">
-                        ${stories.map(s => {
-                            // حسابات الديف
-                            const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-                            const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                            const totalBugs = s.bugs ? s.bugs.length : 0;
-                            const resolvedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
-
-                            // حسابات التستر
-                            const testCases = s.testCases || [];
-                            const totalTC = testCases.length;
-                            const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
-
-                            // التاجز
-                            const allTags = [...(s.tags || []), ...(s.customTags || [])];
-
-                            return `
-                                <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:border-indigo-300 transition-all cursor-pointer group"
-                                     onclick="ui.openStoryModal('${s.id}')">
-                                    
-                                    <div class="flex flex-wrap gap-1 mb-2">
-                                        ${allTags.map(t => `
-                                            <span class="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded text-[9px] font-bold">
-                                                ${t}
-                                            </span>
-                                        `).join('')}
+    // 2. تعريف الحالات (الأعمدة)
+const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];    
+    // 3. بناء الأعمدة
+    container.innerHTML = states.map(state => {
+        const storiesInState = filteredStories.filter(s => s.state === state);
+        
+        return `
+            <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
+                <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
+                    <h3 class="font-bold text-slate-700">${state}</h3>
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
+                </div>
+                <div class="p-2 space-y-3 overflow-y-auto">
+                    ${storiesInState.map(s => {
+                        // حساب الاستميشن
+                        const devEst = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']))
+                                             .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                        const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
+                                              .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                        
+                        return `
+                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+                                <div class="text-[10px] font-bold text-blue-600 mb-1">#${s.id}</div>
+                                <div class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2">${s.title}</div>
+                                
+                                <div class="grid grid-cols-2 gap-2 border-t pt-2">
+                                    <div class="text-[11px]">
+                                        <div class="text-gray-400 uppercase font-bold">Dev</div>
+                                        <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
+                                        <div class="text-blue-500 font-bold">${devEst}h</div>
                                     </div>
-
-                                    <div class="text-[10px] text-gray-400 font-mono mb-1">#${s.id}</div>
-                                    <h4 class="text-sm font-bold text-slate-800 mb-3 leading-tight group-hover:text-indigo-600">${s.title}</h4>
-                                    
-                                    <div class="space-y-2">
-                                        <div class="flex items-center justify-between text-[11px] bg-blue-50/50 p-1.5 rounded border border-blue-100/50">
-                                            <div class="flex items-center gap-1.5">
-                                                <span class="grayscale group-hover:grayscale-0">👨‍💻</span>
-                                                <span class="font-medium text-slate-600">${s.assignedTo}</span>
-                                            </div>
-                                            <div class="flex flex-col items-end gap-0.5">
-                                                <span class="font-bold text-blue-700">Est: ${totalDevEffort}h</span>
-                                                <span class="text-[9px] text-red-600 font-bold">Bugs: ${resolvedBugs}/${totalBugs}</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex items-center justify-between text-[11px] bg-purple-50/50 p-1.5 rounded border border-purple-100/50">
-                                            <div class="flex items-center gap-1.5">
-                                                <span class="grayscale group-hover:grayscale-0">🛡️</span>
-                                                <span class="font-medium text-slate-600">${s.tester}</span>
-                                            </div>
-                                            <div class="text-right">
-                                                <span class="font-bold text-purple-700">TCs: ${completedTC}/${totalTC}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-3 pt-2 border-t border-gray-50 flex justify-between items-center">
-                                        <span class="text-[9px] font-bold text-gray-400 uppercase">${s.area}</span>
-                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[9px] font-bold">P${s.priority || 999}</span>
+                                    <div class="text-[11px]">
+                                        <div class="text-gray-400 uppercase font-bold">Tester</div>
+                                        <div class="text-slate-700 truncate font-medium">${s.tester}</div>
+                                        <div class="text-green-500 font-bold">${testEst}h</div>
                                     </div>
                                 </div>
-                            `;
-                        }).join('')}
-                    </div>
+                            </div>
+                        `;
+                    }).join('')}
+                    ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
                 </div>
-            `;
-        }).join('');
-    },
+            </div>
+        `;
+    }).join('');
+},
     
 renderDelivery() {
     const container = document.getElementById('delivery-grid');
