@@ -1052,63 +1052,56 @@ renderActiveCards() {
     
     if (!currentData || currentData.length === 0) return;
 
-    // 1. جلب الـ Business Areas الفريدة لملء الفلتر (إذا لم يتم ملؤه بعد)
-    const areas = [...new Set(currentData.map(s => s['Business Area'] || "General"))].sort();
-    if (filterSelect.options.length <= 1) { 
+    // 1. ملء الفلتر بـ Business Areas الفريدة
+    const areas = [...new Set(currentData.map(s => s.area || "General"))].sort();
+    if (filterSelect.options.length <= 1) { // التحديث فقط لو كان فارغاً
         filterSelect.innerHTML = areas.map(a => `<option value="${a}">${a}</option>`).join('');
     }
 
     const selectedArea = filterSelect.value || areas[0];
-    const filteredStories = currentData.filter(s => (s['Business Area'] || "General") === selectedArea);
+    const filteredStories = currentData.filter(s => (s.area || "General") === selectedArea);
 
-    // 2. تحديث الحالات المطلوبة (بدون New و Closed وإضافة On-Hold و Active - With Bugs)
-    // الترتيب المقترح: Active -> Active - With Bugs -> Resolved -> Tested -> On-Hold
-    const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
-    
-    // 3. بناء الأعمدة بناءً على الحالات الجديدة
+    // 2. تعريف الحالات (الأعمدة)
+const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];    
+    // 3. بناء الأعمدة
     container.innerHTML = states.map(state => {
-        const storiesInState = filteredStories.filter(s => s['State'] === state);
+        const storiesInState = filteredStories.filter(s => s.state === state);
         
         return `
-            <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-[80vh]">
-                <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl sticky top-0 z-10">
-                    <h3 class="font-bold text-slate-700 text-sm">${state}</h3>
-                    <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-bold">${storiesInState.length}</span>
+            <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
+                <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
+                    <h3 class="font-bold text-slate-700">${state}</h3>
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
                 </div>
-                <div class="p-2 space-y-3 overflow-y-auto custom-scrollbar">
+                <div class="p-2 space-y-3 overflow-y-auto">
                     ${storiesInState.map(s => {
-                        // حساب الاستميشن للمطور والتستر
-                        // ملاحظة: يتم الحساب بناءً على الـ Activity في الـ Tasks
-                        const devEst = (s.tasks || []).filter(t => ["Development", "DB Modification"].includes(t['Activity']))
+                        // حساب الاستميشن
+                        const devEst = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']))
                                              .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                        const testEst = (s.tasks || []).filter(t => t['Activity'] === 'Testing')
+                        const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
                                               .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                         
                         return `
-                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:border-blue-300 transition-all cursor-pointer" 
-                                 onclick="ui.showStoryDetails('${s.id}')">
-                                <div class="text-[10px] font-bold text-blue-600 mb-1 flex justify-between">
-                                    <span>#${s.id}</span>
-                                    ${state === 'On-Hold' ? '<span class="text-red-500">⚠️</span>' : ''}
-                                </div>
-                                <div class="text-xs font-semibold text-slate-800 mb-3 line-clamp-2 leading-relaxed h-8">${s.title}</div>
+                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+                                <div class="text-[10px] font-bold text-blue-600 mb-1">#${s.id}</div>
+                                <div class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2">${s.title}</div>
                                 
-                                <div class="grid grid-cols-2 gap-2 border-t pt-2 mt-2">
-                                    <div class="text-[10px]">
-                                        <div class="text-gray-400 uppercase font-bold text-[8px]">Dev</div>
-                                        <div class="text-slate-700 truncate font-medium">${s.assignedTo.split('<')[0]}</div>
-                                        <div class="text-blue-600 font-bold mt-0.5">${devEst}h</div>
+                                <div class="grid grid-cols-2 gap-2 border-t pt-2">
+                                    <div class="text-[11px]">
+                                        <div class="text-gray-400 uppercase font-bold">Dev</div>
+                                        <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
+                                        <div class="text-blue-500 font-bold">${devEst}h</div>
                                     </div>
-                                    <div class="text-[10px]">
-                                        <div class="text-gray-400 uppercase font-bold text-[8px]">Tester</div>
-                                        <div class="text-slate-700 truncate font-medium">${(s['Assigned To Tester'] || 'Unassigned').split('<')[0]}</div>
-                                        <div class="text-green-600 font-bold mt-0.5">${testEst}h</div>
+                                    <div class="text-[11px]">
+                                        <div class="text-gray-400 uppercase font-bold">Tester</div>
+                                        <div class="text-slate-700 truncate font-medium">${s.tester}</div>
+                                        <div class="text-green-500 font-bold">${testEst}h</div>
                                     </div>
                                 </div>
                             </div>
                         `;
                     }).join('')}
-                    ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-xs italic border-2 border-dashed border-gray-200 rounded-lg">No Stories</div>' : ''}
+                    ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
                 </div>
             </div>
         `;
