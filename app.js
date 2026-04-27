@@ -1076,9 +1076,20 @@ renderKanban() {
                 </div>
                 <div class="p-2 space-y-3 overflow-y-auto">
                     ${storiesInState.map(s => {
-                        // حساب الاستميشن
-                        const devEst = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']))
-                                             .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                        // حساب الاستميشن للتطوير
+                        const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+                        
+                        // Y = الإجمالي
+                        const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                        
+                        // الخلصان = التاسكات اللي مش New أو Active
+                        const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
+                                                        .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                        
+                        // X = المتبقي
+                        const devEstRemaining = Math.max(0, devEstTotal - devEstCompleted);
+
+                        // حساب الاستميشن للتستر
                         const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
                                               .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                         
@@ -1117,7 +1128,7 @@ renderKanban() {
                                         <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
                                         <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
                                         <div class="flex justify-between items-center mt-1">
-                                            <span class="text-blue-500 font-bold">${devEst}h</span>
+                                            <span class="text-blue-500 font-bold" title="Remaining / Total Estimation">${devEstRemaining}/${devEstTotal}h</span>
                                             <span class="text-red-500 text-[10px] font-bold" title="Completed Bugs">🐞${completedBugs}/${totalBugs}</span>
                                         </div>
                                     </div>
