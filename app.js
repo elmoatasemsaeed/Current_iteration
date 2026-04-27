@@ -1094,6 +1094,9 @@ renderKanban() {
                         const totalTC = testCases.length;
                         const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
 
+                        // حساب عدد التعليقات الحالية
+                        const commentsCount = s.standupComments ? s.standupComments.length : 0;
+
                         return `
                             <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
                                 ${tagsList.length > 0 ? `
@@ -1101,7 +1104,12 @@ renderKanban() {
                                     ${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
                                 </div>` : ''}
 
-                                <div class="text-[10px] font-bold text-blue-600 mb-1">#${s.id}</div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="text-[10px] font-bold text-blue-600">#${s.id}</div>
+                                    <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100" title="Standup Comments">
+                                        💬 <span class="font-bold">${commentsCount}</span>
+                                    </button>
+                                </div>
                                 <div class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2">${s.title}</div>
                                 
                                 <div class="grid grid-cols-2 gap-2 border-t pt-2">
@@ -1622,6 +1630,57 @@ openStoryModal(storyId) {
         document.getElementById('story-modal').classList.add('hidden');
         document.body.style.overflow = 'auto';
     },
+    
+    openCommentsModal(storyId) {
+    const s = currentData.find(item => item.id.toString() === storyId.toString());
+    if (!s) return;
+
+    const modal = document.getElementById('story-modal');
+    const title = document.getElementById('modal-title');
+    const body = document.getElementById('modal-body');
+
+    title.innerText = `[#${s.id}] Standup Updates`;
+    
+    const comments = s.standupComments || [];
+
+    body.innerHTML = `
+        <div class="bg-slate-50/30 px-2">
+            <div class="flex gap-2 mb-4">
+                <input type="text" 
+                       id="kanban-comment-input"
+                       placeholder="Add new update and press Enter..." 
+                       class="flex-1 text-sm p-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm"
+                       onkeypress="if(event.key === 'Enter') { 
+                           commentManager.updateComment('${s.id}', this.value); 
+                           this.value=''; 
+                           ui.openCommentsModal('${s.id}'); 
+                           ui.renderKanban(); 
+                       }">
+            </div>
+
+            <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+                ${comments.slice().reverse().map(c => `
+                    <div class="bg-white p-3 rounded-xl border border-indigo-100 shadow-sm">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">${c.date}</span>
+                        </div>
+                        <p class="text-sm text-slate-700 leading-relaxed italic">"${c.text}"</p>
+                    </div>
+                `).join('')}
+                ${comments.length === 0 ? '<div class="text-center p-6 text-gray-400 italic text-sm">No updates recorded yet.</div>' : ''}
+            </div>
+        </div>
+    `;
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // التركيز التلقائي على حقل الإدخال لسهولة الكتابة
+    setTimeout(() => {
+        const input = document.getElementById('kanban-comment-input');
+        if (input) input.focus();
+    }, 100);
+},
      
     
 renderDailyActivity() {
