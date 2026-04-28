@@ -352,7 +352,7 @@ if (existingStory) {
 
     this.calculateTimelines(newStories);
     db.currentStories = newStories; // الآن المصفوفة تحتوي على القصص المحدثة مع الحفاظ على التاجات
-    this.saveToGitHub().then(() => alert("تم تحديث البيانات مع الحفاظ على الكستم تاج بنجاح"));
+    this.saveToGitHub().then(() => alert("تم تحديث البيانات بنجاح"));
 },
     calculateTimelines(stories) {
         // 1. الترتيب الصارم حسب Business Priority (الأقل أولاً)
