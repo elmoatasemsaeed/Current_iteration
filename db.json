@@ -144,7 +144,7 @@
       "title": "Alborg KSA - Enhance the Financial Overview Dashboard by adding Country and Region filters.",
       "type": "User Story",
       "state": "Active",
-      "assignedTo": "Adel Salah El-Din Mahmoud Mohamed Shaheen",
+      "assignedTo": "Mohamed Abdelghany",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 1,
@@ -154,7 +154,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-05-03T10:25:22.153Z",
+      "changedDate": "2026-05-03T10:59:45.400Z",
       "tasks": [
         {
           "ID": 170317,
@@ -206,12 +206,57 @@
           "State": "To Be Reviewed",
           "Changed Date": "2026-04-30T08:03:31.327Z",
           "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 170929,
+          "Work Item Type": "Task",
+          "Title": "BD009: Update Post API (GetFinancialDashboardData) to using CountryIds & RegionIds",
+          "Assigned To": "Mohamed Abdelghany",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:58:49.023Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 170930,
+          "Work Item Type": "Task",
+          "Title": "BD009: Update Post API (GetFinancialDashboardPaymentCharts) to using CountryIds & RegionIds",
+          "Assigned To": "Mohamed Abdelghany",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:59:16.18Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 170932,
+          "Work Item Type": "Task",
+          "Title": "BD009: Update Post API (ExportFinancialDashboardExcel) to using CountryIds & RegionIds",
+          "Assigned To": "Mohamed Abdelghany",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:59:46.603Z",
+          "Customer": "Al Borg KSA_530"
         }
       ],
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-04-29T14:07:53.507Z",
+        "devEnd": "2026-05-03T06:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -3660,6 +3705,412 @@
       ]
     },
     {
+      "id": 157358,
+      "title": "Internal CR - update \"create Proforma no screen \" to Add a new tab for Batch Performa creation.",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Karim El-Saeed Gabr Megahed Attia",
+      "tester": "Saddam Raees",
+      "area": "Front and Financial",
+      "priority": 2,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-05-03T10:50:37.847Z",
+      "tasks": [
+        {
+          "ID": 170896,
+          "Work Item Type": "Task",
+          "Title": "BD001 - Backend : Create new api \"BatchSearchForCreatePerforma\" to search for create performa by Multi-Center and Multi-Payer",
+          "Assigned To": "Karim El-Saeed Gabr Megahed Attia",
+          "Activity": "Development",
+          "Original Estimation": 9,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-03T10:50:53.39Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-05-03T10:50:53.39Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 170897,
+          "Work Item Type": "Task",
+          "Title": "BD006 - Backend : Create new api \"BatchCreatePerforma\" to enqueue a bulk of CreatePerforma Acions to Action Center Queue",
+          "Assigned To": "Karim El-Saeed Gabr Megahed Attia",
+          "Activity": "Development",
+          "Original Estimation": 11,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:11:10.683Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [
+        {
+          "id": 170797,
+          "state": "Design"
+        },
+        {
+          "id": 170798,
+          "state": "Design"
+        },
+        {
+          "id": 170799,
+          "state": "Design"
+        },
+        {
+          "id": 170800,
+          "state": "Design"
+        },
+        {
+          "id": 170801,
+          "state": "Design"
+        },
+        {
+          "id": 170802,
+          "state": "Design"
+        },
+        {
+          "id": 170803,
+          "state": "Design"
+        },
+        {
+          "id": 170804,
+          "state": "Design"
+        },
+        {
+          "id": 170805,
+          "state": "Design"
+        },
+        {
+          "id": 170806,
+          "state": "Design"
+        },
+        {
+          "id": 170807,
+          "state": "Design"
+        },
+        {
+          "id": 170808,
+          "state": "Design"
+        },
+        {
+          "id": 170809,
+          "state": "Design"
+        },
+        {
+          "id": 170810,
+          "state": "Design"
+        },
+        {
+          "id": 170811,
+          "state": "Design"
+        },
+        {
+          "id": 170812,
+          "state": "Design"
+        },
+        {
+          "id": 170813,
+          "state": "Design"
+        },
+        {
+          "id": 170814,
+          "state": "Design"
+        },
+        {
+          "id": 170815,
+          "state": "Design"
+        },
+        {
+          "id": 170816,
+          "state": "Design"
+        },
+        {
+          "id": 170817,
+          "state": "Design"
+        },
+        {
+          "id": 170818,
+          "state": "Design"
+        },
+        {
+          "id": 170819,
+          "state": "Design"
+        },
+        {
+          "id": 170820,
+          "state": "Design"
+        },
+        {
+          "id": 170821,
+          "state": "Design"
+        },
+        {
+          "id": 170822,
+          "state": "Design"
+        },
+        {
+          "id": 170823,
+          "state": "Design"
+        },
+        {
+          "id": 170824,
+          "state": "Design"
+        },
+        {
+          "id": 170825,
+          "state": "Design"
+        },
+        {
+          "id": 170826,
+          "state": "Design"
+        },
+        {
+          "id": 170827,
+          "state": "Design"
+        },
+        {
+          "id": 170828,
+          "state": "Design"
+        },
+        {
+          "id": 170829,
+          "state": "Design"
+        },
+        {
+          "id": 170830,
+          "state": "Design"
+        },
+        {
+          "id": 170831,
+          "state": "Design"
+        },
+        {
+          "id": 170832,
+          "state": "Design"
+        },
+        {
+          "id": 170833,
+          "state": "Design"
+        },
+        {
+          "id": 170834,
+          "state": "Design"
+        },
+        {
+          "id": 170835,
+          "state": "Design"
+        },
+        {
+          "id": 170836,
+          "state": "Design"
+        },
+        {
+          "id": 170837,
+          "state": "Design"
+        },
+        {
+          "id": 170838,
+          "state": "Design"
+        },
+        {
+          "id": 170839,
+          "state": "Design"
+        },
+        {
+          "id": 170840,
+          "state": "Design"
+        },
+        {
+          "id": 170841,
+          "state": "Design"
+        },
+        {
+          "id": 170842,
+          "state": "Design"
+        },
+        {
+          "id": 170843,
+          "state": "Design"
+        },
+        {
+          "id": 170844,
+          "state": "Design"
+        },
+        {
+          "id": 170845,
+          "state": "Design"
+        },
+        {
+          "id": 170846,
+          "state": "Design"
+        },
+        {
+          "id": 170847,
+          "state": "Design"
+        },
+        {
+          "id": 170848,
+          "state": "Design"
+        },
+        {
+          "id": 170849,
+          "state": "Design"
+        },
+        {
+          "id": 170850,
+          "state": "Design"
+        },
+        {
+          "id": 170851,
+          "state": "Design"
+        },
+        {
+          "id": 170852,
+          "state": "Design"
+        },
+        {
+          "id": 170853,
+          "state": "Design"
+        },
+        {
+          "id": 170854,
+          "state": "Design"
+        },
+        {
+          "id": 170855,
+          "state": "Design"
+        },
+        {
+          "id": 170856,
+          "state": "Design"
+        },
+        {
+          "id": 170857,
+          "state": "Design"
+        },
+        {
+          "id": 170858,
+          "state": "Design"
+        },
+        {
+          "id": 170859,
+          "state": "Design"
+        },
+        {
+          "id": 170860,
+          "state": "Design"
+        },
+        {
+          "id": 170861,
+          "state": "Design"
+        },
+        {
+          "id": 170862,
+          "state": "Design"
+        },
+        {
+          "id": 170863,
+          "state": "Design"
+        },
+        {
+          "id": 170864,
+          "state": "Design"
+        },
+        {
+          "id": 170865,
+          "state": "Design"
+        },
+        {
+          "id": 170866,
+          "state": "Design"
+        },
+        {
+          "id": 170867,
+          "state": "Design"
+        },
+        {
+          "id": 170868,
+          "state": "Design"
+        },
+        {
+          "id": 170869,
+          "state": "Design"
+        },
+        {
+          "id": 170870,
+          "state": "Design"
+        },
+        {
+          "id": 170871,
+          "state": "Design"
+        },
+        {
+          "id": 170872,
+          "state": "Design"
+        },
+        {
+          "id": 170873,
+          "state": "Design"
+        },
+        {
+          "id": 170874,
+          "state": "Design"
+        },
+        {
+          "id": 170875,
+          "state": "Design"
+        },
+        {
+          "id": 170876,
+          "state": "Design"
+        },
+        {
+          "id": 170877,
+          "state": "Design"
+        },
+        {
+          "id": 170878,
+          "state": "Design"
+        },
+        {
+          "id": 170879,
+          "state": "Design"
+        },
+        {
+          "id": 170880,
+          "state": "Design"
+        },
+        {
+          "id": 170881,
+          "state": "Design"
+        },
+        {
+          "id": 170882,
+          "state": "Design"
+        },
+        {
+          "id": 170883,
+          "state": "Design"
+        }
+      ],
+      "calc": {
+        "devEnd": "2026-05-07T10:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": []
+    },
+    {
       "id": 158228,
       "title": "Wareed Lab - Users & Roles - Registration Permissions: Add a new option for Unreserve Samples Permissions",
       "type": "User Story",
@@ -3674,7 +4125,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-05-03T08:53:31.613Z",
+      "changedDate": "2026-05-03T10:55:59.133Z",
       "tasks": [
         {
           "ID": 169626,
@@ -3690,7 +4141,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-27T13:42:37.41Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-27T13:42:37.41Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3707,7 +4158,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-27T13:41:05.143Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-28T22:36:32.893Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3724,7 +4175,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-27T18:37:47.77Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-28T22:35:52.85Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3758,7 +4209,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-29T08:47:09.18Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-29T08:47:09.18Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3774,7 +4225,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 26-10",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-05-03T08:33:56.783Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3807,7 +4258,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-28T06:32:23.12Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-28T06:32:23.12Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3824,7 +4275,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-27T13:41:56.343Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-27T13:41:56.343Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3841,7 +4292,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-27T13:40:02.28Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-28T22:36:24.907Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3858,7 +4309,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-27T18:36:58.237Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-28T22:35:47.07Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3875,7 +4326,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-28T13:14:09.127Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-29T08:40:43.313Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3892,7 +4343,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-29T08:48:33.193Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-29T16:24:20.317Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3909,7 +4360,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-28T06:33:11.173Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-28T06:33:11.173Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3926,7 +4377,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-27T18:39:25.65Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-28T22:37:11.383Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3943,7 +4394,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-27T18:38:37.487Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-04-28T22:37:01.84Z",
+          "Changed Date": "2026-05-03T10:55:59.133Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -6511,10 +6962,11 @@
           "Original Estimation": 0.17,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-03T10:55:35.897Z",
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-05-03T10:27:42.713Z",
+          "State": "Active",
+          "Changed Date": "2026-05-03T10:55:35.897Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -6530,7 +6982,7 @@
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-05-03T10:33:24.26Z",
+          "Changed Date": "2026-05-03T10:55:30.13Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -6918,9 +7370,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-05-04T09:00:00.000Z",
-        "testEnd": "2026-05-06T10:00:00.000Z",
-        "finalEnd": "2026-05-06T10:00:00.000Z"
+        "devEnd": "2026-04-22T11:00:00.000Z",
+        "testEnd": "2026-04-26T10:00:00.000Z",
+        "finalEnd": "2026-04-27T11:52:21.603Z"
       },
       "customTags": [],
       "standupComments": [
@@ -7186,7 +7638,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-04T09:00:00.000Z",
+        "devEnd": "2026-05-10T11:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -7813,9 +8265,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-05-05T08:00:00.000Z",
-        "testEnd": "2026-05-06T06:00:00.000Z",
-        "finalEnd": "2026-05-06T06:00:00.000Z"
+        "devEnd": "2026-05-14T12:00:00.000Z",
+        "testEnd": "2026-05-17T06:00:00.000Z",
+        "finalEnd": "2026-05-17T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -8211,9 +8663,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-05-04T09:00:00.000Z",
-        "testEnd": "2026-05-05T06:00:00.000Z",
-        "finalEnd": "2026-05-05T06:00:00.000Z"
+        "devEnd": "2026-05-10T11:00:00.000Z",
+        "testEnd": "2026-05-11T06:00:00.000Z",
+        "finalEnd": "2026-05-11T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -8347,7 +8799,7 @@
           "Title": "BD001 :  create new GetDiscountCommentById endpoint",
           "Assigned To": "Hesham Ahmed",
           "Activity": "Development",
-          "Original Estimation": 1.5,
+          "Original Estimation": 1.25,
           "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-04-28T08:49:09.25Z",
@@ -8355,7 +8807,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-28T09:14:19.453Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-05-03T10:38:53.373Z",
+          "Changed Date": "2026-05-03T10:42:37.053Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -9427,9 +9879,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-05-25T13:00:00.000Z",
-        "testEnd": "2026-05-26T06:00:00.000Z",
-        "finalEnd": "2026-05-26T06:00:00.000Z"
+        "devEnd": "2026-05-19T07:00:00.000Z",
+        "testEnd": "2026-05-20T06:00:00.000Z",
+        "finalEnd": "2026-05-20T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -9506,8 +9958,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-16T11:31:14.42Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T11:01:09.053Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -9523,8 +9975,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-16T11:31:26.71Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T11:01:05.2Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -9558,8 +10010,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-16T11:31:51.623Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T11:01:22.23Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -9574,8 +10026,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-18T22:07:37.32Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T11:01:13.683Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -9698,7 +10150,7 @@
           "ID": 170072,
           "Work Item Type": "Bug",
           "Title": "an error page display after trying to Upload pdf to sent as attached",
-          "Assigned To": "Ola Gamal",
+          "Assigned To": "Mohamed Abomosallam",
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 1.5,
@@ -9706,8 +10158,9 @@
           "Activated Date": "2026-04-30T11:02:55.31Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-05-03T07:29:34.047Z",
+          "Resolved Date": "2026-05-03T10:52:20.207Z",
+          "State": "Resolved",
+          "Changed Date": "2026-05-03T10:52:20.207Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -10007,7 +10460,7 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-04-16T12:50:25.293Z",
+        "devEnd": "2026-04-19T14:00:00.000Z",
         "testEnd": "2026-05-10T10:00:00.000Z",
         "finalEnd": "2026-05-10T10:00:00.000Z"
       },
@@ -10842,14 +11295,46 @@
           "State": "To Be Reviewed",
           "Changed Date": "2026-04-30T13:29:53.99Z",
           "Customer": "Ezz Lab_461"
+        },
+        {
+          "ID": 170924,
+          "Work Item Type": "Task",
+          "Title": "fix share button issue in results",
+          "Assigned To": "Islam kamal",
+          "Activity": "Development",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 3,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-03T10:54:49.163Z",
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-05-03T10:55:41.293Z",
+          "Customer": "Ezz Lab_461"
+        },
+        {
+          "ID": 170934,
+          "Work Item Type": "Task",
+          "Title": "Review Services Module Code ,find bugs, test scenarious",
+          "Assigned To": "Mahmoud Elghoraqy",
+          "Activity": "Development",
+          "Original Estimation": 2.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-03T11:02:52.393Z",
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-05-03T11:02:52.393Z",
+          "Customer": "Ezz Lab_461"
         }
       ],
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-18T12:00:00.000Z",
-        "testEnd": "2026-05-19T06:00:00.000Z",
-        "finalEnd": "2026-05-19T06:00:00.000Z"
+        "devEnd": "2026-05-19T13:00:00.000Z",
+        "testEnd": "2026-05-20T06:00:00.000Z",
+        "finalEnd": "2026-05-20T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": []
@@ -11349,6 +11834,203 @@
           "timestamp": 1777545347176
         }
       ]
+    },
+    {
+      "id": 131284,
+      "title": "Internal CRs - Registration Templates: Update Required age to be a check box",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Mohamed Hashem",
+      "tester": "Ahmed Mohamed Farag",
+      "area": "Registration",
+      "priority": 12,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Internal NT",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-05-03T10:55:59.813Z",
+      "tasks": [
+        {
+          "ID": 157246,
+          "Work Item Type": "Task",
+          "Title": "preparation for cr",
+          "Assigned To": "Mostafa Osama Abdelatif",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 1.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-01-25T14:17:32.88Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-01-25T16:09:44.273Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-01-25T16:09:44.273Z"
+        },
+        {
+          "ID": 170915,
+          "Work Item Type": "Task",
+          "Title": "FD005 | Add IsAgeRequired Checked box",
+          "Assigned To": "Mohamed Hashem",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-03T10:59:39.38Z",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-05-03T10:59:39.38Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 170916,
+          "Work Item Type": "Task",
+          "Title": "FD004 | Add checkbox change handler with enable/disable logic",
+          "Assigned To": "Mohamed Hashem",
+          "Activity": "Development",
+          "Original Estimation": 0.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:48:45.18Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 170917,
+          "Work Item Type": "Task",
+          "Title": "FD002 | Update setRequiredAge()  to handle case 0 (unchecked/unrequired age)",
+          "Assigned To": "Mohamed Hashem",
+          "Activity": "Development",
+          "Original Estimation": 1.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:49:38.577Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 170918,
+          "Work Item Type": "Task",
+          "Title": "FD002 | Update setAgeDOBRequiredValidatorInSaveTemplate() for RequiredAge == 0",
+          "Assigned To": "Mohamed Hashem",
+          "Activity": "Development",
+          "Original Estimation": 1.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:50:22.307Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 170921,
+          "Work Item Type": "Task",
+          "Title": "FD002 | Update setAgeDOBRequiredValidatorInSaveTemplate() :- set all age fields to optional when requiredage = 0",
+          "Assigned To": "Mohamed Hashem",
+          "Activity": "Development",
+          "Original Estimation": 1.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:51:23.67Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 170922,
+          "Work Item Type": "Task",
+          "Title": "FD004 | Handle enableDisableAgeFieldsUponRequiredAge with RequiredAge > 0",
+          "Assigned To": "Mohamed Hashem",
+          "Activity": "Development",
+          "Original Estimation": 0.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:52:31.343Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 170923,
+          "Work Item Type": "Task",
+          "Title": "BD008 | Ensure Insert/Update Template Save Logic",
+          "Assigned To": "Mohamed Hashem",
+          "Activity": "Development",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:53:19.317Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [
+        {
+          "id": 170761,
+          "state": "Design"
+        },
+        {
+          "id": 170762,
+          "state": "Design"
+        },
+        {
+          "id": 170763,
+          "state": "Design"
+        },
+        {
+          "id": 170764,
+          "state": "Design"
+        },
+        {
+          "id": 170765,
+          "state": "Design"
+        },
+        {
+          "id": 170766,
+          "state": "Design"
+        },
+        {
+          "id": 170767,
+          "state": "Design"
+        },
+        {
+          "id": 170768,
+          "state": "Design"
+        },
+        {
+          "id": 170769,
+          "state": "Design"
+        },
+        {
+          "id": 170770,
+          "state": "Design"
+        },
+        {
+          "id": 170771,
+          "state": "Design"
+        },
+        {
+          "id": 170772,
+          "state": "Design"
+        }
+      ],
+      "calc": {
+        "devEnd": "2026-05-04T12:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": []
     },
     {
       "id": 139104,
@@ -12091,8 +12773,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-15T11:31:31.937Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:59:30.06Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12126,8 +12808,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-15T13:16:33.027Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T11:00:20.55Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12143,8 +12825,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-15T15:25:38.493Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T11:00:16.17Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12160,8 +12842,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-15T16:11:21.147Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T11:00:24.563Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12177,8 +12859,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-16T11:31:13.533Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:59:50.733Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12194,8 +12876,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-16T11:31:16.79Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:59:46.76Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12211,8 +12893,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-20T16:43:54.59Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:59:43.1Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12228,8 +12910,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-20T16:44:35.467Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:59:39.277Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12245,8 +12927,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-16T11:31:02.843Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:59:35.067Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12294,8 +12976,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-20T09:17:57.663Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T11:00:05.59Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12311,8 +12993,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-20T16:42:35.52Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-27T17:01:30.7Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:59:16.797Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12328,8 +13010,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-22T12:44:44.25Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-26T08:24:27.567Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:59:07.413Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12345,8 +13027,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-22T12:57:02.757Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-27T16:59:56.087Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:59:03.523Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12362,8 +13044,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-22T12:23:32.637Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-27T17:02:02.677Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:58:58.9Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12379,8 +13061,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-22T12:56:55.973Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-27T17:01:47.39Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:59:13.137Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12396,8 +13078,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-04-23T14:14:04.343Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-04-27T09:45:41.067Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-03T10:58:54.16Z",
           "Customer": "Qatar MOI_96"
         },
         {
@@ -12820,9 +13502,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-04-13T10:00:00.000Z",
-        "testEnd": "2026-05-11T06:00:00.000Z",
-        "finalEnd": "2026-05-11T06:00:00.000Z"
+        "devEnd": "2026-04-22T14:00:00.000Z",
+        "testEnd": "2026-05-10T12:00:00.000Z",
+        "finalEnd": "2026-05-10T12:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -12933,8 +13615,8 @@
       "testCases": [],
       "calc": {
         "devEnd": "2025-09-21T09:00:00.000Z",
-        "testEnd": "2026-05-06T06:00:00.000Z",
-        "finalEnd": "2026-05-06T06:00:00.000Z"
+        "testEnd": "2026-05-17T06:00:00.000Z",
+        "finalEnd": "2026-05-17T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": []
@@ -12948,11 +13630,13 @@
       "tester": "Mohamed Abomosallam",
       "area": "Internal lab",
       "priority": 20,
-      "tags": [],
+      "tags": [
+        "3 BUGS"
+      ],
       "expectedRelease": null,
       "branch": "Kuwait",
       "customer": "Al Seef Hospital_29",
-      "changedDate": "2026-04-30T14:54:42.123Z",
+      "changedDate": "2026-05-03T10:47:47.387Z",
       "tasks": [
         {
           "ID": 169542,
@@ -13100,13 +13784,28 @@
           "State": "New",
           "Changed Date": "2026-05-03T10:26:09.56Z",
           "Customer": "Al Seef Hospital_29"
+        },
+        {
+          "ID": 170914,
+          "Work Item Type": "Bug",
+          "Title": "the system do not display the correct time at specimen date field at the excel sheet",
+          "Assigned To": "Ola Gamal",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.5,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-03T10:48:10.417Z",
+          "Customer": "Al Seef Hospital_29"
         }
       ],
       "testCases": [],
       "calc": {
         "devEnd": "2026-05-05T12:00:00.000Z",
-        "testEnd": "2026-05-11T08:00:00.000Z",
-        "finalEnd": "2026-05-11T08:00:00.000Z"
+        "testEnd": "2026-05-11T06:00:00.000Z",
+        "finalEnd": "2026-05-11T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -13494,7 +14193,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-27T12:00:00.000Z",
+        "devEnd": "2026-05-21T06:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -14661,12 +15360,13 @@
           "Assigned To": "Reem Ali",
           "Activity": "Development",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "Home Visit\\2025\\home_visit January 5-19",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-05-03T09:17:46.01Z",
+          "Resolved Date": "2026-05-03T10:44:30.95Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-05-03T10:44:30.95Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -14774,7 +15474,7 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-04-27T11:03:55.950Z",
+        "devEnd": "2026-04-27T09:03:55.950Z",
         "testEnd": "2026-04-30T06:00:00.000Z",
         "finalEnd": "2026-04-30T06:00:00.000Z"
       },
@@ -15008,8 +15708,8 @@
       ],
       "calc": {
         "devEnd": "2026-04-23T09:12:02.470Z",
-        "testEnd": "2026-05-26T06:00:00.000Z",
-        "finalEnd": "2026-05-26T06:00:00.000Z"
+        "testEnd": "2026-05-20T06:00:00.000Z",
+        "finalEnd": "2026-05-20T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": []
@@ -15327,7 +16027,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-04-27T11:03:55.950Z",
+        "devEnd": "2026-04-27T09:03:55.950Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -16927,9 +17627,9 @@
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-06T07:00:00.000Z",
-        "testEnd": "2026-05-11T06:00:00.000Z",
-        "finalEnd": "2026-05-11T06:00:00.000Z"
+        "devEnd": "2026-05-17T07:00:00.000Z",
+        "testEnd": "2026-05-20T06:00:00.000Z",
+        "finalEnd": "2026-05-20T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": []
@@ -17511,7 +18211,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-05-03T08:04:45.277Z",
+      "changedDate": "2026-05-03T10:43:36.123Z",
       "tasks": [
         {
           "ID": 169422,
@@ -17590,7 +18290,7 @@
           "Iteration Path": "MaterialManagement\\2026\\MM March 1-13",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-05-03T08:04:45.277Z",
+          "Changed Date": "2026-05-03T10:43:36.123Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -17648,7 +18348,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-April 26-10",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-05-03T07:53:34.84Z",
+          "Changed Date": "2026-05-03T10:53:55.55Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -17884,22 +18584,22 @@
           "Assigned To": "Reem Ali",
           "Activity": "",
           "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-05-03T08:07:04.513Z",
           "Iteration Path": "Home Visit\\2026\\home_visit April 6-20",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Tags": "backlog",
-          "Changed Date": "2026-05-03T10:33:07.803Z",
+          "Tags": "backlog; Resolved but not published",
+          "Changed Date": "2026-05-03T10:43:33.353Z",
           "Customer": "Internal CR_2000"
         }
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-11T06:00:00.000Z",
-        "testEnd": "2026-05-17T06:00:00.000Z",
-        "finalEnd": "2026-05-17T06:00:00.000Z"
+        "devEnd": "2026-05-20T06:00:00.000Z",
+        "testEnd": "2026-05-26T06:00:00.000Z",
+        "finalEnd": "2026-05-26T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": []
