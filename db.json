@@ -1444,13 +1444,13 @@
           "Assigned To": "Esraa Abdelsalam",
           "Activity": "Development",
           "Original Estimation": 4,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-05-11T10:04:58.327Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-May 11-25",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-05-11T11:02:20.137Z",
+          "Changed Date": "2026-05-11T11:11:06.793Z",
           "Customer": "Ansary Labs_604"
         },
         {
@@ -1460,13 +1460,14 @@
           "Assigned To": "Esraa Abdelsalam",
           "Activity": "Development",
           "Original Estimation": 4.5,
-          "TimeSheet_DevActualTime": 1,
+          "TimeSheet_DevActualTime": 3,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-05-06T13:57:01.59Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-May 11-25",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-05-11T10:18:53.847Z",
+          "Resolved Date": "2026-05-11T11:10:25.193Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-05-11T11:10:25.193Z",
           "Customer": "Ansary Labs_604"
         },
         {
@@ -1478,17 +1479,18 @@
           "Original Estimation": 5.75,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-11T11:11:20.25Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-May 11-25",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-05-11T10:18:53.847Z",
+          "State": "Active",
+          "Changed Date": "2026-05-11T11:11:20.25Z",
           "Customer": "Ansary Labs_604"
         }
       ],
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-10T08:00:00.000Z",
+        "devEnd": "2026-05-07T09:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -2646,16 +2648,6 @@
           "text": "مهندس فوزي لسه هيراجع - البزنس رد ولسه هنشتغل عليه ومحتاجين يومين شغل",
           "date": "06/05/2026, 14:03:50",
           "timestamp": 1778065430868
-        },
-        {
-          "text": "منتظرين سامح وبثينه يراجعوا البزنس",
-          "date": "11/05/2026, 14:10:22",
-          "timestamp": 1778497822253
-        },
-        {
-          "text": "بثينة وقاسم ومحمد صلاح هيدخلوا ميتنج لان الامباكت كببر",
-          "date": "11/05/2026, 14:11:21",
-          "timestamp": 1778497881999
         }
       ]
     },
@@ -8580,6 +8572,32 @@
       "standupComments": []
     },
     {
+      "id": 169358,
+      "title": "Al Hekma - NT Mobile",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Mohamed Salama",
+      "tester": "Unassigned",
+      "area": "LDM Integration",
+      "priority": 3,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "El Hekma Labs_432",
+      "changedDate": "2026-05-11T11:09:12.133Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "standupComments": []
+    },
+    {
       "id": 169950,
       "title": "MRC - NT Mobile",
       "type": "User Story",
@@ -9278,13 +9296,13 @@
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 1,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.5,
           "Activated Date": "2026-05-10T16:29:13.083Z",
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-05-10T16:33:23.227Z",
           "State": "Resolved",
-          "Changed Date": "2026-05-10T16:33:23.227Z",
+          "Changed Date": "2026-05-11T11:15:07.52Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -13645,7 +13663,7 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-05-20T10:00:00.000Z",
+        "devEnd": "2026-05-19T11:00:00.000Z",
         "testEnd": "2026-06-02T07:00:00.000Z",
         "finalEnd": "2026-06-02T07:00:00.000Z"
       },
@@ -18503,7 +18521,23 @@
           "Customer": "Internal CR_2000"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": 172071,
+          "Work Item Type": "Bug",
+          "Title": "Purchase order log button is not working",
+          "Assigned To": "Sherif Eldorf",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MaterialManagement\\2026\\MM March 1-13",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-11T11:21:14.093Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
       "testCases": [],
       "calc": {
         "devEnd": "2026-05-20T07:00:00.000Z",
@@ -22252,6 +22286,21 @@
           "Assigned To Tester": "Unassigned",
           "State": "Active",
           "Changed Date": "2026-05-11T10:59:54.137Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 172068,
+          "Work Item Type": "Bug",
+          "Title": "Opening Pages in a New Tab Causes an Error or tray to update claim",
+          "Assigned To": "Mahmoud Ahmed Mahmoud Ahmed",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-11T11:10:06.797Z",
           "Customer": "Internal CR_2000"
         }
       ],
