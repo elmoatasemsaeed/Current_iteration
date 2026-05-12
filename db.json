@@ -143,7 +143,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-05-12T11:25:31.317Z",
+      "changedDate": "2026-05-12T11:38:43.573Z",
       "tasks": [
         {
           "ID": 170317,
@@ -363,7 +363,7 @@
         },
         {
           "id": 171539,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171540,
@@ -375,11 +375,11 @@
         },
         {
           "id": 171542,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171543,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171544,
@@ -387,11 +387,11 @@
         },
         {
           "id": 171545,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171546,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171547,
@@ -403,7 +403,7 @@
         },
         {
           "id": 171549,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171550,
@@ -415,11 +415,11 @@
         },
         {
           "id": 171922,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171923,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171924,
@@ -451,7 +451,7 @@
         },
         {
           "id": 171931,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171932,
@@ -459,19 +459,19 @@
         },
         {
           "id": 171933,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171934,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171935,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 171936,
-          "state": "Design"
+          "state": "Pass"
         }
       ],
       "calc": {
@@ -786,7 +786,7 @@
       "expectedRelease": "2026-05-09T21:00:00.000Z",
       "branch": "KSA",
       "customer": "Hafar Al Batin - King Khalid Military City Hospital (KKMCH)_373",
-      "changedDate": "2026-05-12T09:04:00.077Z",
+      "changedDate": "2026-05-12T11:36:06.213Z",
       "tasks": [
         {
           "ID": 168482,
@@ -966,13 +966,13 @@
           "Assigned To": "Mostafa Mahanna",
           "Activity": "DB Modification",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-05-12T10:39:22.337Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-05-12T10:45:12.02Z",
+          "Changed Date": "2026-05-12T11:40:22.81Z",
           "Customer": "Hafar Al Batin - King Khalid Military City Hospital (KKMCH)_373"
         }
       ],
@@ -14858,6 +14858,156 @@
       ]
     },
     {
+      "id": 170978,
+      "title": "Internal CR - Revamp the Manage Contract Type screen to support a new structured setup with auto-generated codes.",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Hesham Ahmed",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 100,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Internal NT",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-05-12T11:32:16.443Z",
+      "tasks": [
+        {
+          "ID": 172091,
+          "Work Item Type": "Task",
+          "Title": "Preperation",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 2.33,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-11T13:26:35.31Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-May 11-25",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-05-11T15:55:45.92Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 172099,
+          "Work Item Type": "Task",
+          "Title": "DB Modification - LDM_DEV_LOG : Insert new record in table AUD_SETUP_MEDULE for ContractType",
+          "Assigned To": "Mostafa Mahanna",
+          "Activity": "DB Modification",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 1,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-12T06:24:28.857Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-May 11-25",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Tags": "liquibase; v.3.6.0; Wait .Net review",
+          "Changed Date": "2026-05-12T07:22:14.66Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 172186,
+          "Work Item Type": "Task",
+          "Title": "BD002 :  create new GenerateContractTypeCode endpoint",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 2.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-May 11-25",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-12T08:27:29.943Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 172187,
+          "Work Item Type": "Task",
+          "Title": "BD006 :  create new CreateContractType endpoint + Audit",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 4.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-May 11-25",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-12T08:28:21.58Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 172188,
+          "Work Item Type": "Task",
+          "Title": "BD006 :  create new UpdateContractType endpoint",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-May 11-25",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-12T08:29:02.507Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 172189,
+          "Work Item Type": "Task",
+          "Title": "BD006 :  create new DeleteContractType endpoint",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-May 11-25",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-12T08:30:00.993Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 172191,
+          "Work Item Type": "Task",
+          "Title": "BD002 :  create new GetContractTypes endpoint",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 2.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-12T11:30:32.783Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-May 11-25",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-05-12T11:30:32.783Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 172192,
+          "Work Item Type": "Task",
+          "Title": "BD002 :  create new GetContractTypeById endpoint",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 2.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-May 11-25",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-12T08:31:36.927Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-05-24T09:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": []
+    },
+    {
       "id": 141636,
       "title": "Update AL-Hekma labs Mobile app Login / تسجيل الدخول screen.",
       "type": "User Story",
@@ -20260,7 +20410,7 @@
       "id": 171755,
       "title": "Shalaby collect APIs > Add New API [Get Lab Batch Report Data]",
       "type": "User Story",
-      "state": "Active",
+      "state": "Active - With Bugs",
       "assignedTo": "Saleh Abdulrahim Attia",
       "tester": "Unassigned",
       "area": "MobileApp",
@@ -20269,7 +20419,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Shalaby Labs_457",
-      "changedDate": "2026-05-10T12:31:56.187Z",
+      "changedDate": "2026-05-12T11:31:58.083Z",
       "tasks": [
         {
           "ID": 171907,
@@ -20747,7 +20897,7 @@
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-05-12T11:16:49.353Z",
+          "Changed Date": "2026-05-12T11:27:54.267Z",
           "Customer": "DSAH - Dr. Samir Abbas Hospital_287"
         },
         {
@@ -20852,6 +21002,22 @@
         }
       ],
       "bugs": [
+        {
+          "ID": 172205,
+          "Work Item Type": "Bug",
+          "Title": "Get Lab Batch Report Data API Returns 500 Internal Server Error Instead of Validation Error for Invalid labID and labBatchNumber",
+          "Assigned To": "Saleh Abdulrahim Attia",
+          "Activity": "",
+          "Original Estimation": 0.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-12T11:29:33.557Z",
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-05-12T11:29:33.557Z",
+          "Customer": "Shalaby Labs_457"
+        },
         {
           "ID": 152818,
           "Work Item Type": "Bug",
