@@ -1101,6 +1101,21 @@
           "Tags": "liquibase; v.3.6.0; Wait .Net review",
           "Changed Date": "2026-05-12T10:10:49.763Z",
           "Customer": "Wateen Lab_325"
+        },
+        {
+          "ID": 172518,
+          "Work Item Type": "Task",
+          "Title": "CR_168282 >>Preparation",
+          "Assigned To": "Mohamed Elgmmal",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 2,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-May 11-25",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-14T07:31:44.093Z",
+          "Customer": "Wateen Lab_325"
         }
       ],
       "bugs": [],
@@ -1216,8 +1231,8 @@
       ],
       "calc": {
         "devEnd": "2026-05-11T10:46:37.033Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
+        "testEnd": "2026-05-12T06:00:00.000Z",
+        "finalEnd": "2026-05-12T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -1477,6 +1492,140 @@
           "timestamp": 1778583884852
         }
       ]
+    },
+    {
+      "id": 169246,
+      "title": "EBGH - Dynamic registration - Impact of the Witness Requirement at setup on Registration.",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Mahmoud Mahfouz",
+      "tester": "Unassigned",
+      "area": "Registration",
+      "priority": 1,
+      "tags": [
+        "collection witness"
+      ],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "EBGH_62",
+      "changedDate": "2026-05-14T07:34:15.067Z",
+      "tasks": [
+        {
+          "ID": 172505,
+          "Work Item Type": "Task",
+          "Title": "BD005 | Update the GET endpoint to get the witness fields from the database",
+          "Assigned To": "Mahmoud Mahfouz",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-14T06:55:58.49Z",
+          "Customer": "EBGH_62"
+        },
+        {
+          "ID": 172506,
+          "Work Item Type": "Task",
+          "Title": "FD006 | Add Popup with the validation message based on the API response",
+          "Assigned To": "Mahmoud Mahfouz",
+          "Activity": "Development",
+          "Original Estimation": 0.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-14T06:57:21.51Z",
+          "Customer": "EBGH_62"
+        },
+        {
+          "ID": 172507,
+          "Work Item Type": "Task",
+          "Title": "BD001 | Get the Service Id based on the registration Id and then check if the service has witness or not",
+          "Assigned To": "Mahmoud Mahfouz",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-14T06:59:43.86Z",
+          "Customer": "EBGH_62"
+        },
+        {
+          "ID": 172508,
+          "Work Item Type": "Task",
+          "Title": "FD002 | Add validation on service id on adding it to the grid to display the popup message (Lab To Lab)",
+          "Assigned To": "Mahmoud Mahfouz",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-14T06:59:36.593Z",
+          "Customer": "EBGH_62"
+        },
+        {
+          "ID": 172509,
+          "Work Item Type": "Task",
+          "Title": "FD002 | Add validation before printing the reports to skip the barcode report if any of the services has witness (Lab To Lab)",
+          "Assigned To": "Mahmoud Mahfouz",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-14T07:00:26.42Z",
+          "Customer": "EBGH_62"
+        },
+        {
+          "ID": 172510,
+          "Work Item Type": "Task",
+          "Title": "FD002 | Add validation on service id on adding it to the grid to display the popup message (Batch Registration)",
+          "Assigned To": "Mahmoud Mahfouz",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-14T07:01:12.187Z",
+          "Customer": "EBGH_62"
+        },
+        {
+          "ID": 172511,
+          "Work Item Type": "Task",
+          "Title": "FD002 | Add validation before printing the reports to skip the barcode report if any of the services has witness (Batch Registration)",
+          "Assigned To": "Mahmoud Mahfouz",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-14T07:01:31.66Z",
+          "Customer": "EBGH_62"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "standupComments": []
     },
     {
       "id": 169387,
@@ -2178,13 +2327,13 @@
           "Activity": "",
           "Original Estimation": 3,
           "TimeSheet_DevActualTime": 4,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.5,
           "Activated Date": "2026-05-13T11:31:37.027Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-May 11-25",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-05-13T17:16:46.413Z",
-          "State": "Resolved",
-          "Changed Date": "2026-05-13T17:16:46.413Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-14T07:27:33.16Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -2530,7 +2679,7 @@
       "id": 172074,
       "title": "Al Farabi Lab KSA - MEENA Integration  [Same as Al borg KSA]",
       "type": "User Story",
-      "state": "Active",
+      "state": "Resolved",
       "assignedTo": "Mustafa Ahmed",
       "tester": "Unassigned",
       "area": "LDM Integration",
@@ -2539,7 +2688,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-05-13T19:37:13.750Z",
+      "changedDate": "2026-05-14T07:41:34.097Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -5684,13 +5833,13 @@
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 1,
           "Activated Date": "2026-05-13T06:41:15.837Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-05-13T06:42:45.69Z",
-          "State": "Resolved",
-          "Changed Date": "2026-05-13T06:42:45.69Z",
+          "State": "Closed",
+          "Changed Date": "2026-05-14T07:24:38.097Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -5725,6 +5874,36 @@
           "State": "Resolved",
           "Changed Date": "2026-05-13T16:18:15.943Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 172512,
+          "Work Item Type": "Bug",
+          "Title": "administration >> user >> bug 1 >> Error displayed when navigating to Registration Permissions and Clinical Groups not appearing",
+          "Assigned To": "Mostafa Mohamed",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-April 26-10",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-14T07:15:18.78Z",
+          "Customer": "Mozmen Labs_1494"
+        },
+        {
+          "ID": 172514,
+          "Work Item Type": "Bug",
+          "Title": "administration >> user >> bug 2>>Registration Permissions popup UI layout is broken  Description:",
+          "Assigned To": "Mohamed Fawzy",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-14T07:24:18.437Z",
+          "Customer": "Mozmen Labs_1494"
         }
       ],
       "testCases": [
@@ -9975,10 +10154,11 @@
           "Original Estimation": 1.5,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-14T07:20:00.127Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-May 11-25",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-05-13T14:11:17.66Z",
+          "State": "Active",
+          "Changed Date": "2026-05-14T07:20:00.127Z",
           "Customer": "EBGH_62"
         },
         {
@@ -12800,15 +12980,32 @@
           "Activated Date": "2026-05-13T13:00:29.843Z",
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-05-14T07:42:31.53Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-05-14T07:42:31.53Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 172520,
+          "Work Item Type": "Task",
+          "Title": "Add Program.cs, logger, middlewares",
+          "Assigned To": "Yahia Hassan",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-05-14T07:44:43.397Z",
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-05-13T16:23:15.81Z",
+          "Changed Date": "2026-05-14T07:44:47.013Z",
           "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-14T09:00:00.000Z",
+        "devEnd": "2026-05-14T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -19965,7 +20162,7 @@
         {
           "ID": 172315,
           "Work Item Type": "Bug",
-          "Title": "non medical Products are not displayed at item search field",
+          "Title": "Bug 04 - non medical Products are not displayed at item search field",
           "Assigned To": "Elhussein Ahmed",
           "Activity": "",
           "Original Estimation": 1,
@@ -19976,7 +20173,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-05-13T12:10:23.27Z",
           "State": "Closed",
-          "Changed Date": "2026-05-13T13:59:11.94Z",
+          "Changed Date": "2026-05-14T07:51:08.343Z",
           "Customer": "Internal CR_2000"
         }
       ],
