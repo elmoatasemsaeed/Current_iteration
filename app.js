@@ -1084,14 +1084,14 @@ renderKanban() {
                         
                         // الخلصان = التاسكات اللي مش New أو Active
                         const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
-                                                        .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                                                                        .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                         
                         // X = المتبقي
                         const devEstRemaining = Math.max(0, devEstTotal - devEstCompleted);
 
                         // حساب الاستميشن للتستر
                         const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
-                                              .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                                                              .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                         
                         // معالجة التاجز (Tags)
                         const tagsList = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
@@ -1116,12 +1116,13 @@ renderKanban() {
                                 </div>` : ''}
 
                                 <div class="flex justify-between items-center mb-2">
-                                    <div class="text-[10px] font-bold text-blue-600">#${s.id}</div>
+                                    <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
                                     <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100" title="Standup Comments">
                                         💬 <span class="font-bold">${commentsCount}</span>
                                     </button>
                                 </div>
-                                <div class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2">${s.title}</div>
+                                
+                                <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
                                 
                                 <div class="grid grid-cols-2 gap-2 border-t pt-2">
                                     <div class="text-[11px]">
