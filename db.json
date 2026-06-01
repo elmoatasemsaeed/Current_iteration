@@ -1319,13 +1319,13 @@
           "Activity": "",
           "Original Estimation": 4,
           "TimeSheet_DevActualTime": 11.5,
-          "TimeSheet_TestingActualTime": 1,
+          "TimeSheet_TestingActualTime": 3,
           "Activated Date": "2026-05-24T13:53:34.773Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-01T09:57:27.45Z",
-          "State": "Resolved",
-          "Changed Date": "2026-06-01T09:57:27.45Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-01T11:19:06.27Z",
           "Customer": "EBGH_62"
         }
       ],
@@ -1730,21 +1730,6 @@
           "Customer": "Ansary Labs_604"
         },
         {
-          "ID": 173700,
-          "Work Item Type": "Bug",
-          "Title": "Doctor Label in Header Data Is Displayed on Two Lines",
-          "Assigned To": "Esraa Abdelsalam",
-          "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0.5,
-          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 1-14",
-          "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-01T06:18:03.313Z",
-          "Customer": "Ansary Labs_604"
-        },
-        {
           "ID": 173717,
           "Work Item Type": "Bug",
           "Title": "3 Report Types Do Not Follow the Center Setup in Header and Footer",
@@ -1802,6 +1787,21 @@
           "Assigned To Tester": "Unassigned",
           "State": "New",
           "Changed Date": "2026-06-01T08:56:30.597Z",
+          "Customer": "Ansary Labs_604"
+        },
+        {
+          "ID": 173881,
+          "Work Item Type": "Bug",
+          "Title": "the last result do not display at clinical group report",
+          "Assigned To": "Esraa Abdelsalam",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-01T11:27:34.08Z",
           "Customer": "Ansary Labs_604"
         }
       ],
@@ -3089,15 +3089,17 @@
           "ID": 173872,
           "Work Item Type": "Task",
           "Title": "DB Modification - LDM_DEV : Update record in table Object for Patient Transfer",
-          "Assigned To": "Mohamed Qassem",
+          "Assigned To": "Mostafa Mahanna",
           "Activity": "DB Modification",
-          "Original Estimation": 0,
+          "Original Estimation": 0.5,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T11:21:20.19Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-01T10:11:13.727Z",
+          "State": "Active",
+          "Tags": "liquibase; V3.7.0; Wait .Net review",
+          "Changed Date": "2026-06-01T11:37:07.337Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -3136,7 +3138,7 @@
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-28T10:00:00.000Z",
+        "devEnd": "2026-05-28T11:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -7325,8 +7327,8 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-05-21T11:54:45.06Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-01T06:24:01.057Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-01T11:30:23.697Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -7343,6 +7345,40 @@
           "Assigned To Tester": "Unassigned",
           "State": "Active",
           "Changed Date": "2026-06-01T08:42:37.53Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173882,
+          "Work Item Type": "Task",
+          "Title": "CR_170792 >> Review CR's Preparation",
+          "Assigned To": "Salah Abdelhakeem",
+          "Activity": "Testing",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.5,
+          "Activated Date": "2026-06-01T11:35:39.423Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-06-01T11:35:42.253Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-01T11:35:47.973Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173883,
+          "Work Item Type": "Task",
+          "Title": "CR_170792 >> Review CR's Execution",
+          "Assigned To": "Salah Abdelhakeem",
+          "Activity": "Testing",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 1,
+          "Activated Date": "2026-06-01T11:31:29.24Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-06-01T11:36:09.99Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-01T11:36:12.42Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -7532,9 +7568,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-05-28T13:00:00.000Z",
-        "testEnd": "2026-06-02T10:00:00.000Z",
-        "finalEnd": "2026-06-02T10:00:00.000Z"
+        "devEnd": "2026-05-31T06:00:00.000Z",
+        "testEnd": "2026-06-02T12:00:00.000Z",
+        "finalEnd": "2026-06-02T12:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -7654,22 +7690,23 @@
           "ID": 173875,
           "Work Item Type": "Task",
           "Title": "DB Modification - LDM_DEV : Update record in table Object for Redemption Transactionsr",
-          "Assigned To": "Mohamed Qassem",
+          "Assigned To": "Mostafa Mahanna",
           "Activity": "DB Modification",
-          "Original Estimation": 0,
+          "Original Estimation": 0.5,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T11:21:09.637Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-01T10:12:48.51Z",
+          "State": "Active",
+          "Changed Date": "2026-06-01T11:21:09.637Z",
           "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-28T13:00:00.000Z",
+        "devEnd": "2026-05-31T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -9742,13 +9779,13 @@
           "Assigned To": "Hesham Ahmed",
           "Activity": "Development",
           "Original Estimation": 5,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-06-01T10:56:35.963Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-01T10:56:35.963Z",
+          "Changed Date": "2026-06-01T11:09:36.537Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -15609,7 +15646,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-05-31T12:13:45.067Z",
+      "changedDate": "2026-06-01T11:30:55.717Z",
       "tasks": [
         {
           "ID": 173499,
@@ -15698,7 +15735,92 @@
           "Customer": "Internal CR_2000"
         }
       ],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 173884,
+          "state": "Design"
+        },
+        {
+          "id": 173885,
+          "state": "Design"
+        },
+        {
+          "id": 173886,
+          "state": "Design"
+        },
+        {
+          "id": 173887,
+          "state": "Design"
+        },
+        {
+          "id": 173888,
+          "state": "Design"
+        },
+        {
+          "id": 173889,
+          "state": "Design"
+        },
+        {
+          "id": 173890,
+          "state": "Design"
+        },
+        {
+          "id": 173891,
+          "state": "Design"
+        },
+        {
+          "id": 173892,
+          "state": "Design"
+        },
+        {
+          "id": 173893,
+          "state": "Design"
+        },
+        {
+          "id": 173894,
+          "state": "Design"
+        },
+        {
+          "id": 173895,
+          "state": "Design"
+        },
+        {
+          "id": 173896,
+          "state": "Design"
+        },
+        {
+          "id": 173897,
+          "state": "Design"
+        },
+        {
+          "id": 173898,
+          "state": "Design"
+        },
+        {
+          "id": 173899,
+          "state": "Design"
+        },
+        {
+          "id": 173900,
+          "state": "Design"
+        },
+        {
+          "id": 173901,
+          "state": "Design"
+        },
+        {
+          "id": 173902,
+          "state": "Design"
+        },
+        {
+          "id": 173903,
+          "state": "Design"
+        },
+        {
+          "id": 173904,
+          "state": "Design"
+        }
+      ],
       "calc": {
         "devEnd": "2026-06-01T10:47:11.083Z",
         "testEnd": "2026-06-04T06:00:00.000Z",
@@ -17665,14 +17787,14 @@
           "Title": "handle User's Details form  \"reactive forms\"",
           "Assigned To": "Mostafa Torad",
           "Activity": "Development",
-          "Original Estimation": 7,
+          "Original Estimation": 4,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-06-01T10:07:07.47Z",
           "Iteration Path": "MaterialManagement\\2026\\MM March 1-13",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-01T10:07:07.47Z",
+          "Changed Date": "2026-06-01T11:09:52.523Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -17697,7 +17819,7 @@
       ],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-31T11:00:00.000Z",
+        "devEnd": "2026-05-31T06:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -19196,8 +19318,8 @@
       "id": 98305,
       "title": "Internal CR - Integration Monitor: Add an option for Load Accession (Status = Pending grid)",
       "type": "CR",
-      "state": "Resolved",
-      "assignedTo": "Tarek Saad",
+      "state": "Active - With Bugs",
+      "assignedTo": "Mohamed Refaat Khalifa Rifaei",
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 999,
@@ -19207,7 +19329,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-04-20T09:24:28.303Z",
+      "changedDate": "2026-06-01T11:17:41.067Z",
       "tasks": [
         {
           "ID": 166547,
