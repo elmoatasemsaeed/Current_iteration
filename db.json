@@ -50,6 +50,64 @@
   ],
   "currentStories": [
     {
+      "id": 143808,
+      "title": "AlHasa - Update the formula test type to use Age ,  Gender & different clinical gp tests  at Results screen.",
+      "type": "User Story",
+      "state": "Resolved",
+      "assignedTo": "Ola Gamal",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 1,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Hasa Health Cluster_12",
+      "changedDate": "2026-06-01T09:17:33.240Z",
+      "tasks": [
+        {
+          "ID": 145986,
+          "Work Item Type": "Task",
+          "Title": "Update Result To Make Formula Accept Gender and Age",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 1.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2025-08-19T09:19:55.067Z",
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "State": "Closed",
+          "Changed Date": "2025-08-24T16:53:52.2Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [
+        {
+          "ID": 172888,
+          "Work Item Type": "Bug",
+          "Title": "#Formula test:  I cannot add the two formula with the same test from test configuration page",
+          "Assigned To": "Ola Gamal",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 1.5,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-17T14:13:39.86Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        }
+      ],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2025-08-19T11:19:55.067Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": []
+    },
+    {
       "id": 156743,
       "title": "AlHasa - Update Test setup to add stability days / hours.",
       "type": "User Story",
@@ -765,7 +823,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-05-25T18:17:37.663Z",
+      "changedDate": "2026-06-01T09:01:30.307Z",
       "tasks": [
         {
           "ID": 173288,
@@ -788,7 +846,7 @@
           "Title": "CR-167932- Execution",
           "Assigned To": "Bassant Abdelhamid",
           "Activity": "Testing",
-          "Original Estimation": 7.2,
+          "Original Estimation": 6,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 2.5,
           "Activated Date": "2026-05-23T13:36:55.55Z",
@@ -796,7 +854,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-05-25T16:53:40.267Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-05-25T16:54:05.04Z",
+          "Changed Date": "2026-06-01T09:03:23.48Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -817,7 +875,104 @@
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 173835,
+          "state": "Design"
+        },
+        {
+          "id": 173836,
+          "state": "Design"
+        },
+        {
+          "id": 173837,
+          "state": "Design"
+        },
+        {
+          "id": 173838,
+          "state": "Design"
+        },
+        {
+          "id": 173839,
+          "state": "Design"
+        },
+        {
+          "id": 173840,
+          "state": "Design"
+        },
+        {
+          "id": 173841,
+          "state": "Design"
+        },
+        {
+          "id": 173842,
+          "state": "Design"
+        },
+        {
+          "id": 173843,
+          "state": "Design"
+        },
+        {
+          "id": 173844,
+          "state": "Design"
+        },
+        {
+          "id": 173845,
+          "state": "Design"
+        },
+        {
+          "id": 173846,
+          "state": "Design"
+        },
+        {
+          "id": 173847,
+          "state": "Design"
+        },
+        {
+          "id": 173848,
+          "state": "Design"
+        },
+        {
+          "id": 173849,
+          "state": "Design"
+        },
+        {
+          "id": 173850,
+          "state": "Design"
+        },
+        {
+          "id": 173851,
+          "state": "Design"
+        },
+        {
+          "id": 173852,
+          "state": "Design"
+        },
+        {
+          "id": 173853,
+          "state": "Design"
+        },
+        {
+          "id": 173854,
+          "state": "Design"
+        },
+        {
+          "id": 173855,
+          "state": "Design"
+        },
+        {
+          "id": 173856,
+          "state": "Design"
+        },
+        {
+          "id": 173857,
+          "state": "Design"
+        },
+        {
+          "id": 173858,
+          "state": "Design"
+        }
+      ],
       "calc": {
         "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
         "devEnd": "TBD",
@@ -1260,13 +1415,11 @@
       "tester": "Mohamed Abomosallam",
       "area": "Internal lab",
       "priority": 1,
-      "tags": [
-        "50% Execution"
-      ],
+      "tags": [],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Ansary Labs_604",
-      "changedDate": "2026-06-01T06:18:03.313Z",
+      "changedDate": "2026-06-01T09:00:28.653Z",
       "tasks": [
         {
           "ID": 171281,
@@ -1628,6 +1781,21 @@
           "State": "New",
           "Changed Date": "2026-06-01T08:31:03.903Z",
           "Customer": "Ansary Labs_604"
+        },
+        {
+          "ID": 173833,
+          "Work Item Type": "Bug",
+          "Title": "issue with header logo at covid19 & clinical group  at web result report",
+          "Assigned To": "Esraa Abdelsalam",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-01T08:56:30.597Z",
+          "Customer": "Ansary Labs_604"
         }
       ],
       "testCases": [
@@ -1817,7 +1985,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-01T06:23:52.443Z",
+      "changedDate": "2026-06-01T09:28:21.077Z",
       "tasks": [
         {
           "ID": 173106,
@@ -1900,12 +2068,28 @@
           "State": "To Be Reviewed",
           "Changed Date": "2026-06-01T06:23:52.443Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173861,
+          "Work Item Type": "Task",
+          "Title": "preparation dev",
+          "Assigned To": "Adel Salah El-Din Mahmoud Mohamed Shaheen",
+          "Activity": "Development",
+          "Original Estimation": 4,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T09:24:02.43Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-May 11-25",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-06-01T09:24:02.43Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-20T07:00:00.000Z",
+        "devEnd": "2026-05-20T13:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -2648,16 +2832,17 @@
           "ID": 173584,
           "Work Item Type": "Bug",
           "Title": "OutBound service doesn't retrieve data from outbox",
-          "Assigned To": "Mustafa Ahmed",
+          "Assigned To": "Abdullah Nasser",
           "Activity": "",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-06-01T07:56:22.277Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-06-01T07:56:22.277Z",
+          "Resolved Date": "2026-06-01T08:52:32.1Z",
+          "State": "Resolved",
+          "Changed Date": "2026-06-01T08:52:32.1Z",
           "Customer": "EBGH_62"
         },
         {
@@ -2740,13 +2925,14 @@
           "Title": "Invalid  outbound Message Structure",
           "Assigned To": "Mustafa Ahmed",
           "Activity": "",
-          "Original Estimation": 0,
+          "Original Estimation": 2,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T09:20:25.243Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-05-30T08:21:37.12Z",
+          "State": "Active",
+          "Changed Date": "2026-06-01T09:20:25.243Z",
           "Customer": "Al Farabi Lab KSA_283"
         },
         {
@@ -5924,8 +6110,9 @@
           "Activated Date": "2026-05-25T17:34:01.113Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-05-25T17:38:08.62Z",
+          "Resolved Date": "2026-06-01T08:57:03.137Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-06-01T08:57:03.137Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -5950,20 +6137,22 @@
           "Title": "DB Modification - LDM_DEV : Update record in table Object for Relationship Income",
           "Assigned To": "Mostafa Mahanna",
           "Activity": "DB Modification",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T08:52:12.16Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-01T08:33:20.613Z",
+          "State": "Active",
+          "Tags": "liquibase; v.3.7.0; Wait .Net review",
+          "Changed Date": "2026-06-01T09:24:02.783Z",
           "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
       "testCases": [],
       "calc": {
-        "devEnd": "2026-05-26T13:00:00.000Z",
+        "devEnd": "2026-05-26T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -6439,55 +6628,55 @@
       "testCases": [
         {
           "id": 172639,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172640,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172641,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172642,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172643,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172644,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172645,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172646,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172647,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172648,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172649,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172650,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172752,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172753,
@@ -6507,7 +6696,7 @@
         },
         {
           "id": 172757,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172758,
@@ -6527,11 +6716,11 @@
         },
         {
           "id": 172762,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172763,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172764,
@@ -6539,7 +6728,7 @@
         },
         {
           "id": 172765,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 172766,
@@ -6555,7 +6744,7 @@
         },
         {
           "id": 172769,
-          "state": "Inprogress"
+          "state": "Pass"
         }
       ],
       "calc": {
@@ -7140,43 +7329,43 @@
         },
         {
           "id": 173460,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 173461,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173462,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173463,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173464,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173465,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173466,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173467,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173468,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173469,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173470,
@@ -7184,51 +7373,51 @@
         },
         {
           "id": 173471,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173472,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173473,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173474,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173475,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173476,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173477,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173478,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173479,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173480,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173481,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173482,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173483,
@@ -7236,11 +7425,11 @@
         },
         {
           "id": 173484,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 173485,
-          "state": "Design"
+          "state": "Pass"
         }
       ],
       "calc": {
@@ -8119,6 +8308,82 @@
       ]
     },
     {
+      "id": 172870,
+      "title": "Internal CR - Financial Reports -  Revamp Processed Service Income",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Hesham Ahmed",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 5,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-06-01T08:57:26.050Z",
+      "tasks": [
+        {
+          "ID": 173738,
+          "Work Item Type": "Task",
+          "Title": "Preperation",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T09:04:24.937Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-06-01T09:04:24.937Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173739,
+          "Work Item Type": "Task",
+          "Title": "BD002: Create new API to generate Report",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 2.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-31T01:13:58.12Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173740,
+          "Work Item Type": "Task",
+          "Title": "DB Modification - LDM_DEV : Update record in table Object for Processed Service Income",
+          "Assigned To": "Mostafa Mahanna",
+          "Activity": "DB Modification",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T09:01:09.137Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Tags": "liquibase; v.3.7.0; Wait .Net review",
+          "Changed Date": "2026-06-01T09:26:32.66Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-06-03T06:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": []
+    },
+    {
       "id": 165222,
       "title": "App Link - Content: for all content pages, enhance Content Management with Cover & Thumbnail Images + Preview",
       "type": "User Story",
@@ -8305,6 +8570,81 @@
       "testCases": [],
       "calc": {
         "devEnd": "2026-05-20T07:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": []
+    },
+    {
+      "id": 172863,
+      "title": "Internal CR - Financial Reports -  Revamp Groups Income",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Hesham Ahmed",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 6,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-06-01T09:22:20.410Z",
+      "tasks": [
+        {
+          "ID": 173741,
+          "Work Item Type": "Task",
+          "Title": "Preperation",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-29T22:25:15.307Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173742,
+          "Work Item Type": "Task",
+          "Title": "BD002: Create new API to generate Report",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 2.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-31T01:15:06.613Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173815,
+          "Work Item Type": "Task",
+          "Title": "DB Modification - LDM_DEV : Update record in table Object for Groups Income",
+          "Assigned To": "Mostafa Mahanna",
+          "Activity": "DB Modification",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T08:55:22.98Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Tags": "liquibase; V3.7.0; Wait .Net review",
+          "Changed Date": "2026-06-01T09:21:32.78Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-06-04T11:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -9102,6 +9442,231 @@
           "timestamp": 1779620983686
         }
       ]
+    },
+    {
+      "id": 172859,
+      "title": "Internal CR - Financial Reports -  Revamp Patients Financial Status",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Hesham Ahmed",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 7,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-06-01T09:22:25.363Z",
+      "tasks": [
+        {
+          "ID": 173743,
+          "Work Item Type": "Task",
+          "Title": "preperation",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-29T23:48:55.46Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173744,
+          "Work Item Type": "Task",
+          "Title": "BD002: Create new API to generate Report",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 2.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-31T01:15:38.373Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173816,
+          "Work Item Type": "Task",
+          "Title": "DB Modification - LDM_DEV : Update record in table Object for Patients Financial Status",
+          "Assigned To": "Mostafa Mahanna",
+          "Activity": "DB Modification",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T08:56:51.643Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Tags": "liquibase; v.3.7.0; Wait .Net review",
+          "Changed Date": "2026-06-01T09:21:32.413Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-06-08T08:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": []
+    },
+    {
+      "id": 172854,
+      "title": "Internal CR - Financial Reports - Registration Canceled Services",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Hesham Ahmed",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 8,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-06-01T09:22:30.163Z",
+      "tasks": [
+        {
+          "ID": 173747,
+          "Work Item Type": "Task",
+          "Title": "Preperation",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-30T22:34:00.413Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173748,
+          "Work Item Type": "Task",
+          "Title": "BD002: Create new API to generate Report",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 2.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-31T01:16:30.457Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173818,
+          "Work Item Type": "Task",
+          "Title": "DB Modification - LDM_DEV : Update record in table Object for Registration Cancelled Services",
+          "Assigned To": "Mostafa Mahanna",
+          "Activity": "DB Modification",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T08:35:15.973Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Tags": "liquibase; v.3.7.0; Wait .Net review",
+          "Changed Date": "2026-06-01T09:19:02.29Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-06-09T13:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": []
+    },
+    {
+      "id": 172851,
+      "title": "Internal CR - Financial Reports - Treasury detailed statement",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Hesham Ahmed",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 9,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-06-01T09:22:49.780Z",
+      "tasks": [
+        {
+          "ID": 173749,
+          "Work Item Type": "Task",
+          "Title": "preperation",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-31T00:36:25.437Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173750,
+          "Work Item Type": "Task",
+          "Title": "BD002: Create new API to generate Report",
+          "Assigned To": "Hesham Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 2.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-05-31T01:17:21.063Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 173820,
+          "Work Item Type": "Task",
+          "Title": "DB Modification - LDM_DEV : Update record in table Object for Treasury Detailed Statement",
+          "Assigned To": "Mostafa Mahanna",
+          "Activity": "DB Modification",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T08:35:02.493Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Tags": "liquibase; v.3.7.0; Wait .Net review",
+          "Changed Date": "2026-06-01T09:16:32.313Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "calc": {
+        "devEnd": "2026-06-11T10:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": []
     },
     {
       "id": 146695,
@@ -11378,7 +11943,7 @@
       "id": 170978,
       "title": "Internal CR - Revamp the Manage Contract Type screen to support a new structured setup with auto-generated codes.",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Tested",
       "assignedTo": "Hesham Ahmed",
       "tester": "Saddam Raees",
       "area": "Front and Financial",
@@ -11387,7 +11952,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-01T07:15:16.330Z",
+      "changedDate": "2026-06-01T09:12:07.273Z",
       "tasks": [
         {
           "ID": 172091,
@@ -11738,12 +12303,13 @@
           "Activity": "Testing",
           "Original Estimation": 6,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 4,
+          "TimeSheet_TestingActualTime": 6,
           "Activated Date": "2026-05-25T07:45:08.5Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-06-01T07:36:19.253Z",
+          "Resolved Date": "2026-06-01T09:02:12.797Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-01T09:10:51.793Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -11807,13 +12373,13 @@
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.5,
           "Activated Date": "2026-05-29T04:59:14.037Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-01T08:02:42.38Z",
-          "State": "Resolved",
-          "Changed Date": "2026-06-01T08:02:42.38Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-01T09:00:12.357Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -11932,13 +12498,13 @@
         },
         {
           "id": 173440,
-          "state": "Design"
+          "state": "Pass"
         }
       ],
       "calc": {
-        "devEnd": "2026-05-26T13:00:00.000Z",
-        "testEnd": "2026-06-07T06:00:00.000Z",
-        "finalEnd": "2026-06-07T06:00:00.000Z"
+        "devEnd": "2026-06-11T10:00:00.000Z",
+        "testEnd": "2026-06-15T10:00:00.000Z",
+        "finalEnd": "2026-06-15T10:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -14970,14 +15536,15 @@
           "Title": "Title: Reassign Visit icon is displayed for Past visit dated Visits",
           "Assigned To": "Reem Ali",
           "Activity": "",
-          "Original Estimation": 0,
+          "Original Estimation": 0.33,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-01T08:53:36.757Z",
           "Iteration Path": "Home Visit\\2026\\home_visit April 27-10",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
+          "State": "Active",
           "Tags": "Changed Bug",
-          "Changed Date": "2026-06-01T08:22:15.69Z",
+          "Changed Date": "2026-06-01T08:53:36.757Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -14987,13 +15554,14 @@
           "Assigned To": "Reem Ali",
           "Activity": "",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-06-01T08:14:55.793Z",
           "Iteration Path": "Home Visit\\2026\\home_visit May 13-25",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-01T08:14:55.793Z",
+          "Tags": "Resolved but not published",
+          "Changed Date": "2026-06-01T08:59:02.253Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -17804,7 +18372,7 @@
           "ID": 173709,
           "Work Item Type": "Bug",
           "Title": "Design issues in side navigation menu and district area screen title font size",
-          "Assigned To": "Yara Mohsen",
+          "Assigned To": "Bassant Abdelhamid",
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0.83,
@@ -17812,9 +18380,9 @@
           "Activated Date": "2026-06-01T08:31:43.04Z",
           "Iteration Path": "Home Visit\\2026\\home_visit April 6-20",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Tags": "Resolved but not published",
-          "Changed Date": "2026-06-01T08:45:54.83Z",
+          "Resolved Date": "2026-06-01T09:10:29.527Z",
+          "State": "Resolved",
+          "Changed Date": "2026-06-01T09:10:29.527Z",
           "Customer": "Internal CR_2000"
         }
       ],
