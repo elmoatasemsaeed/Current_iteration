@@ -16,7 +16,8 @@ let db = {
     vacations: [], 
     holidays: [],  
     deliveryLogs: [],
-    currentStories: []
+    currentStories: [],
+    customTags: [] // Added for custom tags
 };
 
 let currentData = []; 
@@ -129,6 +130,7 @@ if (response.ok) {
     if (userMatch) {
         db = remoteDb;
         db.sha = metaData.sha; // حفظ الـ SHA من بيانات الميتا
+        if (!db.customTags) db.customTags = [];
         sessionStorage.setItem('gh_token', t);
         sessionStorage.setItem('az_pat', azPat);
         if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t, azPat}));
@@ -196,6 +198,7 @@ const dataProcessor = {
         if (response.ok) {
             // البيانات تعود كنص JSON مباشر وليس Base64
             db = await response.json(); 
+            if (!db.customTags) db.customTags = [];
             
             // 2. طلب الـ SHA بشكل منفصل (Metadata) لاستخدامه عند الحفظ لاحقاً
             const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
@@ -284,8 +287,6 @@ async saveToGitHub() {
     
     },
 
-
-
    processRows(rows) {
     const newStories = []; // سنقوم بتجميع القصص الجديدة هنا أولاً
     let currentStory = null;
@@ -317,9 +318,13 @@ async saveToGitHub() {
                 tasks: [],
                 bugs: [],
                 testCases: [],
+                reviews: [],        // NEW: for Review work items
                 calc: {},
                 customTags: [], 
-                standupComments: []
+                standupComments: [],
+                iterationPath: row['Iteration Path'] || "",
+                devActualTime: parseFloat(row['TimeSheet_DevActualTime']) || 0,
+                testActualTime: parseFloat(row['TimeSheet_TestingActualTime']) || 0
             };
 
             // --- التعديل الجوهري هنا ---
@@ -346,6 +351,14 @@ if (existingStory) {
             currentStory.testCases.push({
                 id: row['ID'],
                 state: row['State']
+            });
+        } else if (row['Work Item Type'] === 'Review' && currentStory) {
+            // NEW: جمع عناصر المراجعة
+            currentStory.reviews.push({
+                id: row['ID'],
+                title: row['Title'],
+                state: row['State'],
+                assignedTo: row['Assigned To'] || "Unassigned"
             });
         }
     });
@@ -596,8 +609,10 @@ const ui = {
             this.renderDailyActivity();
         } else if (activeTab.id === 'tab-inactive-stories') {
             this.renderInactiveStories();
-        } else if (activeTab.id === 'tab-kanban') { // أضف هذا الجزء
+        } else if (activeTab.id === 'tab-kanban') { 
             this.renderKanban();
+        } else if (activeTab.id === 'tab-auditor') {
+            this.renderAuditorChecklist();
         }
     }
 },
@@ -2108,7 +2123,137 @@ renderInactiveStories() {
             </div>
         `).join('');
     }
+        },
+    
+    // NEW: Auditor Checklist Renderer
+    renderAuditorChecklist() {
+        const tbody = document.getElementById('auditor-table-body');
+        if (!tbody) return;
+
+        // Get filter values
+        const areaFilter = document.getElementById('auditor-area-filter')?.value || 'all';
+        const stateFilter = document.getElementById('auditor-state-filter')?.value || 'all';
+
+        // Populate area filter dropdown if empty
+        const areaSelect = document.getElementById('auditor-area-filter');
+        if (areaSelect && areaSelect.options.length <= 1) {
+            const areas = [...new Set(currentData.map(s => s.area || "General"))];
+            areaSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${a}">${a}</option>`).join('');
         }
+
+        // Filter stories
+        let filtered = currentData;
+        if (areaFilter !== 'all') {
+            filtered = filtered.filter(s => (s.area || "General") === areaFilter);
+        }
+        if (stateFilter !== 'all') {
+            filtered = filtered.filter(s => s.state === stateFilter);
+        }
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" class="text-center py-8 text-gray-400">No stories match the selected filters.</td></tr>`;
+            return;
+        }
+
+        // Evaluate each story against 7 criteria
+        const rowsHtml = filtered.map(story => {
+            const criteria = this.evaluateStoryCompliance(story);
+            const compliancePercent = Math.round((criteria.passedCount / criteria.totalCount) * 100);
+            
+            // Determine progress bar color
+            let barColor = 'bg-red-500';
+            if (compliancePercent >= 80) barColor = 'bg-green-500';
+            else if (compliancePercent >= 50) barColor = 'bg-yellow-500';
+            
+            return `
+                <tr class="border-b hover:bg-gray-50 transition">
+                    <td class="px-4 py-3 font-mono text-xs">#${story.id}</td>
+                    <td class="px-4 py-3 font-medium text-slate-700 max-w-xs truncate" title="${story.title}">${story.title}</td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="text-xs font-bold">${compliancePercent}%</span>
+                            <div class="w-full bg-gray-200 rounded-full h-2 max-w-[80px]">
+                                <div class="${barColor} h-2 rounded-full" style="width: ${compliancePercent}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-center">${criteria.priority ? '✅' : '❌'}</td>
+                    <td class="px-4 py-3 text-center">${criteria.iterationPath ? '✅' : '❌'}</td>
+                    <td class="px-4 py-3 text-center">${criteria.devTasks ? '✅' : '❌'}</td>
+                    <td class="px-4 py-3 text-center">${criteria.testTasks ? '✅' : '❌'}</td>
+                    <td class="px-4 py-3 text-center">${criteria.testCasesPass ? '✅' : '❌'}</td>
+                    <td class="px-4 py-3 text-center">${criteria.bugsClosed ? '✅' : '❌'}</td>
+                    <td class="px-4 py-3 text-center">${criteria.reviewsClosed ? '✅' : '❌'}</td>
+                </tr>
+            `;
+        }).join('');
+
+        tbody.innerHTML = rowsHtml;
+    },
+
+    evaluateStoryCompliance(story) {
+        let passedCount = 0;
+        const totalCount = 7;
+
+        // 1. Business Priority valid (not empty and not default 999)
+        const priorityValid = story.priority && story.priority !== 999 && !isNaN(story.priority);
+        if (priorityValid) passedCount++;
+
+        // 2. Iteration Path contains numbers or slashes (indicates iteration format)
+        const iterationPathValid = story.iterationPath && /[\d\/]/.test(story.iterationPath);
+        if (iterationPathValid) passedCount++;
+
+        // 3. Development Tasks: exists at least one Development/DB Modification task
+        const devTasksList = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+        let devTasksValid = devTasksList.length > 0;
+        // If story is Tested or Closed, all dev tasks must be closed
+        if ((story.state === 'Tested' || story.state === 'Closed') && devTasksValid) {
+            const allDevClosed = devTasksList.every(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']));
+            devTasksValid = allDevClosed;
+        }
+        if (devTasksValid) passedCount++;
+
+        // 4. Testing Tasks: exists at least one Testing task OR task title contains Prep/Preparation
+        const testTasksList = story.tasks.filter(t => 
+            t['Activity'] === 'Testing' || 
+            (t['Title'] && (t['Title'].toLowerCase().includes('prep') || t['Title'].toLowerCase().includes('preparation')))
+        );
+        const testTasksValid = testTasksList.length > 0;
+        if (testTasksValid) passedCount++;
+
+        // 5. Test Cases: must exist and all have state 'Pass'
+        const testCases = story.testCases || [];
+        const testCasesValid = testCases.length > 0 && testCases.every(tc => tc.state === 'Pass');
+        if (testCasesValid) passedCount++;
+
+        // 6. Bugs Closed: if story is Tested/Closed, all bugs must be closed; otherwise ignore
+        let bugsValid = true;
+        if (story.state === 'Tested' || story.state === 'Closed') {
+            const bugs = story.bugs || [];
+            bugsValid = bugs.length === 0 || bugs.every(b => ['Closed', 'Resolved'].includes(b['State']));
+        }
+        if (bugsValid) passedCount++;
+
+        // 7. Reviews Closed: if reviews exist, they must be closed; otherwise consider as passed (no reviews required)
+        const reviews = story.reviews || [];
+        let reviewsValid = true;
+        if (reviews.length > 0) {
+            reviewsValid = reviews.every(r => ['Closed', 'Resolved'].includes(r.state));
+        }
+        if (reviewsValid) passedCount++;
+
+        return {
+            passedCount,
+            totalCount,
+            priority: priorityValid,
+            iterationPath: iterationPathValid,
+            devTasks: devTasksValid,
+            testTasks: testTasksValid,
+            testCasesPass: testCasesValid,
+            bugsClosed: bugsValid,
+            reviewsClosed: reviewsValid
+        };
+    }
 };
 
 
