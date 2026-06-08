@@ -2223,7 +2223,7 @@ renderInactiveStories() {
 
         // 5. Test Cases: must exist and all have state 'Pass'
         const testCases = story.testCases || [];
-        const testCasesValid = testCases.length > 0 && testCases.every(tc => tc.state === 'Pass');
+        const testCasesValid = testCases.length > 0 && testCases.every(tc => tc.state === 'Pass' || tc.state === 'Not Applicable');
         if (testCasesValid) passedCount++;
 
         // 6. Bugs Closed: if story is Tested/Closed, all bugs must be closed; otherwise ignore
