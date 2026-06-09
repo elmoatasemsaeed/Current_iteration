@@ -2169,6 +2169,7 @@ renderInactiveStories() {
                 <tr class="border-b hover:bg-gray-50 transition">
                     <td class="px-4 py-3 font-mono text-xs">#${story.id}</td>
                     <td class="px-4 py-3 font-medium text-slate-700 max-w-xs truncate" title="${story.title}">${story.title}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700">${story.state}</span></td>
                     <td class="px-4 py-3 text-center">
                         <div class="flex flex-col items-center gap-1">
                             <span class="text-xs font-bold">${compliancePercent}%</span>
@@ -2208,7 +2209,7 @@ renderInactiveStories() {
         let devTasksValid = devTasksList.length > 0;
         // If story is Tested or Closed, all dev tasks must be closed
         if ((story.state === 'Tested' || story.state === 'Closed') && devTasksValid) {
-            const allDevClosed = devTasksList.every(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']));
+            const allDevClosed = devTasksList.every(t => ['Closed', 'Resolved'].includes(t['State']));
             devTasksValid = allDevClosed;
         }
         if (devTasksValid) passedCount++;
