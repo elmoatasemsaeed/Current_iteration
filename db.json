@@ -346,7 +346,7 @@
           "Assigned To": "Ahmed Farag",
           "Activity": "DB Modification",
           "Original Estimation": 8,
-          "TimeSheet_DevActualTime": 7.25,
+          "TimeSheet_DevActualTime": 7.75,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-06-02T14:53:10.3Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
@@ -354,7 +354,7 @@
           "Resolved Date": "2026-06-09T15:39:58.51Z",
           "State": "To Be Reviewed",
           "Tags": "liquibase; V3.7.0; Wait .Net review",
-          "Changed Date": "2026-06-09T16:03:41.587Z",
+          "Changed Date": "2026-06-10T07:50:40.983Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -662,7 +662,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T15:39:19.547Z",
+          "Changed Date": "2026-06-10T07:09:50.44Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -678,7 +678,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T15:51:11.207Z",
+          "Changed Date": "2026-06-10T07:09:50.44Z",
           "Customer": "Al Hasa Health Cluster_12"
         }
       ],
@@ -3502,11 +3502,13 @@
       "tester": "Hebatullah Mohamed",
       "area": "LDM Integration",
       "priority": 1,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-06-09T16:12:19.077Z",
+      "changedDate": "2026-06-10T07:39:15.143Z",
       "tasks": [],
       "bugs": [
         {
@@ -3673,7 +3675,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-09T14:41:08.920Z",
+      "changedDate": "2026-06-10T08:53:02.343Z",
       "tasks": [
         {
           "ID": 173319,
@@ -3860,7 +3862,7 @@
           "Assigned To Tester": "Unassigned",
           "State": "Active",
           "Tags": "frontend with adel",
-          "Changed Date": "2026-06-09T16:43:43.24Z",
+          "Changed Date": "2026-06-10T08:53:02.343Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -3876,7 +3878,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T17:32:44.733Z",
+          "Changed Date": "2026-06-10T08:53:02.343Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -4119,7 +4121,157 @@
           "Assigned To Tester": "Unassigned",
           "State": "Active",
           "Tags": "liquibase; V3.7.0; Wait .Net review",
-          "Changed Date": "2026-06-09T16:46:13.16Z",
+          "Changed Date": "2026-06-10T07:29:10.797Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        },
+        {
+          "ID": 175582,
+          "Work Item Type": "Task",
+          "Title": "BD010 | Map Minimum Retest Check Tables To EF Entities",
+          "Assigned To": "Mohamed Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:53:33.26Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        },
+        {
+          "ID": 175583,
+          "Work Item Type": "Task",
+          "Title": "BD002 | Create GetMinimumReTestGridData Api To Fetch Data For The Master Grid",
+          "Assigned To": "Mohamed Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:53:56.997Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        },
+        {
+          "ID": 175584,
+          "Work Item Type": "Task",
+          "Title": "BD002 | Create GetMinimumRetestBranchandLocalData Api To Fetches Details For The Popup",
+          "Assigned To": "Mohamed Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:54:13.367Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        },
+        {
+          "ID": 175585,
+          "Work Item Type": "Task",
+          "Title": "BD006 | Create SaveMinimumRetestData Api To Inserts/Updates Global Defaults And Overrides",
+          "Assigned To": "Mohamed Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:54:31.34Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        },
+        {
+          "ID": 175586,
+          "Work Item Type": "Task",
+          "Title": "BD006 | Create DeleteMinimumRetestData Api To Delete Global Defaults And Overrides",
+          "Assigned To": "Mohamed Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:54:46.437Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        },
+        {
+          "ID": 175587,
+          "Work Item Type": "Task",
+          "Title": "BD002 | Create DownloadTemplate API To Fetch Data And Generate An Excel File",
+          "Assigned To": "Mohamed Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:55:00.34Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        },
+        {
+          "ID": 175588,
+          "Work Item Type": "Task",
+          "Title": "BD006 | Create UploadTemplate Api To Parse Uploaded Excel And Insert/Update DB Records",
+          "Assigned To": "Mohamed Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:55:18.923Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        },
+        {
+          "ID": 175589,
+          "Work Item Type": "Task",
+          "Title": "BD008 | Ensure Save Data For Fetching Grid And Popup Data",
+          "Assigned To": "Mohamed Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:55:34.957Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        },
+        {
+          "ID": 175590,
+          "Work Item Type": "Task",
+          "Title": "BD008 | Ensure Save Data For Insert, Update, And Delete Minimum Retest",
+          "Assigned To": "Mohamed Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:55:48.503Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        },
+        {
+          "ID": 175591,
+          "Work Item Type": "Task",
+          "Title": "BD008 | Ensure Save Data For Excel Download And Upload",
+          "Assigned To": "Mohamed Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:56:04.473Z",
           "Customer": "Al Hasa Health Cluster_12"
         }
       ],
@@ -6805,7 +6957,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T17:42:44.753Z",
+          "Changed Date": "2026-06-10T08:53:02.343Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -6821,7 +6973,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T17:32:44.733Z",
+          "Changed Date": "2026-06-10T08:53:02.343Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -7029,7 +7181,7 @@
       "id": 173196,
       "title": "Alhasa - Migrate the existing ‘frequency check’ field data at delta check tab to the new Minimum Retest Interval screen & remove the field frequency check field.",
       "type": "User Story",
-      "state": "On-Hold",
+      "state": "Active",
       "assignedTo": "Mahmoud Essam",
       "tester": "Ahmed Mohamed",
       "area": "Registration",
@@ -7040,21 +7192,22 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-06-09T13:05:44.337Z",
+      "changedDate": "2026-06-10T08:45:24.610Z",
       "tasks": [
         {
           "ID": 175282,
           "Work Item Type": "Task",
           "Title": "LDM_DEV: DB_Modification for User story 173196",
-          "Assigned To": "Ahmed Attia",
+          "Assigned To": "Ahmed Farag",
           "Activity": "DB Modification",
-          "Original Estimation": 0,
+          "Original Estimation": 5.5,
           "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-10T08:47:03.81Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-09T17:58:16.47Z",
+          "State": "Active",
+          "Changed Date": "2026-06-10T08:47:03.81Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -7069,8 +7222,9 @@
           "Activated Date": "2026-06-09T09:16:45.75Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-06-09T14:37:39.277Z",
+          "Resolved Date": "2026-06-10T07:27:33.063Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-06-10T07:27:33.063Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -7080,12 +7234,14 @@
           "Assigned To": "Mahmoud Essam",
           "Activity": "Development",
           "Original Estimation": 0.75,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-10T07:09:04.173Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-09T08:57:09.02Z",
+          "Resolved Date": "2026-06-10T07:28:32.957Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-06-10T07:28:32.957Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -7095,12 +7251,14 @@
           "Assigned To": "Mahmoud Essam",
           "Activity": "Development",
           "Original Estimation": 1.25,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1.5,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-10T07:08:58.92Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June1-14",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-09T08:59:09.507Z",
+          "Resolved Date": "2026-06-10T07:28:48.81Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-06-10T08:16:27.51Z",
           "Customer": "Al Hasa Health Cluster_12"
         }
       ],
@@ -7108,7 +7266,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-06-10T07:00:00.000Z",
+        "devEnd": "2026-06-10T10:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -7963,7 +8121,7 @@
       "title": "MRC - NT Mobile - Add New APIs",
       "type": "User Story",
       "state": "Active - With Bugs",
-      "assignedTo": "Hamza Ashry",
+      "assignedTo": "Mohamed Ayman",
       "tester": "MOHAMED SAYED",
       "area": "LDM Integration",
       "priority": 3,
@@ -7973,7 +8131,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "MRC - Misr Radiology Center Lab_104",
-      "changedDate": "2026-06-09T15:53:41.310Z",
+      "changedDate": "2026-06-10T07:48:44.500Z",
       "tasks": [
         {
           "ID": 174303,
@@ -8322,7 +8480,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T17:32:44.733Z",
+          "Changed Date": "2026-06-10T08:53:02.343Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -8589,7 +8747,7 @@
       "id": 173195,
       "title": "AlHasa - Impact of Apply Minimum retest interval check on Registration screens.",
       "type": "User Story",
-      "state": "On-Hold",
+      "state": "Active",
       "assignedTo": "Mahmoud Essam",
       "tester": "Unassigned",
       "area": "Registration",
@@ -8600,7 +8758,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-06-09T13:05:45.103Z",
+      "changedDate": "2026-06-10T08:29:39.747Z",
       "tasks": [
         {
           "ID": 175283,
@@ -9587,7 +9745,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-09T15:21:02.540Z",
+      "changedDate": "2026-06-10T08:53:02.343Z",
       "tasks": [
         {
           "ID": 173741,
@@ -9788,7 +9946,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T17:32:44.733Z",
+          "Changed Date": "2026-06-10T08:53:02.343Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -9804,7 +9962,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T16:43:43.877Z",
+          "Changed Date": "2026-06-10T08:53:02.343Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -10461,7 +10619,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T17:32:44.733Z",
+          "Changed Date": "2026-06-10T08:53:02.343Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -10578,7 +10736,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-09T15:21:02.540Z",
+      "changedDate": "2026-06-10T08:53:02.343Z",
       "tasks": [
         {
           "ID": 173747,
@@ -10762,7 +10920,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T16:43:43.55Z",
+          "Changed Date": "2026-06-10T08:53:02.343Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -10778,7 +10936,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-09T17:32:44.733Z",
+          "Changed Date": "2026-06-10T08:53:02.343Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -11954,7 +12112,7 @@
           "ID": 175564,
           "Work Item Type": "Task",
           "Title": "Need to Keep Gender Options disabled after adding 1st Service",
-          "Assigned To": "eslam anwar",
+          "Assigned To": "Mahmoud El-Sayed",
           "Activity": "Testing",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -11962,7 +12120,7 @@
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-06-09T16:30:06.963Z",
+          "Changed Date": "2026-06-10T07:51:38.493Z",
           "Customer": "Ezz Lab_461"
         }
       ],
@@ -12056,7 +12214,7 @@
           "ID": 175561,
           "Work Item Type": "Bug",
           "Title": "Batch displayed although all their accession are Cancelled",
-          "Assigned To": "eslam anwar",
+          "Assigned To": "Mahmoud El-Sayed",
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0,
@@ -12064,7 +12222,7 @@
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-06-09T16:08:23.87Z",
+          "Changed Date": "2026-06-10T07:51:21.92Z",
           "Customer": "Ezz Lab_461"
         }
       ],
@@ -13132,13 +13290,13 @@
           "Activity": "",
           "Original Estimation": 2,
           "TimeSheet_DevActualTime": 11,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.33,
           "Activated Date": "2026-06-09T14:20:04.377Z",
           "Iteration Path": "Web Results",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-09T14:20:04.377Z",
-          "State": "Resolved",
-          "Changed Date": "2026-06-09T14:20:13.61Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-10T08:52:10.463Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -13149,13 +13307,13 @@
           "Activity": "",
           "Original Estimation": 2,
           "TimeSheet_DevActualTime": 3.65,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.33,
           "Activated Date": "2026-06-09T14:19:38.47Z",
           "Iteration Path": "Web Results",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-09T14:20:27.88Z",
-          "State": "Resolved",
-          "Changed Date": "2026-06-09T14:20:27.88Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-10T08:52:49.717Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -13878,13 +14036,28 @@
           "State": "To Be Reviewed",
           "Changed Date": "2026-06-08T17:11:39.717Z",
           "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 175579,
+          "Work Item Type": "Task",
+          "Title": "preparation dev pay using Payment Provider",
+          "Assigned To": "Adel Salah",
+          "Activity": "Development",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-June 1-14",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T08:29:53.847Z",
+          "Customer": "Al Borg KSA_530"
         }
       ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-06-14T11:00:00.000Z",
+        "devEnd": "2026-06-15T11:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -14621,7 +14794,7 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-06-14T10:00:00.000Z",
+        "devEnd": "2026-06-14T13:00:00.000Z",
         "testEnd": "2026-06-15T10:00:00.000Z",
         "finalEnd": "2026-06-15T10:00:00.000Z"
       },
@@ -17730,6 +17903,99 @@
           "State": "Closed",
           "Changed Date": "2026-06-09T17:20:02.6Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 175572,
+          "Work Item Type": "Task",
+          "Title": "Backend :Add ProductCategoryIds to PurchaseOrderFilterDTO + add interface signatures for new EF methods in IPurchaseOrderRepository and IPurchaseOrderDSL\tPurchaseOrderFilterDTO.cs, IPurchaseOrderRepository.cs, IPurchaseOrderDSL.cs",
+          "Assigned To": "Sherif Ezzat",
+          "Activity": "Development",
+          "Original Estimation": 0.4,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-10T07:25:28.41Z",
+          "Iteration Path": "MaterialManagement\\2026",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-06-10T07:25:28.41Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 175573,
+          "Work Item Type": "Task",
+          "Title": "Backend : Add EF method GetManufacturesByProductCategory in PurchaseOrderRepository — query Item",
+          "Assigned To": "Sherif Ezzat",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MaterialManagement\\2026",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T07:20:06.933Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 175574,
+          "Work Item Type": "Task",
+          "Title": "Backend : Add EF method GetItemsByProductCategory in PurchaseOrderRepository",
+          "Assigned To": "Sherif Ezzat",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MaterialManagement\\2026",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T07:21:29.233Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 175575,
+          "Work Item Type": "Task",
+          "Title": "Backend : Add DSL orchestration methods + controller endpoints to expose the two new EF",
+          "Assigned To": "Sherif Ezzat",
+          "Activity": "Development",
+          "Original Estimation": 0.4,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MaterialManagement\\2026",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T07:22:20.447Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 175576,
+          "Work Item Type": "Task",
+          "Title": "Backend : Add EF-based filtering in GetAll flow — filter purchase orders by ProductCategoryIds using EF",
+          "Assigned To": "Sherif Ezzat",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MaterialManagement\\2026",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-10T07:23:03.827Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 175577,
+          "Work Item Type": "Task",
+          "Title": "CR _ Preparation",
+          "Assigned To": "Sherif Ezzat",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-10T07:23:44.107Z",
+          "Iteration Path": "MaterialManagement\\2026",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-06-10T07:24:31.74Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-06-10T07:24:31.74Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
@@ -17785,7 +18051,7 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-06-07T06:00:00.000Z",
+        "devEnd": "2026-06-07T10:00:00.000Z",
         "testEnd": "2026-06-10T11:00:00.000Z",
         "finalEnd": "2026-06-10T11:00:00.000Z"
       },
@@ -23071,7 +23337,7 @@
         {
           "ID": 175571,
           "Work Item Type": "Task",
-          "Title": "FrontEnd:  working on \"confirmation component  -  delete service - refactor client component - handle style\"",
+          "Title": "FrontEnd:  working on \"confirmation component  -  delete service - refactor client component - handle style - sidenav 'sub menu' \"",
           "Assigned To": "mostafa kamel",
           "Activity": "Development",
           "Original Estimation": 0,
@@ -23080,7 +23346,7 @@
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-06-10T06:18:54.917Z",
+          "Changed Date": "2026-06-10T07:33:07.857Z",
           "Customer": "Internal CR_2000"
         }
       ],
