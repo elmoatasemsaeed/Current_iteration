@@ -2231,7 +2231,7 @@ renderInactiveStories() {
         let bugsValid = true;
         if (story.state === 'Tested' || story.state === 'Closed') {
             const bugs = story.bugs || [];
-            bugsValid = bugs.length === 0 || bugs.every(b => ['Closed', 'Resolved'].includes(b['State']));
+            bugsValid = bugs.length === 0 || bugs.every(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State']));
         }
         if (bugsValid) passedCount++;
 
