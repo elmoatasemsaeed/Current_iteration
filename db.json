@@ -194,6 +194,394 @@
   ],
   "currentStories": [
     {
+      "id": 157487,
+      "title": "Registration Parameters/ dynamic batch setup : Add a new section to manage Dynamic Batch Registration screens",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Ahmed Gamal",
+      "tester": "Mostafa Mamdouh",
+      "area": "Registration",
+      "priority": 1,
+      "tags": [
+        "dynamic batch"
+      ],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Borg KSA_530",
+      "changedDate": "2026-06-22T10:25:01.163Z",
+      "tasks": [
+        {
+          "ID": 177023,
+          "Work Item Type": "Task",
+          "Title": "Preparation of CR 157487",
+          "Assigned To": "Mostafa Mamdouh",
+          "Activity": "Testing",
+          "Original Estimation": 6.6,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 3,
+          "Activated Date": "2026-06-22T09:52:01.753Z",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-06-22T09:52:01.753Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177024,
+          "Work Item Type": "Task",
+          "Title": "Execution of CR 157487",
+          "Assigned To": "Mostafa Mamdouh",
+          "Activity": "Testing",
+          "Original Estimation": 4.4,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T12:31:11.52Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177100,
+          "Work Item Type": "Task",
+          "Title": "DB_Modification LDM_DEV apply modifications to UI_REGSETTING table",
+          "Assigned To": "Mohamed Qassem",
+          "Activity": "DB Modification",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T14:10:36.283Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177160,
+          "Work Item Type": "Task",
+          "Title": "FD005 | Separate the reg parameter screen to a dynamic patient screens parameters tab and default screens tab",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-22T10:27:18.923Z",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-06-22T10:27:18.923Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177161,
+          "Work Item Type": "Task",
+          "Title": "FD005 | Add new tab  batch screen parameters holding the batch registratoin screen parameters.",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T18:57:02.02Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177164,
+          "Work Item Type": "Task",
+          "Title": "FD005 | Add new control \"No. of Batch Registration Screens\" to control the number of dynamic batch screens",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T19:00:09.713Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177165,
+          "Work Item Type": "Task",
+          "Title": "FD005 | Add or remove Title & Template pair of controls based on the number of batch screens selected",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T19:01:29.047Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177166,
+          "Work Item Type": "Task",
+          "Title": "FD008 | Bind data source for No. of batch registration screen to identify the number of screens from 1 to 5",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T19:03:53.02Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177167,
+          "Work Item Type": "Task",
+          "Title": "FD008 | Bind data source for Title & Template pair of controls",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T19:05:22.88Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177168,
+          "Work Item Type": "Task",
+          "Title": "FD008 | Bind data source for default query service fee screen and default batch registration screen",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T19:06:50.87Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177169,
+          "Work Item Type": "Task",
+          "Title": "BD009 | Update saveRegParameters API endpoint to insert the dynamic batch template parameters.",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T19:13:10.93Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177170,
+          "Work Item Type": "Task",
+          "Title": "BD009 | Update saveRegParameters API endpoint to insert the audit data for dynamic batch template parameters.",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T19:17:02.723Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177171,
+          "Work Item Type": "Task",
+          "Title": "BD005 | Update GetRegParameters API endpoint to map the new added dynamic batch registration parameters",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 4,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T19:21:24.23Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177172,
+          "Work Item Type": "Task",
+          "Title": "BD005 | Update GetDefaultRegistrationScreens API endpoint to map the default screen for batch reg and for query service fees screen after separating it into a standalone tab for default screens",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 2.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T19:24:48.337Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177173,
+          "Work Item Type": "Task",
+          "Title": "Task: BD008 | Ensure Dynamic Batch Registration Parameters Are Persisted and Properly Bound Across DB, Insert, and Edit Modes for All Parameter Tabs",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 4.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-21T19:28:49.453Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177174,
+          "Work Item Type": "Task",
+          "Title": "Standup meeting",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "Development",
+          "Original Estimation": 0.33,
+          "TimeSheet_DevActualTime": 0.32,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-06-21T19:35:42.013Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-06-21T19:35:42.013Z",
+          "Customer": "Al Borg KSA_530"
+        }
+      ],
+      "bugs": [],
+      "testCases": [
+        {
+          "id": 176994,
+          "state": "Design"
+        },
+        {
+          "id": 176995,
+          "state": "Design"
+        },
+        {
+          "id": 176996,
+          "state": "Design"
+        },
+        {
+          "id": 176997,
+          "state": "Design"
+        },
+        {
+          "id": 176998,
+          "state": "Design"
+        },
+        {
+          "id": 176999,
+          "state": "Design"
+        },
+        {
+          "id": 177000,
+          "state": "Design"
+        },
+        {
+          "id": 177001,
+          "state": "Design"
+        },
+        {
+          "id": 177002,
+          "state": "Design"
+        },
+        {
+          "id": 177003,
+          "state": "Design"
+        },
+        {
+          "id": 177004,
+          "state": "Design"
+        },
+        {
+          "id": 177005,
+          "state": "Design"
+        },
+        {
+          "id": 177006,
+          "state": "Design"
+        },
+        {
+          "id": 177007,
+          "state": "Design"
+        },
+        {
+          "id": 177008,
+          "state": "Design"
+        },
+        {
+          "id": 177009,
+          "state": "Design"
+        },
+        {
+          "id": 177010,
+          "state": "Design"
+        },
+        {
+          "id": 177011,
+          "state": "Design"
+        },
+        {
+          "id": 177012,
+          "state": "Design"
+        },
+        {
+          "id": 177013,
+          "state": "Design"
+        },
+        {
+          "id": 177014,
+          "state": "Design"
+        },
+        {
+          "id": 177015,
+          "state": "Design"
+        },
+        {
+          "id": 177016,
+          "state": "Design"
+        },
+        {
+          "id": 177017,
+          "state": "Design"
+        },
+        {
+          "id": 177018,
+          "state": "Design"
+        },
+        {
+          "id": 177019,
+          "state": "Design"
+        },
+        {
+          "id": 177020,
+          "state": "Design"
+        },
+        {
+          "id": 177021,
+          "state": "Design"
+        }
+      ],
+      "reviews": [],
+      "calc": {
+        "devEnd": "2026-06-29T11:00:00.000Z",
+        "testEnd": "2026-07-01T06:00:00.000Z",
+        "finalEnd": "2026-07-01T06:00:00.000Z"
+      },
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-June 15-30",
+      "devActualTime": 0,
+      "testActualTime": 0.17
+    },
+    {
       "id": 166685,
       "title": "Al Hasa - Users & Roles - Add a new section named Reject samples permissions at the Result Permission tab.",
       "type": "User Story",
@@ -703,9 +1091,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-06-15T13:00:00.000Z",
-        "testEnd": "2026-06-17T06:00:00.000Z",
-        "finalEnd": "2026-06-18T08:00:00.000Z"
+        "devEnd": "2026-07-12T10:00:00.000Z",
+        "testEnd": "2026-07-14T06:00:00.000Z",
+        "finalEnd": "2026-07-14T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -2152,6 +2540,21 @@
           "Assigned To Tester": "Unassigned",
           "State": "Active",
           "Changed Date": "2026-06-21T15:40:46.527Z"
+        },
+        {
+          "ID": 177213,
+          "Work Item Type": "Task",
+          "Title": "Frontend: fix custom date range reset",
+          "Assigned To": "yara mohsen",
+          "Activity": "Development",
+          "Original Estimation": 0.3,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Home Visit\\2026\\home_visit June 4-18",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-22T10:40:51.927Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [
@@ -2359,7 +2762,7 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-05-24T10:00:00.000Z",
+        "devEnd": "2026-05-24T11:00:00.000Z",
         "testEnd": "2026-05-27T12:00:00.000Z",
         "finalEnd": "2026-06-22T09:32:34.760Z"
       },
@@ -2684,7 +3087,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-06-21T16:19:53.860Z",
+      "changedDate": "2026-06-22T10:44:07.050Z",
       "tasks": [
         {
           "ID": 175553,
@@ -2735,7 +3138,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-14T09:54:12.697Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-06-21T10:08:50.67Z",
+          "Changed Date": "2026-06-22T09:36:06.33Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -2768,7 +3171,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-15T09:18:10.57Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-06-21T16:19:53.86Z",
+          "Changed Date": "2026-06-22T10:44:07.05Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -2817,7 +3220,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-17T15:03:39.887Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-06-21T16:19:53.86Z",
+          "Changed Date": "2026-06-22T10:44:07.05Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -3007,7 +3410,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-21T15:44:02.12Z",
+          "Changed Date": "2026-06-22T10:09:47.577Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -3023,7 +3426,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-21T15:44:01.82Z",
+          "Changed Date": "2026-06-22T10:35:17.52Z",
           "Customer": "Al Hasa Health Cluster_12"
         }
       ],
@@ -3281,8 +3684,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-06-28T11:00:00.000Z",
-        "testEnd": "2026-07-01T08:00:00.000Z",
-        "finalEnd": "2026-07-01T08:00:00.000Z"
+        "testEnd": "2026-07-16T08:00:00.000Z",
+        "finalEnd": "2026-07-16T08:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -5762,7 +6165,7 @@
           "Assigned To": "Mostafa Mahmoud",
           "Activity": "Development",
           "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 2,
+          "TimeSheet_DevActualTime": 2.25,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-06-15T08:26:20.683Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
@@ -5770,7 +6173,7 @@
           "Resolved Date": "2026-06-21T15:59:19.323Z",
           "State": "Closed",
           "Tags": "liquibase; v.3.8.0; Wait .Net review",
-          "Changed Date": "2026-06-22T09:19:48.627Z",
+          "Changed Date": "2026-06-22T09:24:08.17Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -6095,9 +6498,9 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-06-21T11:00:00.000Z",
-        "testEnd": "2026-06-23T07:00:00.000Z",
-        "finalEnd": "2026-06-23T07:00:00.000Z"
+        "devEnd": "2026-07-13T13:00:00.000Z",
+        "testEnd": "2026-07-15T07:00:00.000Z",
+        "finalEnd": "2026-07-15T07:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -7221,6 +7624,36 @@
       "iterationPath": "Integration",
       "devActualTime": 0,
       "testActualTime": 8.17
+    },
+    {
+      "id": 175717,
+      "title": "Al Farabi MMS Integration - update Reviewed Services - Get Page By Dates to set page records to 100 record",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Mostafa Taha",
+      "tester": "Unassigned",
+      "area": "LDM Integration",
+      "priority": 2,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Farabi Lab KSA_283",
+      "changedDate": "2026-06-22T10:36:25.517Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0
     },
     {
       "id": 156744,
@@ -8604,8 +9037,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-06-17T13:00:00.000Z",
-        "testEnd": "2026-07-01T13:00:00.000Z",
-        "finalEnd": "2026-07-01T13:00:00.000Z"
+        "testEnd": "2026-07-16T13:00:00.000Z",
+        "finalEnd": "2026-07-16T13:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -8737,7 +9170,7 @@
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-21T11:56:13.397Z",
+          "Changed Date": "2026-06-22T10:25:21.71Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -8753,7 +9186,7 @@
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-21T16:35:40.407Z",
+          "Changed Date": "2026-06-22T10:25:21.71Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -9290,8 +9723,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-02T17:11:28.493Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-15T07:10:21.98Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-22T09:28:09.33Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -9307,9 +9740,9 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-11T12:30:13.11Z",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Tags": "liquibase; v.3.7.0; Wait .Net review",
-          "Changed Date": "2026-06-15T07:10:21.98Z",
+          "Changed Date": "2026-06-22T09:28:41.277Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -9457,8 +9890,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-10T09:37:55.16Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-15T07:10:21.98Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-22T09:29:15.32Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -9474,8 +9907,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-10T09:37:59.067Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-15T07:10:21.98Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-22T09:28:19.623Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -9491,8 +9924,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-10T09:38:04.903Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-15T07:10:21.98Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-22T09:28:24.307Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -9508,8 +9941,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-11T12:56:31.223Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-15T07:10:28.487Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-22T09:28:29.013Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -9525,8 +9958,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-15T13:08:55.923Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-16T09:37:47.647Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-22T09:28:14.633Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -9542,8 +9975,8 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-16T08:57:44.27Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-16T12:12:00.36Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-22T09:29:08.77Z",
           "Customer": "Wareed Lab_294"
         }
       ],
@@ -9853,7 +10286,7 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-06-04T06:00:00.000Z",
+        "devEnd": "2026-06-11T13:00:00.000Z",
         "testEnd": "2026-07-16T09:00:00.000Z",
         "finalEnd": "2026-07-16T09:00:00.000Z"
       },
@@ -9916,7 +10349,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-21T10:41:03.693Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-06-22T09:23:56.397Z",
+          "Changed Date": "2026-06-22T09:28:06.807Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -9964,7 +10397,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-21T10:41:17.39Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-06-22T08:34:31.577Z",
+          "Changed Date": "2026-06-22T09:28:52.997Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -9980,7 +10413,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-21T10:41:07.907Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-06-22T08:34:31.577Z",
+          "Changed Date": "2026-06-22T09:28:15.343Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -10045,7 +10478,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-22T08:48:51.28Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-06-22T08:48:51.28Z",
+          "Changed Date": "2026-06-22T09:28:30.203Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -10307,8 +10740,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-06-18T09:00:00.000Z",
-        "testEnd": "2026-07-02T13:00:00.000Z",
-        "finalEnd": "2026-07-02T13:00:00.000Z"
+        "testEnd": "2026-07-19T13:00:00.000Z",
+        "finalEnd": "2026-07-19T13:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -10338,7 +10771,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-21T13:47:54.857Z",
+      "changedDate": "2026-06-22T10:36:13.780Z",
       "tasks": [
         {
           "ID": 173743,
@@ -10476,36 +10909,6 @@
           "Customer": "Internal CR_2000"
         },
         {
-          "ID": 174885,
-          "Work Item Type": "Task",
-          "Title": "Preparation task for CR 172859",
-          "Assigned To": "Saddam Raees",
-          "Activity": "Testing",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
-          "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-15T07:06:38.883Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 174886,
-          "Work Item Type": "Task",
-          "Title": "Execution task for CR 172859",
-          "Assigned To": "Saddam Raees",
-          "Activity": "Testing",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
-          "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-15T07:06:38.883Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
           "ID": 175089,
           "Work Item Type": "Task",
           "Title": "preparation",
@@ -10513,11 +10916,13 @@
           "Activity": "Testing",
           "Original Estimation": 3,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 3,
+          "Activated Date": "2026-06-22T10:23:30.29Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-15T07:06:38.883Z",
+          "Resolved Date": "2026-06-22T10:26:29.373Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-06-22T10:26:29.373Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -10528,12 +10933,45 @@
           "Activity": "Testing",
           "Original Estimation": 3,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 3,
           "Activated Date": "2026-06-14T11:52:21.423Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
           "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-06-22T10:26:26.58Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-06-22T10:26:26.58Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 177215,
+          "Work Item Type": "Task",
+          "Title": "CR_172859 >> Review CR's Prepartaion",
+          "Assigned To": "Salah Ahmed",
+          "Activity": "Testing",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-22T10:44:44.32Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
+          "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-15T07:06:38.883Z",
+          "Changed Date": "2026-06-22T10:44:49.91Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 177216,
+          "Work Item Type": "Task",
+          "Title": "CR_172859 >> Review CR's Execution",
+          "Assigned To": "Salah Ahmed",
+          "Activity": "Testing",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-22T10:45:13.15Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-06-22T10:45:18.94Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -10563,147 +11001,147 @@
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 9,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 2,
           "Activated Date": "2026-06-16T12:47:09.677Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-17T12:51:41.073Z",
-          "State": "Resolved",
-          "Changed Date": "2026-06-21T10:43:26.29Z",
+          "State": "Closed",
+          "Changed Date": "2026-06-22T10:19:39.94Z",
           "Customer": "Internal CR_2000"
         }
       ],
       "testCases": [
         {
           "id": 174900,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174901,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174902,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174903,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174904,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174905,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174906,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174907,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174908,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174909,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174913,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174914,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174915,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174916,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174917,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174918,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174919,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174920,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174921,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174922,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 174923,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 176442,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 176443,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 176444,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 176445,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 176446,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 176447,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 176448,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 176449,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 176450,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 176451,
-          "state": "Design"
+          "state": "Pass"
         }
       ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-06-18T09:00:00.000Z",
-        "testEnd": "2026-06-22T11:00:00.000Z",
-        "finalEnd": "2026-06-22T11:00:00.000Z"
+        "testEnd": "2026-06-21T09:00:00.000Z",
+        "finalEnd": "2026-06-21T09:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -10732,7 +11170,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-21T13:19:24.497Z",
+      "changedDate": "2026-06-22T09:29:55.297Z",
       "tasks": [
         {
           "ID": 173749,
@@ -11173,31 +11611,31 @@
         },
         {
           "id": 177058,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177059,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177060,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177061,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177062,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177063,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177064,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177065,
@@ -11205,99 +11643,99 @@
         },
         {
           "id": 177066,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177067,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177068,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177069,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177070,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177071,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177072,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177073,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177074,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177075,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177076,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177077,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177078,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177079,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177080,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177081,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177082,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177083,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177084,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177085,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177086,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177087,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177088,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177089,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 177090,
@@ -11350,7 +11788,7 @@
       "id": 138784,
       "title": "Internal CR - Integration Monitor: Add Regenerate button action to the screen",
       "type": "User Story",
-      "state": "Active",
+      "state": "On-Hold",
       "assignedTo": "Mostafa Taha",
       "tester": "Unassigned",
       "area": "LDM Integration",
@@ -11359,7 +11797,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-21T15:33:24.850Z",
+      "changedDate": "2026-06-22T10:36:40.683Z",
       "tasks": [
         {
           "ID": 176073,
@@ -11391,7 +11829,7 @@
       "customTags": [],
       "standupComments": [],
       "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 21,
+      "devActualTime": 27.5,
       "testActualTime": 0
     },
     {
@@ -14008,7 +14446,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-06-21T12:53:43.653Z",
+      "changedDate": "2026-06-22T10:26:42.250Z",
       "tasks": [
         {
           "ID": 174679,
@@ -14447,7 +14885,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-21T20:43:14.793Z",
+          "Changed Date": "2026-06-22T09:41:33.477Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -14480,7 +14918,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-21T18:23:40.333Z",
+          "Changed Date": "2026-06-22T09:41:33.477Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -14496,7 +14934,22 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-21T20:43:15.1Z",
+          "Changed Date": "2026-06-22T09:41:33.477Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 177214,
+          "Work Item Type": "Task",
+          "Title": "BD001 : (New Requirement Provider Setup) Add Validation to check if Payment Method already related to another provider.",
+          "Assigned To": "Mahmoud Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-22T10:40:51.933Z",
           "Customer": "Al Borg KSA_530"
         }
       ],
