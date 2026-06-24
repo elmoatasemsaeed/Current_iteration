@@ -30,6 +30,18 @@
   ],
   "deliveryLogs": [
     {
+      "storyId": "172414",
+      "to": "لا يوجد تسليم - كل يوزر استوريز عرفان هي من ضمن الرفعه القادمة ",
+      "date": "6/14/2026",
+      "timestamp": 1781421995559
+    },
+    {
+      "storyId": "169435",
+      "to": "تم التسلمي لكمال عبر الواتساب",
+      "date": "6/14/2026",
+      "timestamp": 1781422087776
+    },
+    {
       "storyId": "169848",
       "to": "تم التسليم على جروب المنايجمينت",
       "date": "6/14/2026",
@@ -2526,12 +2538,13 @@
       "area": "Registration",
       "priority": 1,
       "tags": [
-        "minimum retest"
+        "minimum retest",
+        " waiting bugs fix"
       ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-06-23T15:29:04.740Z",
+      "changedDate": "2026-06-24T08:02:29.440Z",
       "tasks": [
         {
           "ID": 175553,
@@ -6381,8 +6394,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-June 15-30",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Tags": "On Hold",
-          "Changed Date": "2026-06-23T15:44:05.683Z",
+          "Changed Date": "2026-06-24T08:02:47.6Z",
           "Customer": "Metra Labs_468"
         }
       ],
@@ -6446,7 +6458,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-06-23T13:11:38.857Z",
+      "changedDate": "2026-06-24T08:09:14.220Z",
       "tasks": [
         {
           "ID": 176567,
@@ -7562,7 +7574,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-21T06:51:33.650Z",
+      "changedDate": "2026-06-24T06:46:18.023Z",
       "tasks": [
         {
           "ID": 176161,
@@ -8392,12 +8404,12 @@
           "Activity": "Testing",
           "Original Estimation": 5,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 1,
           "Activated Date": "2026-06-23T09:00:42.587Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-23T09:00:42.587Z",
+          "Changed Date": "2026-06-24T06:58:33.28Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -8442,13 +8454,13 @@
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.5,
           "Activated Date": "2026-06-23T15:02:14.01Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-June 15-30",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-06-23T15:02:14.01Z",
           "State": "Resolved",
-          "Changed Date": "2026-06-23T15:02:14.01Z",
+          "Changed Date": "2026-06-24T06:58:32.95Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -13426,19 +13438,18 @@
       "id": 172873,
       "title": "Internal CR - Enhance Non-Numeric Range Color Selection. to respect the color code configuration screen",
       "type": "User Story",
-      "state": "Active",
+      "state": "Resolved",
       "assignedTo": "Esraa Abd El Salam",
       "tester": "Yasmine Fouad",
       "area": "Internal lab",
       "priority": 100,
       "tags": [
-        "enhanced report",
-        " waiting publish"
+        "enhanced report"
       ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-23T10:00:42.180Z",
+      "changedDate": "2026-06-24T08:09:03.920Z",
       "tasks": [
         {
           "ID": 176063,
@@ -13557,6 +13568,36 @@
           "State": "New",
           "Changed Date": "2026-06-21T23:35:50.157Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 177373,
+          "Work Item Type": "Task",
+          "Title": "Preparation",
+          "Assigned To": "Yasmine Fouad",
+          "Activity": "Testing",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-24T08:10:48.773Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 177374,
+          "Work Item Type": "Task",
+          "Title": "Execution",
+          "Assigned To": "Yasmine Fouad",
+          "Activity": "Testing",
+          "Original Estimation": 19,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-24T08:11:07.967Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
@@ -13583,8 +13624,8 @@
       ],
       "calc": {
         "devEnd": "2026-06-14T12:57:45.280Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
+        "testEnd": "2026-06-21T13:00:00.000Z",
+        "finalEnd": "2026-06-21T13:00:00.000Z"
       },
       "customTags": [
         "enhanced"
@@ -13597,6 +13638,131 @@
         }
       ],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
+      "devActualTime": 0,
+      "testActualTime": 0
+    },
+    {
+      "id": 172902,
+      "title": "Internal CR - Create a new enhanced Reports Cover Page with Result Summary Cards For the Cumulative Report ONLY",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Esraa Abd El Salam",
+      "tester": "Yasmine Fouad",
+      "area": "Internal lab",
+      "priority": 100,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Internal NT",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-06-24T07:53:35.390Z",
+      "tasks": [
+        {
+          "ID": 177157,
+          "Work Item Type": "Task",
+          "Title": "Preparation",
+          "Assigned To": "Esraa Abd El Salam",
+          "Activity": "Development",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 7,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-21T18:18:49.58Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-06-23T12:47:24.6Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-06-23T12:47:24.6Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 177292,
+          "Work Item Type": "Task",
+          "Title": "DB: Create new procedure in Enhanced package",
+          "Assigned To": "Mostafa Mahmoud",
+          "Activity": "DB Modification",
+          "Original Estimation": 3.5,
+          "TimeSheet_DevActualTime": 3,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-23T09:18:38.127Z",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-June 15-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Tags": "liquibase; v.3.8.0; Wait .Net review",
+          "Changed Date": "2026-06-23T15:46:34.89Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 177306,
+          "Work Item Type": "Task",
+          "Title": "TR013 --> Create new report and add new controls for this report",
+          "Assigned To": "Esraa Abd El Salam",
+          "Activity": "Development",
+          "Original Estimation": 11.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-24T07:53:31.547Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-06-24T07:53:31.547Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 177307,
+          "Work Item Type": "Task",
+          "Title": "TR014 --> Bind new data to report",
+          "Assigned To": "Esraa Abd El Salam",
+          "Activity": "Development",
+          "Original Estimation": 4,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-23T10:50:12.32Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 177308,
+          "Work Item Type": "Task",
+          "Title": "TR003 --> Add conditions in Farabi header reports in case of print cumulative",
+          "Assigned To": "Esraa Abd El Salam",
+          "Activity": "Development",
+          "Original Estimation": 5.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-23T10:51:50.037Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 177309,
+          "Work Item Type": "Task",
+          "Title": "BD005 --> Edit urls to append new Cover Page in case of print cumulative",
+          "Assigned To": "Esraa Abd El Salam",
+          "Activity": "Development",
+          "Original Estimation": 11.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-06-23T10:52:47.223Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "devEnd": "2026-07-01T09:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 0,
       "testActualTime": 0
     },
@@ -20132,7 +20298,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-06-23T18:47:03.593Z",
+      "changedDate": "2026-06-24T06:46:18.023Z",
       "tasks": [
         {
           "ID": 175534,
@@ -20191,13 +20357,30 @@
           "Assigned To": "mostafa kamel",
           "Activity": "Development",
           "Original Estimation": 30,
-          "TimeSheet_DevActualTime": 6,
+          "TimeSheet_DevActualTime": 7.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-06-23T18:46:08.027Z",
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-06-24T06:46:04.487Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-06-24T06:46:04.487Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 177369,
+          "Work Item Type": "Task",
+          "Title": "FrontEnd: handle shared table in \"Firebase Configuration - System Message Configuration - Default Configuration\"",
+          "Assigned To": "mostafa kamel",
+          "Activity": "Development",
+          "Original Estimation": 15,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-06-24T07:10:53.46Z",
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-06-23T19:12:11.67Z",
+          "Changed Date": "2026-06-24T07:10:53.46Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -20205,7 +20388,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-06-17T13:00:00.000Z",
+        "devEnd": "2026-06-14T13:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -20258,7 +20441,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-06-23T07:38:31.670Z",
+      "changedDate": "2026-06-24T06:58:00.767Z",
       "tasks": [
         {
           "ID": 177322,
