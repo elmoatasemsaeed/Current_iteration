@@ -1317,7 +1317,8 @@ renderWorkload() {
     if (!container) return;
 
     const areaGroups = {};
-    const MAX_HOURS = 65; // تم التعديل حسب طلبك
+    const MAX_HOURS = 65; 
+    const MAX_WIP = 3; // 💡 إضافة حد أقصى للـ WIP للتحذير من التشتت
 
     // --- 1. حساب الانشغال العالمي (Global Tracking) ---
     const globalTaskWorkers = new Set();
@@ -1396,7 +1397,6 @@ renderWorkload() {
             }
         });
 
-        // باقي المنطق السابق لتحديد المتاحين والمشغولين بالبجز ...
         const rawAvailableDevs = [...data.allDevsInArea].filter(name => !data.developers[name]);
         const rawAvailableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]);
 
@@ -1449,7 +1449,7 @@ renderWorkload() {
                             <i class="fas fa-code text-indigo-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Active Developers</h3>
                         </div>
-                        ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS, devStoryCounts)}
+                        ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS, devStoryCounts, MAX_WIP)}
                     </div>
 
                     <div class="space-y-6">
@@ -1457,7 +1457,7 @@ renderWorkload() {
                             <i class="fas fa-vial text-emerald-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Active Testers</h3>
                         </div>
-                        ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS, testerStoryCounts)}
+                        ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS, testerStoryCounts, MAX_WIP)}
                     </div>
 
                     <div class="space-y-6">
@@ -1512,7 +1512,7 @@ renderWorkload() {
     }).join('');
 },
 
-generateStaffBars(staffData, color, max, storyCounts = {}) {
+generateStaffBars(staffData, color, max, storyCounts = {}, maxWip = 3) {
     const entries = Object.entries(staffData);
     if (entries.length === 0) return `<div class="text-gray-300 text-sm italic">No active tasks</div>`;
 
@@ -1522,19 +1522,41 @@ generateStaffBars(staffData, color, max, storyCounts = {}) {
         const barColor = isOver ? 'bg-red-500' : (perc > 80 ? 'bg-orange-500' : `bg-${color}-500`);
         const storyCount = storyCounts[name] || 0;
 
+        // 💡 منطق تحديد لون وتأثير شارة الـ WIP احترافياً
+        let wipBadgeColor = 'bg-slate-100 text-slate-600 border-slate-200';
+        let wipAlert = '';
+
+        if (storyCount > maxWip) {
+            // حالة تخطي الحد المسموح به (خطر تشتت عالي)
+            wipBadgeColor = 'bg-rose-50 border-rose-200 text-rose-600 animate-pulse';
+            wipAlert = `<span class="text-[9px] font-black text-rose-600 bg-rose-100 px-1 rounded uppercase tracking-tighter"><i class="fas fa-exclamation-triangle mr-0.5"></i> High WIP</span>`;
+        } else if (storyCount === maxWip) {
+            // حالة الوصول للحد الأقصى تماماً
+            wipBadgeColor = 'bg-amber-50 border-amber-200 text-amber-700';
+        } else if (storyCount > 0) {
+            // حالة ممتازة وآمنة
+            wipBadgeColor = 'bg-emerald-50 border-emerald-100 text-emerald-700';
+        }
+
         return `
-            <div class="relative">
-                <div class="flex justify-between mb-1.5 items-end">
-                    <span class="font-bold text-slate-700">
-                        ${name} 
-                        <span class="text-[10px] font-normal text-gray-400">(${storyCount} ${storyCount === 1 ? 'story' : 'stories'})</span>
-                    </span>
+            <div class="relative p-3 bg-slate-50/50 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors">
+                <div class="flex justify-between mb-2 items-start">
+                    <div class="flex flex-col gap-0.5">
+                        <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5 flex-wrap">
+                            ${name} 
+                            <!-- شارة الـ WIP الاحترافية -->
+                            <span class="inline-flex items-center text-[9px] font-black px-1.5 py-0.5 rounded-md border ${wipBadgeColor}">
+                                WIP: ${storyCount}
+                            </span>
+                            ${wipAlert}
+                        </span>
+                    </div>
                     <span class="text-xs font-mono ${isOver ? 'text-red-600 font-black' : 'text-slate-500'}">
-                        ${hours.toFixed(1)} <span class="text-[10px]">/ ${max}h</span>
+                        ${hours.toFixed(1)} <span class="text-[10px] text-slate-400">/ ${max}h</span>
                     </span>
                 </div>
-                <div class="w-full bg-gray-100 rounded-full h-3">
-                    <div class="${barColor} h-3 rounded-full transition-all duration-1000 shadow-sm" style="width: ${perc}%"></div>
+                <div class="w-full bg-gray-200/70 rounded-full h-2">
+                    <div class="${barColor} h-2 rounded-full transition-all duration-1000 shadow-sm" style="width: ${perc}%"></div>
                 </div>
             </div>
         `;
