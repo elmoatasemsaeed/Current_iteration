@@ -1317,8 +1317,7 @@ renderWorkload() {
     if (!container) return;
 
     const areaGroups = {};
-    const MAX_HOURS = 65; 
-    const MAX_WIP = 3; // 💡 إضافة حد أقصى للـ WIP للتحذير من التشتت
+    const MAX_HOURS = 65;
 
     // --- 1. حساب الانشغال العالمي (Global Tracking) ---
     const globalTaskWorkers = new Set();
@@ -1377,15 +1376,23 @@ renderWorkload() {
         }
     });
 
-    // --- 3. بناء واجهة العرض مع دعم السحب والإفلات وإضافة WIP ---
+    // --- 3. بناء واجهة العرض مع دعم السحب والإفلات وإضافة WIP على مستوى الفريق ---
     const areaEntries = Object.entries(areaGroups);
 
     container.innerHTML = areaEntries.map(([areaName, data], index) => {
-        // ---- حساب WIP (عدد القصص النشطة لكل شخص في هذه المنطقة) ----
+        // ---- حساب WIP الفريق ----
+        const activeDevs = Object.keys(data.developers).length;
+        const activeTesters = Object.keys(data.testers).length;
+        const teamWipLimit = Math.min(activeDevs, activeTesters) * 3;
+
+        // عدد القصص النشطة في هذه المنطقة
         const storiesInArea = currentData.filter(s => 
             (s.area || "General Business Area") === areaName && 
             s.state !== 'Tested' && s.state !== 'Closed'
         );
+        const activeStoriesCount = storiesInArea.length;
+
+        // حساب عدد القصص لكل فرد (للعرض فقط بدون تحذيرات)
         const devStoryCounts = {};
         const testerStoryCounts = {};
         storiesInArea.forEach(s => {
@@ -1397,6 +1404,7 @@ renderWorkload() {
             }
         });
 
+        // باقي المنطق لتحديد المتاحين والمشغولين بالبجز
         const rawAvailableDevs = [...data.allDevsInArea].filter(name => !data.developers[name]);
         const rawAvailableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]);
 
@@ -1425,6 +1433,12 @@ renderWorkload() {
                 </span>`;
         };
 
+        // تحديد لون شريط WIP الفريق حسب الاستهلاك
+        const wipUsage = teamWipLimit > 0 ? Math.min((activeStoriesCount / teamWipLimit) * 100, 100) : 0;
+        let wipBarColor = 'bg-emerald-500';
+        if (wipUsage > 80) wipBarColor = 'bg-amber-500';
+        if (wipUsage >= 100) wipBarColor = 'bg-red-500';
+
         return `
             <div class="mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 cursor-move transition-all duration-300 hover:shadow-indigo-100/50"
                  draggable="true"
@@ -1443,13 +1457,32 @@ renderWorkload() {
                     <i class="fas fa-grip-vertical text-slate-600 text-xl"></i>
                 </div>
 
+                <!-- شريط WIP الفريق -->
+                <div class="px-10 py-3 bg-slate-50/80 border-b border-slate-200 flex items-center gap-6 text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-600">Team WIP Limit:</span>
+                        <span class="font-mono font-black text-indigo-700">${teamWipLimit}</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-1">
+                        <span class="font-bold text-slate-600">Current Stories:</span>
+                        <span class="font-mono font-black ${activeStoriesCount > teamWipLimit ? 'text-red-600' : 'text-slate-700'}">${activeStoriesCount}</span>
+                        <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden ml-2">
+                            <div class="${wipBarColor} h-full rounded-full transition-all duration-1000" style="width: ${wipUsage}%"></div>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-mono">${Math.round(wipUsage)}%</span>
+                    </div>
+                    <div class="text-[10px] text-slate-400">
+                        <span class="font-bold">${activeDevs}</span> Devs · <span class="font-bold">${activeTesters}</span> Testers
+                    </div>
+                </div>
+
                 <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 pointer-events-none">
                     <div class="space-y-6">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-indigo-100">
                             <i class="fas fa-code text-indigo-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Active Developers</h3>
                         </div>
-                        ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS, devStoryCounts, MAX_WIP)}
+                        ${this.generateStaffBars(data.developers, 'indigo', MAX_HOURS, devStoryCounts)}
                     </div>
 
                     <div class="space-y-6">
@@ -1457,7 +1490,7 @@ renderWorkload() {
                             <i class="fas fa-vial text-emerald-600"></i>
                             <h3 class="text-slate-800 font-black text-sm uppercase">Active Testers</h3>
                         </div>
-                        ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS, testerStoryCounts, MAX_WIP)}
+                        ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS, testerStoryCounts)}
                     </div>
 
                     <div class="space-y-6">
@@ -1512,7 +1545,7 @@ renderWorkload() {
     }).join('');
 },
 
-generateStaffBars(staffData, color, max, storyCounts = {}, maxWip = 3) {
+generateStaffBars(staffData, color, max, storyCounts = {}) {
     const entries = Object.entries(staffData);
     if (entries.length === 0) return `<div class="text-gray-300 text-sm italic">No active tasks</div>`;
 
@@ -1522,35 +1555,13 @@ generateStaffBars(staffData, color, max, storyCounts = {}, maxWip = 3) {
         const barColor = isOver ? 'bg-red-500' : (perc > 80 ? 'bg-orange-500' : `bg-${color}-500`);
         const storyCount = storyCounts[name] || 0;
 
-        // 💡 منطق تحديد لون وتأثير شارة الـ WIP احترافياً
-        let wipBadgeColor = 'bg-slate-100 text-slate-600 border-slate-200';
-        let wipAlert = '';
-
-        if (storyCount > maxWip) {
-            // حالة تخطي الحد المسموح به (خطر تشتت عالي)
-            wipBadgeColor = 'bg-rose-50 border-rose-200 text-rose-600 animate-pulse';
-            wipAlert = `<span class="text-[9px] font-black text-rose-600 bg-rose-100 px-1 rounded uppercase tracking-tighter"><i class="fas fa-exclamation-triangle mr-0.5"></i> High WIP</span>`;
-        } else if (storyCount === maxWip) {
-            // حالة الوصول للحد الأقصى تماماً
-            wipBadgeColor = 'bg-amber-50 border-amber-200 text-amber-700';
-        } else if (storyCount > 0) {
-            // حالة ممتازة وآمنة
-            wipBadgeColor = 'bg-emerald-50 border-emerald-100 text-emerald-700';
-        }
-
         return `
             <div class="relative p-3 bg-slate-50/50 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors">
                 <div class="flex justify-between mb-2 items-start">
-                    <div class="flex flex-col gap-0.5">
-                        <span class="font-bold text-sm text-slate-700 flex items-center gap-1.5 flex-wrap">
-                            ${name} 
-                            <!-- شارة الـ WIP الاحترافية -->
-                            <span class="inline-flex items-center text-[9px] font-black px-1.5 py-0.5 rounded-md border ${wipBadgeColor}">
-                                WIP: ${storyCount}
-                            </span>
-                            ${wipAlert}
-                        </span>
-                    </div>
+                    <span class="font-bold text-sm text-slate-700">
+                        ${name} 
+                        <span class="text-[10px] font-normal text-gray-400">(${storyCount} ${storyCount === 1 ? 'story' : 'stories'})</span>
+                    </span>
                     <span class="text-xs font-mono ${isOver ? 'text-red-600 font-black' : 'text-slate-500'}">
                         ${hours.toFixed(1)} <span class="text-[10px] text-slate-400">/ ${max}h</span>
                     </span>
