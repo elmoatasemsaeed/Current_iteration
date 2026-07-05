@@ -1317,7 +1317,7 @@ renderWorkload() {
         if (!container) return;
 
         const areaGroups = {};
-        const MAX_HOURS = 50;
+        const MAX_HOURS = 65;
 
         // --- 1. حساب الانشغال العالمي (Global Tracking) ---
         const globalTaskWorkers = new Set();
