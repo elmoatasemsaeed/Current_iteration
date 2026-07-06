@@ -5038,7 +5038,7 @@
       "id": 173181,
       "title": "Alameda GP – Critical Results – Branch Notified / Patient Notified Per Service",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Ola Gamal",
       "tester": "Mohamed Ragab",
       "area": "Internal lab",
@@ -5049,7 +5049,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-07-06T07:30:23.037Z",
+      "changedDate": "2026-07-06T12:41:37.227Z",
       "tasks": [
         {
           "ID": 177832,
@@ -5162,14 +5162,31 @@
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-07-06T12:41:46.703Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-July 1-15",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-07-05T11:40:58.96Z",
+          "State": "Active",
+          "Changed Date": "2026-07-06T12:41:46.703Z",
           "Customer": "Alameda_0062"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": 178704,
+          "Work Item Type": "Bug",
+          "Title": "the system display one ACC on 2 or more raw display the same data",
+          "Assigned To": "Ola Gamal",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-July 1-15",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-07-06T12:41:36.34Z",
+          "Customer": "Alameda_0062"
+        }
+      ],
       "testCases": [],
       "reviews": [],
       "calc": {
@@ -5558,6 +5575,100 @@
       "testActualTime": 0
     },
     {
+      "id": 175463,
+      "title": "Alborg - Payment - Tabby integration: Activate Tabby integration on the payment screen",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "gamal kasem",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 2,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Borg KSA_530",
+      "changedDate": "2026-07-06T12:34:21.473Z",
+      "tasks": [
+        {
+          "ID": 178516,
+          "Work Item Type": "Task",
+          "Title": "Preparation dev",
+          "Assigned To": "Adel Salah",
+          "Activity": "Development",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-07-05T12:24:51.09Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-July 1-15",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-07-05T12:24:51.09Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 178657,
+          "Work Item Type": "Task",
+          "Title": "BD006 : Implement Tabby initiate checkout - create session (POST /api/v2/checkout)",
+          "Assigned To": "gamal kasem",
+          "Activity": "Development",
+          "Original Estimation": 4,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-07-06T09:02:40.23Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-July 1-15",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-07-06T10:40:19.827Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 178659,
+          "Work Item Type": "Task",
+          "Title": "BD006 : Implement Tabby Cancel session action (POST /api/v2/checkout/session_id/cancel - only when status=CREATED); handle session is finalized edge case (400 response) gracefully.",
+          "Assigned To": "gamal kasem",
+          "Activity": "Development",
+          "Original Estimation": 4,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-07-06T09:12:00.533Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-July 1-15",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-07-06T09:12:00.533Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 178661,
+          "Work Item Type": "Task",
+          "Title": "BD009 : Update PaymentStatus and PaymentResponse at PaymentOrder Table if Tabby payment status changed from  api/v2/payments/paymentid",
+          "Assigned To": "gamal kasem",
+          "Activity": "Development",
+          "Original Estimation": 3.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-07-06T09:17:24.553Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-July 1-15",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-07-06T09:17:46.977Z",
+          "Customer": "Al Borg KSA_530"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "devEnd": "2026-07-09T07:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Front Team\\2026\\Front-July 1-15",
+      "devActualTime": 0,
+      "testActualTime": 0
+    },
+    {
       "id": 175717,
       "title": "Al Farabi MMS Integration - update Reviewed Services - Get Page By Dates to set page records to 100 record",
       "type": "User Story",
@@ -5678,14 +5789,14 @@
       "type": "User Story",
       "state": "Resolved",
       "assignedTo": "Mohamed Ayman",
-      "tester": "Unassigned",
+      "tester": "Hebatullah Mohamed",
       "area": "LDM Integration",
       "priority": 2,
       "tags": [],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-07-05T18:10:54.633Z",
+      "changedDate": "2026-07-06T12:24:19.200Z",
       "tasks": [
         {
           "ID": 177708,
@@ -7475,7 +7586,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-07-06T11:55:25.990Z",
+      "changedDate": "2026-07-06T12:46:22.007Z",
       "tasks": [
         {
           "ID": 178295,
@@ -7569,13 +7680,14 @@
           "Assigned To": "mohamed.abdelghany",
           "Activity": "Development",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-07-06T11:41:23.743Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-July 1-15",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-07-06T11:41:23.743Z",
+          "Resolved Date": "2026-07-06T12:34:18.31Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-07-06T12:34:18.31Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -7585,13 +7697,14 @@
           "Assigned To": "mohamed.abdelghany",
           "Activity": "Development",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-07-06T11:41:36.73Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-July 1-15",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-07-06T11:41:36.73Z",
+          "Resolved Date": "2026-07-06T12:47:11.513Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-07-06T12:47:11.513Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -7647,7 +7760,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-07-05T08:00:00.000Z",
+        "devEnd": "2026-07-02T12:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -11284,6 +11397,21 @@
           "Resolved Date": "2026-07-05T15:43:21.913Z",
           "State": "Resolved",
           "Changed Date": "2026-07-05T15:43:21.913Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 178702,
+          "Work Item Type": "Bug",
+          "Title": "Uploader .net - All services report is not displaying data",
+          "Assigned To": "Abdullah Mohamed",
+          "Activity": "",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Web Results",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-07-06T12:21:24.417Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -16547,13 +16675,14 @@
           "Title": "Tag is created with Active status despite setting status toggle to Inactive during creation",
           "Assigned To": "reem.abdulmuttalib",
           "Activity": "",
-          "Original Estimation": 0,
+          "Original Estimation": 0.33,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-07-06T12:44:07.043Z",
           "Iteration Path": "Home Visit",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-07-06T11:33:25.15Z",
+          "State": "Active",
+          "Changed Date": "2026-07-06T12:44:07.043Z",
           "Customer": "Wareed Lab_294"
         }
       ],
@@ -16562,7 +16691,7 @@
       "calc": {
         "devEnd": "2026-07-02T11:00:00.000Z",
         "testEnd": "2026-07-05T10:00:00.000Z",
-        "finalEnd": "2026-07-05T10:00:00.000Z"
+        "finalEnd": "2026-07-06T13:44:07.043Z"
       },
       "customTags": [],
       "standupComments": [],
@@ -19455,9 +19584,9 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-07-02T13:00:00.000Z",
-        "testEnd": "2026-07-07T08:00:00.000Z",
-        "finalEnd": "2026-07-07T08:00:00.000Z"
+        "devEnd": "2026-07-07T07:00:00.000Z",
+        "testEnd": "2026-07-08T06:00:00.000Z",
+        "finalEnd": "2026-07-08T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [],
