@@ -25,7 +25,7 @@ let currentUser = null;
 
 const archiver = {
     async runArchive() {
-        const TenDaysAgo = Date.now() - (10 * 24 * 60 * 60 * 1000);
+        const TenDaysAgo = Date.now() - (31 * 24 * 60 * 60 * 1000);
         
         // 1. تصفية البيانات (القديمة للأرشفة، والجديدة للبقاء)
         const logsToArchive = db.deliveryLogs.filter(log => log.timestamp < TenDaysAgo);
