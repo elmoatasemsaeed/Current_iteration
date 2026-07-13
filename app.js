@@ -1380,17 +1380,25 @@ renderWorkload() {
     const areaEntries = Object.entries(areaGroups);
 
     container.innerHTML = areaEntries.map(([areaName, data], index) => {
-        // ---- حساب WIP الفريق ----
+        // ---- حساب WIP الفريق حسب الطلب الجديد (Active + Active - With Bugs) ----
+        const devWipLimit = data.allDevsInArea.size * 2;
+        const testerWipLimit = data.allTestersInArea.size * 2;
+
+        // عدد القصص النشطة (Active + Active - With Bugs) في هذه المنطقة للمطورين
+        const storiesInArea = currentData.filter(s => 
+            (s.area || "General Business Area") === areaName
+        );
+        // ✅ التعديل المطلوب: إضافة "Active - With Bugs" إلى حساب المطورين
+        const devActiveCount = storiesInArea.filter(s => s.state === 'Active' || s.state === 'Active - With Bugs').length;
+        const resolvedStoriesCount = storiesInArea.filter(s => s.state === 'Resolved').length;
+
+        // نسب الاستخدام
+        const devWipUsage = devWipLimit > 0 ? Math.min((devActiveCount / devWipLimit) * 100, 100) : 0;
+        const testerWipUsage = testerWipLimit > 0 ? Math.min((resolvedStoriesCount / testerWipLimit) * 100, 100) : 0;
+
+        // بيانات إضافية للعرض
         const activeDevs = Object.keys(data.developers).length;
         const activeTesters = Object.keys(data.testers).length;
-        const teamWipLimit = Math.min(activeDevs, activeTesters) * 3;
-
-        // عدد القصص النشطة في هذه المنطقة
-        const storiesInArea = currentData.filter(s => 
-            (s.area || "General Business Area") === areaName && 
-            s.state !== 'Tested' && s.state !== 'Closed'
-        );
-        const activeStoriesCount = storiesInArea.length;
 
         // حساب عدد القصص لكل فرد (للعرض فقط بدون تحذيرات)
         const devStoryCounts = {};
@@ -1433,12 +1441,6 @@ renderWorkload() {
                 </span>`;
         };
 
-        // تحديد لون شريط WIP الفريق حسب الاستهلاك
-        const wipUsage = teamWipLimit > 0 ? Math.min((activeStoriesCount / teamWipLimit) * 100, 100) : 0;
-        let wipBarColor = 'bg-emerald-500';
-        if (wipUsage > 80) wipBarColor = 'bg-amber-500';
-        if (wipUsage >= 100) wipBarColor = 'bg-red-500';
-
         return `
             <div class="mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 cursor-move transition-all duration-300 hover:shadow-indigo-100/50"
                  draggable="true"
@@ -1457,21 +1459,29 @@ renderWorkload() {
                     <i class="fas fa-grip-vertical text-slate-600 text-xl"></i>
                 </div>
 
-                <!-- شريط WIP الفريق -->
-                <div class="px-10 py-3 bg-slate-50/80 border-b border-slate-200 flex items-center gap-6 text-xs">
-                    <div class="flex items-center gap-2">
-                        <span class="font-bold text-slate-600">Team WIP Limit:</span>
-                        <span class="font-mono font-black text-indigo-700">${teamWipLimit}</span>
-                    </div>
-                    <div class="flex items-center gap-2 flex-1">
-                        <span class="font-bold text-slate-600">Current Stories:</span>
-                        <span class="font-mono font-black ${activeStoriesCount > teamWipLimit ? 'text-red-600' : 'text-slate-700'}">${activeStoriesCount}</span>
-                        <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden ml-2">
-                            <div class="${wipBarColor} h-full rounded-full transition-all duration-1000" style="width: ${wipUsage}%"></div>
+                <!-- شريط WIP المحدث: Dev (Active + Active - With Bugs) و QA (Resolved) منفصلين -->
+                <div class="px-10 py-3 bg-slate-50/80 border-b border-slate-200 space-y-1.5">
+                    <!-- Dev WIP -->
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="font-bold text-slate-600 w-24">Dev WIP (Active):</span>
+                        <span class="font-mono font-black text-indigo-700 w-10">${devWipLimit}</span>
+                        <span class="font-mono font-black ${devActiveCount > devWipLimit ? 'text-red-600' : 'text-slate-700'} w-10">${devActiveCount}</span>
+                        <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="${devWipUsage > 80 ? 'bg-amber-500' : 'bg-emerald-500'} h-full rounded-full transition-all duration-1000" style="width: ${devWipUsage}%"></div>
                         </div>
-                        <span class="text-[10px] text-slate-400 font-mono">${Math.round(wipUsage)}%</span>
+                        <span class="text-[10px] text-slate-400 font-mono w-10">${Math.round(devWipUsage)}%</span>
                     </div>
-                    <div class="text-[10px] text-slate-400">
+                    <!-- QA WIP -->
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="font-bold text-slate-600 w-24">QA WIP (Resolved):</span>
+                        <span class="font-mono font-black text-purple-700 w-10">${testerWipLimit}</span>
+                        <span class="font-mono font-black ${resolvedStoriesCount > testerWipLimit ? 'text-red-600' : 'text-slate-700'} w-10">${resolvedStoriesCount}</span>
+                        <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="${testerWipUsage > 80 ? 'bg-amber-500' : 'bg-purple-500'} h-full rounded-full transition-all duration-1000" style="width: ${testerWipUsage}%"></div>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-mono w-10">${Math.round(testerWipUsage)}%</span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 pt-0.5">
                         <span class="font-bold">${activeDevs}</span> Devs · <span class="font-bold">${activeTesters}</span> Testers
                     </div>
                 </div>
@@ -1544,7 +1554,7 @@ renderWorkload() {
         `;
     }).join('');
 },
-
+    
 generateStaffBars(staffData, color, max, storyCounts = {}) {
     const entries = Object.entries(staffData);
     if (entries.length === 0) return `<div class="text-gray-300 text-sm italic">No active tasks</div>`;
