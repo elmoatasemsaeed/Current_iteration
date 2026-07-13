@@ -1,4 +1,4 @@
-/**
+/** 
  * Configuration & Global State 
  */
 const CONFIG = {
