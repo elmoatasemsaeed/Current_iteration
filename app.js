@@ -1336,6 +1336,7 @@ renderWorkload() {
     const supportWorkersGlobal = new Set();
     const bugWorkersGlobal = new Set();
 
+    // العاملين على Support Log (القصص النشطة من نوع Support Log)
     currentData.forEach(story => {
         if (story.type === 'Support Log' && story.state !== 'Tested' && story.state !== 'Closed') {
             if (story.assignedTo && story.assignedTo !== "Unassigned") supportWorkersGlobal.add(story.assignedTo);
@@ -1343,6 +1344,8 @@ renderWorkload() {
         }
     });
 
+    // العاملين على Bugs (التي حالتها New أو Active)
+    // مع ملاحظة: سنعطي الأولوية للدعم عند العرض، لذا لا نحتاج لاستبعادهم هنا.
     currentData.forEach(story => {
         if (story.bugs && story.bugs.length > 0) {
             story.bugs.forEach(bug => {
@@ -1354,7 +1357,7 @@ renderWorkload() {
         }
     });
 
-    // --- 3. بناء areaGroups ---
+    // --- 3. بناء areaGroups (جمع البيانات الأساسية) ---
     currentData.forEach(story => {
         const area = story.area || "General Business Area";
         if (!areaGroups[area]) {
@@ -1402,6 +1405,7 @@ renderWorkload() {
         }
     });
 
+    // --- 4. دالة مساعدة لعرض اسم مع علامة BUSY ---
     const renderAvailableTag = (name) => {
         const isBusyGlobally = globalTaskWorkers.has(name);
         return `
@@ -1411,9 +1415,11 @@ renderWorkload() {
             </span>`;
     };
 
+    // --- 5. بناء واجهة العرض (الكارت) ---
     const areaEntries = Object.entries(areaGroups);
 
     container.innerHTML = areaEntries.map(([areaName, data], index) => {
+        // ---- حساب WIP (يعتمد على القصص، وليس على المتاحين) ----
         const activeDevs = Object.keys(data.activeDevStories).filter(name => data.activeDevStories[name] > 0);
         const activeDevsCount = activeDevs.length;
 
@@ -1437,14 +1443,19 @@ renderWorkload() {
         const devWipUsage = devWipLimit > 0 ? Math.min((devActiveCount / devWipLimit) * 100, 100) : 0;
         const testerWipUsage = testerWipLimit > 0 ? Math.min((resolvedStoriesCount / testerWipLimit) * 100, 100) : 0;
 
+        // ---- تحديد العاملين على الدعم والبجات في هذه المنطقة (مع إعطاء أولوية للدعم) ----
         const allWorkers = new Set([...data.allDevsInArea, ...data.allTestersInArea]);
         const supportWorkersInArea = [];
         const bugWorkersInArea = [];
         allWorkers.forEach(worker => {
-            if (supportWorkersGlobal.has(worker)) supportWorkersInArea.push(worker);
-            else if (bugWorkersGlobal.has(worker)) bugWorkersInArea.push(worker);
+            if (supportWorkersGlobal.has(worker)) {
+                supportWorkersInArea.push(worker);  // أولوية الدعم
+            } else if (bugWorkersGlobal.has(worker)) {
+                bugWorkersInArea.push(worker);
+            }
         });
 
+        // ---- تحديد المتاحين (المطورين والمختبرين) بعد استبعاد مشغولي الدعم والبجات ----
         const availableDevs = [...data.allDevsInArea]
             .filter(name => !data.developers[name])
             .filter(name => !supportWorkersGlobal.has(name) && !bugWorkersGlobal.has(name));
@@ -1453,8 +1464,10 @@ renderWorkload() {
             .filter(name => !data.testers[name])
             .filter(name => !supportWorkersGlobal.has(name) && !bugWorkersGlobal.has(name));
 
+        // ---- إذا كان نفس الاسم موجوداً في المطورين والمختبرين، نضعه فقط في المختبرين ----
         const finalAvailableDevs = availableDevs.filter(name => !availableTesters.includes(name));
 
+        // ---- توليد HTML الكامل للكارت ----
         return `
             <div class="mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 cursor-move transition-all duration-300 hover:shadow-indigo-100/50"
                  draggable="true"
@@ -1498,6 +1511,7 @@ renderWorkload() {
                 </div>
 
                 <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 pointer-events-none">
+                    <!-- Active Developers -->
                     <div class="space-y-6">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-indigo-100">
                             <i class="fas fa-code text-indigo-600"></i>
@@ -1506,6 +1520,7 @@ renderWorkload() {
                         ${this.generateStaffBarsWithCount(data.developers, 'indigo', MAX_HOURS, data.activeDevStories)}
                     </div>
 
+                    <!-- Active Testers -->
                     <div class="space-y-6">
                         <div class="flex items-center gap-2 pb-2 border-b-2 border-emerald-100">
                             <i class="fas fa-vial text-emerald-600"></i>
@@ -1514,6 +1529,7 @@ renderWorkload() {
                         ${this.generateStaffBarsWithCount(data.testers, 'emerald', MAX_HOURS, data.activeTesterStories)}
                     </div>
 
+                    <!-- Working On Support + Working On Bugs (مع أولوية الدعم) -->
                     <div class="space-y-6">
                         <div>
                             <div class="flex items-center gap-2 pb-2 border-b-2 border-amber-100">
@@ -1562,6 +1578,7 @@ renderWorkload() {
                         </div>
                     </div>
 
+                    <!-- Available For Tasks -->
                     <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200">
                         <div class="flex items-center gap-2 mb-4">
                             <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
