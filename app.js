@@ -1409,13 +1409,15 @@ renderWorkload() {
         });
     });
 
-    // --- 4. دالة مساعدة لعرض اسم مع علامة BUSY ---
-    const renderAvailableTag = (name, taskTypeLabel) => {
+    // --- 4. دالة مساعدة لعرض اسم مع علامة BUSY وتصنيف المهمة ---
+    const renderAvailableTag = (name, taskTypeLabel, isTester = false) => {
         // التحقق من الانشغال العالمي (في منطقة أخرى أو بمهمة عامة)
         const isBusyGlobally = globalTaskWorkers.has(name);
+        // إضافة أيقونة أو لون مختلف حسب الدور
+        const roleIcon = isTester ? '🔍' : '🛠';
         return `
             <span class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center gap-1.5">
-                ${name}
+                ${roleIcon} ${name}
                 ${isBusyGlobally ? '<span class="text-[8px] bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded shadow-sm font-black ring-1 ring-amber-200">BUSY</span>' : ''}
                 <span class="text-[8px] bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded font-bold">${taskTypeLabel}</span>
             </span>`;
@@ -1473,31 +1475,35 @@ renderWorkload() {
 
         // ---- تحديد المتاحين (المطورين والمختبرين) بعد استبعاد مشغولي الدعم والبجات ----
         // المتاح = ليس لديه ساعات في هذه المنطقة، وليس مشغولاً في دعم عالمي، وليس مشغولاً في بج عالمي
-        const availableDevs = [...data.allDevsInArea]
+        const availableDevsRaw = [...data.allDevsInArea]
             .filter(name => !data.developers[name]) // ليس لديه تاسكات تطوير نشطة هنا
             .filter(name => !supportWorkersGlobal.has(name) && !bugWorkersGlobal.has(name)); // غير مشغول بدعم أو بج
 
-        const availableTesters = [...data.allTestersInArea]
+        const availableTestersRaw = [...data.allTestersInArea]
             .filter(name => !data.testers[name]) // ليس لديه تاسكات تست نشطة هنا
             .filter(name => !supportWorkersGlobal.has(name) && !bugWorkersGlobal.has(name)); // غير مشغول بدعم أو بج
 
-        // ---- تقسيم المتاحين إلى دعم وتطوير حسب آخر نوع تاسك ----
-        const devAvailableForSupport = availableDevs.filter(name => {
+        // ---- نقطة التعديل: إزالة المطورين الذين هم أيضاً مختبرين من قائمة المطورين المتاحين ----
+        // أي اسم موجود في availableTestersRaw لا يظهر في availableDevs
+        const testerSet = new Set(availableTestersRaw);
+        const availableDevs = availableDevsRaw.filter(name => !testerSet.has(name));
+
+        // ---- المتاحين النهائيين ----
+        const availableTesters = availableTestersRaw; // كل المختبرين المتاحين
+
+        // ---- الآن نقوم بتصنيف كل متاح حسب آخر نوع تاسك له (للحصول على العلامة) ----
+        // للمطورين المتاحين
+        const devTags = availableDevs.map(name => {
             const last = data.lastTaskType[name];
-            return last && last.type === 'support';
-        });
-        const devAvailableForDevelopment = availableDevs.filter(name => {
-            const last = data.lastTaskType[name];
-            return !last || last.type === 'development'; // إذا لم يكن له تاسكات سابقة، يعتبر تطوير
+            const type = (last && last.type === 'support') ? 'Support' : 'Dev';
+            return { name, type };
         });
 
-        const testerAvailableForSupport = availableTesters.filter(name => {
+        // للمختبرين المتاحين
+        const testerTags = availableTesters.map(name => {
             const last = data.lastTaskType[name];
-            return last && last.type === 'support';
-        });
-        const testerAvailableForDevelopment = availableTesters.filter(name => {
-            const last = data.lastTaskType[name];
-            return !last || last.type === 'development';
+            const type = (last && last.type === 'support') ? 'Support' : 'Dev';
+            return { name, type };
         });
 
         // ---- توليد HTML الكامل للكارت ----
@@ -1617,7 +1623,7 @@ renderWorkload() {
                         </div>
                     </div>
 
-                    <!-- العمود 4: Available For Tasks (مفصول لمطورين ومختبرين، مع تقسيم إلى دعم وتطوير) -->
+                    <!-- العمود 4: Available For Tasks (مفصول لمطورين ومختبرين، كل في مجموعة واحدة مع علامات) -->
                     <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200">
                         <div class="flex items-center gap-2 mb-4">
                             <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
@@ -1626,53 +1632,27 @@ renderWorkload() {
                             <h3 class="text-slate-800 font-black text-sm uppercase">Available For Tasks</h3>
                         </div>
 
-                        <!-- المطورين المتاحين -->
+                        <!-- المطورين المتاحين (مجموعة واحدة) -->
                         <div class="mb-5">
                             <p class="text-[9px] font-bold text-indigo-600 uppercase mb-2 tracking-widest flex items-center gap-2">
                                 <i class="fas fa-code text-[10px]"></i> Developers
                             </p>
-                            <div class="space-y-1.5">
-                                <div>
-                                    <span class="text-[8px] font-bold text-amber-500 uppercase tracking-widest mr-2">Support:</span>
-                                    <div class="flex flex-wrap gap-1.5 mt-1">
-                                        ${devAvailableForSupport.length > 0 
-                                            ? devAvailableForSupport.map(name => renderAvailableTag(name, 'Support')).join('') 
-                                            : '<span class="text-[10px] text-slate-300 italic">None</span>'}
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="text-[8px] font-bold text-indigo-500 uppercase tracking-widest mr-2">Development:</span>
-                                    <div class="flex flex-wrap gap-1.5 mt-1">
-                                        ${devAvailableForDevelopment.length > 0 
-                                            ? devAvailableForDevelopment.map(name => renderAvailableTag(name, 'Dev')).join('') 
-                                            : '<span class="text-[10px] text-slate-300 italic">None</span>'}
-                                    </div>
-                                </div>
+                            <div class="flex flex-wrap gap-2">
+                                ${devTags.length > 0 
+                                    ? devTags.map(({name, type}) => renderAvailableTag(name, type, false)).join('') 
+                                    : '<span class="text-[10px] text-slate-300 italic">No available developers</span>'}
                             </div>
                         </div>
 
-                        <!-- المختبرين المتاحين -->
+                        <!-- المختبرين المتاحين (مجموعة واحدة) -->
                         <div>
                             <p class="text-[9px] font-bold text-purple-600 uppercase mb-2 tracking-widest flex items-center gap-2">
                                 <i class="fas fa-vial text-[10px]"></i> Testers
                             </p>
-                            <div class="space-y-1.5">
-                                <div>
-                                    <span class="text-[8px] font-bold text-amber-500 uppercase tracking-widest mr-2">Support:</span>
-                                    <div class="flex flex-wrap gap-1.5 mt-1">
-                                        ${testerAvailableForSupport.length > 0 
-                                            ? testerAvailableForSupport.map(name => renderAvailableTag(name, 'Support')).join('') 
-                                            : '<span class="text-[10px] text-slate-300 italic">None</span>'}
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="text-[8px] font-bold text-indigo-500 uppercase tracking-widest mr-2">Development:</span>
-                                    <div class="flex flex-wrap gap-1.5 mt-1">
-                                        ${testerAvailableForDevelopment.length > 0 
-                                            ? testerAvailableForDevelopment.map(name => renderAvailableTag(name, 'Dev')).join('') 
-                                            : '<span class="text-[10px] text-slate-300 italic">None</span>'}
-                                    </div>
-                                </div>
+                            <div class="flex flex-wrap gap-2">
+                                ${testerTags.length > 0 
+                                    ? testerTags.map(({name, type}) => renderAvailableTag(name, type, true)).join('') 
+                                    : '<span class="text-[10px] text-slate-300 italic">No available testers</span>'}
                             </div>
                         </div>
                     </div>
