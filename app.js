@@ -1332,11 +1332,11 @@ renderWorkload() {
         });
     });
 
-    // --- 2. تجميع البيانات الأصلية وتحديد العاملين على الدعم والبجات ---
+    // --- 2. تجميع البيانات الأساسية وتحديد العاملين على الدعم والبجات ---
     const supportWorkersGlobal = new Set();  // من يعملون على Support Log نشط
     const bugWorkersGlobal = new Set();     // من يعملون على Bugs نشطة
 
-    // أولا: جمع العاملين على Support Log
+    // جمع العاملين على Support Log
     currentData.forEach(story => {
         if (story.type === 'Support Log' && story.state !== 'Tested' && story.state !== 'Closed') {
             if (story.assignedTo && story.assignedTo !== "Unassigned") supportWorkersGlobal.add(story.assignedTo);
@@ -1344,7 +1344,7 @@ renderWorkload() {
         }
     });
 
-    // ثم: جمع العاملين على Bugs (كما هو موجود)
+    // جمع العاملين على Bugs
     currentData.forEach(story => {
         if (story.bugs && story.bugs.length > 0) {
             story.bugs.forEach(bug => {
@@ -1356,8 +1356,7 @@ renderWorkload() {
         }
     });
 
-    // --- 3. بناء areaGroups كما هو ولكن مع إضافة معلومات عن آخر نوع تاسك لكل شخص ---
-    // سنقوم بتخزين لكل شخص آخر نوع تاسك (Support أم غير Support) داخل areaGroups
+    // --- 3. بناء areaGroups مع إضافة lastTaskType لكل شخص ---
     currentData.forEach(story => {
         const area = story.area || "General Business Area";
         if (!areaGroups[area]) {
@@ -1366,11 +1365,10 @@ renderWorkload() {
                 testers: {}, 
                 allDevsInArea: new Set(), 
                 allTestersInArea: new Set(),
-                lastTaskType: {}  // تخزين آخر نوع تاسك لكل شخص (مفتاح: اسم الشخص، قيمة: 'support' أو 'development')
+                lastTaskType: {}  // مفتاح: اسم الشخص، قيمة: { type: 'support'|'development', date: string }
             };
         }
 
-        // إضافة الأشخاص إلى المجموعات الكلية
         if (story.assignedTo && story.assignedTo !== "Unassigned") areaGroups[area].allDevsInArea.add(story.assignedTo);
         if (story.tester && story.tester !== "Unassigned") areaGroups[area].allTestersInArea.add(story.tester);
 
@@ -1394,19 +1392,15 @@ renderWorkload() {
             areaGroups[area].testers[story.tester] = (areaGroups[area].testers[story.tester] || 0) + tHours;
         }
 
-        // --- تحديث آخر نوع تاسك لكل شخص بناءً على التاسكات في هذه القصة ---
-        // نأخذ جميع تاسكات القصة (بغض النظر عن حالتها) ونبحث عن الأحدث
+        // تحديث آخر نوع تاسك لكل شخص بناءً على التاسكات في هذه القصة
         const allTasks = story.tasks || [];
         allTasks.forEach(task => {
             const worker = (task['Activity'] === 'Testing') ? story.tester : story.assignedTo;
             if (!worker || worker === "Unassigned") return;
-            // نحدد نوع التاسك: إذا كانت القصة من نوع Support Log، فالتاسك يعتبر دعم، وإلا تطوير
             const taskType = (story.type === 'Support Log') ? 'support' : 'development';
-            // نأخذ تاريخ التفعيل أو التغيير
             const taskDate = task['Activated Date'] || task['Changed Date'];
             if (taskDate) {
                 const dateObj = new Date(taskDate);
-                // نحفظ آخر نوع لكل شخص
                 if (!areaGroups[area].lastTaskType[worker] || new Date(areaGroups[area].lastTaskType[worker].date) < dateObj) {
                     areaGroups[area].lastTaskType[worker] = { type: taskType, date: taskDate };
                 }
@@ -1414,11 +1408,26 @@ renderWorkload() {
         });
     });
 
-    // --- 4. بناء واجهة العرض ---
+    // --- 4. دالة مساعدة لعرض اسم مع علامة BUSY إذا كان مشغولاً عالمياً ---
+    const renderAvailableTag = (name, taskTypeLabel) => {
+        // التحقق من الانشغال العالمي (في منطقة أخرى أو بمهمة عامة)
+        const isBusyGlobally = globalTaskWorkers.has(name) || bugWorkersGlobal.has(name) || supportWorkersGlobal.has(name);
+        const busyFlag = isBusyGlobally 
+            ? `<span class="ml-1.5 text-[8px] bg-amber-100 text-amber-600 px-1 rounded shadow-sm italic font-black ring-1 ring-amber-200">BUSY</span>` 
+            : '';
+        return `
+            <span class="px-3 py-1 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center">
+                ${name}
+                ${busyFlag}
+                <span class="ml-1.5 text-[8px] bg-slate-200 text-slate-500 px-1 rounded shadow-sm font-bold">${taskTypeLabel}</span>
+            </span>`;
+    };
+
+    // --- 5. بناء واجهة العرض ---
     const areaEntries = Object.entries(areaGroups);
 
     container.innerHTML = areaEntries.map(([areaName, data], index) => {
-        // ---- حساب WIP الفريق (مثل السابق) ----
+        // ---- حساب WIP الفريق (نفس السابق) ----
         const devWipLimit = data.allDevsInArea.size * 2;
         const testerWipLimit = data.allTestersInArea.size * 2;
         const storiesInArea = currentData.filter(s => 
@@ -1440,24 +1449,26 @@ renderWorkload() {
             else if (bugWorkersGlobal.has(worker)) bugWorkersInArea.push(worker);
         });
 
-        // ---- تحديد المتاحين للتاسكات (الذين ليسوا في دعم ولا بجز) ----
-        const availableWorkers = [];
-        workersInArea.forEach(worker => {
-            if (!supportWorkersGlobal.has(worker) && !bugWorkersGlobal.has(worker)) {
-                availableWorkers.push(worker);
-            }
+        // ---- تحديد المتاحين (غير المشغولين محلياً في هذه المنطقة) ----
+        // المتاح = ليس لديه مهام نشطة في هذه المنطقة (لا في developers ولا في testers)
+        const availableDevsInArea = [...data.allDevsInArea].filter(name => !data.developers[name]);
+        const availableTestersInArea = [...data.allTestersInArea].filter(name => !data.testers[name]);
+
+        // تقسيم المتاحين إلى دعم وتطوير حسب آخر نوع تاسك
+        const devSupport = [];
+        const devDevelopment = [];
+        availableDevsInArea.forEach(name => {
+            const last = data.lastTaskType[name];
+            if (last && last.type === 'support') devSupport.push(name);
+            else devDevelopment.push(name);
         });
 
-        // تقسيم المتاحين إلى فئتين حسب آخر نوع تاسك
-        const availableForSupport = [];
-        const availableForDevelopment = [];
-        availableWorkers.forEach(worker => {
-            const lastType = data.lastTaskType[worker];
-            if (lastType && lastType.type === 'support') {
-                availableForSupport.push(worker);
-            } else {
-                availableForDevelopment.push(worker);
-            }
+        const testerSupport = [];
+        const testerDevelopment = [];
+        availableTestersInArea.forEach(name => {
+            const last = data.lastTaskType[name];
+            if (last && last.type === 'support') testerSupport.push(name);
+            else testerDevelopment.push(name);
         });
 
         // ---- توليد HTML ----
@@ -1479,7 +1490,7 @@ renderWorkload() {
                     <i class="fas fa-grip-vertical text-slate-600 text-xl"></i>
                 </div>
 
-                <!-- شريط WIP (نفس السابق) -->
+                <!-- شريط WIP -->
                 <div class="px-10 py-3 bg-slate-50/80 border-b border-slate-200 space-y-1.5">
                     <div class="flex items-center gap-2 text-xs">
                         <span class="font-bold text-slate-600 w-24">Dev WIP (Active):</span>
@@ -1523,9 +1534,9 @@ renderWorkload() {
                         ${this.generateStaffBars(data.testers, 'emerald', MAX_HOURS, {})}
                     </div>
 
-                    <!-- العمود 3: Working On Support (جديد) + Working On Bugs -->
+                    <!-- العمود 3: Working On Support + Working On Bugs -->
                     <div class="space-y-6">
-                        <!-- قسم Support -->
+                        <!-- Support -->
                         <div>
                             <div class="flex items-center gap-2 pb-2 border-b-2 border-amber-100">
                                 <i class="fas fa-headset text-amber-600"></i>
@@ -1549,7 +1560,7 @@ renderWorkload() {
                             </div>
                         </div>
 
-                        <!-- قسم Bugs -->
+                        <!-- Bugs -->
                         <div>
                             <div class="flex items-center gap-2 pb-2 border-b-2 border-rose-100">
                                 <i class="fas fa-bug text-rose-600"></i>
@@ -1574,7 +1585,7 @@ renderWorkload() {
                         </div>
                     </div>
 
-                    <!-- العمود 4: Available For Tasks (مقسم إلى دعم وتطوير) -->
+                    <!-- العمود 4: Available For Tasks (مفصول لمطورين ومختبرين) -->
                     <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200">
                         <div class="flex items-center gap-2 mb-4">
                             <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
@@ -1583,29 +1594,41 @@ renderWorkload() {
                             <h3 class="text-slate-800 font-black text-sm uppercase">Available For Tasks</h3>
                         </div>
 
-                        <!-- متاح للدعم -->
+                        <!-- المطورين المتاحين -->
                         <div class="mb-4">
-                            <p class="text-[9px] font-bold text-amber-600 uppercase mb-2 tracking-widest">For Support</p>
-                            <div class="flex flex-wrap gap-2">
-                                ${availableForSupport.length > 0 ? availableForSupport.map(name => `
-                                    <span class="px-3 py-1 bg-white border border-amber-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center">
-                                        ${name}
-                                        <span class="ml-1.5 text-[8px] bg-amber-100 text-amber-600 px-1 rounded shadow-sm italic font-black ring-1 ring-amber-200">SUPPORT</span>
-                                    </span>
-                                `).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                            <p class="text-[9px] font-bold text-indigo-600 uppercase mb-2 tracking-widest">Developers</p>
+                            <div class="space-y-1.5">
+                                <div>
+                                    <span class="text-[8px] font-bold text-amber-500 uppercase tracking-widest mr-2">For Support:</span>
+                                    <div class="flex flex-wrap gap-1.5 mt-1">
+                                        ${devSupport.length > 0 ? devSupport.map(name => renderAvailableTag(name, 'SUPPORT')).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-[8px] font-bold text-indigo-500 uppercase tracking-widest mr-2">For Development:</span>
+                                    <div class="flex flex-wrap gap-1.5 mt-1">
+                                        ${devDevelopment.length > 0 ? devDevelopment.map(name => renderAvailableTag(name, 'DEV')).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- متاح للتطوير (Iteration) -->
+                        <!-- المختبرين المتاحين -->
                         <div>
-                            <p class="text-[9px] font-bold text-indigo-600 uppercase mb-2 tracking-widest">For Development</p>
-                            <div class="flex flex-wrap gap-2">
-                                ${availableForDevelopment.length > 0 ? availableForDevelopment.map(name => `
-                                    <span class="px-3 py-1 bg-white border border-indigo-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center">
-                                        ${name}
-                                        <span class="ml-1.5 text-[8px] bg-indigo-100 text-indigo-600 px-1 rounded shadow-sm italic font-black ring-1 ring-indigo-200">DEV</span>
-                                    </span>
-                                `).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                            <p class="text-[9px] font-bold text-purple-600 uppercase mb-2 tracking-widest">Testers</p>
+                            <div class="space-y-1.5">
+                                <div>
+                                    <span class="text-[8px] font-bold text-amber-500 uppercase tracking-widest mr-2">For Support:</span>
+                                    <div class="flex flex-wrap gap-1.5 mt-1">
+                                        ${testerSupport.length > 0 ? testerSupport.map(name => renderAvailableTag(name, 'SUPPORT')).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-[8px] font-bold text-indigo-500 uppercase tracking-widest mr-2">For Development:</span>
+                                    <div class="flex flex-wrap gap-1.5 mt-1">
+                                        ${testerDevelopment.length > 0 ? testerDevelopment.map(name => renderAvailableTag(name, 'DEV')).join('') : '<span class="text-[10px] text-slate-300 italic">None</span>'}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
