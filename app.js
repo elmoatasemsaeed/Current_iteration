@@ -1633,6 +1633,28 @@ renderWorkload() {
             </div>
         `;
     }).join('');
+
+    // --- 6. بعد الانتهاء من بناء المحتوى، جمع المطورين الفاضيين تماماً وعرض النافذة ---
+    const allFreeDevs = [];
+
+    areaEntries.forEach(([areaName, data]) => {
+        // استبعاد من هم في قائمة المختبرين (أولوية المختبر)
+        const freeDevsInArea = [...data.allDevsInArea]
+            .filter(name => !data.developers[name])                     // ليس لديه ساعات تطوير نشطة
+            .filter(name => !supportWorkersGlobal.has(name))            // ليس مشغولاً في دعم
+            .filter(name => !bugWorkersGlobal.has(name))                // ليس مشغولاً في بجز
+            .filter(name => !globalTaskWorkers.has(name))               // ليس مشغولاً في منطقة أخرى (BUSY)
+            .filter(name => !data.allTestersInArea.has(name));          // استبعاد من هم في قائمة المختبرين (حتى لا يظهر كمطور)
+
+        if (freeDevsInArea.length > 0) {
+            allFreeDevs.push({ area: areaName, devs: freeDevsInArea });
+        }
+    });
+
+    // عرض النافذة إذا كان هناك مطورين فاضيين
+    if (allFreeDevs.length > 0) {
+        this.showFreeDevelopersPopup(allFreeDevs);
+    }
 },
     
 generateStaffBarsWithCount(staffData, color, max, storyCounts) {
@@ -1662,6 +1684,44 @@ generateStaffBarsWithCount(staffData, color, max, storyCounts) {
             </div>
         `;
     }).join('');
+},
+    showFreeDevelopersPopup(freeDevsByArea) {
+    // إنشاء النافذة إذا لم تكن موجودة
+    let modal = document.getElementById('free-devs-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'free-devs-modal';
+        modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[1000]';
+        modal.innerHTML = `
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h3 class="text-lg font-bold text-slate-800">🟢 Available Developers (Completely Free)</h3>
+                    <button onclick="document.getElementById('free-devs-modal').style.display='none'" 
+                            class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
+                </div>
+                <div class="p-4 overflow-y-auto" id="free-devs-content"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    // ملء المحتوى
+    const content = document.getElementById('free-devs-content');
+    if (!freeDevsByArea || freeDevsByArea.length === 0) {
+        content.innerHTML = '<p class="text-gray-400 text-center py-8">No completely free developers at the moment.</p>';
+    } else {
+        content.innerHTML = freeDevsByArea.map(item => `
+            <div class="mb-4">
+                <h4 class="font-bold text-indigo-600 text-sm border-b pb-1 mb-2">${item.area}</h4>
+                <div class="flex flex-wrap gap-2">
+                    ${item.devs.map(name => `<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200">${name}</span>`).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // إظهار النافذة
+    modal.style.display = 'flex';
 },
     // --- وظائف السحب والإفلات ---
 
