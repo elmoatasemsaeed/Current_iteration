@@ -1064,8 +1064,8 @@ renderActiveCards() {
     
 renderKanban() {
     const container = document.getElementById('kanban-container');
-    const filterContainer = document.getElementById('kanban-ba-filter'); // أصبح div بدلاً من select
-
+    const filterContainer = document.getElementById('kanban-ba-filter');
+    
     if (!currentData || currentData.length === 0) return;
 
     // 1. استخراج جميع المناطق الفريدة وترتيبها
@@ -1073,13 +1073,12 @@ renderKanban() {
 
     // 2. تهيئة الحالة المخزنة للمناطق المحددة (إن لم تكن موجودة)
     if (!this.selectedAreas) {
-        // افتراضياً نختار الكل (أو يمكن تركها فارغة لعرض الكل)
         this.selectedAreas = areas.slice(); // نسخة من جميع المناطق
     }
 
-    // 3. بناء واجهة الفلتر (Dropdown مع checkboxes)
+    // 3. بناء واجهة الفلتر (Dropdown مع checkboxes) - مع التأكد من عدم وجود محتوى سابق
     const filterHtml = `
-        <div class="relative inline-block w-full md:w-64" id="filter-dropdown-wrapper">
+        <div class="relative inline-block w-full" id="filter-dropdown-wrapper">
             <button id="filter-dropdown-btn" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-left flex items-center justify-between shadow-sm hover:border-indigo-400 transition">
                 <span class="text-sm font-medium text-gray-700 truncate">
                     ${this.selectedAreas.length === areas.length ? 'All Areas' : this.selectedAreas.join(', ')}
@@ -1106,8 +1105,9 @@ renderKanban() {
         </div>
     `;
 
-    // استبدال محتوى حاوية الفلتر بالعنصر الجديد
-    filterContainer.innerHTML = filterHtml;
+    // مسح المحتوى السابق ثم إدراج الجديد
+    filterContainer.innerHTML = '';
+    filterContainer.insertAdjacentHTML('beforeend', filterHtml);
 
     // 4. إضافة السلوكيات (إظهار/إخفاء القائمة، التعامل مع التغييرات)
     const dropdownBtn = document.getElementById('filter-dropdown-btn');
@@ -1115,19 +1115,6 @@ renderKanban() {
     const checkboxes = document.querySelectorAll('.area-checkbox');
     const selectAllBtn = document.getElementById('select-all-areas');
     const clearAllBtn = document.getElementById('clear-all-areas');
-
-    // تبديل إظهار القائمة عند النقر على الزر
-    dropdownBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdownMenu.classList.toggle('hidden');
-    });
-
-    // إغلاق القائمة عند النقر في أي مكان خارجها
-    document.addEventListener('click', (e) => {
-        if (!filterContainer.contains(e.target)) {
-            dropdownMenu.classList.add('hidden');
-        }
-    });
 
     // دالة لتحديث التحديدات وإعادة الرندر
     const updateSelection = () => {
@@ -1154,6 +1141,19 @@ renderKanban() {
     // إضافة مستمعي الأحداث لكل checkbox
     checkboxes.forEach(cb => {
         cb.addEventListener('change', updateSelection);
+    });
+
+    // تبديل إظهار القائمة عند النقر على الزر
+    dropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    // إغلاق القائمة عند النقر في أي مكان خارجها
+    document.addEventListener('click', (e) => {
+        if (!filterContainer.contains(e.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
     });
 
     // زر تحديد الكل
@@ -1198,30 +1198,20 @@ renderKanban() {
                 </div>
                 <div class="p-2 space-y-3 overflow-y-auto">
                     ${storiesInState.map(s => {
-                        // حساب الاستميشن للتطوير
+                        // حسابات البطاقات - نفس الكود السابق
                         const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
                         const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                         const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
                                                                         .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                         const devEstRemaining = Math.max(0, devEstTotal - devEstCompleted);
-
-                        // حساب الاستميشن للتستر
                         const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
                                                               .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                        
-                        // معالجة التاجز (Tags)
                         const tagsList = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
-
-                        // البجز
                         const totalBugs = s.bugs ? s.bugs.length : 0;
                         const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
-
-                        // تست كيسز
                         const testCases = s.testCases || [];
                         const totalTC = testCases.length;
                         const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
-
-                        // عدد التعليقات
                         const commentsCount = s.standupComments ? s.standupComments.length : 0;
 
                         return `
@@ -1230,16 +1220,13 @@ renderKanban() {
                                 <div class="flex flex-wrap gap-1 mb-2">
                                     ${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
                                 </div>` : ''}
-
                                 <div class="flex justify-between items-center mb-2">
                                     <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
                                     <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100" title="Standup Comments">
                                         💬 <span class="font-bold">${commentsCount}</span>
                                     </button>
                                 </div>
-                                
                                 <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
-                                
                                 <div class="grid grid-cols-2 gap-2 border-t pt-2">
                                     <div class="text-[11px]">
                                         <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
