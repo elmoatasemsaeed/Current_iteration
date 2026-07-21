@@ -1067,19 +1067,41 @@ renderKanban() {
     
     if (!currentData || currentData.length === 0) return;
 
-    // 1. ملء الفلتر بـ Business Areas الفريدة
+    // 1. استخراج جميع المناطق الفريدة وترتيبها
     const areas = [...new Set(currentData.map(s => s.area || "General"))].sort();
-    if (filterSelect.options.length <= 1) { // التحديث فقط لو كان فارغاً
-        filterSelect.innerHTML = areas.map(a => `<option value="${a}">${a}</option>`).join('');
+    
+    // 2. جلب التحديدات الحالية (إن وجدت) للحفاظ عليها
+    const currentSelected = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
+    
+    // 3. جعل الفلتر يدعم الاختيار المتعدد
+    filterSelect.multiple = true;
+    filterSelect.size = Math.min(areas.length, 5); // عدد الخيارات المرئية (حد أقصى 5)
+
+    // 4. إعادة بناء الخيارات مع الاحتفاظ بالـ selected
+    filterSelect.innerHTML = areas.map(a => {
+        const selected = currentSelected.includes(a) ? 'selected' : '';
+        return `<option value="${a}" ${selected}>${a}</option>`;
+    }).join('');
+
+    // 5. عند تغيير التحديد، نعيد الرندر تلقائياً
+    filterSelect.onchange = () => {
+        this.renderKanban();
+    };
+
+    // 6. تحديد المناطق المختارة
+    let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
+    // إذا لم يتم تحديد أي منطقة، نعرض الكل
+    if (selectedAreas.length === 0) {
+        selectedAreas = areas;
     }
 
-    const selectedArea = filterSelect.value || areas[0];
-    const filteredStories = currentData.filter(s => (s.area || "General") === selectedArea);
+    // 7. تصفية القصص بناءً على المناطق المحددة
+    const filteredStories = currentData.filter(s => selectedAreas.includes(s.area || "General"));
 
-    // 2. تعريف الحالات (الأعمدة)
+    // 8. تعريف الحالات (الأعمدة)
     const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];    
-    
-    // 3. بناء الأعمدة
+
+    // 9. بناء الأعمدة
     container.innerHTML = states.map(state => {
         const storiesInState = filteredStories.filter(s => s.state === state);
         
@@ -1093,15 +1115,9 @@ renderKanban() {
                     ${storiesInState.map(s => {
                         // حساب الاستميشن للتطوير
                         const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-                        
-                        // Y = الإجمالي
                         const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                        
-                        // الخلصان = التاسكات اللي مش New أو Active
                         const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
                                                                         .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                        
-                        // X = المتبقي
                         const devEstRemaining = Math.max(0, devEstTotal - devEstCompleted);
 
                         // حساب الاستميشن للتستر
@@ -1111,16 +1127,16 @@ renderKanban() {
                         // معالجة التاجز (Tags)
                         const tagsList = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
 
-                        // منطق البجز الصحيح (بناءً على b['State'])
+                        // البجز
                         const totalBugs = s.bugs ? s.bugs.length : 0;
                         const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
 
-                        // منطق التست كيسز الصحيح (بناءً على tc.state والحالات المحددة)
+                        // تست كيسز
                         const testCases = s.testCases || [];
                         const totalTC = testCases.length;
                         const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
 
-                        // حساب عدد التعليقات الحالية
+                        // عدد التعليقات
                         const commentsCount = s.standupComments ? s.standupComments.length : 0;
 
                         return `
