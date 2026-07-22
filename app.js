@@ -1069,57 +1069,19 @@ renderKanban() {
     
     if (!currentData || currentData.length === 0) return;
 
+    // 1. استخراج جميع المناطق الفريدة
     const areas = [...new Set(currentData.map(s => s.area || "General"))].sort();
 
-    // تهيئة الحالة
+    // 2. تهيئة الحالة المخزنة (إن لم تكن موجودة)
     if (!this.selectedAreas) {
         this.selectedAreas = areas.slice();
     }
 
-    // بناء الفلتر فقط في المرة الأولى
-    if (!this.filterBuilt) {
-        this.buildKanbanFilter(filterContainer, areas);
-        this.filterBuilt = true;
-    }
-
-    // تحديث النص على الزر ليعكس التحديد الحالي
-    this.updateFilterButtonText(areas);
-
-    // تطبيق التصفية وعرض الأعمدة
-    let selectedAreasForFilter = this.selectedAreas;
-    if (selectedAreasForFilter.length === 0) {
-        selectedAreasForFilter = areas;
-    }
-
-    const filteredStories = currentData.filter(s => selectedAreasForFilter.includes(s.area || "General"));
-    const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
-
-    container.innerHTML = states.map(state => {
-        const storiesInState = filteredStories.filter(s => s.state === state);
-        return `
-            <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
-                <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                    <h3 class="font-bold text-slate-700">${state}</h3>
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
-                </div>
-                <div class="p-2 space-y-3 overflow-y-auto">
-                    ${storiesInState.map(s => {
-                        // ... (بطاقات القصة كما هي سابقاً)
-                        // نكرر نفس الكود الداخلي للبطاقة
-                    }).join('')}
-                    ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
-                </div>
-            </div>
-        `;
-    }).join('');
-},
-
-// دوال مساعدة جديدة
-buildKanbanFilter(filterContainer, areas) {
+    // 3. بناء واجهة الفلتر (Dropdown + Checkboxes)
     const filterHtml = `
         <div class="relative inline-block w-full" id="filter-dropdown-wrapper">
             <button id="filter-dropdown-btn" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-left flex items-center justify-between shadow-sm hover:border-indigo-400 transition">
-                <span class="text-sm font-medium text-gray-700 truncate" id="filter-label">
+                <span class="text-sm font-medium text-gray-700 truncate">
                     ${this.selectedAreas.length === areas.length ? 'All Areas' : this.selectedAreas.join(', ')}
                 </span>
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1127,7 +1089,7 @@ buildKanbanFilter(filterContainer, areas) {
                 </svg>
             </button>
             <div id="filter-dropdown-menu" class="hidden absolute left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto p-2">
-                <div class="flex flex-col space-y-1">
+                <div class="flex flex-col space-y-1" id="checkbox-list">
                     ${areas.map(area => `
                         <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded">
                             <input type="checkbox" class="area-checkbox" value="${area}" 
@@ -1144,84 +1106,227 @@ buildKanbanFilter(filterContainer, areas) {
         </div>
     `;
 
+    // مسح المحتوى السابق وإضافة الجديد
     filterContainer.innerHTML = '';
     filterContainer.insertAdjacentHTML('beforeend', filterHtml);
 
-    // إضافة السلوكيات
+    // 4. الحصول على العناصر
     const dropdownBtn = document.getElementById('filter-dropdown-btn');
     const dropdownMenu = document.getElementById('filter-dropdown-menu');
-    const checkboxes = document.querySelectorAll('.area-checkbox');
+    const checkboxList = document.getElementById('checkbox-list');
     const selectAllBtn = document.getElementById('select-all-areas');
     const clearAllBtn = document.getElementById('clear-all-areas');
 
-    // تبديل القائمة عند النقر على الزر
+    // دالة لتحديث التحديدات وإعادة الرندر
+    const updateSelection = (keepMenuOpen = false) => {
+        const checkedAreas = [];
+        document.querySelectorAll('.area-checkbox:checked').forEach(cb => {
+            checkedAreas.push(cb.value);
+        });
+        // إذا لم يتم تحديد أي شيء، نعرض الكل
+        this.selectedAreas = checkedAreas.length > 0 ? checkedAreas : areas;
+
+        // تحديث النص على الزر
+        const btnText = document.querySelector('#filter-dropdown-btn span');
+        if (this.selectedAreas.length === areas.length) {
+            btnText.textContent = 'All Areas';
+        } else if (this.selectedAreas.length === 1) {
+            btnText.textContent = this.selectedAreas[0];
+        } else {
+            btnText.textContent = this.selectedAreas.join(', ');
+        }
+
+        // إعادة رسم الكانبان (دون إغلاق القائمة إذا كان keepMenuOpen = true)
+        this.renderKanban();
+
+        // إذا طلبنا إبقاء القائمة مفتوحة، نعيد فتحها بعد الرندر
+        if (keepMenuOpen) {
+            dropdownMenu.classList.remove('hidden');
+        }
+    };
+
+    // --- إضافة الأحداث ---
+
+    // منع إغلاق القائمة عند النقر داخل منطقة الـ checkboxes
+    checkboxList.addEventListener('click', (e) => {
+        e.stopPropagation(); // منع انتشار الحدث لأعلى
+    });
+
+    // عند تغيير أي checkbox، نقوم بتحديث التحديدات مع إبقاء القائمة مفتوحة
+    document.querySelectorAll('.area-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+            e.stopPropagation(); // منع إغلاق القائمة
+            // نقوم بتحديث التحديدات مع إبقاء القائمة مفتوحة
+            const checkedAreas = [];
+            document.querySelectorAll('.area-checkbox:checked').forEach(c => {
+                checkedAreas.push(c.value);
+            });
+            this.selectedAreas = checkedAreas.length > 0 ? checkedAreas : areas;
+            
+            // تحديث النص على الزر
+            const btnText = document.querySelector('#filter-dropdown-btn span');
+            if (this.selectedAreas.length === areas.length) {
+                btnText.textContent = 'All Areas';
+            } else if (this.selectedAreas.length === 1) {
+                btnText.textContent = this.selectedAreas[0];
+            } else {
+                btnText.textContent = this.selectedAreas.join(', ');
+            }
+
+            // إعادة الرندر مع إبقاء القائمة مفتوحة
+            this.renderKanban();
+            // بعد الرندر، نعيد فتح القائمة
+            setTimeout(() => {
+                dropdownMenu.classList.remove('hidden');
+            }, 0);
+        });
+    });
+
+    // تبديل ظهور القائمة عند النقر على الزر
     dropdownBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         dropdownMenu.classList.toggle('hidden');
     });
 
-    // إغلاق القائمة عند النقر خارجها
+    // إغلاق القائمة عند النقر في أي مكان خارجها (ولكن ليس عند النقر على checkbox)
     document.addEventListener('click', (e) => {
+        if (filterContainer.contains(e.target)) {
+            // إذا كان النقر داخل حاوية الفلتر، نتحقق إذا كان على checkbox أو label
+            if (e.target.closest('label') || e.target.closest('input[type="checkbox"]')) {
+                return; // لا نغلق القائمة
+            }
+        }
+        // إذا كان النقر خارج الحاوية، نغلق القائمة
         if (!filterContainer.contains(e.target)) {
             dropdownMenu.classList.add('hidden');
         }
     });
 
-    // دالة لتحديث التحديدات وإعادة الرندر (بدون إعادة بناء الفلتر)
-    const updateSelection = () => {
-        const checkedAreas = [];
-        document.querySelectorAll('.area-checkbox:checked').forEach(cb => {
-            checkedAreas.push(cb.value);
-        });
-        this.selectedAreas = checkedAreas.length > 0 ? checkedAreas : areas;
-
-        // تحديث النص على الزر
-        this.updateFilterButtonText(areas);
-
-        // إعادة عرض الـ Kanban (دون إعادة بناء الفلتر)
-        this.renderKanban();
-    };
-
-    // إضافة مستمعي الأحداث لكل checkbox (مع منع إغلاق القائمة)
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', (e) => {
-            e.stopPropagation(); // منع انتشار الحدث للخارج
-            updateSelection();
-            // لا نغلق القائمة، نتركها مفتوحة
-        });
-    });
-
-    // زر Select All
+    // زر تحديد الكل
     if (selectAllBtn) {
         selectAllBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             document.querySelectorAll('.area-checkbox').forEach(cb => cb.checked = true);
-            updateSelection();
-            // القائمة تبقى مفتوحة
+            // تحديث التحديدات وإعادة الرندر مع إبقاء القائمة مفتوحة
+            this.selectedAreas = areas.slice();
+            const btnText = document.querySelector('#filter-dropdown-btn span');
+            btnText.textContent = 'All Areas';
+            this.renderKanban();
+            setTimeout(() => {
+                dropdownMenu.classList.remove('hidden');
+            }, 0);
         });
     }
 
-    // زر Clear All
+    // زر مسح الكل
     if (clearAllBtn) {
         clearAllBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             document.querySelectorAll('.area-checkbox').forEach(cb => cb.checked = false);
-            updateSelection();
-            // القائمة تبقى مفتوحة
+            // تعيين selectedAreas إلى مصفوفة فارغة (سيتم عرض الكل لأننا نتعامل معها كـ "الكل")
+            this.selectedAreas = [];
+            const btnText = document.querySelector('#filter-dropdown-btn span');
+            btnText.textContent = 'All Areas'; // لأننا سنعرض الكل عندما تكون فارغة
+            this.renderKanban();
+            setTimeout(() => {
+                dropdownMenu.classList.remove('hidden');
+            }, 0);
         });
     }
-},
 
-updateFilterButtonText(areas) {
-    const label = document.getElementById('filter-label');
-    if (!label) return;
-    if (this.selectedAreas.length === areas.length) {
-        label.textContent = 'All Areas';
-    } else if (this.selectedAreas.length === 1) {
-        label.textContent = this.selectedAreas[0];
-    } else {
-        label.textContent = this.selectedAreas.join(', ');
+    // 5. تحديد المناطق المختارة للتصفية
+    let selectedAreasForFilter = this.selectedAreas;
+    // إذا كانت فارغة، نعرض الكل
+    if (selectedAreasForFilter.length === 0) {
+        selectedAreasForFilter = areas;
     }
+
+    // 6. تصفية القصص
+    const filteredStories = currentData.filter(s => selectedAreasForFilter.includes(s.area || "General"));
+
+    // 7. تعريف الحالات
+    const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
+
+    // 8. بناء الأعمدة
+    container.innerHTML = states.map(state => {
+        const storiesInState = filteredStories.filter(s => s.state === state);
+        
+        return `
+            <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
+                <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
+                    <h3 class="font-bold text-slate-700">${state}</h3>
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
+                </div>
+                <div class="p-2 space-y-3 overflow-y-auto">
+                    ${storiesInState.map(s => {
+                        // حساب الاستميشن للتطوير
+                        const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+                        const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                        const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
+                                                                        .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                        const devEstRemaining = Math.max(0, devEstTotal - devEstCompleted);
+
+                        // حساب الاستميشن للتستر
+                        const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
+                                                              .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                        
+                        // معالجة التاجز (Tags)
+                        const tagsList = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
+
+                        // البجز
+                        const totalBugs = s.bugs ? s.bugs.length : 0;
+                        const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
+
+                        // تست كيسز
+                        const testCases = s.testCases || [];
+                        const totalTC = testCases.length;
+                        const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
+
+                        // عدد التعليقات
+                        const commentsCount = s.standupComments ? s.standupComments.length : 0;
+
+                        return `
+                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+                                ${tagsList.length > 0 ? `
+                                <div class="flex flex-wrap gap-1 mb-2">
+                                    ${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
+                                </div>` : ''}
+
+                                <div class="flex justify-between items-center mb-2">
+                                    <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
+                                    <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100" title="Standup Comments">
+                                        💬 <span class="font-bold">${commentsCount}</span>
+                                    </button>
+                                </div>
+                                
+                                <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
+                                
+                                <div class="grid grid-cols-2 gap-2 border-t pt-2">
+                                    <div class="text-[11px]">
+                                        <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
+                                        <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
+                                        <div class="flex justify-between items-center mt-1">
+                                            <span class="text-blue-500 font-bold" title="Remaining / Total Estimation">${devEstRemaining}/${devEstTotal}h</span>
+                                            <span class="text-red-500 text-[10px] font-bold" title="Completed Bugs">🐞${completedBugs}/${totalBugs}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-[11px] border-l pl-2">
+                                        <div class="text-gray-400 uppercase font-bold text-[9px]">Tester</div>
+                                        <div class="text-slate-700 truncate font-medium">${s.tester}</div>
+                                        <div class="flex justify-between items-center mt-1">
+                                            <span class="text-green-500 font-bold">${testEst}h</span>
+                                            <span class="text-indigo-500 text-[10px] font-bold" title="Completed Test Cases">📋${completedTC}/${totalTC}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                    ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
 },
     
 renderDelivery() {
