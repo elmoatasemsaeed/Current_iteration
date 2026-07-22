@@ -577,8 +577,6 @@ countVacationDays(startDate, endDate, person) {
  * UI Rendering
  */
 const ui = {
-    selectedAreas: null,
-    filterBuilt: false,
     switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
@@ -1065,189 +1063,45 @@ renderActiveCards() {
 },
 renderKanban() {
     const container = document.getElementById('kanban-container');
-    const filterContainer = document.getElementById('kanban-ba-filter');
+    const filterSelect = document.getElementById('kanban-ba-filter');
     
     if (!currentData || currentData.length === 0) return;
 
-    // 1. استخراج جميع المناطق الفريدة
+    // 1. استخراج جميع المناطق الفريدة وترتيبها
     const areas = [...new Set(currentData.map(s => s.area || "General"))].sort();
+    
+    // 2. جلب التحديدات الحالية (إن وجدت) للحفاظ عليها
+    const currentSelected = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
+    
+    // 3. جعل الفلتر يدعم الاختيار المتعدد
+    filterSelect.multiple = true;
+    filterSelect.size = Math.min(areas.length, 5); // عدد الخيارات المرئية (حد أقصى 5)
 
-    // 2. تهيئة الحالة المخزنة (إن لم تكن موجودة)
-    if (!this.selectedAreas) {
-        this.selectedAreas = areas.slice();
-    }
+    // 4. إعادة بناء الخيارات مع الاحتفاظ بالـ selected
+    filterSelect.innerHTML = areas.map(a => {
+        const selected = currentSelected.includes(a) ? 'selected' : '';
+        return `<option value="${a}" ${selected}>${a}</option>`;
+    }).join('');
 
-    // 3. بناء واجهة الفلتر (Dropdown + Checkboxes)
-    const filterHtml = `
-        <div class="relative inline-block w-full" id="filter-dropdown-wrapper">
-            <button id="filter-dropdown-btn" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-left flex items-center justify-between shadow-sm hover:border-indigo-400 transition">
-                <span class="text-sm font-medium text-gray-700 truncate">
-                    ${this.selectedAreas.length === areas.length ? 'All Areas' : this.selectedAreas.join(', ')}
-                </span>
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-            </button>
-            <div id="filter-dropdown-menu" class="hidden absolute left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto p-2">
-                <div class="flex flex-col space-y-1" id="checkbox-list">
-                    ${areas.map(area => `
-                        <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded">
-                            <input type="checkbox" class="area-checkbox" value="${area}" 
-                                ${this.selectedAreas.includes(area) ? 'checked' : ''}>
-                            <span class="text-sm text-gray-700">${area}</span>
-                        </label>
-                    `).join('')}
-                </div>
-                <div class="border-t border-gray-200 mt-2 pt-2 flex justify-between">
-                    <button id="select-all-areas" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Select All</button>
-                    <button id="clear-all-areas" class="text-xs text-red-500 hover:text-red-700 font-medium">Clear All</button>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // مسح المحتوى السابق وإضافة الجديد
-    filterContainer.innerHTML = '';
-    filterContainer.insertAdjacentHTML('beforeend', filterHtml);
-
-    // 4. الحصول على العناصر
-    const dropdownBtn = document.getElementById('filter-dropdown-btn');
-    const dropdownMenu = document.getElementById('filter-dropdown-menu');
-    const checkboxList = document.getElementById('checkbox-list');
-    const selectAllBtn = document.getElementById('select-all-areas');
-    const clearAllBtn = document.getElementById('clear-all-areas');
-
-    // دالة لتحديث التحديدات وإعادة الرندر
-    const updateSelection = (keepMenuOpen = false) => {
-        const checkedAreas = [];
-        document.querySelectorAll('.area-checkbox:checked').forEach(cb => {
-            checkedAreas.push(cb.value);
-        });
-        // إذا لم يتم تحديد أي شيء، نعرض الكل
-        this.selectedAreas = checkedAreas.length > 0 ? checkedAreas : areas;
-
-        // تحديث النص على الزر
-        const btnText = document.querySelector('#filter-dropdown-btn span');
-        if (this.selectedAreas.length === areas.length) {
-            btnText.textContent = 'All Areas';
-        } else if (this.selectedAreas.length === 1) {
-            btnText.textContent = this.selectedAreas[0];
-        } else {
-            btnText.textContent = this.selectedAreas.join(', ');
-        }
-
-        // إعادة رسم الكانبان (دون إغلاق القائمة إذا كان keepMenuOpen = true)
+    // 5. عند تغيير التحديد، نعيد الرندر تلقائياً
+    filterSelect.onchange = () => {
         this.renderKanban();
-
-        // إذا طلبنا إبقاء القائمة مفتوحة، نعيد فتحها بعد الرندر
-        if (keepMenuOpen) {
-            dropdownMenu.classList.remove('hidden');
-        }
     };
 
-    // --- إضافة الأحداث ---
-
-    // منع إغلاق القائمة عند النقر داخل منطقة الـ checkboxes
-    checkboxList.addEventListener('click', (e) => {
-        e.stopPropagation(); // منع انتشار الحدث لأعلى
-    });
-
-    // عند تغيير أي checkbox، نقوم بتحديث التحديدات مع إبقاء القائمة مفتوحة
-    document.querySelectorAll('.area-checkbox').forEach(cb => {
-        cb.addEventListener('change', (e) => {
-            e.stopPropagation(); // منع إغلاق القائمة
-            // نقوم بتحديث التحديدات مع إبقاء القائمة مفتوحة
-            const checkedAreas = [];
-            document.querySelectorAll('.area-checkbox:checked').forEach(c => {
-                checkedAreas.push(c.value);
-            });
-            this.selectedAreas = checkedAreas.length > 0 ? checkedAreas : areas;
-            
-            // تحديث النص على الزر
-            const btnText = document.querySelector('#filter-dropdown-btn span');
-            if (this.selectedAreas.length === areas.length) {
-                btnText.textContent = 'All Areas';
-            } else if (this.selectedAreas.length === 1) {
-                btnText.textContent = this.selectedAreas[0];
-            } else {
-                btnText.textContent = this.selectedAreas.join(', ');
-            }
-
-            // إعادة الرندر مع إبقاء القائمة مفتوحة
-            this.renderKanban();
-            // بعد الرندر، نعيد فتح القائمة
-            setTimeout(() => {
-                dropdownMenu.classList.remove('hidden');
-            }, 0);
-        });
-    });
-
-    // تبديل ظهور القائمة عند النقر على الزر
-    dropdownBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdownMenu.classList.toggle('hidden');
-    });
-
-    // إغلاق القائمة عند النقر في أي مكان خارجها (ولكن ليس عند النقر على checkbox)
-    document.addEventListener('click', (e) => {
-        if (filterContainer.contains(e.target)) {
-            // إذا كان النقر داخل حاوية الفلتر، نتحقق إذا كان على checkbox أو label
-            if (e.target.closest('label') || e.target.closest('input[type="checkbox"]')) {
-                return; // لا نغلق القائمة
-            }
-        }
-        // إذا كان النقر خارج الحاوية، نغلق القائمة
-        if (!filterContainer.contains(e.target)) {
-            dropdownMenu.classList.add('hidden');
-        }
-    });
-
-    // زر تحديد الكل
-    if (selectAllBtn) {
-        selectAllBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            document.querySelectorAll('.area-checkbox').forEach(cb => cb.checked = true);
-            // تحديث التحديدات وإعادة الرندر مع إبقاء القائمة مفتوحة
-            this.selectedAreas = areas.slice();
-            const btnText = document.querySelector('#filter-dropdown-btn span');
-            btnText.textContent = 'All Areas';
-            this.renderKanban();
-            setTimeout(() => {
-                dropdownMenu.classList.remove('hidden');
-            }, 0);
-        });
+    // 6. تحديد المناطق المختارة
+    let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
+    // إذا لم يتم تحديد أي منطقة، نعرض الكل
+    if (selectedAreas.length === 0) {
+        selectedAreas = areas;
     }
 
-    // زر مسح الكل
-    if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            document.querySelectorAll('.area-checkbox').forEach(cb => cb.checked = false);
-            // تعيين selectedAreas إلى مصفوفة فارغة (سيتم عرض الكل لأننا نتعامل معها كـ "الكل")
-            this.selectedAreas = [];
-            const btnText = document.querySelector('#filter-dropdown-btn span');
-            btnText.textContent = 'All Areas'; // لأننا سنعرض الكل عندما تكون فارغة
-            this.renderKanban();
-            setTimeout(() => {
-                dropdownMenu.classList.remove('hidden');
-            }, 0);
-        });
-    }
+    // 7. تصفية القصص بناءً على المناطق المحددة
+    const filteredStories = currentData.filter(s => selectedAreas.includes(s.area || "General"));
 
-    // 5. تحديد المناطق المختارة للتصفية
-    let selectedAreasForFilter = this.selectedAreas;
-    // إذا كانت فارغة، نعرض الكل
-    if (selectedAreasForFilter.length === 0) {
-        selectedAreasForFilter = areas;
-    }
+    // 8. تعريف الحالات (الأعمدة)
+    const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];    
 
-    // 6. تصفية القصص
-    const filteredStories = currentData.filter(s => selectedAreasForFilter.includes(s.area || "General"));
-
-    // 7. تعريف الحالات
-    const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
-
-    // 8. بناء الأعمدة
+    // 9. بناء الأعمدة
     container.innerHTML = states.map(state => {
         const storiesInState = filteredStories.filter(s => s.state === state);
         
