@@ -741,7 +741,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-07-26T14:00:24.250Z",
+      "changedDate": "2026-07-26T16:23:49.550Z",
       "tasks": [
         {
           "ID": 181124,
@@ -767,13 +767,13 @@
           "Assigned To": "Karim El-Saeed",
           "Activity": "Development",
           "Original Estimation": 5,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-07-26T14:02:55.78Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-07-26T14:02:55.78Z",
+          "Changed Date": "2026-07-26T16:23:06.73Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -2000,7 +2000,7 @@
       "expectedRelease": null,
       "branch": "UAE",
       "customer": "Al Borg UAE_531",
-      "changedDate": "2026-07-26T13:09:17.017Z",
+      "changedDate": "2026-07-26T15:27:56.933Z",
       "tasks": [
         {
           "ID": 177827,
@@ -2279,13 +2279,14 @@
           "Assigned To": "Samir Mohamed",
           "Activity": "Development",
           "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-07-26T14:17:11.523Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-July 16-30",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-07-26T14:17:11.523Z",
+          "Resolved Date": "2026-07-26T15:31:58.88Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-07-26T15:31:58.88Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -2295,12 +2296,13 @@
           "Assigned To": "Samir Mohamed",
           "Activity": "Development",
           "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1.75,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-07-26T15:25:40.43Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-July 16-30",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-07-26T11:51:34.003Z",
+          "State": "Active",
+          "Changed Date": "2026-07-26T15:33:34.613Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -2317,7 +2319,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-07-26T13:11:36.537Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-07-26T13:11:36.537Z",
+          "Changed Date": "2026-07-26T15:27:56.933Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -2520,7 +2522,7 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-07-12T08:00:00.000Z",
+        "devEnd": "2026-07-12T07:00:00.000Z",
         "testEnd": "2026-07-15T11:00:00.000Z",
         "finalEnd": "2026-07-15T11:00:00.000Z"
       },
@@ -2549,7 +2551,7 @@
       "expectedRelease": "2026-07-29T21:00:00.000Z",
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-07-26T14:44:00.053Z",
+      "changedDate": "2026-07-26T16:07:46.397Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -3361,6 +3363,36 @@
       "testActualTime": 0
     },
     {
+      "id": 178159,
+      "title": "Create new patient reports for Ayenda (New Client) “in IRAQ”.",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Ola Gamal",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 1,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Iraq",
+      "customer": "Ayenda Private Hospital_83",
+      "changedDate": "2026-07-27T07:21:27.990Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0
+    },
+    {
       "id": 179058,
       "title": "Update Wareed NT Mobile APIs - Update Add Registration API to add \"isExtraService\"",
       "type": "User Story",
@@ -3373,7 +3405,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-07-26T12:34:47.470Z",
+      "changedDate": "2026-07-26T15:54:03.337Z",
       "tasks": [
         {
           "ID": 180962,
@@ -3489,7 +3521,7 @@
       "customTags": [],
       "standupComments": [],
       "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 2.5,
+      "devActualTime": 4.5,
       "testActualTime": 0
     },
     {
@@ -3552,11 +3584,12 @@
           "Activity": "Testing",
           "Original Estimation": 4.8,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 2.5,
+          "Activated Date": "2026-07-26T15:26:21.963Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-July 16-30",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-07-20T15:36:15.09Z",
+          "State": "Active",
+          "Changed Date": "2026-07-26T15:26:33.68Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3580,23 +3613,23 @@
       "testCases": [
         {
           "id": 180663,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180664,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180665,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180666,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180667,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180668,
@@ -3604,7 +3637,7 @@
         },
         {
           "id": 180669,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180670,
@@ -3612,7 +3645,7 @@
         },
         {
           "id": 180671,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180698,
@@ -3620,7 +3653,7 @@
         },
         {
           "id": 180699,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180700,
@@ -3628,7 +3661,7 @@
         },
         {
           "id": 180701,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180702,
@@ -3636,19 +3669,19 @@
         },
         {
           "id": 180703,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180704,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180705,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180706,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180707,
@@ -3656,7 +3689,7 @@
         },
         {
           "id": 180708,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180709,
@@ -3664,19 +3697,19 @@
         },
         {
           "id": 180710,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180711,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180712,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180713,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 180714,
@@ -9415,7 +9448,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-07-22T15:10:18.753Z",
+      "changedDate": "2026-07-26T16:08:44.710Z",
       "tasks": [
         {
           "ID": 178332,
@@ -10181,7 +10214,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Metra Labs_468",
-      "changedDate": "2026-07-26T08:24:00.760Z",
+      "changedDate": "2026-07-26T15:04:19.553Z",
       "tasks": [
         {
           "ID": 179637,
@@ -10346,7 +10379,8 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-July 16-30",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-07-26T12:13:42.94Z",
+          "Tags": "Database",
+          "Changed Date": "2026-07-26T15:03:30.577Z",
           "Customer": "Metra Labs_468"
         },
         {
@@ -10368,32 +10402,34 @@
           "ID": 181092,
           "Work Item Type": "Bug",
           "Title": "BUG_003: while filtering with specific payer search criteria retrieve (ALL)",
-          "Assigned To": "mohamed.abdelghany",
+          "Assigned To": "Dina Ahmed",
           "Activity": "",
           "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.75,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-07-26T12:14:12.187Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-July 16-30",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-07-26T12:14:12.187Z",
+          "Resolved Date": "2026-07-26T15:03:09.303Z",
+          "State": "Resolved",
+          "Changed Date": "2026-07-26T15:04:19.553Z",
           "Customer": "Metra Labs_468"
         },
         {
           "ID": 181098,
           "Work Item Type": "Bug",
           "Title": "BUG_002: while edit in center system do not retrieve any data in search criteria",
-          "Assigned To": "mohamed.abdelghany",
+          "Assigned To": "Dina Ahmed",
           "Activity": "",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1.32,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-07-26T10:50:13.017Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-July 16-30",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-07-26T11:34:33.96Z",
+          "Resolved Date": "2026-07-26T15:03:15.227Z",
+          "State": "Resolved",
+          "Changed Date": "2026-07-26T15:04:19.553Z",
           "Customer": "Metra Labs_468"
         }
       ],
@@ -17933,14 +17969,14 @@
           "Assigned To": "Mostafa Mahmoud",
           "Activity": "DB Modification",
           "Original Estimation": 11,
-          "TimeSheet_DevActualTime": 10.75,
+          "TimeSheet_DevActualTime": 11,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-06-23T09:18:38.127Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-July 16-30",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
           "Tags": "liquibase; v.3.8.0; Wait .Net review",
-          "Changed Date": "2026-07-26T09:59:55.227Z",
+          "Changed Date": "2026-07-26T15:24:02.2Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -18387,7 +18423,7 @@
           "ID": 181068,
           "Work Item Type": "Bug",
           "Title": "if Culture Service Contain Numeric tests, it Display at Cover Page with Normal Evaluation",
-          "Assigned To": "Esraa Abd El Salam",
+          "Assigned To": "Yasmine Fouad",
           "Activity": "",
           "Original Estimation": 2,
           "TimeSheet_DevActualTime": 0.5,
@@ -18395,16 +18431,16 @@
           "Activated Date": "2026-07-25T23:20:57.763Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-July 16-30",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Tags": "waiting publish",
-          "Changed Date": "2026-07-26T08:55:24.463Z",
+          "Resolved Date": "2026-07-26T14:48:51.227Z",
+          "State": "Resolved",
+          "Changed Date": "2026-07-26T14:48:51.227Z",
           "Customer": "Internal CR_2000"
         },
         {
           "ID": 181069,
           "Work Item Type": "Bug",
           "Title": "if Water / Drug  custom reports Service Contain Numeric tests, it Display at Cover Page with Normal Evaluation",
-          "Assigned To": "Esraa Abd El Salam",
+          "Assigned To": "Yasmine Fouad",
           "Activity": "",
           "Original Estimation": 2,
           "TimeSheet_DevActualTime": 0.75,
@@ -18412,9 +18448,9 @@
           "Activated Date": "2026-07-26T08:59:25.473Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-July 16-30",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Tags": "waiting publish",
-          "Changed Date": "2026-07-26T13:29:51.253Z",
+          "Resolved Date": "2026-07-26T15:07:36.37Z",
+          "State": "Resolved",
+          "Changed Date": "2026-07-26T15:07:36.37Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -20792,15 +20828,17 @@
           "ID": 180489,
           "Work Item Type": "Bug",
           "Title": "(Enhancement) Search bar missing Clear placeholder text related to what user can search with",
-          "Assigned To": "eslam anwar",
+          "Assigned To": "Amr Soliman",
           "Activity": "",
           "Original Estimation": 2,
           "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-07-27T07:22:09.417Z",
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-07-26T13:54:00.397Z",
+          "Resolved Date": "2026-07-27T07:22:09.417Z",
+          "State": "Resolved",
+          "Changed Date": "2026-07-27T07:22:09.417Z",
           "Customer": "MRC - Misr Radiology Center Lab_104"
         },
         {
@@ -25606,11 +25644,13 @@
       "tester": "Bassant Raafat",
       "area": "Home Visit",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "Tested and to be reviewed"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-07-26T09:22:57.807Z",
+      "changedDate": "2026-07-26T15:00:14.170Z",
       "tasks": [
         {
           "ID": 177522,
@@ -25624,8 +25664,9 @@
           "Activated Date": "2026-07-26T08:06:52.8Z",
           "Iteration Path": "Home Visit",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-07-26T14:24:01.063Z",
+          "Resolved Date": "2026-07-26T14:59:36.927Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-07-26T14:59:36.927Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -25837,8 +25878,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-07-20T07:00:00.000Z",
-        "testEnd": "2026-07-23T11:00:00.000Z",
-        "finalEnd": "2026-07-23T11:00:00.000Z"
+        "testEnd": "2026-07-21T06:00:00.000Z",
+        "finalEnd": "2026-07-21T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [],
@@ -26147,8 +26188,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-07-20T07:00:00.000Z",
-        "testEnd": "2026-07-23T11:00:00.000Z",
-        "finalEnd": "2026-07-23T11:00:00.000Z"
+        "testEnd": "2026-07-21T06:00:00.000Z",
+        "finalEnd": "2026-07-21T06:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [],
@@ -26283,14 +26324,14 @@
       "type": "User Story",
       "state": "Resolved",
       "assignedTo": "reem.abdulmuttalib",
-      "tester": "Mahmoud Mohamed",
+      "tester": "Bassant Raafat",
       "area": "Home Visit",
       "priority": 999,
       "tags": [],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-07-25T13:54:34.720Z",
+      "changedDate": "2026-07-26T15:47:56.430Z",
       "tasks": [
         {
           "ID": 180228,
@@ -26452,6 +26493,22 @@
           "State": "Active",
           "Changed Date": "2026-07-25T13:54:48.947Z",
           "Customer": "Wareed Lab_294"
+        },
+        {
+          "ID": 181227,
+          "Work Item Type": "Task",
+          "Title": "CR-174240- Execution",
+          "Assigned To": "Bassant Raafat",
+          "Activity": "Testing",
+          "Original Estimation": 10,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-07-26T17:36:42.84Z",
+          "Iteration Path": "Home Visit\\2026\\home_visit July 12-26",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-07-26T17:36:48.697Z",
+          "Customer": "Wareed Lab_294"
         }
       ],
       "bugs": [],
@@ -26459,8 +26516,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-07-20T07:00:00.000Z",
-        "testEnd": "2026-07-22T10:00:00.000Z",
-        "finalEnd": "2026-07-22T10:00:00.000Z"
+        "testEnd": "2026-07-26T10:00:00.000Z",
+        "finalEnd": "2026-07-26T10:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [],
@@ -27668,1385 +27725,10 @@
       "testActualTime": 0
     },
     {
-      "id": 176927,
-      "title": "Update Notifications Screen by adding an option for client admin to send notification including push notification to the mobile users.",
-      "type": "User Story",
-      "state": "Tested",
-      "assignedTo": "mostafa kamel",
-      "tester": "Unassigned",
-      "area": "MobileApp",
-      "priority": 999,
-      "tags": [
-        "PMD"
-      ],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Wareed Lab_294",
-      "changedDate": "2026-07-13T09:34:25.137Z",
-      "tasks": [
-        {
-          "ID": 177713,
-          "Work Item Type": "Task",
-          "Title": "investegation for impacts -old version-",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 1.25,
-          "TimeSheet_DevActualTime": 1.25,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-25T16:49:58.52Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-06-25T16:51:05.533Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 177806,
-          "Work Item Type": "Task",
-          "Title": "FrontEnd: Update create notification",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 9,
-          "TimeSheet_DevActualTime": 7,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-28T09:48:12.853Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-28T11:56:28.677Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-28T11:56:28.677Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 177811,
-          "Work Item Type": "Task",
-          "Title": "Database: Modify Notification table and add NotificationTopic table",
-          "Assigned To": "Mostafa Mahmoud",
-          "Activity": "DB Modification",
-          "Original Estimation": 1.5,
-          "TimeSheet_DevActualTime": 2,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-28T10:57:42.057Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-28T11:28:42.8Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T16:45:26.197Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 177826,
-          "Work Item Type": "Task",
-          "Title": "FrontEnd: update notification table",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 0.1,
-          "TimeSheet_DevActualTime": 0.1,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-28T12:12:31.817Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-28T12:12:31.817Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 177947,
-          "Work Item Type": "Task",
-          "Title": "Preparation For Update Notification Screen",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "Testing",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 1.47,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-13T07:08:46.43Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-13T07:08:46.43Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 177948,
-          "Work Item Type": "Task",
-          "Title": "Execution For Update Notification Screen",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "Testing",
-          "Original Estimation": 8,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 7.3,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-13T07:10:09.44Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-13T07:10:09.44Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178071,
-          "Work Item Type": "Task",
-          "Title": "Database: Modify notification_audit table in ldm_mobilemanager_log schema",
-          "Assigned To": "Mostafa Mahmoud",
-          "Activity": "DB Modification",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-29T10:27:50.837Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-29T10:36:52.49Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T12:30:39.227Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178183,
-          "Work Item Type": "Task",
-          "Title": "FrontEnd: add topic \"control  - service -model- search\" to create notification fix ispush control , change format date",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 7,
-          "TimeSheet_DevActualTime": 4.75,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T00:14:51.273Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-30T08:55:32.367Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178263,
-          "Work Item Type": "Task",
-          "Title": "Database: Modify Notifications table",
-          "Assigned To": "Mostafa Mahmoud",
-          "Activity": "DB Modification",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-30T15:29:43.117Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T15:40:26.193Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T12:30:12.567Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178270,
-          "Work Item Type": "Task",
-          "Title": "FrontEnd: Change image control",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.25,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T21:32:29.19Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-12T12:19:57.283Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178271,
-          "Work Item Type": "Task",
-          "Title": "FrontEnd: Add Seen count in Notification Monitor and build",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.25,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-01T06:41:27.73Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-12T12:19:57.283Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178392,
-          "Work Item Type": "Task",
-          "Title": "isolated edit fot module privlage",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 2,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-07-04T20:02:34.46Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-09T10:40:51.11Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-09T10:40:51.11Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178399,
-          "Work Item Type": "Task",
-          "Title": "edit for update  status notification",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 2,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-07-04T20:19:50.793Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-09T10:40:27.727Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-09T10:40:27.727Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178472,
-          "Work Item Type": "Task",
-          "Title": "Frontend: change delete branch method",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-05T10:18:58.047Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-12T12:19:57.283Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178480,
-          "Work Item Type": "Task",
-          "Title": "FrontEnd: display arabic and english Thumbnail Image in Notification Monitor Details",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.25,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-05T11:00:28.777Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-12T12:19:57.283Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178483,
-          "Work Item Type": "Task",
-          "Title": "FrontEnd: fix display file in Notification Monitor Details",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.25,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-05T11:46:47.34Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-12T12:19:57.283Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178734,
-          "Work Item Type": "Task",
-          "Title": "FrontEnd: add custom validation in url \"https\"",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 0.45,
-          "TimeSheet_DevActualTime": 0.75,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-06T15:02:12.537Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-12T12:19:57.283Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178817,
-          "Work Item Type": "Task",
-          "Title": "FrontEnd: Change main layout \"Collapse and expand\"",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 15,
-          "TimeSheet_DevActualTime": 9,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-07-07T11:42:13.287Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-08T09:45:49.15Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-12T20:09:34.74Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 180194,
-          "Work Item Type": "Task",
-          "Title": "Review CR#176927",
-          "Assigned To": "Mariam Ismail",
-          "Activity": "Testing",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0.5,
-          "Activated Date": "2026-07-18T21:26:00.723Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-19T07:05:19.827Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-19T07:05:19.827Z",
-          "Customer": "Wareed Lab_294"
-        }
-      ],
-      "bugs": [
-        {
-          "ID": 178202,
-          "Work Item Type": "Bug",
-          "Title": "Notification Screen – Notification Date field displays non-descriptive validation error message",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.25,
-          "TimeSheet_TestingActualTime": 0.38,
-          "Activated Date": "2026-06-30T12:51:18.3Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T12:51:18.3Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T08:11:57.35Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178203,
-          "Work Item Type": "Bug",
-          "Title": "UI/UX - Misplaced and unlabeled \"Select All\" checkbox inside the Search bar within the Notification Topic dropdown",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 1.5,
-          "TimeSheet_DevActualTime": 1.5,
-          "TimeSheet_TestingActualTime": 1.08,
-          "Activated Date": "2026-06-30T17:54:10.803Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T17:54:10.803Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-12T12:19:57.283Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178214,
-          "Work Item Type": "Bug",
-          "Title": "Past date/time notifications can be successfully saved by delaying the form submission after selection on the Notification Screen",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 1.07,
-          "TimeSheet_TestingActualTime": 1.12,
-          "Activated Date": "2026-06-30T13:02:33.117Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T17:28:09.397Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T08:57:32.177Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178219,
-          "Work Item Type": "Bug",
-          "Title": "Localization/UI - \"Notification Date\" field displays timestamp in 24-hour format instead of the requested 12-hour AM/PM format",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.42,
-          "TimeSheet_DevActualTime": 0.42,
-          "TimeSheet_TestingActualTime": 0.47,
-          "Activated Date": "2026-06-30T13:04:36.647Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T13:04:36.647Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T08:04:55.607Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178222,
-          "Work Item Type": "Bug",
-          "Title": "Data Retrieval - Arabic images, English images, and attachments fail to load or populate when opening a notification in Edit Mode",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.75,
-          "TimeSheet_DevActualTime": 0.83,
-          "TimeSheet_TestingActualTime": 0.88,
-          "Activated Date": "2026-06-30T13:02:18.48Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T17:28:05.887Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T07:00:42.887Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178227,
-          "Work Item Type": "Bug",
-          "Title": "Save button remains active and Back button triggers unsaved changes confirmation without any data modifications in Edit Mode",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0.5,
-          "Activated Date": "2026-06-30T15:58:55.48Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T15:58:55.48Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T07:03:52.427Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178231,
-          "Work Item Type": "Bug",
-          "Title": "Past notifications fail to become immutable and can still be edited, deleted, or moved to draft",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 1,
-          "TimeSheet_TestingActualTime": 1.12,
-          "Activated Date": "2026-06-30T13:48:29.187Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T13:48:29.187Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T09:05:12.133Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178236,
-          "Work Item Type": "Bug",
-          "Title": "UI/UX - Missing delete/remove action button for uploaded file attachments on the Notification Screen",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0.5,
-          "Activated Date": "2026-06-30T15:17:07.99Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-30T15:17:07.99Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T09:36:16.067Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178237,
-          "Work Item Type": "Bug",
-          "Title": "Labelling discrepancies on the Notification Screen mismatching CR specifications for \"Notification Date\" and \"Attachment\" fields",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.1,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0.02,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T07:08:10.6Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178286,
-          "Work Item Type": "Bug",
-          "Title": "Database/API - HTTP 400 Bad Request and screen crash due to non-nullable foreign key constraints between 'Notification_EF' and 'NotificationTopic_EF' during hard delete",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 1,
-          "TimeSheet_TestingActualTime": 1.5,
-          "Activated Date": "2026-07-01T16:01:35.667Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-04T15:46:34.867Z",
-          "State": "Closed",
-          "Tags": "not published on local",
-          "Changed Date": "2026-07-08T07:28:51.47Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178300,
-          "Work Item Type": "Bug",
-          "Title": "Data Retrieval - \"fileUrl\", \"url\", and \"coverImage\" properties return null in API response causing data truncation on the Notification Monitor Screen",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.75,
-          "TimeSheet_DevActualTime": 0.83,
-          "TimeSheet_TestingActualTime": 0.65,
-          "Activated Date": "2026-07-01T15:58:59.217Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-04T08:41:11.607Z",
-          "State": "Closed",
-          "Tags": "holding fo frontend developer for edit notification monitor",
-          "Changed Date": "2026-07-09T07:48:21.783Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178525,
-          "Work Item Type": "Bug",
-          "Title": "[Add New Notification] Multiple mandatory text input fields incorrectly accept whitespace strings as valid data during form submission.",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 1,
-          "TimeSheet_TestingActualTime": 0.65,
-          "Activated Date": "2026-07-05T13:53:52.49Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-05T14:09:54.117Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-09T07:47:11.11Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 178733,
-          "Work Item Type": "Bug",
-          "Title": "Notifications: \"Notification date must be a valid date that is not in the past\" validation error triggers for a future date during creation.",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 1.75,
-          "TimeSheet_TestingActualTime": 1.5,
-          "Activated Date": "2026-07-06T14:29:02.623Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-06T18:15:38.217Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-09T07:43:47.75Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 179033,
-          "Work Item Type": "Bug",
-          "Title": "Notification Module / Push Notifications fail to deliver when multiple topics are selected simultaneously",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 1.5,
-          "TimeSheet_DevActualTime": 1,
-          "TimeSheet_TestingActualTime": 1.78,
-          "Activated Date": "2026-07-09T10:15:46.83Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-09T12:37:49.793Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-12T07:06:39.94Z",
-          "Customer": "Wareed Lab_294"
-        }
-      ],
-      "testCases": [
-        {
-          "id": 177980,
-          "state": "Pass"
-        },
-        {
-          "id": 177981,
-          "state": "Pass"
-        },
-        {
-          "id": 177982,
-          "state": "Pass"
-        },
-        {
-          "id": 177983,
-          "state": "Pass"
-        },
-        {
-          "id": 177984,
-          "state": "Fail"
-        },
-        {
-          "id": 177985,
-          "state": "Pass"
-        },
-        {
-          "id": 177986,
-          "state": "Design"
-        },
-        {
-          "id": 177987,
-          "state": "Pass"
-        },
-        {
-          "id": 177988,
-          "state": "Pass"
-        },
-        {
-          "id": 177989,
-          "state": "Fail"
-        },
-        {
-          "id": 177990,
-          "state": "Design"
-        },
-        {
-          "id": 177991,
-          "state": "Design"
-        },
-        {
-          "id": 177992,
-          "state": "Pass"
-        },
-        {
-          "id": 177993,
-          "state": "Pass"
-        },
-        {
-          "id": 177994,
-          "state": "Pass"
-        }
-      ],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-06-28T13:00:00.000Z",
-        "testEnd": "2026-08-24T06:00:00.000Z",
-        "finalEnd": "2026-08-24T06:00:00.000Z"
-      },
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "MobileApp",
-      "devActualTime": 0,
-      "testActualTime": 0
-    },
-    {
-      "id": 177331,
-      "title": "Update App Link Admin Portal Client Setup in Add/Edit mode by adding a new Firebase Topic grid inside the Firebase Configuration section.",
-      "type": "User Story",
-      "state": "Tested",
-      "assignedTo": "Saleh Abdelrahem",
-      "tester": "Unassigned",
-      "area": "MobileApp",
-      "priority": 999,
-      "tags": [
-        "PMD"
-      ],
-      "expectedRelease": null,
-      "branch": "Internal NT",
-      "customer": "Internal CR_2000",
-      "changedDate": "2026-07-13T09:34:54.110Z",
-      "tasks": [
-        {
-          "ID": 177384,
-          "Work Item Type": "Task",
-          "Title": "DB : Create Table",
-          "Assigned To": "Mostafa Mahmoud",
-          "Activity": "DB Modification",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 1.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-25T10:01:57.117Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-25T11:14:53.457Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-01T12:35:44.46Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177529,
-          "Work Item Type": "Task",
-          "Title": "Create Api get Topics",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 0.75,
-          "TimeSheet_DevActualTime": 0.75,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-24T19:17:01.367Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-24T19:34:21.637Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-24T19:34:21.637Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177530,
-          "Work Item Type": "Task",
-          "Title": "Create Api Add Topic",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 0.75,
-          "TimeSheet_DevActualTime": 0.75,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-24T19:17:41.647Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-24T19:34:06.89Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-24T19:34:06.89Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177531,
-          "Work Item Type": "Task",
-          "Title": "Create Api Update Topic",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 0.75,
-          "TimeSheet_DevActualTime": 0.83,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-24T19:18:40.337Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-24T19:34:27.913Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-24T19:34:27.913Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177532,
-          "Work Item Type": "Task",
-          "Title": "Create Api delete Topic",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.58,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-24T19:19:52.813Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-24T19:34:15.71Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-24T19:34:15.71Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177709,
-          "Work Item Type": "Task",
-          "Title": "Backend :Edit for table",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.33,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-25T16:37:49.853Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-07T15:49:06.143Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-07T15:49:06.143Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177712,
-          "Work Item Type": "Task",
-          "Title": "preparation tasks",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-25T16:45:25.81Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-25T16:48:30.183Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-25T16:48:30.183Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177945,
-          "Work Item Type": "Task",
-          "Title": "Preparation For Add/Edit New Firebase Topic in Admin Portal Client",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "Testing",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 1.7,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-13T07:07:48.68Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-13T07:07:48.68Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177946,
-          "Work Item Type": "Task",
-          "Title": "Execution For Add/Edit New Firebase Topic in Admin Portal Client",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "Testing",
-          "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 3.15,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-13T07:08:20.847Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-13T07:08:20.847Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178165,
-          "Work Item Type": "Task",
-          "Title": "FrontEnd: Firebase Topics \"ui - logic - service -model\"",
-          "Assigned To": "mostafa kamel",
-          "Activity": "Development",
-          "Original Estimation": 7,
-          "TimeSheet_DevActualTime": 2,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-29T14:54:12.393Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-29T19:47:43.743Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-29T19:47:43.743Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178387,
-          "Work Item Type": "Task",
-          "Title": "Add for  notification topic",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 1.5,
-          "TimeSheet_DevActualTime": 1.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-07-04T19:47:55.71Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-07T15:49:15.787Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-07T15:49:15.787Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178388,
-          "Work Item Type": "Task",
-          "Title": "edit for  notification topic",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 1,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-07-04T19:52:28.537Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-04T19:52:28.537Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-04T19:52:28.537Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178391,
-          "Work Item Type": "Task",
-          "Title": "edit for delete topic",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0.83,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-07-04T19:59:16.84Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-04T20:04:53.847Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-04T20:04:53.847Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178393,
-          "Work Item Type": "Task",
-          "Title": "add vesion  fot topic",
-          "Assigned To": "Saleh Abdelrahem",
-          "Activity": "Development",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 1.17,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-07-04T20:06:58.76Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-04T20:11:42.86Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-04T20:11:42.86Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 180193,
-          "Work Item Type": "Task",
-          "Title": "Review CR#177331",
-          "Assigned To": "Mariam Ismail",
-          "Activity": "Testing",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0.5,
-          "Activated Date": "2026-07-19T07:05:02.68Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-19T07:05:05.273Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-19T07:05:05.273Z",
-          "Customer": "Internal CR_2000"
-        }
-      ],
-      "bugs": [
-        {
-          "ID": 178517,
-          "Work Item Type": "Bug",
-          "Title": "[Update Firebase Topics] System blocks topic update with a false duplicate error by matching the record against itself.",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.58,
-          "TimeSheet_TestingActualTime": 0.42,
-          "Activated Date": "2026-07-05T14:02:48.023Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-05T14:09:21.027Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-06T15:31:56.25Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178518,
-          "Work Item Type": "Bug",
-          "Title": "[Firebase Topics] \"Name\" mandatory field incorrectly accepts whitespaces as a valid value during submission.",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.58,
-          "TimeSheet_TestingActualTime": 0.45,
-          "Activated Date": "2026-07-05T14:02:01.137Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-05T14:09:43Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-06T15:27:31.16Z",
-          "Customer": "Internal CR_2000"
-        }
-      ],
-      "testCases": [
-        {
-          "id": 177954,
-          "state": "Pass"
-        },
-        {
-          "id": 177955,
-          "state": "Pass"
-        },
-        {
-          "id": 177956,
-          "state": "Pass"
-        },
-        {
-          "id": 177957,
-          "state": "Pass"
-        },
-        {
-          "id": 177958,
-          "state": "Pass"
-        },
-        {
-          "id": 177959,
-          "state": "Design"
-        },
-        {
-          "id": 177960,
-          "state": "Pass"
-        },
-        {
-          "id": 177961,
-          "state": "Pass"
-        },
-        {
-          "id": 177962,
-          "state": "Pass"
-        },
-        {
-          "id": 177963,
-          "state": "Pass"
-        },
-        {
-          "id": 177964,
-          "state": "Pass"
-        },
-        {
-          "id": 177965,
-          "state": "Design"
-        },
-        {
-          "id": 177966,
-          "state": "Pass"
-        },
-        {
-          "id": 177967,
-          "state": "Pass"
-        },
-        {
-          "id": 177968,
-          "state": "Design"
-        }
-      ],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-06-25T08:00:00.000Z",
-        "testEnd": "2026-08-24T06:00:00.000Z",
-        "finalEnd": "2026-08-24T06:00:00.000Z"
-      },
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "MobileApp",
-      "devActualTime": 0,
-      "testActualTime": 0
-    },
-    {
-      "id": 177660,
-      "title": "App Link - cient Portal - Update Integration APIs - v2.1",
-      "type": "User Story",
-      "state": "Tested",
-      "assignedTo": "Yahia Hossam",
-      "tester": "Unassigned",
-      "area": "MobileApp",
-      "priority": 999,
-      "tags": [
-        "PMD"
-      ],
-      "expectedRelease": null,
-      "branch": "Internal NT",
-      "customer": "Internal CR_2000",
-      "changedDate": "2026-07-13T09:35:33.823Z",
-      "tasks": [
-        {
-          "ID": 177710,
-          "Work Item Type": "Task",
-          "Title": "Reading Notification Documents",
-          "Assigned To": "Mariam Ismail",
-          "Activity": "Testing",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 1,
-          "Activated Date": "2026-06-25T16:39:10.69Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-06-25T16:42:41.007Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-06-25T16:42:41.007Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177951,
-          "Work Item Type": "Task",
-          "Title": "Preparation for Update Integration APIs",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "Testing",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0.92,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-13T07:13:10.063Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-13T07:13:10.063Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177952,
-          "Work Item Type": "Task",
-          "Title": "Execution for Update Integration APIs",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "Testing",
-          "Original Estimation": 8,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 11.3,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-13T07:12:33.6Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-13T07:12:33.6Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178221,
-          "Work Item Type": "Task",
-          "Title": "Database: Apply needed modifications",
-          "Assigned To": "Yahia Hossam",
-          "Activity": "DB Modification",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 3,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-30T11:58:05.773Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-04T22:48:20.79Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-04T22:48:20.79Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178269,
-          "Work Item Type": "Task",
-          "Title": "Backend: Apply needed modifications",
-          "Assigned To": "Yahia Hossam",
-          "Activity": "Development",
-          "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 15,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-30T20:04:14.817Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-04T22:50:49.29Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-12T12:19:57.283Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 180196,
-          "Work Item Type": "Task",
-          "Title": "Review CR#177660",
-          "Assigned To": "Mariam Ismail",
-          "Activity": "Testing",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 1,
-          "Activated Date": "2026-07-18T21:28:58.633Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-19T07:05:50.11Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-19T07:05:50.11Z",
-          "Customer": "Internal CR_2000"
-        }
-      ],
-      "bugs": [
-        {
-          "ID": 178340,
-          "Work Item Type": "Bug",
-          "Title": "API - Notifications | DELETE /DeleteDeviceNotificationsData returns 500 Internal Server Error without logging the exception details",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.42,
-          "TimeSheet_TestingActualTime": 1,
-          "Activated Date": "2026-07-09T10:12:26.797Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-09T10:12:29.76Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-09T11:59:52.45Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178549,
-          "Work Item Type": "Bug",
-          "Title": "[GetNotifications API] GetUnseenNotificationsCountByReceiverID incorrectly returns a positive count for a user with all notifications marked as Seen",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.42,
-          "TimeSheet_TestingActualTime": 1,
-          "Activated Date": "2026-07-09T10:11:09.967Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-09T10:11:42.583Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-09T11:57:01.113Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178751,
-          "Work Item Type": "Bug",
-          "Title": "SetNotificationsSeen API: SetNotificationsSeen endpoint returns unhandled 500 Internal Server Error instead of proper data validation handling.",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.42,
-          "TimeSheet_TestingActualTime": 1,
-          "Activated Date": "2026-07-09T10:09:51.19Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-09T10:10:40.593Z",
-          "State": "Closed",
-          "Changed Date": "2026-07-13T15:12:41.793Z",
-          "Customer": "Internal CR_2000"
-        }
-      ],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-07-23T06:00:00.000Z",
-        "testEnd": "2026-08-24T06:00:00.000Z",
-        "finalEnd": "2026-08-24T06:00:00.000Z"
-      },
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "MobileApp",
-      "devActualTime": 0,
-      "testActualTime": 0
-    },
-    {
-      "id": 177668,
-      "title": "App Link - Client Portal - Send Firebase Notification in case of new notification with push notification is checked",
-      "type": "User Story",
-      "state": "Tested",
-      "assignedTo": "Yahia Hossam",
-      "tester": "Unassigned",
-      "area": "MobileApp",
-      "priority": 999,
-      "tags": [
-        "PMD"
-      ],
-      "expectedRelease": null,
-      "branch": "Internal NT",
-      "customer": "Internal CR_2000",
-      "changedDate": "2026-07-13T09:37:55.723Z",
-      "tasks": [
-        {
-          "ID": 177881,
-          "Work Item Type": "Task",
-          "Title": "Add Push Topic notification flow",
-          "Assigned To": "Yahia Hossam",
-          "Activity": "Development",
-          "Original Estimation": 5,
-          "TimeSheet_DevActualTime": 6.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-28T14:01:53.227Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-04T22:41:59.32Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-12T12:19:57.283Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177882,
-          "Work Item Type": "Task",
-          "Title": "Scaffold database modifications",
-          "Assigned To": "Yahia Hossam",
-          "Activity": "Development",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 2,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-28T14:11:38.49Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-04T22:46:51.337Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-04T22:46:51.337Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177949,
-          "Work Item Type": "Task",
-          "Title": "Preparation for send firebase notification",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "Testing",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0.62,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-13T07:10:38.88Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-13T07:10:38.88Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 177950,
-          "Work Item Type": "Task",
-          "Title": "Execution for send firebase notification",
-          "Assigned To": "Abdulrahman Elbetar",
-          "Activity": "Testing",
-          "Original Estimation": 15,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 20.72,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-13T07:11:15.743Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-13T07:11:15.743Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178217,
-          "Work Item Type": "Task",
-          "Title": "Database: Add notificationsId to Notification table, Add clientId to NotificationTopic table",
-          "Assigned To": "Yahia Hossam",
-          "Activity": "DB Modification",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 13,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-06-30T11:27:16.943Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-04T22:42:06.557Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-04T22:42:06.557Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 178351,
-          "Work Item Type": "Task",
-          "Title": "testing notification cycle",
-          "Assigned To": "Mariam Ismail",
-          "Activity": "Testing",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 2,
-          "Activated Date": "2026-07-02T16:13:01.68Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-21T23:03:53.043Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-21T23:03:53.043Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 179010,
-          "Work Item Type": "Task",
-          "Title": "Execution CR#177668",
-          "Assigned To": "Mariam Ismail",
-          "Activity": "Testing",
-          "Original Estimation": 6,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 5,
-          "Activated Date": "2026-07-08T20:01:46.35Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-21T23:04:10.137Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-21T23:04:10.137Z",
-          "Customer": "Internal CR_2000"
-        },
-        {
-          "ID": 180195,
-          "Work Item Type": "Task",
-          "Title": "Review CR#177668",
-          "Assigned To": "Mariam Ismail",
-          "Activity": "Testing",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 2,
-          "Activated Date": "2026-07-18T21:27:41.483Z",
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-07-19T07:05:41.34Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-07-19T07:05:41.34Z",
-          "Customer": "Internal CR_2000"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-07-23T06:00:00.000Z",
-        "testEnd": "2026-08-24T06:00:00.000Z",
-        "finalEnd": "2026-08-24T06:00:00.000Z"
-      },
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "MobileApp",
-      "devActualTime": 0,
-      "testActualTime": 0
-    },
-    {
       "id": 178298,
       "title": "When user enters patient data, system shall validate if the patient exists or not.",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "yara mohsen",
       "tester": "Mahmoud Mohamed",
       "area": "Home Visit",
@@ -29055,7 +27737,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-07-26T12:10:49.867Z",
+      "changedDate": "2026-07-27T07:19:31.617Z",
       "tasks": [
         {
           "ID": 173802,
@@ -29225,13 +27907,13 @@
           "Activity": "Testing",
           "Original Estimation": 19,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 5.83,
+          "TimeSheet_TestingActualTime": 7.33,
           "Activated Date": "2026-07-14T13:39:33.047Z",
           "Iteration Path": "Home Visit\\2026\\home_visit July 12-26",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-07-22T12:37:59.877Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-07-22T12:37:59.877Z",
+          "Changed Date": "2026-07-26T15:11:05.047Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -29377,13 +28059,13 @@
           "Activity": "",
           "Original Estimation": 0.5,
           "TimeSheet_DevActualTime": 0.58,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 1.5,
           "Activated Date": "2026-07-26T12:48:02.253Z",
           "Iteration Path": "Home Visit\\2026\\home_visit July 12-26",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-07-26T12:48:02.253Z",
-          "State": "Resolved",
-          "Changed Date": "2026-07-26T14:27:03.087Z",
+          "State": "Closed",
+          "Changed Date": "2026-07-26T15:08:16.88Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -29506,16 +28188,18 @@
       "id": 178577,
       "title": "Home Visit_LDM integration - Create outbox APIs Get and Set (ack)",
       "type": "User Story",
-      "state": "Active",
+      "state": "On-Hold",
       "assignedTo": "yara mohsen",
       "tester": "Unassigned",
       "area": "Home Visit",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "waiting Eng. Fawzy's project structure updates"
+      ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-07-19T14:59:02.243Z",
+      "changedDate": "2026-07-27T07:21:43.183Z",
       "tasks": [
         {
           "ID": 180234,
@@ -30826,7 +29510,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-07-26T14:47:09.000Z",
+      "changedDate": "2026-07-26T15:28:14.090Z",
       "tasks": [
         {
           "ID": 180068,
@@ -31001,8 +29685,56 @@
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "Home Visit\\2026\\home_visit July 12-26",
           "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-07-26T14:48:24.477Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-07-26T15:28:14.09Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 181216,
+          "Work Item Type": "Task",
+          "Title": "FrontEnd: Handle Governorates Component \"use shared table\"",
+          "Assigned To": "mostafa kamel",
+          "Activity": "Development",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 0.58,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Home Visit\\2026\\home_visit July 12-26",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-07-26T15:27:10.833Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-07-26T15:28:14.09Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 181217,
+          "Work Item Type": "Task",
+          "Title": "FrontEnd: Handle Governorates Component \"use shared table\"",
+          "Assigned To": "mostafa kamel",
+          "Activity": "Development",
+          "Original Estimation": 0.02,
+          "TimeSheet_DevActualTime": 0.02,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Home Visit\\2026\\home_visit July 12-26",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-07-26T15:28:33.273Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-07-26T15:28:33.273Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 181221,
+          "Work Item Type": "Task",
+          "Title": "FrontEnd: Handle Users Component \"use shared table\"",
+          "Assigned To": "mostafa kamel",
+          "Activity": "Development",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Home Visit\\2026\\home_visit July 12-26",
+          "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-07-26T14:47:09.12Z",
+          "Changed Date": "2026-07-26T15:30:20.127Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -31670,6 +30402,21 @@
           "Customer": "Alameda_0062"
         },
         {
+          "ID": 181232,
+          "Work Item Type": "Task",
+          "Title": "DB Task",
+          "Assigned To": "Mohamed Qassem",
+          "Activity": "DB Modification",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-07-27T07:00:20.09Z",
+          "Customer": "Al Shamel Lab_624"
+        },
+        {
           "ID": 181175,
           "Work Item Type": "Task",
           "Title": "DB_Modification EBGH Live publish task no : 179124,181030",
@@ -31683,6 +30430,22 @@
           "Assigned To Tester": "Unassigned",
           "State": "Closed",
           "Changed Date": "2026-07-26T13:42:57.843Z",
+          "Customer": "EBGH_62"
+        },
+        {
+          "ID": 181223,
+          "Work Item Type": "Task",
+          "Title": "SL181123 |  Review",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0.25,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-07-26T16:17:31.463Z",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-July 16-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "Closed",
+          "Changed Date": "2026-07-26T16:18:14.2Z",
           "Customer": "EBGH_62"
         }
       ],
@@ -34030,7 +32793,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-08-05T06:00:00.000Z",
+        "devEnd": "2026-08-05T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
