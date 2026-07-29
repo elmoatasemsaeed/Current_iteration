@@ -885,9 +885,14 @@ renderActiveCards() {
                 const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed', 'Resolved'].includes(t['State'])).length;
                 const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
 
+                // --- حساب البجز واستميشينها ---
                 const totalBugs = s.bugs ? s.bugs.length : 0;
                 const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
-                const fixingProgressPercent = totalBugs > 0 ? Math.round((completedBugs / totalBugs) * 100) : 0;
+                const totalBugEffort = s.bugs ? s.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
+                const completedBugEffort = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State']))
+                                                              .reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
+                const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
+                const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
 
                 const testCases = s.testCases || [];
                 const totalTC = testCases.length;
@@ -982,11 +987,20 @@ renderActiveCards() {
                                         <div class="mb-1">
                                             <div class="flex justify-between items-center mb-0.5">
                                                 <span class="text-[9px] text-gray-400 font-bold">Bugs: ${completedBugs}/${totalBugs}</span>
-                                                <span class="text-[9px] text-red-600 font-bold">${fixingProgressPercent}%</span>
+                                                <span class="text-[9px] text-red-600 font-bold">${bugProgressPercent}%</span>
                                             </div>
                                             <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                                                <div class="bg-red-500 h-full" style="width: ${fixingProgressPercent}%"></div>
+                                                <div class="bg-red-500 h-full" style="width: ${bugProgressPercent}%"></div>
                                             </div>
+                                            ${totalBugEffort > 0 ? `
+                                            <div class="flex justify-between items-center mt-1 text-[10px] text-gray-500">
+                                                <span class="font-bold">Bug Effort:</span>
+                                                <span class="font-mono">${remainingBugEffort.toFixed(1)}/${totalBugEffort.toFixed(1)}h</span>
+                                                <span class="text-xs font-bold ${remainingBugEffort === 0 ? 'text-green-600' : 'text-amber-600'}">
+                                                    ${bugProgressPercent}%
+                                                </span>
+                                            </div>
+                                            ` : ''}
                                         </div>
                                         ` : ''}
                                         <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${devStartDisplay}</p>
