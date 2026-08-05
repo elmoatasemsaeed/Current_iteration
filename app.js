@@ -583,13 +583,12 @@ const ui = {
         this.renderAll();
     },
 
-    renderAll() {
-    // 1. استدعاء الوظائف الأساسية
-    this.renderStats();
+   renderAll() {
+    // استدعاء الوظائف الأساسية (تم حذف renderStats و renderClientRoadmap من هنا)
+    this.renderDashboard();      // <-- الجديد
     this.renderActiveCards();
     this.renderDelivery();
     this.renderSettings();
-    this.renderClientRoadmap();
     this.renderWorkload();
 
     // 2. إدارة الصلاحيات للمشاهد (Viewer)
@@ -616,159 +615,212 @@ const ui = {
         }
     }
 },
-
-  renderStats() {
-    // --- البيانات الأساسية ---
-    const now = new Date();
-    const todayStr = now.toISOString().split('T')[0];
-    const sevenDaysLater = new Date();
-    sevenDaysLater.setDate(now.getDate() + 7);
-
-    // 1. القصص النشطة (ليست في حالة Tested أو Closed)
-    const active = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
     
-    // 2. القصص الجاهزة للتسليم (حالتها Tested ولم يتم تسجيل تسليمها بعد)
-    const readyForDelivery = currentData.filter(s => 
-        (s.state === 'Tested' || s.state === 'Closed') && 
-        !db.deliveryLogs.some(log => log.storyId === s.id)
-    );
+  renderDashboard() {
+    const container = document.getElementById('dashboard-container');
+    if (!container) return;
+
+    // --- القسم الأول: إحصائيات Business Area مقابل State ---
+    const areaStateMap = {};
+    const allStates = new Set();
     
-    // 3. القصص المتأخرة عن موعدها المحسوب
-    const delayed = active.filter(s => {
-        return s.calc.finalEnd instanceof Date && 
-               !isNaN(s.calc.finalEnd.getTime()) && 
-               now > s.calc.finalEnd;
+    currentData.forEach(s => {
+        const area = s.area || 'General';
+        const state = s.state || 'Unknown';
+        allStates.add(state);
+        
+        if (!areaStateMap[area]) areaStateMap[area] = {};
+        if (!areaStateMap[area][state]) areaStateMap[area][state] = 0;
+        areaStateMap[area][state]++;
     });
 
-    // --- الإحصائيات الجديدة المضافة بناءً على محتوى الفيوز الأخرى ---
+    // ترتيب الحالات لعرضها كأعمدة ثابتة
+    const sortedStates = Array.from(allStates).sort();
 
-    // أ- إجمالي الـ Bugs المفتوحة في القصص النشطة
-    const totalOpenBugs = active.reduce((acc, s) => {
-        const openBugs = s.bugs ? s.bugs.filter(b => b.State !== 'Closed' && b.State !== 'Resolved').length : 0;
-        return acc + openBugs;
-    }, 0);
+    let areaStatsHtml = `
+        <div class="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                📊 Business Area Stats (By State)
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 border-b">
+                            <th class="text-left p-2 font-bold text-gray-600">Business Area</th>
+                            ${sortedStates.map(state => `<th class="text-center p-2 font-bold text-gray-600">${state}</th>`).join('')}
+                            <th class="text-center p-2 font-bold text-indigo-600">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    `;
 
-    // ب- عدد طلبات التغيير (CRs) النشطة
-    const activeCRs = active.filter(s => s.type === 'CR').length;
+    let grandTotal = 0;
+    const sortedAreas = Object.keys(areaStateMap).sort();
+    sortedAreas.forEach(area => {
+        const statesData = areaStateMap[area];
+        let rowTotal = 0;
+        let rowCells = sortedStates.map(state => {
+            const count = statesData[state] || 0;
+            rowTotal += count;
+            return `<td class="text-center p-2 border-t">${count}</td>`;
+        }).join('');
+        grandTotal += rowTotal;
 
-    // ج- تسليمات العميل المتوقعة خلال 7 أيام (Roadmap Stat)
-    const upcomingClientDeadlines = currentData.filter(s => {
-        return s.expectedRelease instanceof Date && 
-               s.state !== 'Tested' && 
-               s.expectedRelease >= now && 
-               s.expectedRelease <= sevenDaysLater;
-    }).length;
+        areaStatsHtml += `
+            <tr class="border-b hover:bg-gray-50">
+                <td class="p-2 font-medium text-slate-700">${area}</td>
+                ${rowCells}
+                <td class="text-center p-2 border-t font-bold text-indigo-600">${rowTotal}</td>
+            </tr>
+        `;
+    });
 
-    // د- الموظفين في إجازة اليوم (Settings & Vacations Stat)
-    const onVacationToday = db.vacations ? db.vacations.filter(v => v.date === todayStr).length : 0;
-
-    // --- بناء محتوى الكروت الأساسية (Stats Cards) ---
-    const statsHtml = `
-        <div class="bg-blue-600 text-white p-4 rounded-xl shadow">
-            <div class="text-sm opacity-80">Active Stories</div>
-            <div class="text-2xl font-bold">${active.length} <span class="text-xs font-normal opacity-70">(${activeCRs} CRs)</span></div>
-        </div>
-        <div class="bg-green-600 text-white p-4 rounded-xl shadow">
-            <div class="text-sm opacity-80">Ready for Delivery</div>
-            <div class="text-2xl font-bold">${readyForDelivery.length}</div>
-        </div>
-        <div class="bg-red-600 text-white p-4 rounded-xl shadow">
-            <div class="text-sm opacity-80">Delayed</div>
-            <div class="text-2xl font-bold">${delayed.length}</div>
-        </div>
-        <div class="bg-purple-600 text-white p-4 rounded-xl shadow">
-            <div class="text-sm opacity-80">Delivered Total</div>
-            <div class="text-2xl font-bold">${db.deliveryLogs.length}</div>
-        </div>
-        
-        <div class="bg-amber-500 text-white p-4 rounded-xl shadow">
-            <div class="text-sm opacity-80">Open Bugs</div>
-            <div class="text-2xl font-bold">${totalOpenBugs}</div>
-        </div>
-        <div class="bg-indigo-600 text-white p-4 rounded-xl shadow">
-            <div class="text-sm opacity-80">Client Deadlines (7d)</div>
-            <div class="text-2xl font-bold">${upcomingClientDeadlines}</div>
-        </div>
-        <div class="bg-teal-600 text-white p-4 rounded-xl shadow">
-            <div class="text-sm opacity-80">Staff on Vacation</div>
-            <div class="text-2xl font-bold">${onVacationToday}</div>
+    areaStatsHtml += `
+                    <tr class="bg-gray-100 font-bold">
+                        <td class="p-2 text-slate-800">Grand Total</td>
+                        ${sortedStates.map(state => {
+                            let total = 0;
+                            Object.values(areaStateMap).forEach(areaData => { total += areaData[state] || 0; });
+                            return `<td class="text-center p-2">${total}</td>`;
+                        }).join('')}
+                        <td class="text-center p-2 text-indigo-700">${grandTotal}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     `;
-    
-    document.getElementById('stats-cards').innerHTML = statsHtml;
 
-    // --- تحديث قائمة المتأخرات (Overdue Container) ---
-    document.getElementById('overdue-container').innerHTML = delayed.map(s => `
-        <div class="p-2 border-b text-sm">
-            <span class="font-bold">[${s.area}]</span> ${s.title}
-            <div class="text-xs text-red-400">Delayed since: ${s.calc.finalEnd.toLocaleDateString()}</div>
-        </div>
-    `).join('') || '<div class="text-gray-400 text-center py-2">No delayed items</div>';
+    // --- القسم الثاني: إحصائيات الفروع (Branches) ---
+    const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
+    const branchMap = {};
+    activeStories.forEach(s => {
+        const branch = s.branch || 'N/A';
+        branchMap[branch] = (branchMap[branch] || 0) + 1;
+    });
+    const sortedBranches = Object.entries(branchMap).sort((a, b) => b[1] - a[1]);
 
-    // --- تحديث قائمة مهام اليوم (Today Container) ---
-    document.getElementById('today-container').innerHTML = active.filter(s => {
-        return s.calc.finalEnd instanceof Date && 
-               !isNaN(s.calc.finalEnd.getTime()) && 
-               s.calc.finalEnd.toISOString().split('T')[0] === todayStr;
-    }).map(s => `
-        <div class="p-2 border-b text-sm">
-            <span class="font-bold">[${s.area}]</span> ${s.title} - <span class="text-blue-500">${s.assignedTo}</span>
+    let branchStatsHtml = `
+        <div class="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                🌿 Active Stories by Branch
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+    `;
+    sortedBranches.forEach(([branch, count]) => {
+        branchStatsHtml += `
+            <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 text-center">
+                <div class="text-xs font-bold text-indigo-600 truncate" title="${branch}">${branch}</div>
+                <div class="text-2xl font-black text-indigo-800">${count}</div>
+            </div>
+        `;
+    });
+    branchStatsHtml += `
+            </div>
+            <div class="mt-2 text-xs text-gray-400">Total Active Stories: ${activeStories.length}</div>
         </div>
-    `).join('') || '<div class="text-gray-400 text-center py-2">Nothing planned for today</div>';
+    `;
+
+    // --- القسم الثالث: إحصائيات العملاء (Customers) ---
+    const customerMap = {};
+    activeStories.forEach(s => {
+        const customer = s.customer || 'General';
+        customerMap[customer] = (customerMap[customer] || 0) + 1;
+    });
+    const sortedCustomers = Object.entries(customerMap).sort((a, b) => b[1] - a[1]);
+
+    let customerStatsHtml = `
+        <div class="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                👥 Active Stories by Customer
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+    `;
+    sortedCustomers.forEach(([customer, count]) => {
+        customerStatsHtml += `
+            <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 text-center">
+                <div class="text-xs font-bold text-emerald-600 truncate" title="${customer}">${customer}</div>
+                <div class="text-2xl font-black text-emerald-800">${count}</div>
+            </div>
+        `;
+    });
+    customerStatsHtml += `
+            </div>
+            <div class="mt-2 text-xs text-gray-400">Total Active Stories: ${activeStories.length}</div>
+        </div>
+    `;
+
+    // --- القسم الرابع: الـ Roadmap (بنفس التصميم القديم) ---
+    const roadmapHtml = this.renderClientRoadmap();
+
+    // تجميع كل الأقسام في الحاوية
+    container.innerHTML = `
+        ${areaStatsHtml}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            ${branchStatsHtml}
+            ${customerStatsHtml}
+        </div>
+        <div class="mt-6">
+            ${roadmapHtml}
+        </div>
+    `;
 },
 
 renderClientRoadmap() {
-    const container = document.getElementById('roadmap-container');
     const today = new Date();
     const fourteenDaysLater = new Date();
     fourteenDaysLater.setDate(today.getDate() + 14);
 
-    // 1. فلترة القصص التي لها تاريخ تسليم متوقع خلال الـ 14 يوم القادمين وليست منتهية
+    // فلترة القصص التي لها تاريخ تسليم متوقع خلال الـ 14 يوم القادمين وليست منتهية
     const upcomingDeliveries = currentData.filter(s => {
         if (!s.expectedRelease || !(s.expectedRelease instanceof Date)) return false;
-        
-        // تصفية المهام التي لم تنتهِ بعد (أو انتهت مؤخراً وتريد عرضها)
         const isNotDone = s.state !== 'Tested'; 
         const isWithinRange = s.expectedRelease >= today && s.expectedRelease <= fourteenDaysLater;
-        
         return isNotDone && isWithinRange;
     });
 
-    // ترتيب حسب التاريخ الأقرب
     upcomingDeliveries.sort((a, b) => a.expectedRelease - b.expectedRelease);
 
+    let html = `
+        <div class="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 class="font-bold text-indigo-700 mb-4 flex items-center gap-2">
+                🚀 Client Delivery Roadmap (Next 14 Days)
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="roadmap-container">
+    `;
+
     if (upcomingDeliveries.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center py-8 bg-white rounded-xl border border-dashed text-gray-400">No client deliveries expected in the next 14 days.</div>`;
-        return;
+        html += `<div class="col-span-full text-center py-8 text-gray-400">No client deliveries expected in the next 14 days.</div>`;
+    } else {
+        html += upcomingDeliveries.map(s => {
+            const diffTime = Math.abs(s.expectedRelease - today);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            let urgencyClass = "border-blue-200 bg-white";
+            if (diffDays <= 3) urgencyClass = "border-amber-400 bg-amber-50";
+            if (diffDays <= 1) urgencyClass = "border-red-400 bg-red-50";
+
+            return `
+                <div class="p-4 rounded-xl border-2 ${urgencyClass} shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">In ${diffDays} Days</span>
+                        <span class="text-[10px] text-gray-400">#${s.id}</span>
+                    </div>
+                    <div class="text-sm font-bold text-slate-800 truncate" title="${s.title}">${s.title}</div>
+                    <div class="text-[11px] text-gray-500 mt-1">Area: ${s.area}</div>
+                    <div class="mt-3 flex justify-between items-center">
+                        <div class="text-[10px] font-bold uppercase text-gray-400">Release:</div>
+                        <div class="text-xs font-bold text-slate-700">${s.expectedRelease.toLocaleDateString('en-GB')}</div>
+                    </div>
+                    <div class="mt-2 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-indigo-500" style="width: ${s.state === 'Resolved' ? '80%' : '40%'}"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
-    container.innerHTML = upcomingDeliveries.map(s => {
-        const diffTime = Math.abs(s.expectedRelease - today);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        // تحديد لون الكارت بناءً على قرب الموعد
-        let urgencyClass = "border-blue-200 bg-white";
-        if (diffDays <= 3) urgencyClass = "border-amber-400 bg-amber-50";
-        if (diffDays <= 1) urgencyClass = "border-red-400 bg-red-50";
-
-        return `
-            <div class="p-4 rounded-xl border-2 ${urgencyClass} shadow-sm">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">In ${diffDays} Days</span>
-                    <span class="text-[10px] text-gray-400">#${s.id}</span>
-                </div>
-                <div class="text-sm font-bold text-slate-800 truncate" title="${s.title}">${s.title}</div>
-                <div class="text-[11px] text-gray-500 mt-1">Area: ${s.area}</div>
-                <div class="mt-3 flex justify-between items-center">
-                    <div class="text-[10px] font-bold uppercase text-gray-400">Release:</div>
-                    <div class="text-xs font-bold text-slate-700">${s.expectedRelease.toLocaleDateString('en-GB')}</div>
-                </div>
-                <div class="mt-2 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-indigo-500" style="width: ${s.state === 'Resolved' ? '80%' : '40%'}"></div>
-                </div>
-            </div>
-        `;
-    }).join('');
+    html += `</div></div>`;
+    return html;
 },
     
 renderActiveCards() {
