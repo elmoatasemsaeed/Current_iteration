@@ -170,7 +170,7 @@ if (response.ok) {
             // document.querySelector("button[onclick*='dataProcessor.sync()']").style.display = 'none';
         }
         
-        ui.switchTab('active'); 
+        ui.switchTab('dashboard'); 
         dataProcessor.sync(); 
     },
 
