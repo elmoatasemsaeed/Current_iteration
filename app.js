@@ -616,11 +616,56 @@ const ui = {
     }
 },
     
-  renderDashboard() {
+ renderDashboard() {
     const container = document.getElementById('dashboard-container');
     if (!container) return;
 
-    // --- القسم الأول: إحصائيات Business Area مقابل State ---
+    // --- حساب إحصائيات الموظفين (المطورين والمختبرين) ---
+    // 1. المطورون النشطون (لديهم قصص نشطة)
+    const activeDevsSet = new Set();
+    const activeTestersSet = new Set();
+    const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
+    
+    activeStories.forEach(s => {
+        if (s.assignedTo && s.assignedTo !== "Unassigned") activeDevsSet.add(s.assignedTo);
+        if (s.tester && s.tester !== "Unassigned") activeTestersSet.add(s.tester);
+    });
+
+    // 2. المطورون والمختبرون الفارغون (بنفس منطق Workload)
+    const freeDevs = this.getFreeStaff('dev');
+    const freeTesters = this.getFreeStaff('tester');
+
+    // 3. بناء كارت الإحصائيات الجديد
+    const staffStatsHtml = `
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div onclick="ui.showStaffDetails('dev', 'active')" 
+                 class="bg-gradient-to-br from-blue-500 to-blue-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
+                <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Active Developers</div>
+                <div class="text-4xl font-black mt-1">${activeDevsSet.size}</div>
+                <div class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-0.5 rounded">Click for details</div>
+            </div>
+            <div onclick="ui.showStaffDetails('tester', 'active')" 
+                 class="bg-gradient-to-br from-emerald-500 to-emerald-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
+                <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Active Testers</div>
+                <div class="text-4xl font-black mt-1">${activeTestersSet.size}</div>
+                <div class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-0.5 rounded">Click for details</div>
+            </div>
+            <div onclick="ui.showStaffDetails('dev', 'free')" 
+                 class="bg-gradient-to-br from-slate-500 to-slate-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
+                <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Free Developers</div>
+                <div class="text-4xl font-black mt-1">${freeDevs.length}</div>
+                <div class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-0.5 rounded">Click for details</div>
+            </div>
+            <div onclick="ui.showStaffDetails('tester', 'free')" 
+                 class="bg-gradient-to-br from-purple-500 to-purple-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
+                <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Free Testers</div>
+                <div class="text-4xl font-black mt-1">${freeTesters.length}</div>
+                <div class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-0.5 rounded">Click for details</div>
+            </div>
+        </div>
+    `;
+
+    // --- القسم الأول: إحصائيات Business Area مقابل State (بدون تغيير) ---
     const areaStateMap = {};
     const allStates = new Set();
     
@@ -689,8 +734,7 @@ const ui = {
         </div>
     `;
 
-    // --- القسم الثاني: إحصائيات الفروع (Branches) مع إضافة onclick ---
-    const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
+    // --- القسم الثاني: الفروع (بدون تغيير) ---
     const branchMap = {};
     activeStories.forEach(s => {
         const branch = s.branch || 'N/A';
@@ -719,7 +763,7 @@ const ui = {
         </div>
     `;
 
-    // --- القسم الثالث: إحصائيات العملاء (Customers) مع إضافة onclick ---
+    // --- القسم الثالث: العملاء (بدون تغيير) ---
     const customerMap = {};
     activeStories.forEach(s => {
         const customer = s.customer || 'General';
@@ -751,8 +795,9 @@ const ui = {
     // --- القسم الرابع: الـ Roadmap (بدون تغيير) ---
     const roadmapHtml = this.renderClientRoadmap();
 
-    // تجميع كل الأقسام في الحاوية
+    // --- تجميع كل الأقسام في الحاوية (مع إضافة كارت الموظفين في الأعلى) ---
     container.innerHTML = `
+        ${staffStatsHtml}
         ${areaStatsHtml}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             ${branchStatsHtml}
@@ -762,6 +807,135 @@ const ui = {
             ${roadmapHtml}
         </div>
     `;
+},
+
+// ==============================================
+// 2. الدوال المساعدة الجديدة
+// ==============================================
+
+// حساب الموظفين الفارغين (بنفس منطق Workload بالضبط)
+getFreeStaff(role) {
+    // استخراج جميع الأسماء الفريدة لهذا الدور
+    const allStaff = new Set();
+    currentData.forEach(s => {
+        if (role === 'dev' && s.assignedTo && s.assignedTo !== "Unassigned") {
+            allStaff.add(s.assignedTo);
+        } else if (role === 'tester' && s.tester && s.tester !== "Unassigned") {
+            allStaff.add(s.tester);
+        }
+    });
+
+    // تحديد المشغولين (بناءً على وجود مهام نشطة أو بجز أو دعم)
+    const busyStaff = new Set();
+
+    // 1. المشغولون بمهام تطوير أو تستر نشطة (لها Estimated Hours > 0)
+    currentData.forEach(s => {
+        const activeTasks = (s.tasks || []).filter(t => 
+            t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed' &&
+            parseFloat(t['Original Estimation'] || 0) > 0
+        );
+        activeTasks.forEach(t => {
+            if (role === 'dev' && ["Development", "DB Modification"].includes(t['Activity'])) {
+                if (s.assignedTo && s.assignedTo !== "Unassigned") busyStaff.add(s.assignedTo);
+            } else if (role === 'tester' && t['Activity'] === 'Testing') {
+                if (s.tester && s.tester !== "Unassigned") busyStaff.add(s.tester);
+            }
+        });
+    });
+
+    // 2. المشغولون بدعم (Support Logs)
+    currentData.forEach(s => {
+        if (s.type === 'Support Log' && s.state !== 'Tested' && s.state !== 'Closed') {
+            if (role === 'dev' && s.assignedTo && s.assignedTo !== "Unassigned") {
+                busyStaff.add(s.assignedTo);
+            }
+            if (role === 'tester' && s.tester && s.tester !== "Unassigned") {
+                busyStaff.add(s.tester);
+            }
+        }
+    });
+
+    // 3. المشغولون ببجز (Bugs) نشطة
+    currentData.forEach(s => {
+        if (s.bugs && s.bugs.length > 0) {
+            s.bugs.forEach(bug => {
+                if (['New', 'Active'].includes(bug['State'])) {
+                    const worker = bug['Assigned To'];
+                    if (worker && worker !== "Unassigned") {
+                        // عادة البجز بتتسند للمطورين، لكن نضيفها للاتنين احتياطاً
+                        busyStaff.add(worker);
+                    }
+                }
+            });
+        }
+    });
+
+    // إرجاع الأسماء غير الموجودة في قائمة المشغولين
+    return Array.from(allStaff).filter(name => !busyStaff.has(name));
+},
+
+// عرض نافذة منبثقة بقائمة الموظفين (عامة)
+showStaffModal(title, list, showStoryCount = true) {
+    const modal = document.getElementById('story-modal');
+    const titleEl = document.getElementById('modal-title');
+    const body = document.getElementById('modal-body');
+
+    titleEl.innerText = title;
+
+    if (!list || list.length === 0) {
+        body.innerHTML = `<div class="text-center py-10 text-gray-400">لا يوجد موظفون في هذه الفئة.</div>`;
+    } else {
+        let html = `<div class="space-y-3">`;
+        list.forEach(name => {
+            if (showStoryCount) {
+                // حساب عدد القصص النشطة لهذا الموظف
+                let count = 0;
+                if (title.includes('Developers')) {
+                    count = currentData.filter(s => s.assignedTo === name && s.state !== 'Tested' && s.state !== 'Closed').length;
+                } else if (title.includes('Testers')) {
+                    count = currentData.filter(s => s.tester === name && s.state !== 'Tested' && s.state !== 'Closed').length;
+                }
+                html += `
+                    <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700">${name}</span>
+                        <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold">${count} Stories</span>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700">${name}</span>
+                        <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">Free</span>
+                    </div>
+                `;
+            }
+        });
+        html += `</div>`;
+        body.innerHTML = html;
+    }
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+},
+
+// دالة الربط بين الأزرار والنافذة (تُستدعى من onclick)
+showStaffDetails(role, type) {
+    if (type === 'active') {
+        const set = new Set();
+        const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
+        activeStories.forEach(s => {
+            if (role === 'dev' && s.assignedTo && s.assignedTo !== "Unassigned") set.add(s.assignedTo);
+            else if (role === 'tester' && s.tester && s.tester !== "Unassigned") set.add(s.tester);
+        });
+        const list = Array.from(set).sort();
+        const title = role === 'dev' ? '👨‍💻 Active Developers' : '🧪 Active Testers';
+        this.showStaffModal(title, list, true);
+    } else {
+        // Free
+        const list = role === 'dev' ? this.getFreeStaff('dev') : this.getFreeStaff('tester');
+        const title = role === 'dev' ? '🟢 Free Developers' : '🟣 Free Testers';
+        this.showStaffModal(title, list, false);
+    }
 },
 
 renderClientRoadmap() {
