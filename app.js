@@ -634,7 +634,6 @@ const ui = {
         areaStateMap[area][state]++;
     });
 
-    // ترتيب الحالات لعرضها كأعمدة ثابتة
     const sortedStates = Array.from(allStates).sort();
 
     let areaStatsHtml = `
@@ -690,7 +689,7 @@ const ui = {
         </div>
     `;
 
-    // --- القسم الثاني: إحصائيات الفروع (Branches) ---
+    // --- القسم الثاني: إحصائيات الفروع (Branches) مع إضافة onclick ---
     const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
     const branchMap = {};
     activeStories.forEach(s => {
@@ -708,7 +707,7 @@ const ui = {
     `;
     sortedBranches.forEach(([branch, count]) => {
         branchStatsHtml += `
-            <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 text-center">
+            <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 text-center cursor-pointer hover:bg-indigo-100 transition" onclick="ui.showBranchModal('${branch}')">
                 <div class="text-xs font-bold text-indigo-600 truncate" title="${branch}">${branch}</div>
                 <div class="text-2xl font-black text-indigo-800">${count}</div>
             </div>
@@ -720,7 +719,7 @@ const ui = {
         </div>
     `;
 
-    // --- القسم الثالث: إحصائيات العملاء (Customers) ---
+    // --- القسم الثالث: إحصائيات العملاء (Customers) مع إضافة onclick ---
     const customerMap = {};
     activeStories.forEach(s => {
         const customer = s.customer || 'General';
@@ -737,7 +736,7 @@ const ui = {
     `;
     sortedCustomers.forEach(([customer, count]) => {
         customerStatsHtml += `
-            <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 text-center">
+            <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 text-center cursor-pointer hover:bg-emerald-100 transition" onclick="ui.showCustomerModal('${customer}')">
                 <div class="text-xs font-bold text-emerald-600 truncate" title="${customer}">${customer}</div>
                 <div class="text-2xl font-black text-emerald-800">${count}</div>
             </div>
@@ -749,7 +748,7 @@ const ui = {
         </div>
     `;
 
-    // --- القسم الرابع: الـ Roadmap (بنفس التصميم القديم) ---
+    // --- القسم الرابع: الـ Roadmap (بدون تغيير) ---
     const roadmapHtml = this.renderClientRoadmap();
 
     // تجميع كل الأقسام في الحاوية
@@ -1990,7 +1989,53 @@ openStoryModal(storyId) {
         if (input) input.focus();
     }, 100);
 },
-     
+ // عرض نافذة منبثقة عامة تحتوي على قائمة قصص مجمعة حسب Business Area
+showModalWithTitleAndStories(title, stories) {
+    const modal = document.getElementById('story-modal');
+    const titleEl = document.getElementById('modal-title');
+    const body = document.getElementById('modal-body');
+
+    titleEl.innerText = title;
+
+    // تجميع حسب Business Area
+    const grouped = stories.reduce((acc, s) => {
+        const area = s.area || "General";
+        if (!acc[area]) acc[area] = [];
+        acc[area].push(s);
+        return acc;
+    }, {});
+
+    let html = '<div class="space-y-4">';
+    for (const area in grouped) {
+        html += `<div class="border-b pb-2"><h4 class="font-bold text-indigo-600">${area}</h4>`;
+        grouped[area].forEach(s => {
+            html += `
+                <div class="flex justify-between items-center border-b border-gray-100 py-1 hover:bg-gray-50 cursor-pointer" onclick="ui.openStoryModal('${s.id}')">
+                    <span class="text-sm">#${s.id} - ${s.title}</span>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-bold ${s.state === 'Tested' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${s.state}</span>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    html += '</div>';
+
+    body.innerHTML = html;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+},
+
+// فتح نافذة قصص فرع معين
+showBranchModal(branch) {
+    const activeStories = currentData.filter(s => s.branch === branch && s.state !== 'Tested' && s.state !== 'Closed');
+    this.showModalWithTitleAndStories(`Branch: ${branch} (${activeStories.length} active stories)`, activeStories);
+},
+
+// فتح نافذة قصص عميل معين
+showCustomerModal(customer) {
+    const activeStories = currentData.filter(s => s.customer === customer && s.state !== 'Tested' && s.state !== 'Closed');
+    this.showModalWithTitleAndStories(`Customer: ${customer} (${activeStories.length} active stories)`, activeStories);
+},    
     
 renderDailyActivity() {
         const container = document.getElementById('daily-activity-container');
