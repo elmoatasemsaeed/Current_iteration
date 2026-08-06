@@ -2954,19 +2954,26 @@ const azureDevOps = {
             const mainRelations = mainData.workItemRelations || [];
             const mainIds = [...new Set(mainRelations.map(r => r.target ? r.target.id : null).filter(id => id))];
 
-            // 2. جلب IDs من استعلام Backlog
+            // 2. جلب IDs من استعلام Backlog (يدعم الفلات كويري)
             let backlogIds = [];
             if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
                 const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
                 const backlogRes = await fetch(backlogQueryUrl, { headers: { 'Authorization': authHeader } });
                 const backlogData = await backlogRes.json();
-                backlogIds = (backlogData.workItemRelations || []).map(r => r.target ? r.target.id : null).filter(id => id);
+                
+                if (backlogData.workItemRelations && backlogData.workItemRelations.length > 0) {
+                    backlogIds = backlogData.workItemRelations.map(r => r.target ? r.target.id : null).filter(id => id);
+                } else if (backlogData.workItems && backlogData.workItems.length > 0) {
+                    backlogIds = backlogData.workItems.map(wi => wi.id).filter(id => id);
+                }
+                console.log(`✅ Backlog IDs extracted: ${backlogIds.length}`);
             }
 
+            // 3. دمج المعرفات لجلب التفاصيل دفعة واحدة
             const allIds = [...new Set([...mainIds, ...backlogIds])];
             if (allIds.length === 0) throw new Error("No items found in the specified queries.");
 
-            // 3. جلب تفاصيل جميع العناصر دفعات
+            // 4. جلب تفاصيل جميع العناصر دفعات (Batch)
             const chunkSize = 200;
             let allDetails = [];
             for (let i = 0; i < allIds.length; i += chunkSize) {
@@ -2981,21 +2988,23 @@ const azureDevOps = {
                 allDetails = allDetails.concat(batchData.value);
             }
 
-            // 4. بناء خريطة التفاصيل
+            // 5. بناء خريطة للتفاصيل
             const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
 
-            // 5. بناء صفوف الاستعلام الرئيسي باستخدام العلاقات (نفس الكود القديم)
+            // 6. معالجة القصص الرئيسية (باستخدام العلاقات لضمان الترتيب الصحيح)
             const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
             dataProcessor.processRows(mainRows);
 
-            // 6. بناء صفوف Backlog
+            // 7. معالجة قصص Backlog (باستخدام المعرفات الخاصة بها)
             const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
             const backlogRows = this.buildBacklogRows(backlogDetails);
             dataProcessor.processBacklogRows(backlogRows);
 
+            alert("✅ تمت المزامنة بنجاح مع Azure!");
+
         } catch (error) {
             console.error("Azure Sync Error:", error);
-            alert("فشل الاتصال بـ Azure: " + error.message);
+            alert("❌ فشل الاتصال بـ Azure: " + error.message);
         } finally {
             syncBtn.innerHTML = "🔄 <span class='hidden md:inline'>Sync from Azure</span>";
             syncBtn.disabled = false;
