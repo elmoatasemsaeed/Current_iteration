@@ -11,6 +11,12 @@ const CONFIG = {
     WEEKEND: [5, 6], // الجمعة والسبت
     BACKLOG_MONTHS: 2 // عدد الأشهر للـ Roadmap
 };
+const AZURE_CONFIG = {
+    ORG: "NTDotNet",
+    PROJECT: "LDM",
+    QUERY_ID: "8a732680-07a6-4dff-bdbd-7800644f61b9",
+    BACKLOG_QUERY_ID: "8e60a3dd-d754-44d2-95ec-993c4e0d135b"
+};
 
 let db = {
     users: [],
@@ -2931,15 +2937,7 @@ const commentManager = {
  */
 const azureDevOps = {
     async sync() {
-    const pat = sessionStorage.getItem('az_pat');
-    const savedSettings = JSON.parse(localStorage.getItem('az_settings')) || {};
-    const settings = {
-        org: "NTDotNet",
-        project: "LDM",
-        queryId: "8a732680-07a6-4dff-bdbd-7800644f61b9",
-        backlogQueryId: "8e60a3dd-d754-44d2-95ec-993c4e0d135b"
-    };
-
+        const pat = sessionStorage.getItem('az_pat');
         if (!pat) return alert("Azure PAT is missing. Please login again.");
 
         const syncBtn = document.querySelector("button[onclick='azureDevOps.sync()']");
@@ -2949,32 +2947,31 @@ const azureDevOps = {
         try {
             const authHeader = 'Basic ' + btoa(':' + pat);
 
-            const fetchIds = async (queryId) => {
-                if (!queryId) return [];
-                const url = `https://dev.azure.com/${settings.org}/${settings.project}/_apis/wit/wiql/${queryId}?api-version=6.0`;
-                const res = await fetch(url, { headers: { 'Authorization': authHeader } });
-                const data = await res.json();
-                if (data.workItemRelations) {
-                    return data.workItemRelations.map(r => r.target ? r.target.id : null).filter(id => id);
-                } else if (data.workItems) {
-                    return data.workItems.map(wi => wi.id).filter(id => id);
-                }
-                return [];
-            };
+            // 1. جلب علاقات الاستعلام الرئيسي
+            const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
+            const mainRes = await fetch(mainQueryUrl, { headers: { 'Authorization': authHeader } });
+            const mainData = await mainRes.json();
+            const mainRelations = mainData.workItemRelations || [];
+            const mainIds = [...new Set(mainRelations.map(r => r.target ? r.target.id : null).filter(id => id))];
 
-            const mainIds = await fetchIds(settings.queryId);
-            const backlogIds = await fetchIds(settings.backlogQueryId);
-
-            console.log(`Main IDs: ${mainIds.length}, Backlog IDs: ${backlogIds.length}`);
+            // 2. جلب IDs من استعلام Backlog
+            let backlogIds = [];
+            if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
+                const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
+                const backlogRes = await fetch(backlogQueryUrl, { headers: { 'Authorization': authHeader } });
+                const backlogData = await backlogRes.json();
+                backlogIds = (backlogData.workItemRelations || []).map(r => r.target ? r.target.id : null).filter(id => id);
+            }
 
             const allIds = [...new Set([...mainIds, ...backlogIds])];
             if (allIds.length === 0) throw new Error("No items found in the specified queries.");
 
+            // 3. جلب تفاصيل جميع العناصر دفعات
             const chunkSize = 200;
             let allDetails = [];
             for (let i = 0; i < allIds.length; i += chunkSize) {
                 const chunk = allIds.slice(i, i + chunkSize);
-                const batchUrl = `https://dev.azure.com/${settings.org}/_apis/wit/workitemsbatch?api-version=6.0`;
+                const batchUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
                 const batchRes = await fetch(batchUrl, {
                     method: 'POST',
                     headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
@@ -2984,14 +2981,15 @@ const azureDevOps = {
                 allDetails = allDetails.concat(batchData.value);
             }
 
-            const mainDetails = allDetails.filter(d => mainIds.includes(d.id));
-            const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
+            // 4. بناء خريطة التفاصيل
+            const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
 
-            // Process main query
-            const mainRows = this.buildRowsFromDetails(mainDetails);
+            // 5. بناء صفوف الاستعلام الرئيسي باستخدام العلاقات (نفس الكود القديم)
+            const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
             dataProcessor.processRows(mainRows);
 
-            // Process backlog query
+            // 6. بناء صفوف Backlog
+            const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
             const backlogRows = this.buildBacklogRows(backlogDetails);
             dataProcessor.processBacklogRows(backlogRows);
 
@@ -3004,25 +3002,16 @@ const azureDevOps = {
         }
     },
 
-    getRequiredFields() {
-        return [
-            "System.Id", "System.WorkItemType", "System.Title", "System.AssignedTo",
-            "Microsoft.VSTS.Common.Activity", "NT.OriginalEstimation",
-            "Custom.TimeSheet_DevActualTime", "Custom.TimeSheet_TestingActualTime",
-            "Microsoft.VSTS.Common.ActivatedDate", "MyCompany.MyProcess.BusinessArea",
-            "System.IterationPath", "Custom.CustomResolvedDate", "MyCompany.MyProcess.TestedDate",
-            "MyCompany.MyProcess.Tester", "Microsoft.VSTS.Common.ResolvedDate",
-            "System.State", "MyCompany.MyProcess.Release", "MyCompany.MyProcess.BusinessPriority",
-            "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer"
-        ];
-    },
-
-    buildRowsFromDetails(details) {
+    // دالة بناء الصفوف من العلاقات (مأخوذة من الكود القديم)
+    buildRowsFromRelations(relations, detailsMap) {
         const rows = [];
-        details.forEach(d => {
-            const fields = d.fields || {};
+        relations.forEach(rel => {
+            if (!rel.target) return;
+            const fields = detailsMap.get(rel.target.id);
+            if (!fields) return;
+
             rows.push({
-                'ID': d.id,
+                'ID': rel.target.id,
                 'Work Item Type': fields["System.WorkItemType"],
                 'Title': fields["System.Title"],
                 'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
@@ -3049,40 +3038,50 @@ const azureDevOps = {
         return rows;
     },
 
-buildBacklogRows(details) {
-    const rows = [];
-    details.forEach(d => {
-        const fields = d.fields || {};
-        const state = fields["System.State"] || "";
-        if (!["New", "Approved"].includes(state)) return;
+    getRequiredFields() {
+        return [
+            "System.Id", "System.WorkItemType", "System.Title", "System.AssignedTo",
+            "Microsoft.VSTS.Common.Activity", "NT.OriginalEstimation",
+            "Custom.TimeSheet_DevActualTime", "Custom.TimeSheet_TestingActualTime",
+            "Microsoft.VSTS.Common.ActivatedDate", "MyCompany.MyProcess.BusinessArea",
+            "System.IterationPath", "Custom.CustomResolvedDate", "MyCompany.MyProcess.TestedDate",
+            "MyCompany.MyProcess.Tester", "Microsoft.VSTS.Common.ResolvedDate",
+            "System.State", "MyCompany.MyProcess.Release", "MyCompany.MyProcess.BusinessPriority",
+            "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer"
+        ];
+    },
 
-        let area = fields["MyCompany.MyProcess.BusinessArea"] || "";
-        if (area && area.trim().toLowerCase() === "integration") {
-            area = "LDM Integration";
-        }
-        if (!area || area.trim() === "") {
-            const path = fields["System.IterationPath"] || "";
-            area = path.includes('\\') ? path.split('\\')[0] : path;
-        }
+    buildBacklogRows(details) {
+        const rows = [];
+        details.forEach(d => {
+            const fields = d.fields || {};
+            const state = fields["System.State"] || "";
+            if (!["New", "Approved"].includes(state)) return;
 
-        rows.push({
-            'ID': d.id,
-            'Work Item Type': fields["System.WorkItemType"] || "User Story",
-            'Title': fields["System.Title"] || "Untitled",
-            'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
-            'Business Area': area,
-            'State': state,
-            'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
-            'Release Expected Date': fields["MyCompany.MyProcess.Release"] ? new Date(fields["MyCompany.MyProcess.Release"]) : null,
-            'Tags': fields["System.Tags"] || "",
-            'Iteration Path': fields["System.IterationPath"] || "",
-            'Changed Date': fields["System.ChangedDate"] ? new Date(fields["System.ChangedDate"]) : null
+            let area = fields["MyCompany.MyProcess.BusinessArea"] || "";
+            if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
+            if (!area || area.trim() === "") {
+                const path = fields["System.IterationPath"] || "";
+                area = path.includes('\\') ? path.split('\\')[0] : path;
+            }
+
+            rows.push({
+                'ID': d.id,
+                'Work Item Type': fields["System.WorkItemType"] || "User Story",
+                'Title': fields["System.Title"] || "Untitled",
+                'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
+                'Business Area': area,
+                'State': state,
+                'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
+                'Release Expected Date': fields["MyCompany.MyProcess.Release"] ? new Date(fields["MyCompany.MyProcess.Release"]) : null,
+                'Tags': fields["System.Tags"] || "",
+                'Iteration Path': fields["System.IterationPath"] || "",
+                'Changed Date': fields["System.ChangedDate"] ? new Date(fields["System.ChangedDate"]) : null
+            });
         });
-    });
-    console.log(`Backlog rows built: ${rows.length}`);
-    return rows;
-},
-
+        return rows;
+    },
+    
     saveSettings() {
         const settings = {
             org: document.getElementById('az-org').value,
