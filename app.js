@@ -173,9 +173,68 @@ const auth = {
 };
 
 /**
- * Data Processing Engine
+ * Data Processing Engine - with concurrency fix
  */
 const dataProcessor = {
+    _savePromise: null,   // lock to prevent concurrent saves
+
+    async saveToGitHub() {
+        if (this._savePromise) {
+            return this._savePromise;
+        }
+        this._savePromise = this._saveToGitHubInternal()
+            .finally(() => { this._savePromise = null; });
+        return this._savePromise;
+    },
+
+    async _saveToGitHubInternal() {
+        const token = sessionStorage.getItem('gh_token');
+        if (!token) throw new Error('GitHub token missing');
+
+        // 1. Fetch latest SHA
+        const timestamp = Date.now();
+        const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}?t=${timestamp}`, {
+            headers: { 'Authorization': `token ${token}` }
+        });
+        if (!metaRes.ok) {
+            throw new Error(`Failed to get metadata: ${metaRes.status}`);
+        }
+        const metaData = await metaRes.json();
+        const latestSha = metaData.sha;
+
+        // 2. Prepare data
+        const dataToSave = { ...db };
+        delete dataToSave.sha;
+        const jsonString = JSON.stringify(dataToSave, null, 2);
+        const content = btoa(unescape(encodeURIComponent(jsonString)));
+
+        // 3. Save
+        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+            method: 'PUT',
+            headers: { 'Authorization': `token ${token}` },
+            body: JSON.stringify({
+                message: `Update db.json [${new Date().toLocaleString()}]`,
+                content: content,
+                sha: latestSha
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            if (response.status === 409) {
+                console.warn('Conflict detected, retrying...');
+                // Retry once with fresh SHA
+                return this._saveToGitHubInternal();
+            }
+            throw new Error(error.message);
+        }
+
+        const result = await response.json();
+        db.sha = result.content.sha;
+        console.log('Saved successfully with new SHA');
+        return result;
+    },
+
     async sync() {
         const token = sessionStorage.getItem('gh_token');
         try {
@@ -214,53 +273,6 @@ const dataProcessor = {
             alert("خطأ في المزامنة مع GitHub: " + e.message); 
         }
     },    
-
-    async saveToGitHub() {
-        const token = sessionStorage.getItem('gh_token');
-        if(!token) return;
-
-        try {
-            const timestamp = new Date().getTime();
-            const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}?t=${timestamp}`, {
-                headers: { 'Authorization': `token ${token}` }
-            });
-            
-            const metaData = await metaRes.json();
-            const latestSha = metaData.sha;
-
-            if (!latestSha) {
-                throw new Error("Could not retrieve file SHA from GitHub");
-            }
-
-            const dataToSave = { ...db };
-            delete dataToSave.sha; 
-
-            const jsonString = JSON.stringify(dataToSave, null, 2);
-            const content = btoa(unescape(encodeURIComponent(jsonString)));
-
-            const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${token}` },
-                body: JSON.stringify({
-                    message: `Update db.json [${new Date().toLocaleString()}]`,
-                    content: content,
-                    sha: latestSha 
-                })
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                db.sha = result.content.sha;
-                console.log("Saved successfully with new SHA");
-            } else {
-                const errorDetails = await response.json();
-                throw new Error(errorDetails.message);
-            }
-        } catch (e) {
-            console.error("Save Error:", e);
-            alert("فشل الحفظ: " + e.message);
-        }
-    },
 
     handleCSV(event) {
         const file = event.target.files[0];
@@ -352,8 +364,8 @@ const dataProcessor = {
 
     // NEW: Process backlog rows from second query
     processBacklogRows(rows) {
+        console.log(`Processing ${rows.length} backlog rows`);
         const backlogStories = rows.map(row => {
-            // Only User Stories with New or Approved state
             const state = row['State'] || "";
             if (!["New", "Approved"].includes(state)) return null;
             
@@ -387,8 +399,13 @@ const dataProcessor = {
         }).filter(s => s !== null);
 
         db.backlogStories = backlogStories;
-        this.saveToGitHub();
-        ui.renderAll();
+        this.saveToGitHub().then(() => {
+            console.log(`Saved ${backlogStories.length} backlog stories`);
+            ui.renderAll();
+        }).catch(err => {
+            console.error('Failed to save backlog:', err);
+            alert('فشل حفظ الباك لوج: ' + err.message);
+        });
     },
 
     calculateTimelines(stories) {
@@ -2920,6 +2937,8 @@ const azureDevOps = {
             const mainIds = await fetchIds(settings.queryId);
             const backlogIds = await fetchIds(settings.backlogQueryId);
 
+            console.log(`Main IDs: ${mainIds.length}, Backlog IDs: ${backlogIds.length}`);
+
             const allIds = [...new Set([...mainIds, ...backlogIds])];
             if (allIds.length === 0) throw new Error("No items found in the specified queries.");
 
@@ -3023,6 +3042,7 @@ const azureDevOps = {
                 'Changed Date': fields["System.ChangedDate"]
             });
         });
+        console.log(`Backlog rows built: ${rows.length}`);
         return rows;
     },
 
