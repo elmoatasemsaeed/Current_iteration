@@ -2905,7 +2905,7 @@ const commentManager = {
 };
 
 /**
- * Azure DevOps Integration
+ * Azure DevOps Integration 
  */
 const azureDevOps = {
     async sync() {
