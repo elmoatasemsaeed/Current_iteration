@@ -2904,13 +2904,14 @@ const commentManager = {
  */
 const azureDevOps = {
     async sync() {
-        const pat = sessionStorage.getItem('az_pat');
-        const settings = JSON.parse(localStorage.getItem('az_settings')) || {
-            org: "NTDotNet",
-            project: "LDM",
-            queryId: "8a732680-07a6-4dff-bdbd-7800644f61b9",
-            backlogQueryId: "8e60a3dd-d754-44d2-95ec-993c4e0d135b"
-        };
+    const pat = sessionStorage.getItem('az_pat');
+    const savedSettings = JSON.parse(localStorage.getItem('az_settings')) || {};
+    const settings = {
+        org: "NTDotNet",
+        project: "LDM",
+        queryId: "8a732680-07a6-4dff-bdbd-7800644f61b9",
+        backlogQueryId: "8e60a3dd-d754-44d2-95ec-993c4e0d135b"
+    };
 
         if (!pat) return alert("Azure PAT is missing. Please login again.");
 
@@ -3021,30 +3022,40 @@ const azureDevOps = {
         return rows;
     },
 
-    buildBacklogRows(details) {
-        const rows = [];
-        details.forEach(d => {
-            const fields = d.fields || {};
-            const state = fields["System.State"] || "";
-            // Only New or Approved
-            if (!["New", "Approved"].includes(state)) return;
-            rows.push({
-                'ID': d.id,
-                'Work Item Type': fields["System.WorkItemType"] || "User Story",
-                'Title': fields["System.Title"] || "Untitled",
-                'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
-                'Business Area': fields["MyCompany.MyProcess.BusinessArea"] || "General",
-                'State': state,
-                'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
-                'Release Expected Date': fields["MyCompany.MyProcess.Release"],
-                'Tags': fields["System.Tags"] || "",
-                'Iteration Path': fields["System.IterationPath"] || "",
-                'Changed Date': fields["System.ChangedDate"]
-            });
+buildBacklogRows(details) {
+    const rows = [];
+    details.forEach(d => {
+        const fields = d.fields || {};
+        const state = fields["System.State"] || "";
+        if (!["New", "Approved"].includes(state)) return;
+
+        // --- معالجة Business Area بنفس طريقة الكويري الأساسية ---
+        let area = fields["MyCompany.MyProcess.BusinessArea"] || "";
+        if (area && area.trim().toLowerCase() === "integration") {
+            area = "LDM Integration";
+        }
+        if (!area || area.trim() === "") {
+            const path = fields["System.IterationPath"] || "";
+            area = path.includes('\\') ? path.split('\\')[0] : path;
+        }
+
+        rows.push({
+            'ID': d.id,
+            'Work Item Type': fields["System.WorkItemType"] || "User Story",
+            'Title': fields["System.Title"] || "Untitled",
+            'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
+            'Business Area': area,   // ← استخدم القيمة المعالجة
+            'State': state,
+            'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
+            'Release Expected Date': fields["MyCompany.MyProcess.Release"],
+            'Tags': fields["System.Tags"] || "",
+            'Iteration Path': fields["System.IterationPath"] || "",
+            'Changed Date': fields["System.ChangedDate"]
         });
-        console.log(`Backlog rows built: ${rows.length}`);
-        return rows;
-    },
+    });
+    console.log(`Backlog rows built: ${rows.length}`);
+    return rows;
+},
 
     saveSettings() {
         const settings = {
