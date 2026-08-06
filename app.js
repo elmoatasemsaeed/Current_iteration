@@ -813,66 +813,69 @@ const ui = {
     },
 
     // Modified to accept stories array and show 2 months
-    renderClientRoadmap(stories = []) {
-        const today = new Date();
-        const twoMonthsLater = new Date();
-        twoMonthsLater.setMonth(twoMonthsLater.getMonth() + CONFIG.BACKLOG_MONTHS);
+   renderClientRoadmap(stories = []) {
+    const today = new Date();
+    const twoMonthsLater = new Date();
+    twoMonthsLater.setMonth(twoMonthsLater.getMonth() + CONFIG.BACKLOG_MONTHS);
 
-        const upcomingDeliveries = stories.filter(s => {
-            if (!s.expectedRelease || !(s.expectedRelease instanceof Date)) return false;
-            const isNotDone = s.state !== 'Tested' && s.state !== 'Closed';
-            const isWithinRange = s.expectedRelease >= today && s.expectedRelease <= twoMonthsLater;
-            return isNotDone && isWithinRange;
-        });
+    const upcomingDeliveries = stories.filter(s => {
+        if (!s.expectedRelease || !(s.expectedRelease instanceof Date)) return false;
+        const isNotDone = s.state !== 'Tested' && s.state !== 'Closed';
+        const isWithinRange = s.expectedRelease >= today && s.expectedRelease <= twoMonthsLater;
+        return isNotDone && isWithinRange;
+    });
 
-        upcomingDeliveries.sort((a, b) => a.expectedRelease - b.expectedRelease);
+    upcomingDeliveries.sort((a, b) => a.expectedRelease - b.expectedRelease);
 
-        let html = `
-            <div class="bg-white p-6 rounded-xl shadow-sm border">
-                <h3 class="font-bold text-indigo-700 mb-4 flex items-center gap-2">
-                    🚀 Client Delivery Roadmap (Next ${CONFIG.BACKLOG_MONTHS} Months)
-                    <span class="text-xs font-normal text-gray-400 ml-2">(${upcomingDeliveries.length} items)</span>
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="roadmap-container">
-        `;
+    let html = `
+        <div class="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 class="font-bold text-indigo-700 mb-4 flex items-center gap-2">
+                🚀 Client Delivery Roadmap (Next ${CONFIG.BACKLOG_MONTHS} Months)
+                <span class="text-xs font-normal text-gray-400 ml-2">(${upcomingDeliveries.length} items)</span>
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="roadmap-container">
+    `;
 
-        if (upcomingDeliveries.length === 0) {
-            html += `<div class="col-span-full text-center py-8 text-gray-400">No client deliveries expected in the next ${CONFIG.BACKLOG_MONTHS} months.</div>`;
-        } else {
-            html += upcomingDeliveries.map(s => {
-                const diffTime = Math.abs(s.expectedRelease - today);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
-                let urgencyClass = "border-blue-200 bg-white";
-                if (diffDays <= 7) urgencyClass = "border-amber-400 bg-amber-50";
-                if (diffDays <= 3) urgencyClass = "border-red-400 bg-red-50";
-                
-                const isBacklog = isBacklogStory(s) ? '📋 ' : '';
+    if (upcomingDeliveries.length === 0) {
+        html += `<div class="col-span-full text-center py-8 text-gray-400">No client deliveries expected in the next ${CONFIG.BACKLOG_MONTHS} months.</div>`;
+    } else {
+        html += upcomingDeliveries.map(s => {
+            const diffTime = Math.abs(s.expectedRelease - today);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            let urgencyClass = "border-blue-200 bg-white";
+            if (diffDays <= 7) urgencyClass = "border-amber-400 bg-amber-50";
+            if (diffDays <= 3) urgencyClass = "border-red-400 bg-red-50";
+            
+            const isBacklog = isBacklogStory(s) ? '📋 ' : '';
 
-                return `
-                    <div class="p-4 rounded-xl border-2 ${urgencyClass} shadow-sm ${isBacklogStory(s) ? 'border-dashed' : ''}">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">In ${diffDays} Days</span>
+            return `
+                <div class="p-4 rounded-xl border-2 ${urgencyClass} shadow-sm ${isBacklogStory(s) ? 'border-dashed' : ''}">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">In ${diffDays} Days</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">P${s.priority || '?'}</span>
                             <span class="text-[10px] text-gray-400">#${s.id}</span>
                         </div>
-                        <div class="text-sm font-bold text-slate-800 truncate" title="${s.title}">${isBacklog}${s.title}</div>
-                        <div class="text-[11px] text-gray-500 mt-1">Area: ${s.area}</div>
-                        ${isBacklogStory(s) ? '<div class="text-[10px] text-purple-600 font-bold mt-1">📋 Backlog</div>' : ''}
-                        <div class="mt-3 flex justify-between items-center">
-                            <div class="text-[10px] font-bold uppercase text-gray-400">Release:</div>
-                            <div class="text-xs font-bold text-slate-700">${s.expectedRelease.toLocaleDateString('en-GB')}</div>
-                        </div>
-                        <div class="mt-2 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full ${isBacklogStory(s) ? 'bg-purple-400' : 'bg-indigo-500'}" style="width: ${s.state === 'Resolved' ? '80%' : '40%'}"></div>
-                        </div>
                     </div>
-                `;
-            }).join('');
-        }
+                    <div class="text-sm font-bold text-slate-800 truncate" title="${s.title}">${isBacklog}${s.title}</div>
+                    <div class="text-[11px] text-gray-500 mt-1">Area: ${s.area}</div>
+                    ${isBacklogStory(s) ? '<div class="text-[10px] text-purple-600 font-bold mt-1">📋 Backlog</div>' : ''}
+                    <div class="mt-3 flex justify-between items-center">
+                        <div class="text-[10px] font-bold uppercase text-gray-400">Release:</div>
+                        <div class="text-xs font-bold text-slate-700">${s.expectedRelease.toLocaleDateString('en-GB')}</div>
+                    </div>
+                    <div class="mt-2 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full ${isBacklogStory(s) ? 'bg-purple-400' : 'bg-indigo-500'}" style="width: ${s.state === 'Resolved' ? '80%' : '40%'}"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
 
-        html += `</div></div>`;
-        return html;
-    },
+    html += `</div></div>`;
+    return html;
+},
 
     getFreeStaff(role) {
         const allStaff = new Set();
@@ -1298,174 +1301,172 @@ const ui = {
     },
 
     renderKanban() {
-    const container = document.getElementById('kanban-container');
-    const filterSelect = document.getElementById('kanban-ba-filter');
-    
-    // Combine current stories (non-backlog) and backlog stories for filtering
-    const allStories = [...currentData.filter(s => !isBacklogStory(s)), ...db.backlogStories];
-    if (allStories.length === 0) return;
+        const container = document.getElementById('kanban-container');
+        const filterSelect = document.getElementById('kanban-ba-filter');
+        
+        // Combine current stories (non-backlog) and backlog stories for filtering
+        const allStories = [...currentData.filter(s => !isBacklogStory(s)), ...db.backlogStories];
+        if (allStories.length === 0) return;
 
-    const areas = [...new Set(allStories.map(s => s.area || "General"))].sort();
-    
-    const currentSelected = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
-    filterSelect.multiple = true;
-    filterSelect.size = Math.min(areas.length, 5);
+        const areas = [...new Set(allStories.map(s => s.area || "General"))].sort();
+        
+        const currentSelected = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
+        filterSelect.multiple = true;
+        filterSelect.size = Math.min(areas.length, 5);
 
-    filterSelect.innerHTML = areas.map(a => {
-        const selected = currentSelected.includes(a) ? 'selected' : '';
-        return `<option value="${a}" ${selected}>${a}</option>`;
-    }).join('');
+        filterSelect.innerHTML = areas.map(a => {
+            const selected = currentSelected.includes(a) ? 'selected' : '';
+            return `<option value="${a}" ${selected}>${a}</option>`;
+        }).join('');
 
-    filterSelect.onchange = () => {
-        this.renderKanban();
-    };
+        filterSelect.onchange = () => {
+            this.renderKanban();
+        };
 
-    let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
-    if (selectedAreas.length === 0) {
-        selectedAreas = areas;
-    }
-
-    const filteredStories = allStories.filter(s => selectedAreas.includes(s.area || "General"));
-
-    // Define columns: Backlog first, then the rest
-    const states = ["Backlog", "Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
-
-    container.innerHTML = states.map(state => {
-        let storiesInState;
-        if (state === "Backlog") {
-            // Only backlog stories
-            storiesInState = filteredStories.filter(s => isBacklogStory(s));
-            // ترتيب حسب الأولوية تصاعدياً (الأصغر أولاً)
-            storiesInState.sort((a, b) => (a.priority || 999) - (b.priority || 999));
-        } else {
-            // Non-backlog stories with matching state
-            storiesInState = filteredStories.filter(s => !isBacklogStory(s) && s.state === state);
+        let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
+        if (selectedAreas.length === 0) {
+            selectedAreas = areas;
         }
-        
-        const columnColor = state === "Backlog" ? "bg-purple-50 border-purple-200" : "bg-gray-50 border-gray-200";
-        const headerColor = state === "Backlog" ? "bg-purple-100 text-purple-800" : "bg-gray-100 text-gray-700";
-        
-        return `
-            <div class="flex-shrink-0 w-80 ${columnColor} rounded-xl border flex flex-col max-h-screen">
-                <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                    <h3 class="font-bold ${state === 'Backlog' ? 'text-purple-700' : 'text-slate-700'}">${state}</h3>
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
-                </div>
-                <div class="p-2 space-y-3 overflow-y-auto">
-                    ${storiesInState.map(s => {
-                        if (isBacklogStory(s)) {
-                            // Backlog card - simplified
-                            const tagsList = s.tags || [];
+
+        const filteredStories = allStories.filter(s => selectedAreas.includes(s.area || "General"));
+
+        // Define columns: Backlog first, then the rest
+        const states = ["Backlog", "Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
+
+        container.innerHTML = states.map(state => {
+            let storiesInState;
+            if (state === "Backlog") {
+                // Only backlog stories
+                storiesInState = filteredStories.filter(s => isBacklogStory(s));
+            } else {
+                // Non-backlog stories with matching state
+                storiesInState = filteredStories.filter(s => !isBacklogStory(s) && s.state === state);
+            }
+            
+            const columnColor = state === "Backlog" ? "bg-purple-50 border-purple-200" : "bg-gray-50 border-gray-200";
+            const headerColor = state === "Backlog" ? "bg-purple-100 text-purple-800" : "bg-gray-100 text-gray-700";
+            
+            return `
+                <div class="flex-shrink-0 w-80 ${columnColor} rounded-xl border flex flex-col max-h-screen">
+                    <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
+                        <h3 class="font-bold ${state === 'Backlog' ? 'text-purple-700' : 'text-slate-700'}">${state}</h3>
+                        <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
+                    </div>
+                    <div class="p-2 space-y-3 overflow-y-auto">
+                        ${storiesInState.map(s => {
+                            if (isBacklogStory(s)) {
+                                // Backlog card - simplified
+                                const tagsList = s.tags || [];
+                                return `
+                                    <div class="bg-white p-3 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
+                                        ${tagsList.length > 0 ? `
+                                        <div class="flex flex-wrap gap-1 mb-2">
+                                            ${tagsList.map(tag => `<span class="bg-purple-50 text-purple-600 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
+                                        </div>` : ''}
+                                        <div class="flex justify-between items-center mb-2">
+                                            <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-purple-600 cursor-pointer hover:underline">#${s.id} 🔍</div>
+                                        </div>
+                                        <div class="text-sm font-semibold text-slate-800 mb-2 line-clamp-2">${s.title}</div>
+                                        <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
+                                            <div>
+                                                <div class="text-gray-400 uppercase font-bold text-[9px]">Area</div>
+                                                <div class="text-slate-700 truncate">${s.area}</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div>
+                                                <div class="text-slate-700 font-bold">P${s.priority}</div>
+                                            </div>
+                                        </div>
+                                        ${s.expectedRelease ? `
+                                        <div class="mt-2 text-[10px] text-purple-600 border-t border-purple-100 pt-1">
+                                            📅 Release: ${s.expectedRelease.toLocaleDateString('en-GB')}
+                                        </div>` : ''}
+                                    </div>
+                                `;
+                            }
+
+                            // Regular story card (existing logic)
+                            const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+                            const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                            const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
+                                                                            .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                            const devEstRemaining = Math.max(0, devEstTotal - devEstCompleted);
+
+                            const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
+                                                                  .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                            
+                            const tagsList = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
+
+                            const totalBugs = s.bugs ? s.bugs.length : 0;
+                            const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State'])).length : 0;
+
+                            const totalBugEffort = s.bugs ? s.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
+                            const completedBugEffort = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State']))
+                                                                              .reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
+                            const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
+                            const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
+
+                            const testCases = s.testCases || [];
+                            const totalTC = testCases.length;
+                            const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
+
+                            const commentsCount = s.standupComments ? s.standupComments.length : 0;
+
                             return `
-                                <div class="bg-white p-3 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
+                                <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
                                     ${tagsList.length > 0 ? `
                                     <div class="flex flex-wrap gap-1 mb-2">
-                                        ${tagsList.map(tag => `<span class="bg-purple-50 text-purple-600 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
+                                        ${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
                                     </div>` : ''}
+
                                     <div class="flex justify-between items-center mb-2">
-                                        <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-purple-600 cursor-pointer hover:underline">#${s.id} 🔍</div>
+                                        <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
+                                        <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100" title="Standup Comments">
+                                            💬 <span class="font-bold">${commentsCount}</span>
+                                        </button>
                                     </div>
-                                    <div class="text-sm font-semibold text-slate-800 mb-2 line-clamp-2">${s.title}</div>
-                                    <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
-                                        <div>
-                                            <div class="text-gray-400 uppercase font-bold text-[9px]">Area</div>
-                                            <div class="text-slate-700 truncate">${s.area}</div>
+                                    
+                                    <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
+                                    
+                                    <div class="grid grid-cols-2 gap-2 border-t pt-2">
+                                        <div class="text-[11px]">
+                                            <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
+                                            <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
+                                            <div class="flex justify-between items-center mt-1">
+                                                <span class="text-blue-500 font-bold" title="Remaining / Total Estimation">${devEstRemaining}/${devEstTotal}h</span>
+                                                <span class="text-red-500 text-[10px] font-bold" title="Completed Bugs">🐞${completedBugs}/${totalBugs}</span>
+                                            </div>
+                                            ${totalBugEffort > 0 ? `
+                                            <div class="flex justify-between items-center mt-1 text-[10px] text-gray-600 border-t border-dashed border-gray-200 pt-1">
+                                                <span class="font-bold text-gray-500">Bug Effort:</span>
+                                                <span class="font-mono">${remainingBugEffort.toFixed(1)}/${totalBugEffort.toFixed(1)}h</span>
+                                                <span class="text-xs font-bold ${remainingBugEffort === 0 ? 'text-green-600' : 'text-amber-600'}">
+                                                    ${bugProgressPercent}%
+                                                </span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 h-0.5 rounded-full mt-0.5">
+                                                <div class="${remainingBugEffort === 0 ? 'bg-green-500' : 'bg-amber-500'} h-full rounded-full" style="width: ${bugProgressPercent}%"></div>
+                                            </div>
+                                            ` : ''}
                                         </div>
-                                        <div>
-                                            <div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div>
-                                            <div class="text-slate-700 font-bold">P${s.priority}</div>
+                                        <div class="text-[11px] border-l pl-2">
+                                            <div class="text-gray-400 uppercase font-bold text-[9px]">Tester</div>
+                                            <div class="text-slate-700 truncate font-medium">${s.tester}</div>
+                                            <div class="flex justify-between items-center mt-1">
+                                                <span class="text-green-500 font-bold">${testEst}h</span>
+                                                <span class="text-indigo-500 text-[10px] font-bold" title="Completed Test Cases">📋${completedTC}/${totalTC}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    ${s.expectedRelease ? `
-                                    <div class="mt-2 text-[10px] text-purple-600 border-t border-purple-100 pt-1">
-                                        📅 Release: ${s.expectedRelease.toLocaleDateString('en-GB')}
-                                    </div>` : ''}
                                 </div>
                             `;
-                        }
-
-                        // Regular story card (existing logic)
-                        const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-                        const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                        const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
-                                                                        .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                        const devEstRemaining = Math.max(0, devEstTotal - devEstCompleted);
-
-                        const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
-                                                              .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                        
-                        const tagsList = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
-
-                        const totalBugs = s.bugs ? s.bugs.length : 0;
-                        const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State'])).length : 0;
-
-                        const totalBugEffort = s.bugs ? s.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-                        const completedBugEffort = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State']))
-                                                                          .reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-                        const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
-                        const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
-
-                        const testCases = s.testCases || [];
-                        const totalTC = testCases.length;
-                        const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
-
-                        const commentsCount = s.standupComments ? s.standupComments.length : 0;
-
-                        return `
-                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
-                                ${tagsList.length > 0 ? `
-                                <div class="flex flex-wrap gap-1 mb-2">
-                                    ${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
-                                </div>` : ''}
-
-                                <div class="flex justify-between items-center mb-2">
-                                    <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
-                                    <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100" title="Standup Comments">
-                                        💬 <span class="font-bold">${commentsCount}</span>
-                                    </button>
-                                </div>
-                                
-                                <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
-                                
-                                <div class="grid grid-cols-2 gap-2 border-t pt-2">
-                                    <div class="text-[11px]">
-                                        <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
-                                        <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
-                                        <div class="flex justify-between items-center mt-1">
-                                            <span class="text-blue-500 font-bold" title="Remaining / Total Estimation">${devEstRemaining}/${devEstTotal}h</span>
-                                            <span class="text-red-500 text-[10px] font-bold" title="Completed Bugs">🐞${completedBugs}/${totalBugs}</span>
-                                        </div>
-                                        ${totalBugEffort > 0 ? `
-                                        <div class="flex justify-between items-center mt-1 text-[10px] text-gray-600 border-t border-dashed border-gray-200 pt-1">
-                                            <span class="font-bold text-gray-500">Bug Effort:</span>
-                                            <span class="font-mono">${remainingBugEffort.toFixed(1)}/${totalBugEffort.toFixed(1)}h</span>
-                                            <span class="text-xs font-bold ${remainingBugEffort === 0 ? 'text-green-600' : 'text-amber-600'}">
-                                                ${bugProgressPercent}%
-                                            </span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 h-0.5 rounded-full mt-0.5">
-                                            <div class="${remainingBugEffort === 0 ? 'bg-green-500' : 'bg-amber-500'} h-full rounded-full" style="width: ${bugProgressPercent}%"></div>
-                                        </div>
-                                        ` : ''}
-                                    </div>
-                                    <div class="text-[11px] border-l pl-2">
-                                        <div class="text-gray-400 uppercase font-bold text-[9px]">Tester</div>
-                                        <div class="text-slate-700 truncate font-medium">${s.tester}</div>
-                                        <div class="flex justify-between items-center mt-1">
-                                            <span class="text-green-500 font-bold">${testEst}h</span>
-                                            <span class="text-indigo-500 text-[10px] font-bold" title="Completed Test Cases">📋${completedTC}/${totalTC}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                    ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
+                        }).join('')}
+                        ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
+                    </div>
                 </div>
-            </div>
-        `;
-    }).join('');
-},
+            `;
+        }).join('');
+    },
 
     renderDelivery() {
         const container = document.getElementById('delivery-grid');
