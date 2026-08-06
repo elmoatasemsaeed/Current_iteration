@@ -236,43 +236,51 @@ const dataProcessor = {
     },
 
     async sync() {
-        const token = sessionStorage.getItem('gh_token');
-        try {
-            const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                headers: { 
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3.raw'
-                }
-            });
-
-            if (response.ok) {
-                db = await response.json(); 
-                if (!db.customTags) db.customTags = [];
-                if (!db.backlogStories) db.backlogStories = [];
-                
-                const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                    headers: { 'Authorization': `token ${token}` }
-                });
-                const metaData = await metaRes.json();
-                db.sha = metaData.sha; 
-                
-                if (db.currentStories && db.currentStories.length > 0) {
-                    db.currentStories.forEach(s => {
-                        if (s.expectedRelease) s.expectedRelease = new Date(s.expectedRelease);
-                        if (s.changedDate) s.changedDate = new Date(s.changedDate);
-                    });
-                    this.calculateTimelines(db.currentStories);
-                }
-                ui.renderAll();
-            } else {
-                console.log("File not found, creating new DB...");
-                this.saveToGitHub();
+    const token = sessionStorage.getItem('gh_token');
+    try {
+        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+            headers: { 
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3.raw'
             }
-        } catch (e) { 
-            console.error("Sync Error:", e);
-            alert("خطأ في المزامنة مع GitHub: " + e.message); 
+        });
+
+        if (response.ok) {
+            db = await response.json(); 
+            if (!db.customTags) db.customTags = [];
+            if (!db.backlogStories) db.backlogStories = [];
+            
+            const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+            const metaData = await metaRes.json();
+            db.sha = metaData.sha; 
+
+            // تحويل التواريخ لكل من currentStories و backlogStories
+            const convertDates = (story) => {
+                if (story.expectedRelease) story.expectedRelease = new Date(story.expectedRelease);
+                if (story.changedDate) story.changedDate = new Date(story.changedDate);
+                return story;
+            };
+
+            if (db.currentStories && db.currentStories.length > 0) {
+                db.currentStories = db.currentStories.map(convertDates);
+                this.calculateTimelines(db.currentStories);
+            }
+            if (db.backlogStories && db.backlogStories.length > 0) {
+                db.backlogStories = db.backlogStories.map(convertDates);
+            }
+
+            ui.renderAll();
+        } else {
+            console.log("File not found, creating new DB...");
+            this.saveToGitHub();
         }
-    },    
+    } catch (e) { 
+        console.error("Sync Error:", e);
+        alert("خطأ في المزامنة مع GitHub: " + e.message); 
+    }
+},    
 
     handleCSV(event) {
         const file = event.target.files[0];
@@ -813,18 +821,24 @@ const ui = {
     },
 
     // Modified to accept stories array and show 2 months
-   renderClientRoadmap(stories = []) {
+  renderClientRoadmap(stories = []) {
     const today = new Date();
     const twoMonthsLater = new Date();
     twoMonthsLater.setMonth(twoMonthsLater.getMonth() + CONFIG.BACKLOG_MONTHS);
 
-    const upcomingDeliveries = stories.filter(s => {
+      const safeStories = stories.map(s => {
+        if (s.expectedRelease && typeof s.expectedRelease === 'string') {
+            s.expectedRelease = new Date(s.expectedRelease);
+        }
+        return s;
+    });
+
+    const upcomingDeliveries = safeStories.filter(s => {
         if (!s.expectedRelease || !(s.expectedRelease instanceof Date)) return false;
         const isNotDone = s.state !== 'Tested' && s.state !== 'Closed';
         const isWithinRange = s.expectedRelease >= today && s.expectedRelease <= twoMonthsLater;
         return isNotDone && isWithinRange;
     });
-
     upcomingDeliveries.sort((a, b) => a.expectedRelease - b.expectedRelease);
 
     let html = `
@@ -1377,10 +1391,10 @@ const ui = {
                                                 <div class="text-slate-700 font-bold">P${s.priority}</div>
                                             </div>
                                         </div>
-                                        ${s.expectedRelease ? `
-                                        <div class="mt-2 text-[10px] text-purple-600 border-t border-purple-100 pt-1">
-                                            📅 Release: ${s.expectedRelease.toLocaleDateString('en-GB')}
-                                        </div>` : ''}
+                                       ${s.expectedRelease ? `
+    <div class="mt-2 text-[10px] text-purple-600 border-t border-purple-100 pt-1">
+        📅 Release: ${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB')}
+    </div>` : ''}
                                     </div>
                                 `;
                             }
@@ -3032,7 +3046,6 @@ buildBacklogRows(details) {
         const state = fields["System.State"] || "";
         if (!["New", "Approved"].includes(state)) return;
 
-        // --- معالجة Business Area بنفس طريقة الكويري الأساسية ---
         let area = fields["MyCompany.MyProcess.BusinessArea"] || "";
         if (area && area.trim().toLowerCase() === "integration") {
             area = "LDM Integration";
@@ -3047,13 +3060,13 @@ buildBacklogRows(details) {
             'Work Item Type': fields["System.WorkItemType"] || "User Story",
             'Title': fields["System.Title"] || "Untitled",
             'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
-            'Business Area': area,   // ← استخدم القيمة المعالجة
+            'Business Area': area,
             'State': state,
             'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
-            'Release Expected Date': fields["MyCompany.MyProcess.Release"],
+            'Release Expected Date': fields["MyCompany.MyProcess.Release"] ? new Date(fields["MyCompany.MyProcess.Release"]) : null,
             'Tags': fields["System.Tags"] || "",
             'Iteration Path': fields["System.IterationPath"] || "",
-            'Changed Date': fields["System.ChangedDate"]
+            'Changed Date': fields["System.ChangedDate"] ? new Date(fields["System.ChangedDate"]) : null
         });
     });
     console.log(`Backlog rows built: ${rows.length}`);
