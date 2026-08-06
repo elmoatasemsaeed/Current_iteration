@@ -1325,7 +1325,7 @@ const ui = {
     // استخراج المناطق الفريدة
     const areas = [...new Set(allStoriesForAreas.map(s => s.area || "General"))].sort();
 
-    // الحفاظ على التحديدات الحالية
+    //  الحفاظ على التحديدات الحالية
     const currentSelected = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
     filterSelect.multiple = true;
     filterSelect.size = Math.min(areas.length, 5);
