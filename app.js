@@ -611,33 +611,53 @@ const ui = {
         this.renderAll();
     },
 
-    renderAll() {
-        this.renderDashboard();
-        this.renderActiveCards();
-        this.renderDelivery();
-        this.renderSettings();
-        this.renderWorkload();
+renderAll() {
+    // 1. عرض الأقسام الثابتة دائمًا
+    this.renderDashboard();
+    this.renderActiveCards();
+    this.renderDelivery();
+    this.renderSettings();
+    this.renderWorkload();
 
-        if (currentUser && currentUser.role === 'viewer') {
-            const uploadBtn = document.querySelector("button[onclick*='csv-input']");
-            if (uploadBtn) uploadBtn.style.display = 'none';
-            const settingsNav = document.querySelector("button[onclick*='settings']");
-            if (settingsNav) settingsNav.style.display = 'none';
-        }
+    // 2. التحكم في صلاحيات المستخدم (viewer)
+    if (currentUser && currentUser.role === 'viewer') {
+        const uploadBtn = document.querySelector("button[onclick*='csv-input']");
+        if (uploadBtn) uploadBtn.style.display = 'none';
 
-        const activeTab = document.querySelector('.tab-content.active');
-        if (activeTab) {
-            if (activeTab.id === 'tab-daily-activity') {
-                this.renderDailyActivity();
-            } else if (activeTab.id === 'tab-inactive-stories') {
-                this.renderInactiveStories();
-            } else if (activeTab.id === 'tab-kanban') { 
-                this.renderKanban();
-            } else if (activeTab.id === 'tab-auditor') {
-                this.renderAuditorChecklist();
-            }
-        }
-    },
+        const settingsNav = document.querySelector("button[onclick*='settings']");
+        if (settingsNav) settingsNav.style.display = 'none';
+    }
+
+    // 3. عرض المحتوى الديناميكي حسب التبويب النشط
+    const activeTab = document.querySelector('.tab-content.active');
+    if (!activeTab) return;
+
+    switch (activeTab.id) {
+        case 'tab-daily-activity':
+            this.renderDailyActivity();
+            break;
+
+        case 'tab-inactive-stories':
+            this.renderInactiveStories();
+            break;
+
+        case 'tab-kanban':
+            this.renderKanban();
+            break;
+
+        case 'tab-auditor':
+            this.renderAuditorChecklist();
+            break;
+
+        case 'tab-support-kanban':
+            this.renderSupportKanban();
+            break;
+
+        default:
+            // أي تبويب آخر لا يحتاج معالجة إضافية
+            break;
+    }
+}
     
     renderDashboard() {
         const container = document.getElementById('dashboard-container');
@@ -1503,6 +1523,88 @@ const ui = {
     container.innerHTML = html;
 },
 
+    renderSupportKanban() {
+    const container = document.getElementById('support-kanban-container');
+    const filterSelect = document.getElementById('support-kanban-ba-filter');
+
+    // 1. تصفية عناصر Support log
+    const supportLogs = currentData.filter(s => s.type === 'Support log');
+    if (supportLogs.length === 0) {
+        container.innerHTML = `<div class="text-center py-20 text-gray-400 col-span-full">No Support logs found.</div>`;
+        return;
+    }
+
+    // 2. استخراج المناطق الفريدة لفلتر Business Area
+    const areas = [...new Set(supportLogs.map(s => s.area || "General"))].sort();
+    filterSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${a}">${a}</option>`).join('');
+
+    const selectedArea = filterSelect.value;
+    let filteredLogs = supportLogs;
+    if (selectedArea !== 'all') {
+        filteredLogs = filteredLogs.filter(s => (s.area || "General") === selectedArea);
+    }
+
+    // 3. استخراج الحالات الفريدة كأعمدة (بترتيب منطقي)
+    const allStates = [...new Set(filteredLogs.map(s => s.state))].sort();
+    // يمكن تخصيص ترتيب معين إذا أردت، مثلاً: Active, Resolved, Closed, On-Hold, Reactive, Rejected
+    const preferredOrder = ['Active', 'Resolved', 'Closed', 'On-Hold', 'Reactive', 'Rejected'];
+    const orderedStates = preferredOrder.filter(st => allStates.includes(st));
+    const remainingStates = allStates.filter(st => !preferredOrder.includes(st)).sort();
+    const finalStates = [...orderedStates, ...remainingStates];
+
+    // 4. دالة إنشاء بطاقة Support Log (مبسطة)
+    const createSupportCard = (s) => {
+        const tagsList = s.tags || [];
+        return `
+            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+                ${tagsList.length > 0 ? `
+                <div class="flex flex-wrap gap-1 mb-2">
+                    ${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
+                </div>` : ''}
+
+                <div class="flex justify-between items-center mb-2">
+                    <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
+                </div>
+                
+                <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
+                
+                <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
+                    <div>
+                        <div class="text-gray-400 uppercase font-bold text-[9px]">Assigned To</div>
+                        <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div>
+                        <div class="text-slate-700 font-bold">P${s.priority}</div>
+                    </div>
+                </div>
+                <div class="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">
+                    Area: ${s.area || "General"} | Updated: ${s.changedDate ? new Date(s.changedDate).toLocaleDateString('en-GB') : 'N/A'}
+                </div>
+            </div>
+        `;
+    };
+
+    // 5. بناء الأعمدة
+    let html = '';
+    finalStates.forEach(state => {
+        const logsInState = filteredLogs.filter(s => s.state === state);
+        html += `
+            <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
+                <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
+                    <h3 class="font-bold text-slate-700">${state}</h3>
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${logsInState.length}</span>
+                </div>
+                <div class="p-2 space-y-3 overflow-y-auto">
+                    ${logsInState.map(s => createSupportCard(s)).join('')}
+                    ${logsInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+},
     renderDelivery() {
         const container = document.getElementById('delivery-grid');
         const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || ""; 
