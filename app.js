@@ -663,10 +663,10 @@ renderAll() {
         const container = document.getElementById('dashboard-container');
         if (!container) return;
 
-        // --- Staff Stats ---
+        // --- Staff Stats (only regular stories) ---
+        const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed' && !isBacklogStory(s) && isRegularStory(s));
         const activeDevsSet = new Set();
         const activeTestersSet = new Set();
-        const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed' && !isBacklogStory(s));
         
         activeStories.forEach(s => {
             if (s.assignedTo && s.assignedTo !== "Unassigned") activeDevsSet.add(s.assignedTo);
@@ -705,10 +705,10 @@ renderAll() {
             </div>
         `;
 
-        // --- Area State Map (exclude backlog) ---
+        // --- Area State Map (only regular stories, exclude backlog) ---
+        const nonBacklogData = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const areaStateMap = {};
         const allStates = new Set();
-        const nonBacklogData = currentData.filter(s => !isBacklogStory(s));
         
         nonBacklogData.forEach(s => {
             const area = s.area || 'General';
@@ -775,9 +775,9 @@ renderAll() {
         </div>
         `;
 
-        // --- Branch Stats (exclude backlog) ---
-        const branchMap = {};
+        // --- Branch Stats (only regular stories) ---
         const activeNonBacklog = nonBacklogData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
+        const branchMap = {};
         activeNonBacklog.forEach(s => {
             const branch = s.branch || 'N/A';
             branchMap[branch] = (branchMap[branch] || 0) + 1;
@@ -805,7 +805,7 @@ renderAll() {
         </div>
         `;
 
-        // --- Customer Stats (exclude backlog) ---
+        // --- Customer Stats (only regular stories) ---
         const customerMap = {};
         activeNonBacklog.forEach(s => {
             const customer = s.customer || 'General';
@@ -834,8 +834,9 @@ renderAll() {
         </div>
         `;
 
-        // --- Roadmap (including backlog stories) ---
-        const allStoriesForRoadmap = [...currentData, ...db.backlogStories];
+        // --- Roadmap (only regular stories + backlog) ---
+        const regularCurrent = currentData.filter(isRegularStory);
+        const allStoriesForRoadmap = [...regularCurrent, ...db.backlogStories];
         const roadmapHtml = this.renderClientRoadmap(allStoriesForRoadmap);
 
         container.innerHTML = `
@@ -923,10 +924,11 @@ renderAll() {
 },
 
     getFreeStaff(role) {
+        // Only regular stories (exclude Support log and backlog)
+        const regularStories = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const allStaff = new Set();
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
         
-        nonBacklog.forEach(s => {
+        regularStories.forEach(s => {
             if (role === 'dev' && s.assignedTo && s.assignedTo !== "Unassigned") {
                 allStaff.add(s.assignedTo);
             } else if (role === 'tester' && s.tester && s.tester !== "Unassigned") {
@@ -936,7 +938,7 @@ renderAll() {
 
         const busyStaff = new Set();
 
-        nonBacklog.forEach(s => {
+        regularStories.forEach(s => {
             const activeTasks = (s.tasks || []).filter(t => 
                 t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed' &&
                 parseFloat(t['Original Estimation'] || 0) > 0
@@ -950,7 +952,7 @@ renderAll() {
             });
         });
 
-        nonBacklog.forEach(s => {
+        regularStories.forEach(s => {
             if (s.type === 'Support Log' && s.state !== 'Tested' && s.state !== 'Closed') {
                 if (role === 'dev' && s.assignedTo && s.assignedTo !== "Unassigned") {
                     busyStaff.add(s.assignedTo);
@@ -961,7 +963,7 @@ renderAll() {
             }
         });
 
-        nonBacklog.forEach(s => {
+        regularStories.forEach(s => {
             if (s.bugs && s.bugs.length > 0) {
                 s.bugs.forEach(bug => {
                     if (['New', 'Active'].includes(bug['State'])) {
@@ -988,14 +990,14 @@ renderAll() {
             body.innerHTML = `<div class="text-center py-10 text-gray-400">لا يوجد موظفون في هذه الفئة.</div>`;
         } else {
             let html = `<div class="space-y-3">`;
-            const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+            const regularNonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
             list.forEach(name => {
                 if (showStoryCount) {
                     let count = 0;
                     if (title.includes('Developers')) {
-                        count = nonBacklog.filter(s => s.assignedTo === name && s.state !== 'Tested' && s.state !== 'Closed').length;
+                        count = regularNonBacklog.filter(s => s.assignedTo === name && s.state !== 'Tested' && s.state !== 'Closed').length;
                     } else if (title.includes('Testers')) {
-                        count = nonBacklog.filter(s => s.tester === name && s.state !== 'Tested' && s.state !== 'Closed').length;
+                        count = regularNonBacklog.filter(s => s.tester === name && s.state !== 'Tested' && s.state !== 'Closed').length;
                     }
                     html += `
                         <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
@@ -1021,10 +1023,10 @@ renderAll() {
     },
 
     showStaffDetails(role, type) {
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        const regularNonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         if (type === 'active') {
             const set = new Set();
-            const activeStories = nonBacklog.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
+            const activeStories = regularNonBacklog.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
             activeStories.forEach(s => {
                 if (role === 'dev' && s.assignedTo && s.assignedTo !== "Unassigned") set.add(s.assignedTo);
                 else if (role === 'tester' && s.tester && s.tester !== "Unassigned") set.add(s.tester);
@@ -1044,8 +1046,8 @@ renderAll() {
         const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; 
         const tagSearchTerm = document.getElementById('tag-search-input')?.value.toLowerCase() || "";
         
-        // Exclude backlog stories from active cards
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        // Exclude backlog and Support log from active cards
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         
         const activeStories = nonBacklog.filter(s => {
             const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
@@ -1349,8 +1351,8 @@ renderAll() {
     const container = document.getElementById('kanban-container');
     const filterSelect = document.getElementById('kanban-ba-filter');
 
-    // دمج القصص العادية وقصص الباك لوج لعرض المناطق في الفلتر
-    const allStoriesForAreas = [...currentData.filter(s => !isBacklogStory(s)), ...db.backlogStories];
+    // دمج القصص العادية وقصص الباك لوج لعرض المناطق في الفلتر (استبعاد السابورت)
+    const allStoriesForAreas = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
     if (allStoriesForAreas.length === 0) return;
 
     // استخراج المناطق الفريدة
@@ -1527,7 +1529,7 @@ renderAll() {
     const container = document.getElementById('support-kanban-container');
     const filterSelect = document.getElementById('support-kanban-ba-filter');
 
-    // 1. تصفية عناصر Support log
+    // 1. تصفية عناصر Support log (هذا التاب مخصص للسابورت فقط)
     const supportLogs = currentData.filter(s => s.type === 'Support log');
     if (supportLogs.length === 0) {
         container.innerHTML = `<div class="text-center py-20 text-gray-400 col-span-full">No Support logs found.</div>`;
@@ -1754,8 +1756,8 @@ renderAll() {
         const container = document.getElementById('workload-container');
         if (!container) return;
 
-        // Exclude backlog from workload
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        // Exclude backlog from workload, but INCLUDE Support log (per user request)
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s)); // includes Support log
         const areaGroups = {};
         const MAX_HOURS = 65;
 
@@ -1775,7 +1777,7 @@ renderAll() {
         const bugWorkersGlobal = new Set();
 
         nonBacklog.forEach(story => {
-            if (story.type === 'Support Log' && story.state !== 'Tested' && story.state !== 'Closed') {
+            if (story.type === 'Support log' && story.state !== 'Tested' && story.state !== 'Closed') {
                 if (story.assignedTo && story.assignedTo !== "Unassigned") supportWorkersGlobal.add(story.assignedTo);
                 if (story.tester && story.tester !== "Unassigned") supportWorkersGlobal.add(story.tester);
             }
@@ -2373,13 +2375,13 @@ renderAll() {
     },
 
     showBranchModal(branch) {
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const activeStories = nonBacklog.filter(s => s.branch === branch && s.state !== 'Tested' && s.state !== 'Closed');
         this.showModalWithTitleAndStories(`Branch: ${branch} (${activeStories.length} active stories)`, activeStories);
     },
 
     showCustomerModal(customer) {
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const activeStories = nonBacklog.filter(s => s.customer === customer && s.state !== 'Tested' && s.state !== 'Closed');
         this.showModalWithTitleAndStories(`Customer: ${customer} (${activeStories.length} active stories)`, activeStories);
     },
@@ -2392,8 +2394,8 @@ renderAll() {
         const todayStr = today.toISOString().split('T')[0];
         const activities = [];
 
-        // Exclude backlog from daily activity
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        // Exclude backlog and Support log from daily activity
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
 
         nonBacklog.forEach(story => {
             let hasActivityToday = false;
@@ -2588,7 +2590,7 @@ renderAll() {
         const todayStr = new Date().toISOString().split('T')[0];
         const activities = [];
 
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
 
         nonBacklog.forEach(story => {
             let hasActivityToday = false;
@@ -2674,8 +2676,8 @@ renderAll() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // Exclude backlog from inactive
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        // Exclude backlog and Support log from inactive
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
 
         const inactive = nonBacklog.filter(s => {
             const isActive = s.state !== 'Tested' && s.state !== 'Closed';
@@ -2759,7 +2761,7 @@ renderAll() {
     },
 
     renderSettings() {
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const staff = [...new Set(nonBacklog.map(s => s.assignedTo).concat(nonBacklog.map(s => s.tester)))];
         const staffSelect = document.getElementById('staff-select');
         if(staffSelect) staffSelect.innerHTML = staff.map(s => `<option value="${s}">${s}</option>`).join('');
@@ -2802,8 +2804,8 @@ renderAll() {
         const stateFilter = document.getElementById('auditor-state-filter')?.value || 'all';
 
         const areaSelect = document.getElementById('auditor-area-filter');
-        // Exclude backlog from auditor
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        // Exclude backlog and Support log from auditor
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         
         if (areaSelect && areaSelect.options.length <= 1) {
             const areas = [...new Set(nonBacklog.map(s => s.area || "General"))];
@@ -2959,11 +2961,6 @@ const settings = {
         const date = document.getElementById('holiday-date').value;
         if(!date) return;
         db.holidays.push(date);
-        dataProcessor.saveToGitHub();
-        ui.renderSettings();
-    },
-    removeHoliday(i) {
-        db.holidays.splice(i, 1);
         dataProcessor.saveToGitHub();
         ui.renderSettings();
     }
