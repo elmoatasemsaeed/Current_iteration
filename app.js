@@ -1527,23 +1527,23 @@ renderAll() {
     const container = document.getElementById('support-kanban-container');
     const filterSelect = document.getElementById('support-kanban-ba-filter');
 
-    // 1. تصفية عناصر Support log
     const supportLogs = currentData.filter(s => s.type === 'Support log');
     if (supportLogs.length === 0) {
         container.innerHTML = `<div class="text-center py-20 text-gray-400 col-span-full">No Support logs found.</div>`;
         return;
     }
 
-    // 2. استخراج المناطق الفريدة لفلتر Business Area
     const areas = [...new Set(supportLogs.map(s => s.area || "General"))].sort();
-    filterSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${a}">${a}</option>`).join('');
+    const currentSelected = filterSelect.value;
+
+    filterSelect.innerHTML = '<option value="all">All Areas</option>' + 
+        areas.map(a => `<option value="${a}" ${a === currentSelected ? 'selected' : ''}>${a}</option>`).join('');
 
     const selectedArea = filterSelect.value;
     let filteredLogs = supportLogs;
     if (selectedArea !== 'all') {
         filteredLogs = filteredLogs.filter(s => (s.area || "General") === selectedArea);
     }
-
     // 3. استخراج الحالات الفريدة كأعمدة (بترتيب منطقي)
     const allStates = [...new Set(filteredLogs.map(s => s.state))].sort();
     // يمكن تخصيص ترتيب معين إذا أردت، مثلاً: Active, Resolved, Closed, On-Hold, Reactive, Rejected
