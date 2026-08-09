@@ -1322,7 +1322,7 @@ const ui = {
     
     function isRegularStory(story) {
     return story && (story.type === 'User Story' || story.type === 'CR');
-},
+}
 
     renderKanban() {
     const container = document.getElementById('kanban-container');
