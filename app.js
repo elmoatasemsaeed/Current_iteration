@@ -35,6 +35,9 @@ let currentUser = null;
 function isBacklogStory(story) {
     return story && story.isBacklog === true;
 }
+function isRegularStory(story) {
+    return story && (story.type === 'User Story' || story.type === 'CR');
+}
 
 const archiver = {
     async runArchive() {
@@ -178,9 +181,6 @@ const auth = {
     }
 };
 
-   function isRegularStory(story) {
-    return story && (story.type === 'User Story' || story.type === 'CR');
-};
 
 /**
  * Data Processing Engine - with concurrency fix
