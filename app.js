@@ -178,6 +178,10 @@ const auth = {
     }
 };
 
+   function isRegularStory(story) {
+    return story && (story.type === 'User Story' || story.type === 'CR');
+};
+
 /**
  * Data Processing Engine - with concurrency fix
  */
@@ -1320,9 +1324,7 @@ const ui = {
         }).join('');
     },
     
-    function isRegularStory(story) {
-    return story && (story.type === 'User Story' || story.type === 'CR');
-}
+ 
 
     renderKanban() {
     const container = document.getElementById('kanban-container');
