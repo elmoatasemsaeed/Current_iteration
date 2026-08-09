@@ -657,7 +657,7 @@ renderAll() {
             // أي تبويب آخر لا يحتاج معالجة إضافية
             break;
     }
-}
+},
     
     renderDashboard() {
         const container = document.getElementById('dashboard-container');
