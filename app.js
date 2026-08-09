@@ -923,12 +923,12 @@ renderAll() {
     return html;
 },
 
+    // MODIFIED: Now includes Support log in busy calculation to match Workload logic
     getFreeStaff(role) {
-        // Only regular stories (exclude Support log and backlog)
-        const regularStories = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+        // جميع القصص غير الباك لوج (تشمل السابورت)
+        const allStories = currentData.filter(s => !isBacklogStory(s));
         const allStaff = new Set();
-        
-        regularStories.forEach(s => {
+        allStories.forEach(s => {
             if (role === 'dev' && s.assignedTo && s.assignedTo !== "Unassigned") {
                 allStaff.add(s.assignedTo);
             } else if (role === 'tester' && s.tester && s.tester !== "Unassigned") {
@@ -936,24 +936,31 @@ renderAll() {
             }
         });
 
+        // تحديد المشغولين
         const busyStaff = new Set();
 
-        regularStories.forEach(s => {
+        // 1. المهام النشطة (أي مهمة)
+        allStories.forEach(s => {
             const activeTasks = (s.tasks || []).filter(t => 
                 t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed' &&
                 parseFloat(t['Original Estimation'] || 0) > 0
             );
             activeTasks.forEach(t => {
-                if (role === 'dev' && ["Development", "DB Modification"].includes(t['Activity'])) {
-                    if (s.assignedTo && s.assignedTo !== "Unassigned") busyStaff.add(s.assignedTo);
-                } else if (role === 'tester' && t['Activity'] === 'Testing') {
-                    if (s.tester && s.tester !== "Unassigned") busyStaff.add(s.tester);
+                let worker = null;
+                if (t['Activity'] === 'Testing') {
+                    worker = s.tester;
+                } else {
+                    worker = s.assignedTo;
+                }
+                if (worker && worker !== "Unassigned") {
+                    busyStaff.add(worker);
                 }
             });
         });
 
-        regularStories.forEach(s => {
-            if (s.type === 'Support Log' && s.state !== 'Tested' && s.state !== 'Closed') {
+        // 2. دعم السابورت النشط
+        allStories.forEach(s => {
+            if (s.type === 'Support log' && s.state !== 'Tested' && s.state !== 'Closed') {
                 if (role === 'dev' && s.assignedTo && s.assignedTo !== "Unassigned") {
                     busyStaff.add(s.assignedTo);
                 }
@@ -963,7 +970,8 @@ renderAll() {
             }
         });
 
-        regularStories.forEach(s => {
+        // 3. الباغات النشطة
+        allStories.forEach(s => {
             if (s.bugs && s.bugs.length > 0) {
                 s.bugs.forEach(bug => {
                     if (['New', 'Active'].includes(bug['State'])) {
@@ -976,6 +984,7 @@ renderAll() {
             }
         });
 
+        // إرجاع المطورين (أو التستير) غير المشغولين
         return Array.from(allStaff).filter(name => !busyStaff.has(name));
     },
 
