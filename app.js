@@ -1319,6 +1319,10 @@ const ui = {
             `;
         }).join('');
     },
+    
+    function isRegularStory(story) {
+    return story && (story.type === 'User Story' || story.type === 'CR');
+},
 
     renderKanban() {
     const container = document.getElementById('kanban-container');
@@ -1347,8 +1351,8 @@ const ui = {
     if (selectedAreas.length === 0) selectedAreas = areas;
 
     // تصفية القصص حسب المنطقة
-    const filteredRegular = currentData.filter(s => !isBacklogStory(s) && selectedAreas.includes(s.area || "General"));
-    const filteredBacklog = db.backlogStories.filter(s => selectedAreas.includes(s.area || "General"));
+    const filteredRegular = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s) && selectedAreas.includes(s.area || "General"));
+const filteredBacklog = db.backlogStories.filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"));
 
     // تعريف الأعمدة (بدون Backlog لأنه سيُضاف بشكل منفصل)
     const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
@@ -1503,8 +1507,8 @@ const ui = {
         const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || ""; 
         
         // Exclude backlog from delivery
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
-        const allTested = nonBacklog.filter(s => s.state === 'Tested' || s.state === 'Closed');
+        const regularStories = nonBacklog.filter(s => isRegularStory(s));
+        const allTested = regularStories.filter(s => s.state === 'Tested' || s.state === 'Closed');
 
         const pendingStories = allTested.filter(s => {
             const isPending = !db.deliveryLogs.some(l => l.storyId === s.id.toString());
@@ -1516,7 +1520,7 @@ const ui = {
         });
 
         const completedStories = db.deliveryLogs.map(log => {
-            const story = currentData.find(s => s.id.toString() === log.storyId.toString());
+            const story = regularStories.find(s => s.id.toString() === log.storyId.toString());
             return { 
                 ...story, 
                 logData: log,
