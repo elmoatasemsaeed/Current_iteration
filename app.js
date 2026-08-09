@@ -1527,12 +1527,14 @@ renderAll() {
     const container = document.getElementById('support-kanban-container');
     const filterSelect = document.getElementById('support-kanban-ba-filter');
 
+    // 1. تصفية عناصر Support log
     const supportLogs = currentData.filter(s => s.type === 'Support log');
     if (supportLogs.length === 0) {
         container.innerHTML = `<div class="text-center py-20 text-gray-400 col-span-full">No Support logs found.</div>`;
         return;
     }
 
+    // 2. استخراج المناطق الفريدة لفلتر Business Area مع الحفاظ على التحديد
     const areas = [...new Set(supportLogs.map(s => s.area || "General"))].sort();
     const currentSelected = filterSelect.value;
 
@@ -1544,17 +1546,18 @@ renderAll() {
     if (selectedArea !== 'all') {
         filteredLogs = filteredLogs.filter(s => (s.area || "General") === selectedArea);
     }
+
     // 3. استخراج الحالات الفريدة كأعمدة (بترتيب منطقي)
     const allStates = [...new Set(filteredLogs.map(s => s.state))].sort();
-    // يمكن تخصيص ترتيب معين إذا أردت، مثلاً: Active, Resolved, Closed, On-Hold, Reactive, Rejected
     const preferredOrder = ['Active', 'Resolved', 'Closed', 'On-Hold', 'Reactive', 'Rejected'];
     const orderedStates = preferredOrder.filter(st => allStates.includes(st));
     const remainingStates = allStates.filter(st => !preferredOrder.includes(st)).sort();
     const finalStates = [...orderedStates, ...remainingStates];
 
-    // 4. دالة إنشاء بطاقة Support Log (مبسطة)
+    // 4. دالة إنشاء بطاقة Support Log مع زر التعليقات
     const createSupportCard = (s) => {
         const tagsList = s.tags || [];
+        const commentsCount = s.standupComments ? s.standupComments.length : 0;
         return `
             <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
                 ${tagsList.length > 0 ? `
@@ -1564,6 +1567,10 @@ renderAll() {
 
                 <div class="flex justify-between items-center mb-2">
                     <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
+                    <button onclick="ui.openCommentsModal('${s.id}')" 
+                            class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100">
+                        💬 <span class="font-bold">${commentsCount}</span>
+                    </button>
                 </div>
                 
                 <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
