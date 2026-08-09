@@ -305,7 +305,7 @@ const dataProcessor = {
 
         rows.forEach(row => {
             const itemType = row['Work Item Type'];
-            if (itemType === 'User Story' || itemType === 'CR' || itemType === 'Support Log') {
+            if (itemType === 'User Story' || itemType === 'CR' || itemType === 'Support log') {
                 let area = row['Business Area'];
                 if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
                 if (!area || area.trim() === "") {
