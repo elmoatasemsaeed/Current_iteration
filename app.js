@@ -35,6 +35,8 @@ let currentUser = null;
 function isBacklogStory(story) {
     return story && story.isBacklog === true;
 }
+
+// Helper to check if a story is a regular story (User Story or CR) - exclude Support log
 function isRegularStory(story) {
     return story && (story.type === 'User Story' || story.type === 'CR');
 }
@@ -180,7 +182,6 @@ const auth = {
         location.reload();
     }
 };
-
 
 /**
  * Data Processing Engine - with concurrency fix
@@ -1323,8 +1324,6 @@ const ui = {
             `;
         }).join('');
     },
-    
- 
 
     renderKanban() {
     const container = document.getElementById('kanban-container');
@@ -1352,9 +1351,9 @@ const ui = {
     let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
     if (selectedAreas.length === 0) selectedAreas = areas;
 
-    // تصفية القصص حسب المنطقة
+    // تصفية القصص حسب المنطقة ونوعها (استبعاد Support log)
     const filteredRegular = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s) && selectedAreas.includes(s.area || "General"));
-const filteredBacklog = db.backlogStories.filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"));
+    const filteredBacklog = db.backlogStories.filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"));
 
     // تعريف الأعمدة (بدون Backlog لأنه سيُضاف بشكل منفصل)
     const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
@@ -1508,8 +1507,10 @@ const filteredBacklog = db.backlogStories.filter(s => isRegularStory(s) && selec
         const container = document.getElementById('delivery-grid');
         const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || ""; 
         
-        // Exclude backlog from delivery
+        // Exclude backlog from delivery, and filter only regular stories (User Story & CR)
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
         const regularStories = nonBacklog.filter(s => isRegularStory(s));
+        
         const allTested = regularStories.filter(s => s.state === 'Tested' || s.state === 'Closed');
 
         const pendingStories = allTested.filter(s => {
@@ -1530,6 +1531,8 @@ const filteredBacklog = db.backlogStories.filter(s => isRegularStory(s) && selec
                 area: story ? story.area : "N/A"
             };
         }).filter(s => {
+            // Ensure the story is not null and is regular (already filtered by regularStories)
+            if (!s.id) return false;
             const matchesSearch = 
                 s.title.toLowerCase().includes(searchTerm) || 
                 s.logData.storyId.toString().includes(searchTerm) || 
