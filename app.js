@@ -1389,8 +1389,13 @@ renderAll() {
     // تعريف الأعمدة (بدون Backlog لأنه سيُضاف بشكل منفصل)
     const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
 
-    // دالة مساعدة لإنشاء بطاقة القصة العادية (نفس الكود القديم)
+    // دالة مساعدة لإنشاء بطاقة القصة العادية (مع دمج وتمييز الوسوم)
     const createRegularCard = (s) => {
+        // جلب الوسوم من Azure ومعالجتها
+        const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
+        const customTagsArr = s.customTags || [];
+        const allTagSet = new Set([...azureTags, ...customTagsArr]); // دمج بدون تكرار
+
         const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
         const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
         const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
@@ -1400,7 +1405,6 @@ renderAll() {
         const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
                               .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
-        const tagsList = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
         const totalBugs = s.bugs ? s.bugs.length : 0;
         const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State'])).length : 0;
 
@@ -1418,9 +1422,12 @@ renderAll() {
 
         return `
             <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
-                ${tagsList.length > 0 ? `
+                ${allTagSet.size > 0 ? `
                 <div class="flex flex-wrap gap-1 mb-2">
-                    ${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
+                    ${[...allTagSet].map(tag => {
+                        const isCustom = customTagsArr.includes(tag);
+                        return `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`;
+                    }).join('')}
                 </div>` : ''}
 
                 <div class="flex justify-between items-center mb-2">
@@ -1466,14 +1473,20 @@ renderAll() {
         `;
     };
 
-    // دالة مساعدة لإنشاء بطاقة الباك لوج (مبسطة)
+    // دالة مساعدة لإنشاء بطاقة الباك لوج (مع دمج وتمييز الوسوم)
     const createBacklogCard = (s) => {
-        const tagsList = s.tags || [];
+        const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
+        const customTagsArr = s.customTags || [];
+        const allTagSet = new Set([...azureTags, ...customTagsArr]);
+
         return `
             <div class="bg-white p-3 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
-                ${tagsList.length > 0 ? `
+                ${allTagSet.size > 0 ? `
                 <div class="flex flex-wrap gap-1 mb-2">
-                    ${tagsList.map(tag => `<span class="bg-purple-50 text-purple-600 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
+                    ${[...allTagSet].map(tag => {
+                        const isCustom = customTagsArr.includes(tag);
+                        return `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`;
+                    }).join('')}
                 </div>` : ''}
                 <div class="flex justify-between items-center mb-2">
                     <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-purple-600 cursor-pointer hover:underline">#${s.id} 🔍</div>
@@ -1514,7 +1527,7 @@ renderAll() {
         </div>
     `;
 
-    // 2. الأعمدة العادية (نفس الكود القديم)
+    // 2. الأعمدة العادية
     html += states.map(state => {
         const storiesInState = filteredRegular.filter(s => s.state === state);
         return `
