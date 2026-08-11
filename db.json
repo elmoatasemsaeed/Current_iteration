@@ -4290,13 +4290,14 @@
           "Title": "DB: Update 'EBGH_REPORTS.SP_REPORTING_PATIENTHEADER' to return customized header data",
           "Assigned To": "Mostafa Mahmoud",
           "Activity": "DB Modification",
-          "Original Estimation": 0,
+          "Original Estimation": 1.5,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-08-11T08:23:35.19Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-08-11T08:13:08.2Z",
+          "State": "Active",
+          "Changed Date": "2026-08-11T08:23:35.19Z",
           "Customer": "EBGH_62"
         }
       ],
@@ -4549,10 +4550,9 @@
       ],
       "reviews": [],
       "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
+        "devEnd": "2026-08-11T11:23:35.190Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
       },
       "customTags": [],
       "standupComments": [],
@@ -14052,7 +14052,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-08-11T06:42:56.627Z",
+      "changedDate": "2026-08-11T08:29:49.237Z",
       "tasks": [
         {
           "ID": 178296,
@@ -14720,13 +14720,13 @@
           "Assigned To": "Mohamed Samy",
           "Activity": "",
           "Original Estimation": 1.5,
-          "TimeSheet_DevActualTime": 1,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-08-10T16:13:24.4Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 2-22",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-08-10T19:04:16.987Z",
+          "Changed Date": "2026-08-11T08:28:57.67Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -14887,7 +14887,7 @@
         },
         {
           "id": 170597,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 170598,
@@ -14895,7 +14895,7 @@
         },
         {
           "id": 170599,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 170600,
@@ -14938,10 +14938,6 @@
           "state": "Pass"
         },
         {
-          "id": 170616,
-          "state": "Inprogress"
-        },
-        {
           "id": 170618,
           "state": "Pass"
         },
@@ -14963,7 +14959,7 @@
         },
         {
           "id": 183397,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 183398,
@@ -32572,7 +32568,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-08-10T13:06:53.533Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-08-10T15:52:22.107Z",
+          "Changed Date": "2026-08-11T08:28:02.29Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -36608,6 +36604,32 @@
       "isBacklog": true
     },
     {
+      "id": 163363,
+      "title": "Alfarabi Labs -  Add some modification to the Query service Fee report",
+      "type": "User Story",
+      "state": "Approved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Registration",
+      "priority": 100,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2026-06-24T09:14:14.217Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true
+    },
+    {
       "id": 163862,
       "title": "Batch Dynamic Registration - Batch Payment:  Update the batch dynamic Registration to follow the Minimum Amount to Pay",
       "type": "User Story",
@@ -39970,6 +39992,32 @@
       "isBacklog": true
     },
     {
+      "id": 161790,
+      "title": "MM | Client | Reports | Dashboard: Screen shall track only items of \"Kits and Consumables\" type",
+      "type": "User Story",
+      "state": "New",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "MaterialManagement",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2026-03-02T12:23:18.783Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "MaterialManagement",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true
+    },
+    {
       "id": 161791,
       "title": "Wareed Labs – Reservation Settings Enhancement",
       "type": "User Story",
@@ -40217,32 +40265,6 @@
       "branch": "N/A",
       "customer": "General",
       "changedDate": "2026-03-10T01:49:49.080Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true
-    },
-    {
-      "id": 163363,
-      "title": "Alfarabi Labs -  Add some modification to the Query service Fee report",
-      "type": "User Story",
-      "state": "Approved",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "Registration",
-      "priority": 100,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2026-06-24T09:14:14.217Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -45101,32 +45123,6 @@
       "customTags": [],
       "standupComments": [],
       "iterationPath": "Integration",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true
-    },
-    {
-      "id": 161790,
-      "title": "MM | Client | Reports | Dashboard: Screen shall track only items of \"Kits and Consumables\" type",
-      "type": "User Story",
-      "state": "New",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "MaterialManagement",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2026-03-02T12:23:18.783Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "MaterialManagement",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": true
