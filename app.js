@@ -1383,8 +1383,13 @@ renderAll() {
     if (selectedAreas.length === 0) selectedAreas = areas;
 
     // تصفية القصص حسب المنطقة ونوعها (استبعاد Support log)
-    const filteredRegular = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s) && selectedAreas.includes(s.area || "General"));
-    const filteredBacklog = db.backlogStories.filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"));
+    const filteredRegular = currentData
+    .filter(s => !isBacklogStory(s) && isRegularStory(s) && selectedAreas.includes(s.area || "General"))
+    .sort((a, b) => (a.priority || 999) - (b.priority || 999));
+
+const filteredBacklog = db.backlogStories
+    .filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"))
+    .sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
     // تعريف الأعمدة (بدون Backlog لأنه سيُضاف بشكل منفصل)
     const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
