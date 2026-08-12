@@ -3600,7 +3600,7 @@ const azureDevOps = {
     }
 };
 
-/**
+/** 
  * Initialize
  */
 window.onload = () => {
