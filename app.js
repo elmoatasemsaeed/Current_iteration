@@ -1356,6 +1356,306 @@ renderAll() {
         }).join('');
     },
 
+    // ------------------- NEW WEEKLY REPORT FUNCTIONS -------------------
+    generateWeeklyReport() {
+        const filterSelect = document.getElementById('kanban-ba-filter');
+        if (!filterSelect) return;
+        const selectedOptions = Array.from(filterSelect.selectedOptions);
+        let selectedAreas = selectedOptions.map(opt => opt.value);
+        
+        // If no area selected, take all areas available from regular + backlog
+        const allAreas = [...new Set([
+            ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
+            ...db.backlogStories.map(s => s.area || "General")
+        ])];
+        if (selectedAreas.length === 0) {
+            selectedAreas = allAreas;
+        }
+
+        // Build report data per area
+        const reportData = {};
+        selectedAreas.forEach(area => {
+            // Active stories (Active, Active - With Bugs, Resolved) - exclude backlog & support
+            const activeStories = currentData.filter(s => 
+                !isBacklogStory(s) && 
+                isRegularStory(s) && 
+                (s.area || "General") === area &&
+                ['Active', 'Active - With Bugs', 'Resolved'].includes(s.state)
+            );
+            
+            // Backlog stories for this area
+            const backlogStories = db.backlogStories.filter(s => 
+                (s.area || "General") === area && 
+                isRegularStory(s)
+            );
+            
+            // On-Hold stories
+            const onHoldStories = currentData.filter(s => 
+                !isBacklogStory(s) && 
+                isRegularStory(s) && 
+                (s.area || "General") === area &&
+                s.state === 'On-Hold'
+            );
+
+            // Tested stories in last 15 days
+            const fifteenDaysAgo = new Date();
+            fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+            const testedStories = currentData.filter(s => 
+                !isBacklogStory(s) && 
+                isRegularStory(s) && 
+                (s.area || "General") === area &&
+                s.state === 'Tested' &&
+                s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
+            );
+
+            reportData[area] = {
+                activeStories,
+                backlog: backlogStories,
+                onHold: onHoldStories,
+                tested: testedStories
+            };
+        });
+
+        this.showWeeklyReportModal(reportData);
+    },
+
+    showWeeklyReportModal(reportData) {
+        // Create modal if not exists
+        let modal = document.getElementById('weekly-report-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'weekly-report-modal';
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[2000] p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col relative" style="direction: rtl;">
+                    <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-2xl">
+                        <h3 class="text-xl font-bold text-slate-800">📋 التقرير الأسبوعي</h3>
+                        <div class="flex gap-2">
+                            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
+                                🖨️ طباعة
+                            </button>
+                            <button onclick="document.getElementById('weekly-report-modal').style.display='none'" 
+                                    class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
+                        </div>
+                    </div>
+                    <div class="p-6 overflow-y-auto" id="weekly-report-content"></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Inject print CSS into modal
+            const style = document.createElement('style');
+            style.textContent = `
+                @media print {
+                    body * {
+                        visibility: hidden;
+                    }
+                    #weekly-report-modal, #weekly-report-modal * {
+                        visibility: visible;
+                    }
+                    #weekly-report-modal {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        background: white;
+                        margin: 0;
+                        padding: 20px;
+                        box-shadow: none;
+                        border-radius: 0;
+                        max-height: none;
+                        overflow: visible;
+                        direction: rtl;
+                    }
+                    #weekly-report-modal .sticky,
+                    #weekly-report-modal .border-b {
+                        position: relative;
+                        top: auto;
+                    }
+                    #weekly-report-modal .p-6 {
+                        padding: 10px;
+                    }
+                    #weekly-report-modal button {
+                        display: none !important;
+                    }
+                    .page-break-after {
+                        page-break-after: always;
+                    }
+                    .print-area-title {
+                        font-size: 1.5rem;
+                    }
+                    .print-story-card {
+                        border: 1px solid #ddd;
+                        padding: 8px;
+                        margin-bottom: 6px;
+                        border-radius: 4px;
+                    }
+                    .print-tag {
+                        display: inline-block;
+                        padding: 0 4px;
+                        margin: 2px;
+                        font-size: 9px;
+                        border-radius: 3px;
+                        background: #f0f0f0;
+                        border: 1px solid #ccc;
+                    }
+                    .print-custom-tag {
+                        background: #e9d5ff;
+                        border-color: #a78bfa;
+                    }
+                    .print-comment {
+                        background: #f0f4ff;
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        border-right: 3px solid #6366f1;
+                        margin-top: 4px;
+                        font-size: 12px;
+                    }
+                }
+            `;
+            modal.querySelector('.bg-white').appendChild(style);
+        }
+
+        const content = document.getElementById('weekly-report-content');
+        let html = '';
+
+        // Report header
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+        html += `<div class="text-center mb-6 border-b pb-4">
+            <h1 class="text-2xl font-bold text-slate-800">تقرير الحالة الأسبوعي</h1>
+            <p class="text-sm text-gray-500">تاريخ التقرير: ${dateStr}</p>
+        </div>`;
+
+        // For each area
+        for (const area in reportData) {
+            const data = reportData[area];
+            const { activeStories, backlog, onHold, tested } = data;
+
+            html += `<div class="mb-12 page-break-after">`;
+            html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${area}</h2>`;
+
+            // 1. Active stories
+            if (activeStories.length > 0) {
+                html += `<h3 class="text-lg font-bold text-slate-700 mt-4 mb-2">📌 القصص النشطة (${activeStories.length})</h3>`;
+                html += `<div class="space-y-4">`;
+                activeStories.forEach(s => {
+                    const lastComment = s.standupComments && s.standupComments.length > 0 
+                        ? s.standupComments[s.standupComments.length - 1] 
+                        : null;
+                    const azureTags = s.tags || [];
+                    const customTags = s.customTags || [];
+                    const allTags = [...new Set([...azureTags, ...customTags])];
+                    
+                    html += `<div class="border border-gray-200 rounded-lg p-4 shadow-sm print-story-card">`;
+                    html += `<div class="flex justify-between items-start">`;
+                    html += `<div><span class="font-mono text-sm text-gray-500">#${s.id}</span> <span class="font-bold text-slate-800">${s.title}</span></div>`;
+                    html += `<span class="px-2 py-1 text-xs font-bold rounded-full ${s.state === 'Resolved' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${s.state}</span>`;
+                    html += `</div>`;
+                    
+                    // Tags
+                    if (allTags.length > 0) {
+                        html += `<div class="flex flex-wrap gap-1 mt-2">`;
+                        allTags.forEach(tag => {
+                            const isCustom = customTags.includes(tag);
+                            html += `<span class="px-2 py-0.5 text-[10px] font-bold rounded ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300 print-custom-tag' : 'bg-gray-100 text-gray-600 border border-gray-200 print-tag'}">${tag}${isCustom ? ' ★' : ''}</span>`;
+                        });
+                        html += `</div>`;
+                    }
+                    
+                    // Last standup comment
+                    if (lastComment) {
+                        html += `<div class="mt-2 p-2 bg-indigo-50 rounded border border-indigo-100 text-sm print-comment">`;
+                        html += `<span class="font-bold text-indigo-600">آخر استاندب:</span> `;
+                        html += `<span class="text-slate-700">"${lastComment.text}"</span>`;
+                        html += `<span class="text-xs text-gray-400 mr-2">(${lastComment.date})</span>`;
+                        html += `</div>`;
+                    } else {
+                        html += `<div class="mt-2 text-xs text-gray-400">لا توجد تعليقات استاندب</div>`;
+                    }
+                    html += `</div>`;
+                });
+                html += `</div>`;
+            } else {
+                html += `<div class="text-gray-400 italic mt-2">لا توجد قصص نشطة في هذه المنطقة.</div>`;
+            }
+
+            // 2. Backlog (first 5 with priority, plus count of those without)
+            if (backlog.length > 0) {
+                const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
+                const top5 = sortedBacklog.slice(0, 5);
+                const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
+                
+                html += `<h3 class="text-lg font-bold text-slate-700 mt-6 mb-2">📋 الباك لوج (${backlog.length})</h3>`;
+                html += `<div class="space-y-2">`;
+                top5.forEach(s => {
+                    html += `<div class="flex justify-between items-center border-b border-gray-100 py-1">`;
+                    html += `<span class="font-mono text-sm">#${s.id}</span>`;
+                    html += `<span class="font-medium">${s.title}</span>`;
+                    html += `<span class="text-xs font-bold bg-gray-200 px-2 py-0.5 rounded">P${s.priority}</span>`;
+                    html += `</div>`;
+                });
+                if (withoutPriority.length > 0) {
+                    html += `<div class="text-sm text-red-600 mt-1">⚠️ يوجد ${withoutPriority.length} قصة بدون أولوية (Priority = 999)</div>`;
+                }
+                html += `</div>`;
+            } else {
+                html += `<div class="text-gray-400 italic mt-2">لا يوجد باك لوج في هذه المنطقة.</div>`;
+            }
+
+            // 3. On-Hold stories
+            if (onHold.length > 0) {
+                html += `<h3 class="text-lg font-bold text-slate-700 mt-6 mb-2">⏸️ قصص معلقة (On-Hold) (${onHold.length})</h3>`;
+                html += `<div class="space-y-2">`;
+                onHold.forEach(s => {
+                    const lastComment = s.standupComments && s.standupComments.length > 0 
+                        ? s.standupComments[s.standupComments.length - 1] 
+                        : null;
+                    const azureTags = s.tags || [];
+                    const customTags = s.customTags || [];
+                    const allTags = [...new Set([...azureTags, ...customTags])];
+                    
+                    html += `<div class="border border-gray-200 rounded p-3 print-story-card">`;
+                    html += `<div class="flex justify-between items-start">`;
+                    html += `<span class="font-mono text-sm text-gray-500">#${s.id}</span>`;
+                    html += `<span class="font-medium">${s.title}</span>`;
+                    html += `</div>`;
+                    if (allTags.length > 0) {
+                        html += `<div class="flex flex-wrap gap-1 mt-1">`;
+                        allTags.forEach(tag => {
+                            const isCustom = customTags.includes(tag);
+                            html += `<span class="px-2 py-0.5 text-[10px] font-bold rounded ${isCustom ? 'bg-purple-200 text-purple-700 print-custom-tag' : 'bg-gray-100 text-gray-600 print-tag'}">${tag}</span>`;
+                        });
+                        html += `</div>`;
+                    }
+                    if (lastComment) {
+                        html += `<div class="mt-1 text-sm text-gray-600 print-comment">"${lastComment.text}" <span class="text-xs text-gray-400">(${lastComment.date})</span></div>`;
+                    }
+                    html += `</div>`;
+                });
+                html += `</div>`;
+            }
+
+            // 4. Tested stories in last 15 days
+            if (tested.length > 0) {
+                html += `<h3 class="text-lg font-bold text-slate-700 mt-6 mb-2">✅ القصص التي تم تسليمها (آخر 15 يوم) (${tested.length})</h3>`;
+                html += `<div class="flex flex-wrap gap-2">`;
+                tested.forEach(s => {
+                    html += `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-mono">#${s.id}</span>`;
+                });
+                html += `</div>`;
+            } else {
+                html += `<div class="text-gray-400 italic mt-2">لا توجد قصص مسلمة في آخر 15 يوم.</div>`;
+            }
+
+            html += `</div>`; // end area
+        }
+
+        content.innerHTML = html;
+        modal.style.display = 'flex';
+    },
+    // ------------------- END NEW WEEKLY REPORT FUNCTIONS -------------------
+
     renderKanban() {
     const container = document.getElementById('kanban-container');
     const filterSelect = document.getElementById('kanban-ba-filter');
@@ -1595,6 +1895,19 @@ renderAll() {
     // بناء الأعمدة
     let html = '';
 
+    // إضافة الفلتر مع زر التقرير الأسبوعي
+    html += `
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 col-span-full bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <div class="flex items-center gap-3">
+                <label class="text-sm font-bold text-slate-600">Business Area:</label>
+                <select id="kanban-ba-filter" multiple size="1" class="border rounded-lg p-1 text-sm min-w-[200px]"></select>
+            </div>
+            <button onclick="ui.generateWeeklyReport()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-md transition flex items-center gap-2">
+                <span>📊</span> التقرير الأسبوعي
+            </button>
+        </div>
+    `;
+
     // 1. عمود الباك لوج (يظهر أولاً)
     html += `
         <div class="flex-shrink-0 w-80 bg-purple-50 rounded-xl border border-purple-200 flex flex-col max-h-screen">
@@ -1628,6 +1941,7 @@ renderAll() {
 
     container.innerHTML = html;
 },
+
     renderSupportKanban() {
     const container = document.getElementById('support-kanban-container');
     const filterSelect = document.getElementById('support-kanban-ba-filter');
@@ -1717,6 +2031,7 @@ renderAll() {
 
     container.innerHTML = html;
 },
+
     renderDelivery() {
         const container = document.getElementById('delivery-grid');
         const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || ""; 
