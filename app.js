@@ -1367,7 +1367,7 @@ renderAll() {
     // استخراج المناطق الفريدة
     const areas = [...new Set(allStoriesForAreas.map(s => s.area || "General"))].sort();
 
-    //  الحفاظ على التحديدات الحالية
+    // الحفاظ على التحديدات الحالية
     const currentSelected = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
     filterSelect.multiple = true;
     filterSelect.size = Math.min(areas.length, 5);
@@ -1382,19 +1382,19 @@ renderAll() {
     let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
     if (selectedAreas.length === 0) selectedAreas = areas;
 
-    // تصفية القصص حسب المنطقة ونوعها (استبعاد Support log)
+    // تصفية القصص حسب المنطقة ونوعها (استبعاد Support log) مع الترتيب حسب الأولوية
     const filteredRegular = currentData
-    .filter(s => !isBacklogStory(s) && isRegularStory(s) && selectedAreas.includes(s.area || "General"))
-    .sort((a, b) => (a.priority || 999) - (b.priority || 999));
+        .filter(s => !isBacklogStory(s) && isRegularStory(s) && selectedAreas.includes(s.area || "General"))
+        .sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
-const filteredBacklog = db.backlogStories
-    .filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"))
-    .sort((a, b) => (a.priority || 999) - (b.priority || 999));
+    const filteredBacklog = db.backlogStories
+        .filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"))
+        .sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
     // تعريف الأعمدة (بدون Backlog لأنه سيُضاف بشكل منفصل)
     const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
 
-    // دالة مساعدة لإنشاء بطاقة القصة العادية (مع دمج وتمييز الوسوم)
+    // دالة مساعدة لإنشاء بطاقة القصة العادية (مع دمج وتمييز الوسوم وإضافة زر التحكم)
     const createRegularCard = (s) => {
         // جلب الوسوم من Azure ومعالجتها
         const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
@@ -1425,6 +1425,10 @@ const filteredBacklog = db.backlogStories
 
         const commentsCount = s.standupComments ? s.standupComments.length : 0;
 
+        // زر التحكم في الوسوم (نفسه الموجود في Active Cards)
+        const customTagsList = db.customTags || [];
+        const storyTags = s.customTags || [];
+
         return `
             <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
                 ${allTagSet.size > 0 ? `
@@ -1434,6 +1438,40 @@ const filteredBacklog = db.backlogStories
                         return `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`;
                     }).join('')}
                 </div>` : ''}
+
+                <!-- إضافة زر إضافة وسوم مخصصة -->
+                <div class="flex flex-wrap items-center gap-1.5 mb-3 border-b border-dashed border-gray-100 pb-2 overflow-visible">
+                    ${storyTags.map(tag => `
+                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
+                            ${tag}
+                            <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
+                        </span>
+                    `).join('')}
+                    
+                    <div class="relative inline-block group">
+                        <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
+                            <span class="text-sm font-bold">+</span>
+                        </button>
+                        
+                        <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
+                            <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
+                                <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
+                                <div class="max-h-40 overflow-y-auto">
+                                    ${customTagsList.length > 0 ? customTagsList.map(tag => {
+                                        const isPicked = storyTags.includes(tag);
+                                        return `
+                                        <button 
+                                            onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')"
+                                            class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
+                                            ${tag}
+                                            ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
+                                        </button>`;
+                                    }).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags defined</div>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="flex justify-between items-center mb-2">
                     <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
@@ -1478,11 +1516,15 @@ const filteredBacklog = db.backlogStories
         `;
     };
 
-    // دالة مساعدة لإنشاء بطاقة الباك لوج (مع دمج وتمييز الوسوم)
+    // دالة مساعدة لإنشاء بطاقة الباك لوج (مع دمج وتمييز الوسوم وإضافة زر التحكم)
     const createBacklogCard = (s) => {
         const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
         const customTagsArr = s.customTags || [];
         const allTagSet = new Set([...azureTags, ...customTagsArr]);
+
+        // زر التحكم في الوسوم
+        const customTagsList = db.customTags || [];
+        const storyTags = s.customTags || [];
 
         return `
             <div class="bg-white p-3 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
@@ -1493,6 +1535,41 @@ const filteredBacklog = db.backlogStories
                         return `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`;
                     }).join('')}
                 </div>` : ''}
+
+                <!-- إضافة زر إضافة وسوم مخصصة -->
+                <div class="flex flex-wrap items-center gap-1.5 mb-3 border-b border-dashed border-gray-100 pb-2 overflow-visible">
+                    ${storyTags.map(tag => `
+                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
+                            ${tag}
+                            <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
+                        </span>
+                    `).join('')}
+                    
+                    <div class="relative inline-block group">
+                        <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
+                            <span class="text-sm font-bold">+</span>
+                        </button>
+                        
+                        <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
+                            <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
+                                <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
+                                <div class="max-h-40 overflow-y-auto">
+                                    ${customTagsList.length > 0 ? customTagsList.map(tag => {
+                                        const isPicked = storyTags.includes(tag);
+                                        return `
+                                        <button 
+                                            onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')"
+                                            class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
+                                            ${tag}
+                                            ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
+                                        </button>`;
+                                    }).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags defined</div>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex justify-between items-center mb-2">
                     <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-purple-600 cursor-pointer hover:underline">#${s.id} 🔍</div>
                 </div>
@@ -1551,7 +1628,6 @@ const filteredBacklog = db.backlogStories
 
     container.innerHTML = html;
 },
-
     renderSupportKanban() {
     const container = document.getElementById('support-kanban-container');
     const filterSelect = document.getElementById('support-kanban-ba-filter');
@@ -3034,26 +3110,31 @@ const tagManager = {
     },
 
     toggleTagInStory(storyId, tagName) {
-        const story = db.currentStories.find(s => (s.id || s.ID || s.idReadable) == storyId);
-        
-        if (story) {
-            if (!story.customTags) {
-                story.customTags = [];
-            }
-            
-            const index = story.customTags.indexOf(tagName);
-            if (index > -1) {
-                story.customTags.splice(index, 1);
-            } else {
-                story.customTags.push(tagName);
-            }
-            
-            dataProcessor.saveToGitHub();
-            ui.renderActiveCards(); 
-        } else {
-            console.error("Story not found in database for ID:", storyId);
-        }
+    // البحث في currentStories أولاً
+    let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
+    if (!story) {
+        // إذا لم يوجد، نبحث في backlogStories
+        story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
     }
+    
+    if (story) {
+        if (!story.customTags) {
+            story.customTags = [];
+        }
+        
+        const index = story.customTags.indexOf(tagName);
+        if (index > -1) {
+            story.customTags.splice(index, 1);
+        } else {
+            story.customTags.push(tagName);
+        }
+        
+        dataProcessor.saveToGitHub();
+        ui.renderKanban(); // تحديث الكانبان بعد التغيير
+    } else {
+        console.error("Story not found in database for ID:", storyId);
+    }
+}
 };
 
 const commentManager = {
