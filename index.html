@@ -228,25 +228,19 @@
     <div id="daily-activity-container" class="space-y-8"></div>
 </section>
             
-            <!-- ======================== TAB KANBAN المعدل ======================== -->
+            <!-- ======================== TAB KANBAN المعدل (عناصر تحكم يسار، بدون وصف) ======================== -->
             <section id="tab-kanban" class="tab-content space-y-4">
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white p-4 rounded-xl border shadow-sm">
-                    <div>
-                        <h2 class="font-bold text-slate-800 text-xl">Kanban Board</h2>
-                        <p class="text-sm text-gray-500">View stories by status for specific business area</p>
+                <div class="flex flex-wrap items-center gap-3 bg-white p-4 rounded-xl border shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-bold text-gray-600">Area:</label>
+                        <select id="kanban-ba-filter" onchange="ui.renderKanban()" class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        </select>
                     </div>
-                    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-                        <div class="flex items-center gap-2">
-                            <label class="text-sm font-bold text-gray-600">Area:</label>
-                            <select id="kanban-ba-filter" onchange="ui.renderKanban()" class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                                </select>
-                        </div>
-                        <button onclick="ui.generateWeeklyReport()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow transition flex items-center gap-2">
-                            <span>📊</span> Weekly Report
-                        </button>
-                        <input type="text" id="kanban-search-input" oninput="ui.renderKanban()" placeholder="Search ID, Title, Employee..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48">
-                        <input type="text" id="kanban-tag-search-input" oninput="ui.renderKanban()" placeholder="Search Tags..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-40">
-                    </div>
+                    <button onclick="ui.generateWeeklyReport()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow transition flex items-center gap-2">
+                        <span>📊</span> Weekly Report
+                    </button>
+                    <input type="text" id="kanban-search-input" oninput="ui.renderKanban()" placeholder="Search ID, Title, Employee..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48">
+                    <input type="text" id="kanban-tag-search-input" oninput="ui.renderKanban()" placeholder="Search Tags..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-40">
                 </div>
                 <div id="kanban-container" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 min-h-[600px]">
                 </div>
