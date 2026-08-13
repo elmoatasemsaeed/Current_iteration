@@ -1624,6 +1624,29 @@ renderAll() {
     renderKanban() {
     const container = document.getElementById('kanban-container');
     const filterSelect = document.getElementById('kanban-ba-filter');
+    const searchInput = document.getElementById('kanban-search-input');
+    const tagSearchInput = document.getElementById('kanban-tag-search-input');
+
+    // قراءة قيم البحث
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+    const tagSearchTerm = tagSearchInput ? tagSearchInput.value.toLowerCase() : "";
+
+    // دالة مساعدة للبحث في النص (ID، العنوان، المطور، المختبر، المنطقة)
+    const matchesSearch = (s) => {
+        if (!searchTerm) return true;
+        return (s.title && s.title.toLowerCase().includes(searchTerm)) ||
+               (s.id && s.id.toString().includes(searchTerm)) ||
+               (s.assignedTo && s.assignedTo.toLowerCase().includes(searchTerm)) ||
+               (s.tester && s.tester.toLowerCase().includes(searchTerm)) ||
+               (s.area && s.area.toLowerCase().includes(searchTerm));
+    };
+
+    // دالة مساعدة للبحث في الوسوم (Azure Tags + Custom Tags)
+    const matchesTag = (s) => {
+        if (!tagSearchTerm) return true;
+        const allTags = [...(s.tags || []), ...(s.customTags || [])];
+        return allTags.some(t => t.toLowerCase().includes(tagSearchTerm));
+    };
 
     // دمج القصص العادية وقصص الباك لوج لعرض المناطق في الفلتر (استبعاد السابورت)
     const allStoriesForAreas = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
@@ -1647,13 +1670,15 @@ renderAll() {
     let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
     if (selectedAreas.length === 0) selectedAreas = areas;
 
-    // تصفية القصص حسب المنطقة ونوعها (استبعاد Support log) مع الترتيب حسب الأولوية
+    // تصفية القصص حسب المنطقة ونوعها (استبعاد Support log) مع تطبيق البحث
     const filteredRegular = currentData
         .filter(s => !isBacklogStory(s) && isRegularStory(s) && selectedAreas.includes(s.area || "General"))
+        .filter(s => matchesSearch(s) && matchesTag(s))
         .sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
     const filteredBacklog = db.backlogStories
         .filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"))
+        .filter(s => matchesSearch(s) && matchesTag(s))
         .sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
     // تعريف الأعمدة (بدون Backlog لأنه سيُضاف بشكل منفصل)
@@ -1858,14 +1883,7 @@ renderAll() {
     };
 
     // بناء الأعمدة
-    // نبدأ HTML بوضع زر التقرير في الأعلى
-    let html = `
-        <div class="flex justify-end mb-4">
-            <button onclick="ui.generateWeeklyReport()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-md transition flex items-center gap-2">
-                <span>📊</span> التقرير الأسبوعي
-            </button>
-        </div>
-    `;
+    let html = '';
 
     // 1. عمود الباك لوج (يظهر أولاً)
     html += `
@@ -1900,7 +1918,6 @@ renderAll() {
 
     container.innerHTML = html;
 },
-
     renderSupportKanban() {
     const container = document.getElementById('support-kanban-container');
     const filterSelect = document.getElementById('support-kanban-ba-filter');
