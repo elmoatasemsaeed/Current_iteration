@@ -1621,7 +1621,7 @@ renderAll() {
     },
     // ------------------- END WEEKLY REPORT FUNCTIONS -------------------
 
-    renderKanban() {
+   renderKanban() {
     const container = document.getElementById('kanban-container');
     const filterSelect = document.getElementById('kanban-ba-filter');
     const searchInput = document.getElementById('kanban-search-input');
@@ -1684,13 +1684,14 @@ renderAll() {
     // تعريف الأعمدة (بدون Backlog لأنه سيُضاف بشكل منفصل)
     const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
 
-    // دالة مساعدة لإنشاء بطاقة القصة العادية (مع دمج وتمييز الوسوم وإضافة زر التحكم)
+    // دالة مساعدة لإنشاء بطاقة القصة العادية (مع شريط الزاوية للتاريخ)
     const createRegularCard = (s) => {
         // جلب الوسوم من Azure ومعالجتها
         const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
         const customTagsArr = s.customTags || [];
-        const allTagSet = new Set([...azureTags, ...customTagsArr]); // دمج بدون تكرار
+        const allTagSet = new Set([...azureTags, ...customTagsArr]);
 
+        // حساب البيانات
         const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
         const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
         const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
@@ -1715,12 +1716,22 @@ renderAll() {
 
         const commentsCount = s.standupComments ? s.standupComments.length : 0;
 
-        // زر التحكم في الوسوم (نفسه الموجود في Active Cards)
         const customTagsList = db.customTags || [];
         const storyTags = s.customTags || [];
 
+        // ---- شريط الزاوية للتاريخ ----
+        const releaseDate = s.expectedRelease 
+            ? (s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB'))
+            : null;
+
         return `
-            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+            <div class="relative bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+                ${releaseDate ? `
+                    <div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">
+                        📅 ${releaseDate}
+                    </div>
+                ` : ''}
+
                 ${allTagSet.size > 0 ? `
                 <div class="flex flex-wrap gap-1 mb-2">
                     ${[...allTagSet].map(tag => {
@@ -1806,18 +1817,28 @@ renderAll() {
         `;
     };
 
-    // دالة مساعدة لإنشاء بطاقة الباك لوج (مع دمج وتمييز الوسوم وإضافة زر التحكم)
+    // دالة مساعدة لإنشاء بطاقة الباك لوج (مع شريط الزاوية للتاريخ)
     const createBacklogCard = (s) => {
         const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
         const customTagsArr = s.customTags || [];
         const allTagSet = new Set([...azureTags, ...customTagsArr]);
 
-        // زر التحكم في الوسوم
         const customTagsList = db.customTags || [];
         const storyTags = s.customTags || [];
 
+        // ---- شريط الزاوية للتاريخ ----
+        const releaseDate = s.expectedRelease 
+            ? (s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB'))
+            : null;
+
         return `
-            <div class="bg-white p-3 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
+            <div class="relative bg-white p-3 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
+                ${releaseDate ? `
+                    <div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">
+                        📅 ${releaseDate}
+                    </div>
+                ` : ''}
+
                 ${allTagSet.size > 0 ? `
                 <div class="flex flex-wrap gap-1 mb-2">
                     ${[...allTagSet].map(tag => {
