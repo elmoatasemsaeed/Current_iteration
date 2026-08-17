@@ -11323,6 +11323,21 @@
       ],
       "bugs": [
         {
+          "ID": 182586,
+          "Work Item Type": "Bug",
+          "Title": "Al Farabi LDM General APIs_ Add new registration: undefined blocking bug prevent add registrtion done",
+          "Assigned To": "Mostafa Taha",
+          "Activity": "",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 1,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-08-17T10:33:05.473Z",
+          "Customer": "Al Farabi Lab KSA_283"
+        },
+        {
           "ID": 183568,
           "Work Item Type": "Bug",
           "Title": "General API // add registration bugs",
@@ -11352,6 +11367,36 @@
           "Assigned To Tester": "Unassigned",
           "State": "New",
           "Changed Date": "2026-08-17T10:28:26.897Z",
+          "Customer": "Al Farabi Lab KSA_283"
+        },
+        {
+          "ID": 184278,
+          "Work Item Type": "Bug",
+          "Title": "add service to existing registrations // when add service with several tests like CBC  to an existing accession the lonic code of the parent service duplicated a number of times equal to the number of tests",
+          "Assigned To": "Mostafa Taha",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-08-17T10:31:06.557Z",
+          "Customer": "Al Farabi Lab KSA_283"
+        },
+        {
+          "ID": 184279,
+          "Work Item Type": "Bug",
+          "Title": "GET RESULT AS \"raw data \" Api // Api response do not log test results with critical flag",
+          "Assigned To": "Mostafa Taha",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-08-17T10:32:52.143Z",
           "Customer": "Al Farabi Lab KSA_283"
         }
       ],
@@ -17742,13 +17787,13 @@
           "Assigned To": "Ahmed Gamal",
           "Activity": "",
           "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.08,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-August 2-22",
           "Assigned To Tester": "Unassigned",
           "State": "New",
           "Tags": "UAT",
-          "Changed Date": "2026-08-16T13:25:35.243Z",
+          "Changed Date": "2026-08-17T10:30:57.007Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -24481,12 +24526,12 @@
       "area": "Home Visit",
       "priority": 999,
       "tags": [
-        "execution"
+        "Done execution and waiting allaa on empty ldmreservation payloads handeling"
       ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-08-16T13:42:21.243Z",
+      "changedDate": "2026-08-17T10:38:56.950Z",
       "tasks": [
         {
           "ID": 180056,
@@ -26568,12 +26613,13 @@
       "area": "Home Visit",
       "priority": 999,
       "tags": [
-        "execution"
+        "execution",
+        " Under review"
       ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-08-13T13:49:12.503Z",
+      "changedDate": "2026-08-17T10:47:09.107Z",
       "tasks": [
         {
           "ID": 182040,
@@ -26685,8 +26731,9 @@
           "Activated Date": "2026-08-13T10:04:32.217Z",
           "Iteration Path": "Home Visit\\2026\\home_visit July 12-26",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-08-13T14:02:47.717Z",
+          "Resolved Date": "2026-08-17T10:36:36.843Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-08-17T10:36:36.843Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -26711,8 +26758,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-07-30T18:05:46.723Z",
-        "testEnd": "2026-08-04T13:00:00.000Z",
-        "finalEnd": "2026-08-04T13:00:00.000Z"
+        "testEnd": "2026-08-03T13:00:00.000Z",
+        "finalEnd": "2026-08-03T13:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [],
@@ -26889,7 +26936,7 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-07-30T19:46:32.830Z",
-        "testEnd": "2026-08-09T13:00:00.000Z",
+        "testEnd": "2026-08-06T13:00:00.000Z",
         "finalEnd": "2026-08-13T09:39:13.217Z"
       },
       "customTags": [],
@@ -26914,11 +26961,13 @@
       "tester": "Bothyna Mostafa",
       "area": "Home Visit",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "execution"
+      ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-08-13T09:09:45.740Z",
+      "changedDate": "2026-08-17T10:39:09.217Z",
       "tasks": [
         {
           "ID": 182412,
@@ -27086,11 +27135,13 @@
       "tester": "Bassant Raafat",
       "area": "Home Visit",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "execution"
+      ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-08-16T21:02:17.720Z",
+      "changedDate": "2026-08-17T10:39:16.627Z",
       "tasks": [
         {
           "ID": 182421,
@@ -30856,54 +30907,6 @@
       "isBacklog": false
     },
     {
-      "id": 180066,
-      "title": "Integration | Integ_Saving HL7 CLOB Data in Server Storage Instead of Database",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "MOHAMED SAYED",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Internal NT",
-      "customer": "Internal CR_2000",
-      "changedDate": "2026-08-16T09:27:53.837Z",
-      "tasks": [
-        {
-          "ID": 182272,
-          "Work Item Type": "Task",
-          "Title": "LDM_LOCAL: Update ReceivedHL7Messages and HL7OutboxMessages and Integ_OutboxMessageLog and Integ_PendingMessages tables structure",
-          "Assigned To": "Mostafa Mahmoud",
-          "Activity": "DB Modification",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 4.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-08-11T09:36:02.497Z",
-          "Iteration Path": "LDM\\Base Release Regression Cycle",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-08-11T10:59:54.02Z",
-          "State": "Closed",
-          "Changed Date": "2026-08-13T14:58:56.353Z",
-          "Customer": "Internal CR_2000"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-08-11T11:36:02.497Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
-      },
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM\\Base Release Regression Cycle",
-      "devActualTime": 20.5,
-      "testActualTime": 0,
-      "isBacklog": false
-    },
-    {
       "id": 180975,
       "title": "Adafca : UAH production servers adjustments (#45439)",
       "type": "Support log",
@@ -32414,9 +32417,9 @@
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-08-17T09:28:12.503Z",
-          "State": "To Be Reviewed",
+          "State": "Closed",
           "Tags": "liquibase; v4.1.0; Wait .Net review",
-          "Changed Date": "2026-08-17T10:08:23.723Z",
+          "Changed Date": "2026-08-17T10:31:18.55Z",
           "Customer": "Al Borg KSA_530"
         }
       ],
@@ -32424,7 +32427,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-08-16T14:42:01.300Z",
+        "devEnd": "2026-08-17T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -32533,7 +32536,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Trust Lab - Alex_619",
-      "changedDate": "2026-08-17T09:13:24.470Z",
+      "changedDate": "2026-08-17T10:45:45.583Z",
       "tasks": [
         {
           "ID": 184087,
@@ -36928,32 +36931,6 @@
       "isBacklog": true
     },
     {
-      "id": 183436,
-      "title": "Internal CR - Revamp Locations",
-      "type": "User Story",
-      "state": "New",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "LDM",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2026-08-11T09:05:55.320Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true
-    },
-    {
       "id": 183462,
       "title": "Admin Portal - update Client Data to add Apple bundle ID and android com package",
       "type": "User Story",
@@ -37018,7 +36995,7 @@
       "expectedRelease": null,
       "branch": "N/A",
       "customer": "General",
-      "changedDate": "2026-08-11T12:50:52.093Z",
+      "changedDate": "2026-08-17T10:40:43.550Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -38819,32 +38796,6 @@
       "branch": "N/A",
       "customer": "General",
       "changedDate": "2025-11-06T00:07:18.383Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "Client Custom Portals",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true
-    },
-    {
-      "id": 151367,
-      "title": "UAHP - Client Portal - Batch Results: Flag the numeric results that are below normal range with orange color",
-      "type": "User Story",
-      "state": "New",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "Client Custom Portals",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2025-11-06T00:22:54.920Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -42290,6 +42241,32 @@
       "isBacklog": true
     },
     {
+      "id": 183436,
+      "title": "Internal CR - Revamp Locations",
+      "type": "User Story",
+      "state": "New",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "LDM",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2026-08-11T09:05:55.320Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true
+    },
+    {
       "id": 183446,
       "title": "Internal CR - Create Patient Class Menu",
       "type": "User Story",
@@ -42406,7 +42383,7 @@
       "expectedRelease": null,
       "branch": "N/A",
       "customer": "General",
-      "changedDate": "2026-08-17T09:57:27.750Z",
+      "changedDate": "2026-08-17T10:39:37.063Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -42415,6 +42392,32 @@
       "customTags": [],
       "standupComments": [],
       "iterationPath": "LDM",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true
+    },
+    {
+      "id": 151367,
+      "title": "UAHP - Client Portal - Batch Results: Flag the numeric results that are below normal range with orange color",
+      "type": "User Story",
+      "state": "New",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Client Custom Portals",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2025-11-06T00:22:54.920Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "Client Custom Portals",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": true
