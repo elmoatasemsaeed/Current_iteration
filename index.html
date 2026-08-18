@@ -85,6 +85,13 @@
             background: #a5b4fc;
             border-radius: 8px;
         }
+        /* إضافات للنافذة المنبثقة */
+        #comments-popup .comment-item {
+            transition: background 0.15s;
+        }
+        #comments-popup .comment-item:hover {
+            background-color: #f1f5f9;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -298,14 +305,16 @@
                     <button onclick="ui.generateWeeklyReport()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow transition flex items-center gap-2">
                         <span>📊</span> Weekly Report
                     </button>
+                    <!-- زر التعليقات الجديد -->
+                    <button onclick="areaCommentManager.openCommentsPopup()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2">
+                        <span>💬</span> تعليقات المنطقة
+                    </button>
                     <input type="text" id="kanban-search-input" oninput="ui.renderKanban()" placeholder="Search ID, Title, Employee..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48">
                     <input type="text" id="kanban-tag-search-input" oninput="ui.renderKanban()" placeholder="Search Tags..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-40">
                 </div>
 
-                <!-- ===== AREA COMMENTS SECTION (RTL) ===== -->
-                <div id="area-comments-container" class="space-y-4">
-                    <!-- dynamically rendered -->
-                </div>
+                <!-- <div id="area-comments-container" class="space-y-4"> --> <!-- تم إزالة هذا القسم -->
+                <!-- سيتم عرض التعليقات في الـ popup -->
 
                 <div id="kanban-container" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 min-h-[600px]">
                 </div>
@@ -376,6 +385,7 @@
         </main>
     </div>
 
+    <!-- Story Modal -->
     <div id="story-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div class="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
@@ -383,6 +393,19 @@
                 <button onclick="ui.closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
             <div id="modal-body" class="p-6 space-y-6">
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Popup Modal -->
+    <div id="comments-popup" class="fixed inset-0 z-[2000] hidden flex items-center justify-center bg-black/50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10">
+                <h3 class="text-xl font-bold text-slate-800">💬 تعليقات المنطقة</h3>
+                <button onclick="areaCommentManager.closeCommentsPopup()" class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
+            </div>
+            <div id="comments-popup-content" class="p-6 overflow-y-auto">
+                <!-- سيتم تعبئته بواسطة JavaScript -->
             </div>
         </div>
     </div>
