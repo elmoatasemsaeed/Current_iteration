@@ -489,7 +489,7 @@ const dateEngine = {
 };
 
 /**
- * Area Comment Manager
+ * Area Comment Manager – مع دعم النافذة المنبثقة والحذف
  */
 const areaCommentManager = {
     addComment(area, text) {
@@ -506,48 +506,105 @@ const areaCommentManager = {
             alert('فشل حفظ التعليق: ' + err.message);
         });
     },
-    renderAreaComments(areas) {
-        if (!areas || areas.length === 0) return '';
-        const commentsMap = {};
+    // فتح النافذة المنبثقة مع تعليقات المناطق المحددة
+    openCommentsPopup() {
+        const modal = document.getElementById('comments-popup');
+        if (!modal) return;
+        // جلب المناطق المختارة حالياً من فلتر الكانبان
+        const filterSelect = document.getElementById('kanban-ba-filter');
+        let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
+        if (selectedAreas.length === 0) {
+            // إذا لم تكن هناك مناطق محددة، نأخذ جميع المناطق المتاحة
+            const allStories = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
+            const areas = [...new Set(allStories.map(s => s.area || "General"))].sort();
+            this.renderCommentsPopup(areas);
+        } else {
+            this.renderCommentsPopup(selectedAreas);
+        }
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    },
+    closeCommentsPopup() {
+        const modal = document.getElementById('comments-popup');
+        if (modal) modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    },
+    renderCommentsPopup(areas) {
+        const content = document.getElementById('comments-popup-content');
+        if (!content) return;
+        if (!areas || areas.length === 0) {
+            content.innerHTML = `<div class="text-center py-10 text-gray-400">لا توجد مناطق محددة.</div>`;
+            return;
+        }
+        let html = '';
         areas.forEach(area => {
-            commentsMap[area] = db.areaComments.filter(c => c.area === area);
-        });
-        let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
-        areas.forEach(area => {
-            const comments = commentsMap[area] || [];
+            const comments = db.areaComments.filter(c => c.area === area);
             html += `
-                <div class="area-comment-section bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                    <div class="flex justify-between items-center mb-2">
+                <div class="mb-6 border-b border-gray-100 pb-4 last:border-0">
+                    <div class="flex justify-between items-center mb-3">
                         <h4 class="font-bold text-indigo-700 text-sm">📍 ${area}</h4>
                         <span class="text-xs text-gray-400">${comments.length} تعليق</span>
                     </div>
-                    <div class="area-comment-box">
-                        <div class="flex gap-2 mb-2">
-                            <textarea id="area-comment-${area.replace(/\s/g, '')}" 
-                                      placeholder="اكتب تعليق عام عن المنطقة..." 
-                                      class="flex-1 border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
-                                      rows="1"
-                                      style="direction: rtl; text-align: right;"></textarea>
-                            <button onclick="areaCommentManager.addComment('${area}', document.getElementById('area-comment-${area.replace(/\s/g, '')}').value); document.getElementById('area-comment-${area.replace(/\s/g, '')}').value='';" 
-                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition whitespace-nowrap">
-                                إضافة تعليق
-                            </button>
-                        </div>
-                        <div class="comment-list space-y-2 max-h-40 overflow-y-auto">
-                            ${comments.length === 0 ? '<p class="text-gray-400 text-xs italic">لا توجد تعليقات بعد</p>' : ''}
-                            ${comments.slice().reverse().map(c => `
-                                <div class="area-comment-card bg-gray-50 p-2 rounded-lg border border-gray-100 flex justify-between items-start gap-2">
-                                    <span class="comment-text text-sm text-slate-700 flex-1" style="direction: rtl; text-align: right;">${c.text}</span>
-                                    <span class="comment-meta text-[10px] text-gray-400 whitespace-nowrap" style="direction: ltr;">${c.timestamp}</span>
+                    <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                        ${comments.length === 0 ? '<p class="text-gray-400 text-xs italic">لا توجد تعليقات في هذه المنطقة.</p>' : ''}
+                        ${comments.map((c, index) => `
+                            <div class="flex justify-between items-start bg-gray-50 p-3 rounded-lg border border-gray-100 comment-item">
+                                <div class="flex-1">
+                                    <p class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</p>
+                                    <p class="text-[10px] text-gray-400 mt-1">${c.timestamp}</p>
                                 </div>
-                            `).join('')}
-                        </div>
+                                <button onclick="areaCommentManager.deleteComment('${area}', ${index})" class="text-red-400 hover:text-red-600 text-sm font-bold ml-2" title="حذف التعليق">✕</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="mt-3 flex gap-2">
+                        <textarea id="area-comment-${area.replace(/\s/g, '')}" 
+                                  placeholder="اكتب تعليق عام عن المنطقة..." 
+                                  class="flex-1 border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                                  rows="1"
+                                  style="direction: rtl; text-align: right;"></textarea>
+                        <button onclick="areaCommentManager.addCommentFromPopup('${area}')" 
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition whitespace-nowrap">
+                            إضافة
+                        </button>
                     </div>
                 </div>
             `;
         });
-        html += '</div>';
-        return html;
+        content.innerHTML = html;
+    },
+    addCommentFromPopup(area) {
+        const textarea = document.getElementById(`area-comment-${area.replace(/\s/g, '')}`);
+        if (!textarea) return;
+        const text = textarea.value.trim();
+        if (!text) return;
+        this.addComment(area, text);
+        textarea.value = '';
+        // بعد الإضافة، نعيد فتح البوباب لتحديث المحتوى
+        this.openCommentsPopup();
+    },
+    deleteComment(area, index) {
+        if (!confirm('هل تريد حذف هذا التعليق؟')) return;
+        const comments = db.areaComments.filter(c => c.area === area);
+        if (comments[index]) {
+            const commentToDelete = comments[index];
+            const globalIndex = db.areaComments.indexOf(commentToDelete);
+            if (globalIndex > -1) {
+                db.areaComments.splice(globalIndex, 1);
+                dataProcessor.saveToGitHub().then(() => {
+                    this.openCommentsPopup(); // إعادة فتح البوباب لتحديث المحتوى
+                    ui.renderKanban(); // تحديث الكانبان أيضاً
+                }).catch(err => {
+                    console.error('Failed to delete comment:', err);
+                    alert('فشل حذف التعليق: ' + err.message);
+                });
+            }
+        }
+    },
+    // دوال قديمة للحفاظ على التوافق (يمكن الاستغناء عنها لاحقاً)
+    renderAreaComments(areas) {
+        // لم تعد مستخدمة، لكن نتركها لتجنب الأخطاء
+        return '';
     }
 };
 
@@ -1229,6 +1286,26 @@ const ui = {
             const { states, backlog, tested, comments } = data;
             html += `<div class="mb-12 page-break-after">`;
             html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${area}</h2>`;
+
+            // ===== التعليقات العامة في الأعلى =====
+            if (comments && comments.length > 0) {
+                html += `<div class="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">`;
+                html += `<h3 class="font-bold text-amber-700 text-sm flex items-center gap-2 mb-3">💬 تعليقات عامة على المنطقة</h3>`;
+                html += `<div class="space-y-2">`;
+                comments.forEach(c => {
+                    html += `
+                        <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2">
+                            <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</span>
+                            <span class="text-[10px] text-gray-400 whitespace-nowrap">${c.timestamp}</span>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            } else {
+                html += `<div class="text-gray-400 text-sm italic mb-4">لا توجد تعليقات عامة على هذه المنطقة.</div>`;
+            }
+
+            // ===== جدول الحالات =====
             html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">`;
             const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
             stateOrder.forEach(state => {
@@ -1269,6 +1346,8 @@ const ui = {
                 html += `</div>`;
             });
             html += `</div>`;
+
+            // ===== الباك لوج =====
             if (backlog.length > 0) {
                 const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
                 const top5 = sortedBacklog.slice(0, 5);
@@ -1289,6 +1368,8 @@ const ui = {
             } else {
                 html += `<div class="text-gray-400 text-sm italic mt-2">لا يوجد باك لوج في هذه المنطقة.</div>`;
             }
+
+            // ===== تم تسليمها مؤخراً =====
             if (tested.length > 0) {
                 html += `<div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">`;
                 html += `<h3 class="font-bold text-green-700 text-sm">✅ تم تسليمها (آخر 15 يوم) (${tested.length})</h3>`;
@@ -1300,23 +1381,7 @@ const ui = {
             } else {
                 html += `<div class="text-gray-400 text-sm italic mt-2">لا توجد قصص مسلمة في آخر 15 يوم.</div>`;
             }
-            // ===== Area Comments =====
-            if (comments && comments.length > 0) {
-                html += `<div class="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">`;
-                html += `<h3 class="font-bold text-amber-700 text-sm flex items-center gap-2">💬 تعليقات عامة على المنطقة</h3>`;
-                html += `<div class="space-y-2 mt-2">`;
-                comments.forEach(c => {
-                    html += `
-                        <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2">
-                            <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</span>
-                            <span class="text-[10px] text-gray-400 whitespace-nowrap">${c.timestamp}</span>
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
-            } else {
-                html += `<div class="text-gray-400 text-sm italic mt-2">لا توجد تعليقات عامة على هذه المنطقة.</div>`;
-            }
+
             html += `</div>`;
         }
         content.innerHTML = html;
@@ -1525,7 +1590,7 @@ const ui = {
             `;
         };
 
-        // بناء HTML: الأعمدة أولاً، ثم التعليقات في الأسفل
+        // بناء HTML: الأعمدة فقط (التعليقات العامة أصبحت في popup)
         let html = '';
         // أعمدة الكانبان
         html += `<div class="flex flex-nowrap gap-4 overflow-x-auto pb-4">`;
@@ -1560,11 +1625,7 @@ const ui = {
         }).join('');
         html += `</div>`;
 
-        // ===== عرض التعليقات العامة أسفل الأعمدة =====
-        const commentsHtml = areaCommentManager.renderAreaComments(selectedAreas);
-        if (commentsHtml) {
-            html += `<div id="area-comments-container" class="mt-6">${commentsHtml}</div>`;
-        }
+        // لم نعد نعرض التعليقات العامة هنا، بل عبر الزر
 
         container.innerHTML = html;
     },
