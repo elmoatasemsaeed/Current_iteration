@@ -4,15 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iteration Tracker</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js">
+    </script>
     <link rel="icon" href="data:,">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .status-delayed { background-color: #fee2e2; border-left: 4px solid #ef4444; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .status-delayed {
+            background-color: #fee2e2;
+            border-left: 4px solid #ef4444;
+        }
+
+        /* RTL comment styling */
+        .area-comment-box {
+            direction: rtl;
+            font-family: 'Inter', sans-serif;
+        }
+        .area-comment-box textarea,
+        .area-comment-box input {
+            direction: rtl;
+            text-align: right;
+        }
+        .area-comment-box .comment-text {
+            direction: rtl;
+            text-align: right;
+        }
+        .area-comment-box .comment-meta {
+            direction: ltr;
+            text-align: left;
+        }
+        .area-comment-card {
+            transition: all 0.2s ease;
+        }
+        .area-comment-card:hover {
+            background-color: #f8faff;
+            border-color: #818cf8;
+        }
+
+        /* scrollable kanban columns */
+        #kanban-container .overflow-y-auto {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+        #kanban-container .overflow-y-auto::-webkit-scrollbar {
+            width: 4px;
+        }
+        #kanban-container .overflow-y-auto::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #kanban-container .overflow-y-auto::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .area-comment-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .area-comment-section .comment-list {
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .area-comment-section .comment-list::-webkit-scrollbar {
+            width: 3px;
+        }
+        .area-comment-section .comment-list::-webkit-scrollbar-thumb {
+            background: #a5b4fc;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -36,39 +108,39 @@
     </div>
 
     <div id="app-container" class="hidden">
-      <header class="bg-white shadow-sm border-b sticky top-0 z-40">
-    <div class="max-w-full mx-auto px-4">
-        <div class="h-16 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <span class="text-xl font-bold text-blue-700 italic underline">Iteration Follow-Up</span>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                <input type="file" id="csv-input" class="hidden" accept=".csv" onchange="dataProcessor.handleCSV(event)">
-                <button onclick="document.getElementById('csv-input').click()" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-green-700 transition">
-                    📤 <span class="hidden md:inline">Upload CSV</span>
-                </button>
-                <button onclick="azureDevOps.sync()" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-blue-700 transition flex items-center gap-1">
-                    🔄 <span class="hidden md:inline">Refresh</span>
-                </button>
-                <button onclick="auth.logout()" class="text-red-500 text-xs md:text-sm font-bold p-2 hover:bg-red-50 rounded">Logout</button>
-            </div>
-        </div>
+        <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+            <div class="max-w-full mx-auto px-4">
+                <div class="h-16 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <span class="text-xl font-bold text-blue-700 italic underline">Iteration Follow-Up</span>
+                    </div>
 
-        <nav class="flex overflow-x-auto pb-2 gap-1 no-scrollbar lg:justify-start border-t pt-2 lg:border-none lg:pt-0">
-            <button onclick="ui.switchTab('dashboard')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Dashboard</button>
-            <button onclick="ui.switchTab('active')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Current Status</button>
-            <button onclick="ui.switchTab('delivery')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Delivery</button>
-            <button onclick="ui.switchTab('workload')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Workload</button>
-            <button onclick="ui.switchTab('daily-activity')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Daily Activity</button>
-            <button onclick="ui.switchTab('inactive-stories')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Inactive</button>
-            <button onclick="ui.switchTab('kanban')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap font-medium">Kanban Board</button>
-            <button onclick="ui.switchTab('support-kanban')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap font-medium">Support Kanban</button>
-            <button onclick="ui.switchTab('auditor')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Auditor Checklist</button>
-            <button onclick="ui.switchTab('settings')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Settings</button>
-        </nav>
-    </div>
-</header>
+                    <div class="flex items-center gap-2">
+                        <input type="file" id="csv-input" class="hidden" accept=".csv" onchange="dataProcessor.handleCSV(event)">
+                        <button onclick="document.getElementById('csv-input').click()" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-green-700 transition">
+                            📤 <span class="hidden md:inline">Upload CSV</span>
+                        </button>
+                        <button onclick="azureDevOps.sync()" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-blue-700 transition flex items-center gap-1">
+                            🔄 <span class="hidden md:inline">Refresh</span>
+                        </button>
+                        <button onclick="auth.logout()" class="text-red-500 text-xs md:text-sm font-bold p-2 hover:bg-red-50 rounded">Logout</button>
+                    </div>
+                </div>
+
+                <nav class="flex overflow-x-auto pb-2 gap-1 no-scrollbar lg:justify-start border-t pt-2 lg:border-none lg:pt-0">
+                    <button onclick="ui.switchTab('dashboard')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Dashboard</button>
+                    <button onclick="ui.switchTab('active')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Current Status</button>
+                    <button onclick="ui.switchTab('delivery')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Delivery</button>
+                    <button onclick="ui.switchTab('workload')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Workload</button>
+                    <button onclick="ui.switchTab('daily-activity')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Daily Activity</button>
+                    <button onclick="ui.switchTab('inactive-stories')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Inactive</button>
+                    <button onclick="ui.switchTab('kanban')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap font-medium">Kanban Board</button>
+                    <button onclick="ui.switchTab('support-kanban')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap font-medium">Support Kanban</button>
+                    <button onclick="ui.switchTab('auditor')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Auditor Checklist</button>
+                    <button onclick="ui.switchTab('settings')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Settings</button>
+                </nav>
+            </div>
+        </header>
 
         <main class="p-6">
             <!-- تبويب Dashboard -->
@@ -81,79 +153,64 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <h2 class="text-2xl font-bold text-slate-800">Active Workstreams</h2>
                         <div id="active-filters" class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-    <div class="relative flex-grow min-w-[250px]">
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
-        <input type="text" 
-               id="search-input" 
-               onkeyup="ui.renderActiveCards()" 
-               placeholder="Search by ID, Title, or Employee..." 
-               class="w-full pl-10 pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm">
-    </div>
-    
-    <div class="relative">
-        <input type="text" 
-               id="tag-search-input" 
-               oninput="ui.renderActiveCards()" 
-               placeholder="Filter by tags..." 
-               class="w-full sm:w-48 px-4 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none shadow-sm">
-    </div>
-</div>                    </div>
-                    
-                    <div id="active-cards-container" class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                            <div class="relative flex-grow min-w-[250px]">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
+                                <input type="text" id="search-input" onkeyup="ui.renderActiveCards()" placeholder="Search by ID, Title, or Employee..." class="w-full pl-10 pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm">
+                            </div>
+                            <div class="relative">
+                                <input type="text" id="tag-search-input" oninput="ui.renderActiveCards()" placeholder="Filter by tags..." class="w-full sm:w-48 px-4 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none shadow-sm">
+                            </div>
                         </div>
+                    </div>
+
+                    <div id="active-cards-container" class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                    </div>
                 </div>
             </section>
 
-           <section id="tab-delivery" class="tab-content space-y-4">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-green-50 p-4 rounded-lg border border-green-200">
-        <h2 class="font-bold text-green-800 text-2xl">Ready To Deliver (Tested)</h2>
-        
-        <div class="relative w-full md:w-80">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
-            <input type="text" 
-                   id="search-delivery-input" 
-                   onkeyup="ui.renderDelivery()" 
-                   placeholder="Search by ID, Title, or Recipient..." 
-                   class="w-full pl-10 pr-4 py-2 border border-green-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm">
-        </div>
-    </div>
-    
-    <div id="delivery-grid" class="grid grid-cols-1 md:grid-cols-4 gap-4"></div>
-</section>
+            <section id="tab-delivery" class="tab-content space-y-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-green-50 p-4 rounded-lg border border-green-200">
+                    <h2 class="font-bold text-green-800 text-2xl">Ready To Deliver (Tested)</h2>
+                    <div class="relative w-full md:w-80">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
+                        <input type="text" id="search-delivery-input" onkeyup="ui.renderDelivery()" placeholder="Search by ID, Title, or Recipient..." class="w-full pl-10 pr-4 py-2 border border-green-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm">
+                    </div>
+                </div>
+                <div id="delivery-grid" class="grid grid-cols-1 md:grid-cols-4 gap-4"></div>
+            </section>
 
             <section id="tab-availability" class="tab-content">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="availability-container"></div>
             </section>
 
-<section id="tab-inactive-stories" class="tab-content space-y-4">
-    <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-        <h2 class="font-bold text-red-800 text-2xl">Inactive Stories Today</h2>
-        <p class="text-sm text-red-600">Active items with no updates since the start of today</p>
-    </div>
-    <div id="inactive-stories-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-</section>
-            
+            <section id="tab-inactive-stories" class="tab-content space-y-4">
+                <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                    <h2 class="font-bold text-red-800 text-2xl">Inactive Stories Today</h2>
+                    <p class="text-sm text-red-600">Active items with no updates since the start of today</p>
+                </div>
+                <div id="inactive-stories-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </section>
+
             <section id="tab-settings" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <div class="bg-white p-6 rounded-xl border">
-        <h3 class="font-bold mb-4 flex items-center gap-2">👥 User Management</h3>
-        <div class="space-y-3 mb-6">
-            <input type="text" id="new-user-name" placeholder="Username" class="w-full border p-2 rounded">
-            <input type="password" id="new-user-pass" placeholder="Password" class="w-full border p-2 rounded">
-            <select id="new-user-role" class="w-full border p-2 rounded">
-                <option value="viewer">Viewer (Read Only)</option>
-                <option value="admin">Admin (Full Access)</option>
-            </select>
-            <button onclick="settings.addUser()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700">Create User</button>
-        </div>
-        <div class="border-t pt-4">
-            <h4 class="text-sm font-bold text-gray-500 mb-2">Existing Users:</h4>
-            <div id="users-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
-        </div>
-    </div>
-    
-    </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl border">
+                        <h3 class="font-bold mb-4 flex items-center gap-2">👥 User Management</h3>
+                        <div class="space-y-3 mb-6">
+                            <input type="text" id="new-user-name" placeholder="Username" class="w-full border p-2 rounded">
+                            <input type="password" id="new-user-pass" placeholder="Password" class="w-full border p-2 rounded">
+                            <select id="new-user-role" class="w-full border p-2 rounded">
+                                <option value="viewer">Viewer (Read Only)</option>
+                                <option value="admin">Admin (Full Access)</option>
+                            </select>
+                            <button onclick="settings.addUser()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700">Create User</button>
+                        </div>
+                        <div class="border-t pt-4">
+                            <h4 class="text-sm font-bold text-gray-500 mb-2">Existing Users:</h4>
+                            <div id="users-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
                     <div class="bg-white p-6 rounded-xl border">
                         <h3 class="font-bold mb-4">Add Vacation For Employee</h3>
                         <div class="space-y-3">
@@ -175,60 +232,62 @@
                         <div id="holidays-list" class="mt-6 flex flex-wrap gap-2"></div>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 mt-6">
-    <h3 class="text-xl font-bold mb-4 text-purple-800 flex items-center gap-2">
-        🏷️ إعدادات التصنيفات (Tags)
-    </h3>
-    <div class="flex gap-2 mb-4">
-        <input type="text" id="new-tag-input" placeholder="اسم التصنيف الجديد..." class="flex-1 border rounded-lg px-4 py-2">
-        <button onclick="tagManager.addTag()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">إضافة</button>
-    </div>
-    <div id="tags-list" class="flex flex-wrap gap-2">
-        </div>
-                        <!-- ضمن قسم Azure DevOps Setup -->
-<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
-    <h3 class="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
-        ⚙️ Azure DevOps Setup
-    </h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-            <label class="block text-sm text-gray-600 mb-1">Organization</label>
-            <input type="text" id="az-org" value="NTDotNet" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
-        </div>
-        <div>
-            <label class="block text-sm text-gray-600 mb-1">Project</label>
-            <input type="text" id="az-project" value="LDM" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
-        </div>
-        <div>
-            <label class="block text-sm text-gray-600 mb-1">Main Query ID</label>
-            <input type="text" id="az-query-id" value="8a732680-07a6-4dff-bdbd-7800644f61b9" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
-        </div>
-        <div>
-            <label class="block text-sm text-gray-600 mb-1">Backlog Query ID</label>
-            <input type="text" id="az-backlog-query-id" value="" placeholder="e.g., 12345678-..." class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
-        </div>
-    </div>
-    <button onclick="azureDevOps.saveSettings()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Save Azure Settings</button>
-</div>
-</div>
+                        <h3 class="text-xl font-bold mb-4 text-purple-800 flex items-center gap-2">
+                            🏷️ إعدادات التصنيفات (Tags)
+                        </h3>
+                        <div class="flex gap-2 mb-4">
+                            <input type="text" id="new-tag-input" placeholder="اسم التصنيف الجديد..." class="flex-1 border rounded-lg px-4 py-2">
+                            <button onclick="tagManager.addTag()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">إضافة</button>
+                        </div>
+                        <div id="tags-list" class="flex flex-wrap gap-2">
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
+                        <h3 class="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
+                            ⚙️ Azure DevOps Setup
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Organization</label>
+                                <input type="text" id="az-org" value="NTDotNet" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Project</label>
+                                <input type="text" id="az-project" value="LDM" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Main Query ID</label>
+                                <input type="text" id="az-query-id" value="8a732680-07a6-4dff-bdbd-7800644f61b9" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Backlog Query ID</label>
+                                <input type="text" id="az-backlog-query-id" value="" placeholder="e.g., 12345678-..." class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                        </div>
+                        <button onclick="azureDevOps.saveSettings()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Save Azure Settings</button>
+                    </div>
+                </div>
             </section>
+
             <section id="tab-workload" class="tab-content">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="workload-container">
-        </div>
-</section>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="workload-container">
+                </div>
+            </section>
+
             <section id="tab-daily-activity" class="tab-content space-y-4">
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-amber-50 p-4 rounded-lg border border-amber-200">
-        <div>
-            <h2 class="font-bold text-amber-800 text-2xl">Daily Activity Log</h2>
-            <p class="text-sm text-amber-600">All work items activated or updated today</p>
-        </div>
-        <button onclick="ui.exportDailyActivityToExcel()" class="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition flex items-center gap-2">
-            📊 Export to Excel
-        </button>
-    </div>
-    <div id="daily-activity-container" class="space-y-8"></div>
-</section>
-            
-            <!-- ======================== TAB KANBAN المعدل (عناصر تحكم يسار، بدون وصف) ======================== -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-amber-50 p-4 rounded-lg border border-amber-200">
+                    <div>
+                        <h2 class="font-bold text-amber-800 text-2xl">Daily Activity Log</h2>
+                        <p class="text-sm text-amber-600">All work items activated or updated today</p>
+                    </div>
+                    <button onclick="ui.exportDailyActivityToExcel()" class="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition flex items-center gap-2">
+                        📊 Export to Excel
+                    </button>
+                </div>
+                <div id="daily-activity-container" class="space-y-8"></div>
+            </section>
+
+            <!-- ======================== TAB KANBAN with Area Comments ======================== -->
             <section id="tab-kanban" class="tab-content space-y-4">
                 <div class="flex flex-wrap items-center gap-3 bg-white p-4 rounded-xl border shadow-sm">
                     <div class="flex items-center gap-2">
@@ -242,31 +301,36 @@
                     <input type="text" id="kanban-search-input" oninput="ui.renderKanban()" placeholder="Search ID, Title, Employee..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48">
                     <input type="text" id="kanban-tag-search-input" oninput="ui.renderKanban()" placeholder="Search Tags..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-40">
                 </div>
+
+                <!-- ===== AREA COMMENTS SECTION (RTL) ===== -->
+                <div id="area-comments-container" class="space-y-4">
+                    <!-- dynamically rendered -->
+                </div>
+
                 <div id="kanban-container" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 min-h-[600px]">
                 </div>
             </section>
             <!-- ================================================================ -->
 
             <section id="tab-support-kanban" class="tab-content space-y-4">
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border shadow-sm">
-        <div>
-            <h2 class="font-bold text-slate-800 text-xl">Support Log Kanban Board</h2>
-            <p class="text-sm text-gray-500">View support logs by status for specific business area</p>
-        </div>
-        <div class="flex items-center gap-3">
-            <label class="text-sm font-bold text-gray-600">Business Area:</label>
-            <select id="support-kanban-ba-filter" onchange="ui.renderSupportKanban()" class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="all">All Areas</option>
-            </select>
-        </div>
-    </div>
-    <div id="support-kanban-container" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 min-h-[600px]">
-        </div>
-</section>
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border shadow-sm">
+                    <div>
+                        <h2 class="font-bold text-slate-800 text-xl">Support Log Kanban Board</h2>
+                        <p class="text-sm text-gray-500">View support logs by status for specific business area</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <label class="text-sm font-bold text-gray-600">Business Area:</label>
+                        <select id="support-kanban-ba-filter" onchange="ui.renderSupportKanban()" class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">All Areas</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="support-kanban-container" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 min-h-[600px]">
+                </div>
+            </section>
+
             <!-- NEW TAB: Auditor Checklist -->
             <section id="tab-auditor" class="tab-content space-y-6">
-                
-                <!-- Filters -->
                 <div class="flex flex-wrap gap-4 bg-white p-4 rounded-xl shadow-sm">
                     <div class="flex-1 min-w-[200px]">
                         <label class="block text-xs font-bold text-gray-500 mb-1">Business Area</label>
@@ -287,7 +351,6 @@
                     </div>
                 </div>
 
-                <!-- Table -->
                 <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead class="bg-gray-50 border-b">
@@ -306,24 +369,26 @@
                             </tr>
                         </thead>
                         <tbody id="auditor-table-body">
-                            <!-- dynamic rows -->
                         </tbody>
                     </table>
                 </div>
             </section>
         </main>
     </div>
-<div id="story-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div class="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
-            <h2 id="modal-title" class="text-xl font-bold text-slate-800 pr-8"></h2>
-            <button onclick="ui.closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-        </div>
-        <div id="modal-body" class="p-6 space-y-6">
+
+    <div id="story-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
+                <h2 id="modal-title" class="text-xl font-bold text-slate-800 pr-8"></h2>
+                <button onclick="ui.closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
+            <div id="modal-body" class="p-6 space-y-6">
+            </div>
+        </div>
     </div>
-</div>
-    <script src="app.js"></script>
-    
+
+    <script src="app.js">
+    </script>
+
 </body>
 </html>
