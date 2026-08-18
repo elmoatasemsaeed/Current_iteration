@@ -20,15 +20,16 @@ const AZURE_CONFIG = {
 
 let db = {
     users: [],
-    vacations: [], 
-    holidays: [],  
+    vacations: [],
+    holidays: [],
     deliveryLogs: [],
     currentStories: [],
     customTags: [],
-    backlogStories: [] // NEW: for backlog stories from second query
+    backlogStories: [],
+    areaComments: [] // NEW: تخزين التعليقات العامة للمناطق
 };
 
-let currentData = []; 
+let currentData = [];
 let currentUser = null;
 
 // Helper to check if a story is from backlog
@@ -44,7 +45,7 @@ function isRegularStory(story) {
 const archiver = {
     async runArchive() {
         const TenDaysAgo = Date.now() - (31 * 24 * 60 * 60 * 1000);
-        
+
         const logsToArchive = db.deliveryLogs.filter(log => log.timestamp < TenDaysAgo);
         const logsToKeep = db.deliveryLogs.filter(log => log.timestamp >= TenDaysAgo);
 
@@ -68,7 +69,7 @@ const archiver = {
 
             db.deliveryLogs = logsToKeep;
             await dataProcessor.saveToGitHub();
-            
+
             console.log(`${logsToArchive.length} records moved to archive.`);
         } catch (error) {
             console.error("Archive process failed:", error);
@@ -78,7 +79,7 @@ const archiver = {
     async saveFileToGitHub(path, data) {
         const token = localStorage.getItem('gh_token');
         const url = `https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${path}`;
-        
+
         let sha = "";
         const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
         if (res.ok) {
@@ -110,7 +111,7 @@ const auth = {
         const azPat = document.getElementById('az-pat').value;
         const rem = document.getElementById('remember-me').checked;
 
-        if(!u || !p || !t || !azPat) return alert("برجاء ملء جميع البيانات بما في ذلك Azure PAT");
+        if (!u || !p || !t || !azPat) return alert("برجاء ملء جميع البيانات بما في ذلك Azure PAT");
         sessionStorage.setItem('az_pat', azPat);
 
         const loginBtn = document.querySelector("button[onclick='auth.handleLogin()']");
@@ -120,30 +121,31 @@ const auth = {
 
         try {
             const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                headers: { 
+                headers: {
                     'Authorization': `token ${t}`,
                     'Accept': 'application/vnd.github.v3.raw'
                 }
             });
 
             if (response.ok) {
-                const remoteDb = await response.json(); 
-                
+                const remoteDb = await response.json();
+
                 const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                     headers: { 'Authorization': `token ${t}` }
                 });
                 const metaData = await metaRes.json();
 
                 const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
-                
+
                 if (userMatch) {
                     db = remoteDb;
                     db.sha = metaData.sha;
                     if (!db.customTags) db.customTags = [];
                     if (!db.backlogStories) db.backlogStories = [];
+                    if (!db.areaComments) db.areaComments = [];
                     sessionStorage.setItem('gh_token', t);
                     sessionStorage.setItem('az_pat', azPat);
-                    if(rem) localStorage.setItem('saved_creds', JSON.stringify({u, p, t, azPat}));
+                    if (rem) localStorage.setItem('saved_creds', JSON.stringify({ u, p, t, azPat }));
                     currentUser = userMatch;
                     archiver.runArchive();
                     this.startApp();
@@ -161,20 +163,20 @@ const auth = {
             loginBtn.disabled = false;
         }
     },
-   
+
     startApp() {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('app-container').classList.remove('hidden');
-        
+
         if (currentUser.role === 'viewer') {
             const uploadBtn = document.querySelector("button[onclick*='csv-input']");
             if (uploadBtn) uploadBtn.style.display = 'none';
             const settingsNav = document.querySelector("button[onclick*='settings']");
             if (settingsNav) settingsNav.style.display = 'none';
         }
-        
-        ui.switchTab('dashboard'); 
-        dataProcessor.sync(); 
+
+        ui.switchTab('dashboard');
+        dataProcessor.sync();
     },
 
     logout() {
@@ -187,7 +189,7 @@ const auth = {
  * Data Processing Engine - with concurrency fix
  */
 const dataProcessor = {
-    _savePromise: null,   // lock to prevent concurrent saves
+    _savePromise: null,
 
     async saveToGitHub() {
         if (this._savePromise) {
@@ -202,7 +204,6 @@ const dataProcessor = {
         const token = sessionStorage.getItem('gh_token');
         if (!token) throw new Error('GitHub token missing');
 
-        // 1. Fetch latest SHA
         const timestamp = Date.now();
         const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}?t=${timestamp}`, {
             headers: { 'Authorization': `token ${token}` }
@@ -213,13 +214,11 @@ const dataProcessor = {
         const metaData = await metaRes.json();
         const latestSha = metaData.sha;
 
-        // 2. Prepare data
         const dataToSave = { ...db };
         delete dataToSave.sha;
         const jsonString = JSON.stringify(dataToSave, null, 2);
         const content = btoa(unescape(encodeURIComponent(jsonString)));
 
-        // 3. Save
         const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
             method: 'PUT',
             headers: { 'Authorization': `token ${token}` },
@@ -234,7 +233,6 @@ const dataProcessor = {
             const error = await response.json();
             if (response.status === 409) {
                 console.warn('Conflict detected, retrying...');
-                // Retry once with fresh SHA
                 return this._saveToGitHubInternal();
             }
             throw new Error(error.message);
@@ -247,51 +245,51 @@ const dataProcessor = {
     },
 
     async sync() {
-    const token = sessionStorage.getItem('gh_token');
-    try {
-        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-            headers: { 
-                'Authorization': `token ${token}`,
-                'Accept': 'application/vnd.github.v3.raw'
-            }
-        });
-
-        if (response.ok) {
-            db = await response.json(); 
-            if (!db.customTags) db.customTags = [];
-            if (!db.backlogStories) db.backlogStories = [];
-            
-            const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                headers: { 'Authorization': `token ${token}` }
+        const token = sessionStorage.getItem('gh_token');
+        try {
+            const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3.raw'
+                }
             });
-            const metaData = await metaRes.json();
-            db.sha = metaData.sha; 
 
-            // تحويل التواريخ لكل من currentStories و backlogStories
-            const convertDates = (story) => {
-                if (story.expectedRelease) story.expectedRelease = new Date(story.expectedRelease);
-                if (story.changedDate) story.changedDate = new Date(story.changedDate);
-                return story;
-            };
+            if (response.ok) {
+                db = await response.json();
+                if (!db.customTags) db.customTags = [];
+                if (!db.backlogStories) db.backlogStories = [];
+                if (!db.areaComments) db.areaComments = [];
 
-            if (db.currentStories && db.currentStories.length > 0) {
-                db.currentStories = db.currentStories.map(convertDates);
-                this.calculateTimelines(db.currentStories);
+                const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                const metaData = await metaRes.json();
+                db.sha = metaData.sha;
+
+                const convertDates = (story) => {
+                    if (story.expectedRelease) story.expectedRelease = new Date(story.expectedRelease);
+                    if (story.changedDate) story.changedDate = new Date(story.changedDate);
+                    return story;
+                };
+
+                if (db.currentStories && db.currentStories.length > 0) {
+                    db.currentStories = db.currentStories.map(convertDates);
+                    this.calculateTimelines(db.currentStories);
+                }
+                if (db.backlogStories && db.backlogStories.length > 0) {
+                    db.backlogStories = db.backlogStories.map(convertDates);
+                }
+
+                ui.renderAll();
+            } else {
+                console.log("File not found, creating new DB...");
+                this.saveToGitHub();
             }
-            if (db.backlogStories && db.backlogStories.length > 0) {
-                db.backlogStories = db.backlogStories.map(convertDates);
-            }
-
-            ui.renderAll();
-        } else {
-            console.log("File not found, creating new DB...");
-            this.saveToGitHub();
+        } catch (e) {
+            console.error("Sync Error:", e);
+            alert("خطأ في المزامنة مع GitHub: " + e.message);
         }
-    } catch (e) { 
-        console.error("Sync Error:", e);
-        alert("خطأ في المزامنة مع GitHub: " + e.message); 
-    }
-},    
+    },
 
     handleCSV(event) {
         const file = event.target.files[0];
@@ -321,7 +319,7 @@ const dataProcessor = {
                 currentStory = {
                     id: row['ID'],
                     title: row['Title'],
-                    type: itemType, 
+                    type: itemType,
                     state: row['State'],
                     assignedTo: row['Assigned To'] || "Unassigned",
                     tester: row['Assigned To Tester'] || "Unassigned",
@@ -356,8 +354,7 @@ const dataProcessor = {
                 }
 
                 newStories.push(currentStory);
-            } 
-            else if (row['Work Item Type'] === 'Task' && currentStory) {
+            } else if (row['Work Item Type'] === 'Task' && currentStory) {
                 currentStory.tasks.push(row);
             } else if (row['Work Item Type'] === 'Bug' && currentStory) {
                 currentStory.bugs.push(row);
@@ -381,13 +378,12 @@ const dataProcessor = {
         this.saveToGitHub().then(() => alert("تم تحديث البيانات بنجاح"));
     },
 
-    // NEW: Process backlog rows from second query
     processBacklogRows(rows) {
         console.log(`Processing ${rows.length} backlog rows`);
         const backlogStories = rows.map(row => {
             const state = row['State'] || "";
             if (!["New", "Approved"].includes(state)) return null;
-            
+
             const area = row['Business Area'] || "General";
             return {
                 id: row['ID'],
@@ -413,7 +409,7 @@ const dataProcessor = {
                 iterationPath: row['Iteration Path'] || "",
                 devActualTime: 0,
                 testActualTime: 0,
-                isBacklog: true // MARK as backlog
+                isBacklog: true
             };
         }).filter(s => s !== null);
 
@@ -430,7 +426,7 @@ const dataProcessor = {
     calculateTimelines(stories) {
         stories.sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
-        const staffAvailability = {}; 
+        const staffAvailability = {};
 
         stories.forEach(story => {
             const devTasks = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
@@ -453,7 +449,7 @@ const dataProcessor = {
 
             let devActualStart = new Date(Math.max(devStart, staffAvailability[story.assignedTo] || devStart));
             story.calc.devEnd = dateEngine.addWorkingHours(devActualStart, devHours, story.assignedTo);
-            
+
             staffAvailability[story.assignedTo] = new Date(story.calc.devEnd);
 
             const testTasks = story.tasks.filter(t => t['Activity'] === 'Testing');
@@ -492,15 +488,15 @@ const dataProcessor = {
             }
 
             let finalDeliveryDate = new Date(story.calc.testEnd);
-            
+
             if (story.bugs && story.bugs.length > 0) {
                 story.bugs.forEach(bug => {
                     const bugEffort = parseFloat(bug['Original Estimation'] || 0);
                     const bugActivatedDate = bug['Activated Date'] ? new Date(bug['Activated Date']) : null;
-                    
+
                     if (bugActivatedDate && bugEffort > 0) {
                         const bugFinish = dateEngine.addWorkingHours(bugActivatedDate, bugEffort, story.assignedTo);
-                        
+
                         if (bugFinish > finalDeliveryDate) {
                             finalDeliveryDate = bugFinish;
                         }
@@ -523,16 +519,16 @@ const dateEngine = {
     isWorkDay(date, person) {
         const day = date.getDay();
         const dateStr = date.toISOString().split('T')[0];
-        
+
         if (CONFIG.WEEKEND.includes(day)) return false;
-        
+
         if (db.holidays && db.holidays.includes(dateStr)) return false;
-        
+
         if (db.vacations.some(v => v.name === person && v.date === dateStr)) return false;
-        
+
         return true;
     },
-   
+
     countVacationDaysUntilNow(startDate, personName) {
         if (!startDate) return 0;
         const start = new Date(startDate);
@@ -553,13 +549,13 @@ const dateEngine = {
         }
         return count;
     },
-    
+
     countVacationDays(startDate, endDate, person) {
         if (!(startDate instanceof Date) || !(endDate instanceof Date) || isNaN(startDate) || isNaN(endDate)) return 0;
-        
+
         let count = 0;
         let current = new Date(startDate);
-        
+
         while (current <= endDate) {
             if (!this.isWorkDay(current, person)) {
                 count++;
@@ -573,7 +569,7 @@ const dateEngine = {
         let result = new Date(startDate);
         let remainingHours = hours;
 
-        while(!this.isWorkDay(result, person)) {
+        while (!this.isWorkDay(result, person)) {
             result.setDate(result.getDate() + 1);
             result.setHours(CONFIG.START_HOUR, 0, 0, 0);
         }
@@ -585,19 +581,97 @@ const dateEngine = {
                     remainingHours -= (CONFIG.WORKING_HOURS / (CONFIG.END_HOUR - CONFIG.START_HOUR));
                 }
             }
-            
+
             result.setHours(result.getHours() + 1);
-            
+
             if (result.getHours() >= CONFIG.END_HOUR) {
                 result.setDate(result.getDate() + 1);
                 result.setHours(CONFIG.START_HOUR, 0, 0, 0);
-                
+
                 while (!this.isWorkDay(result, person)) {
                     result.setDate(result.getDate() + 1);
                 }
             }
         }
         return result;
+    }
+};
+
+/**
+ * Area Comment Manager - NEW
+ */
+const areaCommentManager = {
+    /**
+     * إضافة تعليق جديد لمنطقة معينة
+     * @param {string} area - اسم المنطقة
+     * @param {string} text - نص التعليق
+     */
+    addComment(area, text) {
+        if (!area || !text || !text.trim()) return;
+        db.areaComments.push({
+            area: area,
+            text: text.trim(),
+            timestamp: new Date().toLocaleString('ar-EG', { hour12: false })
+        });
+        // حفظ التغييرات في GitHub
+        dataProcessor.saveToGitHub().then(() => {
+            // إعادة عرض الكانبان لتحديث قسم التعليقات
+            ui.renderKanban();
+        }).catch(err => {
+            console.error('Failed to save area comment:', err);
+            alert('فشل حفظ التعليق: ' + err.message);
+        });
+    },
+
+    /**
+     * عرض أقسام التعليقات للمناطق المحددة
+     * @param {string[]} areas - قائمة المناطق المراد عرض تعليقاتها
+     * @returns {string} HTML string
+     */
+    renderAreaComments(areas) {
+        if (!areas || areas.length === 0) return '';
+        // تصفية التعليقات حسب المناطق المحددة
+        const commentsMap = {};
+        areas.forEach(area => {
+            commentsMap[area] = db.areaComments.filter(c => c.area === area);
+        });
+
+        let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">';
+        areas.forEach(area => {
+            const comments = commentsMap[area] || [];
+            html += `
+                <div class="area-comment-section bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-bold text-indigo-700 text-sm">📍 ${area}</h4>
+                        <span class="text-xs text-gray-400">${comments.length} تعليق</span>
+                    </div>
+                    <div class="area-comment-box">
+                        <div class="flex gap-2 mb-2">
+                            <textarea id="area-comment-${area.replace(/\s/g, '')}" 
+                                      placeholder="اكتب تعليق عام عن المنطقة..." 
+                                      class="flex-1 border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                                      rows="1"
+                                      style="direction: rtl; text-align: right;"></textarea>
+                            <button onclick="areaCommentManager.addComment('${area}', document.getElementById('area-comment-${area.replace(/\s/g, '')}').value); document.getElementById('area-comment-${area.replace(/\s/g, '')}').value='';" 
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition whitespace-nowrap">
+                                إضافة تعليق
+                            </button>
+                        </div>
+                        <div class="comment-list space-y-2 max-h-40 overflow-y-auto">
+                            ${comments.length === 0 ? '<p class="text-gray-400 text-xs italic">لا توجد تعليقات بعد</p>' : ''}
+                            ${comments.slice().reverse().map(c => `
+                                <div class="area-comment-card bg-gray-50 p-2 rounded-lg border border-gray-100 flex justify-between items-start gap-2">
+                                    <span class="comment-text text-sm text-slate-700 flex-1" style="direction: rtl; text-align: right;">${c.text}</span>
+                                    <span class="comment-meta text-[10px] text-gray-400 whitespace-nowrap" style="direction: ltr;">${c.timestamp}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        return html;
     }
 };
 
@@ -611,63 +685,62 @@ const ui = {
         this.renderAll();
     },
 
-renderAll() {
-    // 1. عرض الأقسام الثابتة دائمًا
-    this.renderDashboard();
-    this.renderActiveCards();
-    this.renderDelivery();
-    this.renderSettings();
-    this.renderWorkload();
+    renderAll() {
+        // 1. عرض الأقسام الثابتة دائمًا
+        this.renderDashboard();
+        this.renderActiveCards();
+        this.renderDelivery();
+        this.renderSettings();
+        this.renderWorkload();
 
-    // 2. التحكم في صلاحيات المستخدم (viewer)
-    if (currentUser && currentUser.role === 'viewer') {
-        const uploadBtn = document.querySelector("button[onclick*='csv-input']");
-        if (uploadBtn) uploadBtn.style.display = 'none';
+        // 2. التحكم في صلاحيات المستخدم (viewer)
+        if (currentUser && currentUser.role === 'viewer') {
+            const uploadBtn = document.querySelector("button[onclick*='csv-input']");
+            if (uploadBtn) uploadBtn.style.display = 'none';
 
-        const settingsNav = document.querySelector("button[onclick*='settings']");
-        if (settingsNav) settingsNav.style.display = 'none';
-    }
+            const settingsNav = document.querySelector("button[onclick*='settings']");
+            if (settingsNav) settingsNav.style.display = 'none';
+        }
 
-    // 3. عرض المحتوى الديناميكي حسب التبويب النشط
-    const activeTab = document.querySelector('.tab-content.active');
-    if (!activeTab) return;
+        // 3. عرض المحتوى الديناميكي حسب التبويب النشط
+        const activeTab = document.querySelector('.tab-content.active');
+        if (!activeTab) return;
 
-    switch (activeTab.id) {
-        case 'tab-daily-activity':
-            this.renderDailyActivity();
-            break;
+        switch (activeTab.id) {
+            case 'tab-daily-activity':
+                this.renderDailyActivity();
+                break;
 
-        case 'tab-inactive-stories':
-            this.renderInactiveStories();
-            break;
+            case 'tab-inactive-stories':
+                this.renderInactiveStories();
+                break;
 
-        case 'tab-kanban':
-            this.renderKanban();
-            break;
+            case 'tab-kanban':
+                this.renderKanban();
+                break;
 
-        case 'tab-auditor':
-            this.renderAuditorChecklist();
-            break;
+            case 'tab-auditor':
+                this.renderAuditorChecklist();
+                break;
 
-        case 'tab-support-kanban':
-            this.renderSupportKanban();
-            break;
+            case 'tab-support-kanban':
+                this.renderSupportKanban();
+                break;
 
-        default:
-            // أي تبويب آخر لا يحتاج معالجة إضافية
-            break;
-    }
-},
-    
+            default:
+                break;
+        }
+    },
+
     renderDashboard() {
         const container = document.getElementById('dashboard-container');
         if (!container) return;
 
-        // --- Staff Stats (only regular stories) ---
+        // Staff Stats (only regular stories)
         const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed' && !isBacklogStory(s) && isRegularStory(s));
         const activeDevsSet = new Set();
         const activeTestersSet = new Set();
-        
+
         activeStories.forEach(s => {
             if (s.assignedTo && s.assignedTo !== "Unassigned") activeDevsSet.add(s.assignedTo);
             if (s.tester && s.tester !== "Unassigned") activeTestersSet.add(s.tester);
@@ -705,16 +778,16 @@ renderAll() {
             </div>
         `;
 
-        // --- Area State Map (only regular stories, exclude backlog) ---
+        // Area State Map
         const nonBacklogData = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const areaStateMap = {};
         const allStates = new Set();
-        
+
         nonBacklogData.forEach(s => {
             const area = s.area || 'General';
             const state = s.state || 'Unknown';
             allStates.add(state);
-            
+
             if (!areaStateMap[area]) areaStateMap[area] = {};
             if (!areaStateMap[area][state]) areaStateMap[area][state] = 0;
             areaStateMap[area][state]++;
@@ -775,7 +848,7 @@ renderAll() {
         </div>
         `;
 
-        // --- Branch Stats (only regular stories) ---
+        // Branch Stats
         const activeNonBacklog = nonBacklogData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
         const branchMap = {};
         activeNonBacklog.forEach(s => {
@@ -805,7 +878,7 @@ renderAll() {
         </div>
         `;
 
-        // --- Customer Stats (only regular stories) ---
+        // Customer Stats
         const customerMap = {};
         activeNonBacklog.forEach(s => {
             const customer = s.customer || 'General';
@@ -834,7 +907,7 @@ renderAll() {
         </div>
         `;
 
-        // --- Roadmap (only regular stories + backlog) ---
+        // Roadmap
         const regularCurrent = currentData.filter(isRegularStory);
         const allStoriesForRoadmap = [...regularCurrent, ...db.backlogStories];
         const roadmapHtml = this.renderClientRoadmap(allStoriesForRoadmap);
@@ -852,80 +925,77 @@ renderAll() {
         `;
     },
 
-    // Modified to accept stories array and show 2 months
-  renderClientRoadmap(stories = []) {
-    const today = new Date();
-    const twoMonthsLater = new Date();
-    twoMonthsLater.setMonth(twoMonthsLater.getMonth() + CONFIG.BACKLOG_MONTHS);
+    renderClientRoadmap(stories = []) {
+        const today = new Date();
+        const twoMonthsLater = new Date();
+        twoMonthsLater.setMonth(twoMonthsLater.getMonth() + CONFIG.BACKLOG_MONTHS);
 
-      const safeStories = stories.map(s => {
-        if (s.expectedRelease && typeof s.expectedRelease === 'string') {
-            s.expectedRelease = new Date(s.expectedRelease);
-        }
-        return s;
-    });
+        const safeStories = stories.map(s => {
+            if (s.expectedRelease && typeof s.expectedRelease === 'string') {
+                s.expectedRelease = new Date(s.expectedRelease);
+            }
+            return s;
+        });
 
-    const upcomingDeliveries = safeStories.filter(s => {
-        if (!s.expectedRelease || !(s.expectedRelease instanceof Date)) return false;
-        const isNotDone = s.state !== 'Tested' && s.state !== 'Closed';
-        const isWithinRange = s.expectedRelease >= today && s.expectedRelease <= twoMonthsLater;
-        return isNotDone && isWithinRange;
-    });
-    upcomingDeliveries.sort((a, b) => a.expectedRelease - b.expectedRelease);
+        const upcomingDeliveries = safeStories.filter(s => {
+            if (!s.expectedRelease || !(s.expectedRelease instanceof Date)) return false;
+            const isNotDone = s.state !== 'Tested' && s.state !== 'Closed';
+            const isWithinRange = s.expectedRelease >= today && s.expectedRelease <= twoMonthsLater;
+            return isNotDone && isWithinRange;
+        });
+        upcomingDeliveries.sort((a, b) => a.expectedRelease - b.expectedRelease);
 
-    let html = `
-        <div class="bg-white p-6 rounded-xl shadow-sm border">
-            <h3 class="font-bold text-indigo-700 mb-4 flex items-center gap-2">
-                🚀 Client Delivery Roadmap (Next ${CONFIG.BACKLOG_MONTHS} Months)
-                <span class="text-xs font-normal text-gray-400 ml-2">(${upcomingDeliveries.length} items)</span>
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="roadmap-container">
-    `;
+        let html = `
+            <div class="bg-white p-6 rounded-xl shadow-sm border">
+                <h3 class="font-bold text-indigo-700 mb-4 flex items-center gap-2">
+                    🚀 Client Delivery Roadmap (Next ${CONFIG.BACKLOG_MONTHS} Months)
+                    <span class="text-xs font-normal text-gray-400 ml-2">(${upcomingDeliveries.length} items)</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="roadmap-container">
+        `;
 
-    if (upcomingDeliveries.length === 0) {
-        html += `<div class="col-span-full text-center py-8 text-gray-400">No client deliveries expected in the next ${CONFIG.BACKLOG_MONTHS} months.</div>`;
-    } else {
-        html += upcomingDeliveries.map(s => {
-            const diffTime = Math.abs(s.expectedRelease - today);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            let urgencyClass = "border-blue-200 bg-white";
-            if (diffDays <= 7) urgencyClass = "border-amber-400 bg-amber-50";
-            if (diffDays <= 3) urgencyClass = "border-red-400 bg-red-50";
-            
-            const isBacklog = isBacklogStory(s) ? '📋 ' : '';
+        if (upcomingDeliveries.length === 0) {
+            html += `<div class="col-span-full text-center py-8 text-gray-400">No client deliveries expected in the next ${CONFIG.BACKLOG_MONTHS} months.</div>`;
+        } else {
+            html += upcomingDeliveries.map(s => {
+                const diffTime = Math.abs(s.expectedRelease - today);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            return `
-                <div class="p-4 rounded-xl border-2 ${urgencyClass} shadow-sm ${isBacklogStory(s) ? 'border-dashed' : ''}">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">In ${diffDays} Days</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">P${s.priority || '?'}</span>
-                            <span class="text-[10px] text-gray-400">#${s.id}</span>
+                let urgencyClass = "border-blue-200 bg-white";
+                if (diffDays <= 7) urgencyClass = "border-amber-400 bg-amber-50";
+                if (diffDays <= 3) urgencyClass = "border-red-400 bg-red-50";
+
+                const isBacklog = isBacklogStory(s) ? '📋 ' : '';
+
+                return `
+                    <div class="p-4 rounded-xl border-2 ${urgencyClass} shadow-sm ${isBacklogStory(s) ? 'border-dashed' : ''}">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">In ${diffDays} Days</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">P${s.priority || '?'}</span>
+                                <span class="text-[10px] text-gray-400">#${s.id}</span>
+                            </div>
+                        </div>
+                        <div class="text-sm font-bold text-slate-800 truncate" title="${s.title}">${isBacklog}${s.title}</div>
+                        <div class="text-[11px] text-gray-500 mt-1">Area: ${s.area}</div>
+                        ${isBacklogStory(s) ? '<div class="text-[10px] text-purple-600 font-bold mt-1">📋 Backlog</div>' : ''}
+                        <div class="mt-3 flex justify-between items-center">
+                            <div class="text-[10px] font-bold uppercase text-gray-400">Release:</div>
+                            <div class="text-xs font-bold text-slate-700">${s.expectedRelease.toLocaleDateString('en-GB')}</div>
+                        </div>
+                        <div class="mt-2 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full ${isBacklogStory(s) ? 'bg-purple-400' : 'bg-indigo-500'}" style="width: ${s.state === 'Resolved' ? '80%' : '40%'}"></div>
                         </div>
                     </div>
-                    <div class="text-sm font-bold text-slate-800 truncate" title="${s.title}">${isBacklog}${s.title}</div>
-                    <div class="text-[11px] text-gray-500 mt-1">Area: ${s.area}</div>
-                    ${isBacklogStory(s) ? '<div class="text-[10px] text-purple-600 font-bold mt-1">📋 Backlog</div>' : ''}
-                    <div class="mt-3 flex justify-between items-center">
-                        <div class="text-[10px] font-bold uppercase text-gray-400">Release:</div>
-                        <div class="text-xs font-bold text-slate-700">${s.expectedRelease.toLocaleDateString('en-GB')}</div>
-                    </div>
-                    <div class="mt-2 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                        <div class="h-full ${isBacklogStory(s) ? 'bg-purple-400' : 'bg-indigo-500'}" style="width: ${s.state === 'Resolved' ? '80%' : '40%'}"></div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
+                `;
+            }).join('');
+        }
 
-    html += `</div></div>`;
-    return html;
-},
+        html += `</div></div>`;
+        return html;
+    },
 
-    // MODIFIED: Now includes Support log in busy calculation to match Workload logic
     getFreeStaff(role) {
-        // جميع القصص غير الباك لوج (تشمل السابورت)
         const allStories = currentData.filter(s => !isBacklogStory(s));
         const allStaff = new Set();
         allStories.forEach(s => {
@@ -936,12 +1006,10 @@ renderAll() {
             }
         });
 
-        // تحديد المشغولين
         const busyStaff = new Set();
 
-        // 1. المهام النشطة (أي مهمة)
         allStories.forEach(s => {
-            const activeTasks = (s.tasks || []).filter(t => 
+            const activeTasks = (s.tasks || []).filter(t =>
                 t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed' &&
                 parseFloat(t['Original Estimation'] || 0) > 0
             );
@@ -958,7 +1026,6 @@ renderAll() {
             });
         });
 
-        // 2. دعم السابورت النشط
         allStories.forEach(s => {
             if (s.type === 'Support log' && s.state !== 'Tested' && s.state !== 'Closed') {
                 if (role === 'dev' && s.assignedTo && s.assignedTo !== "Unassigned") {
@@ -970,7 +1037,6 @@ renderAll() {
             }
         });
 
-        // 3. الباغات النشطة
         allStories.forEach(s => {
             if (s.bugs && s.bugs.length > 0) {
                 s.bugs.forEach(bug => {
@@ -984,7 +1050,6 @@ renderAll() {
             }
         });
 
-        // إرجاع المطورين (أو التستير) غير المشغولين
         return Array.from(allStaff).filter(name => !busyStaff.has(name));
     },
 
@@ -1052,25 +1117,24 @@ renderAll() {
 
     renderActiveCards() {
         const container = document.getElementById('active-cards-container');
-        const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || ""; 
+        const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || "";
         const tagSearchTerm = document.getElementById('tag-search-input')?.value.toLowerCase() || "";
-        
-        // Exclude backlog and Support log from active cards
+
         const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
-        
+
         const activeStories = nonBacklog.filter(s => {
             const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
-            const matchesSearch = 
-                s.title.toLowerCase().includes(searchTerm) || 
-                s.id.toString().includes(searchTerm) || 
+            const matchesSearch =
+                s.title.toLowerCase().includes(searchTerm) ||
+                s.id.toString().includes(searchTerm) ||
                 s.tester.toLowerCase().includes(searchTerm) ||
                 s.assignedTo.toLowerCase().includes(searchTerm) ||
                 (s.area && s.area.toLowerCase().includes(searchTerm));
             const matchesTags = tagSearchTerm === "" || (s.customTags && s.customTags.some(tag => tag.toLowerCase().includes(tagSearchTerm)));
-            
-            return isNotFinished && matchesSearch && matchesTags; 
+
+            return isNotFinished && matchesSearch && matchesTags;
         });
-        
+
         if (activeStories.length === 0) {
             container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">
                 ${searchTerm ? 'لا توجد نتائج تطابق بحثك.' : 'No active stories found.'}
@@ -1090,7 +1154,7 @@ renderAll() {
                 if (a.priority !== b.priority) return a.priority - b.priority;
                 const isALate = a.calc.finalEnd instanceof Date && new Date() > a.calc.finalEnd;
                 const isBLate = b.calc.finalEnd instanceof Date && new Date() > b.calc.finalEnd;
-                return isBLate - isALate; 
+                return isBLate - isALate;
             });
 
             return `
@@ -1105,10 +1169,10 @@ renderAll() {
                     const now = new Date();
                     const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
                     const hasError = s.calc.error;
-                    
+
                     const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
                     const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                    
+
                     let activeDaysCount = 0;
                     const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
                     if (devActivatedDates.length > 0) {
@@ -1130,12 +1194,12 @@ renderAll() {
                         activeDaysColor = "bg-rose-600 shadow-rose-200 animate-pulse";
                     }
 
-                    const devVacDaysNow = devActivatedDates.length > 0 
-                        ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) 
-                        : 0;
+                    const devVacDaysNow = devActivatedDates.length > 0 ?
+                        dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) :
+                        0;
 
                     let devStartDisplay = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]).toLocaleDateString('en-GB') : "TBD";
-                   
+
                     let devResolveDate = "N/A";
                     const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
                     if (resolvedDevTasks.length > 0) {
@@ -1147,10 +1211,10 @@ renderAll() {
                     const totalTestEffort = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
                     let testStartDisplay = "Waiting";
                     const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
-                    
-                    const testVacDaysNow = (execTask && execTask['Activated Date']) 
-                        ? dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) 
-                        : 0;
+
+                    const testVacDaysNow = (execTask && execTask['Activated Date']) ?
+                        dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) :
+                        0;
 
                     if (execTask && execTask['Activated Date']) {
                         testStartDisplay = new Date(execTask['Activated Date']).toLocaleDateString('en-GB');
@@ -1171,7 +1235,7 @@ renderAll() {
                     const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
                     const totalBugEffort = s.bugs ? s.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
                     const completedBugEffort = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State']))
-                                                                  .reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
+                        .reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
                     const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
                     const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
 
@@ -1356,14 +1420,12 @@ renderAll() {
         }).join('');
     },
 
-    // ------------------- WEEKLY REPORT FUNCTIONS (UPDATED) -------------------
     generateWeeklyReport() {
         const filterSelect = document.getElementById('kanban-ba-filter');
         if (!filterSelect) return;
         const selectedOptions = Array.from(filterSelect.selectedOptions);
         let selectedAreas = selectedOptions.map(opt => opt.value);
-        
-        // If no area selected, take all areas available from regular + backlog
+
         const allAreas = [...new Set([
             ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
             ...db.backlogStories.map(s => s.area || "General")
@@ -1372,40 +1434,25 @@ renderAll() {
             selectedAreas = allAreas;
         }
 
-        // Build report data per area: grouped by State
         const reportData = {};
         const targetStates = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
         const fifteenDaysAgo = new Date();
         fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
 
         selectedAreas.forEach(area => {
-            const areaData = { states: {}, backlog: [], tested: [] };
-            
-            // Active stories grouped by state
+            const areaData = { states: {}, backlog: [], tested: [], comments: [] };
             targetStates.forEach(state => {
-                areaData.states[state] = currentData.filter(s => 
-                    !isBacklogStory(s) && 
-                    isRegularStory(s) && 
-                    (s.area || "General") === area &&
-                    s.state === state
+                areaData.states[state] = currentData.filter(s =>
+                    !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area && s.state === state
                 );
             });
-
-            // Backlog stories for this area
-            areaData.backlog = db.backlogStories.filter(s => 
-                (s.area || "General") === area && 
-                isRegularStory(s)
+            areaData.backlog = db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s));
+            areaData.tested = currentData.filter(s =>
+                !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area &&
+                s.state === 'Tested' && s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
             );
-
-            // Tested stories in last 15 days
-            areaData.tested = currentData.filter(s => 
-                !isBacklogStory(s) && 
-                isRegularStory(s) && 
-                (s.area || "General") === area &&
-                s.state === 'Tested' &&
-                s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
-            );
-
+            // جلب التعليقات الخاصة بهذه المنطقة
+            areaData.comments = db.areaComments.filter(c => c.area === area);
             reportData[area] = areaData;
         });
 
@@ -1413,7 +1460,6 @@ renderAll() {
     },
 
     showWeeklyReportModal(reportData) {
-        // Create modal if not exists
         let modal = document.getElementById('weekly-report-modal');
         if (!modal) {
             modal = document.createElement('div');
@@ -1436,7 +1482,6 @@ renderAll() {
             `;
             document.body.appendChild(modal);
 
-            // Inject print CSS into modal
             const style = document.createElement('style');
             style.textContent = `
                 @media print {
@@ -1502,7 +1547,6 @@ renderAll() {
         const content = document.getElementById('weekly-report-content');
         let html = '';
 
-        // Report header
         const now = new Date();
         const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
         html += `<div class="text-center mb-6 border-b pb-4">
@@ -1510,7 +1554,6 @@ renderAll() {
             <p class="text-sm text-gray-500">تاريخ التقرير: ${dateStr}</p>
         </div>`;
 
-        // Utility to truncate title to first 6 words
         const truncateTitle = (title) => {
             if (!title) return '';
             const words = title.split(' ');
@@ -1518,15 +1561,14 @@ renderAll() {
             return words.slice(0, 6).join(' ') + ' ...';
         };
 
-        // Render each area
         for (const area in reportData) {
             const data = reportData[area];
-            const { states, backlog, tested } = data;
+            const { states, backlog, tested, comments } = data;
 
             html += `<div class="mb-12 page-break-after">`;
             html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${area}</h2>`;
 
-            // 1. State columns grid (Active, Active - With Bugs, Resolved, On-Hold)
+            // 1. State columns
             html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">`;
             const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
             stateOrder.forEach(state => {
@@ -1537,9 +1579,9 @@ renderAll() {
                     html += `<div class="text-gray-400 text-[10px] italic">لا توجد</div>`;
                 } else {
                     stories.forEach(s => {
-                        const lastComment = s.standupComments && s.standupComments.length > 0 
-                            ? s.standupComments[s.standupComments.length - 1] 
-                            : null;
+                        const lastComment = s.standupComments && s.standupComments.length > 0 ?
+                            s.standupComments[s.standupComments.length - 1] :
+                            null;
                         const azureTags = s.tags || [];
                         const customTags = s.customTags || [];
                         const allTags = [...new Set([...azureTags, ...customTags])];
@@ -1549,7 +1591,7 @@ renderAll() {
                         html += `<span class="font-mono text-[9px] text-gray-400">#${s.id}</span>`;
                         html += `<span class="title text-xs font-bold text-slate-800 flex-1">${truncateTitle(s.title)}</span>`;
                         html += `</div>`;
-                        
+
                         if (allTags.length > 0) {
                             html += `<div class="flex flex-wrap gap-1 mt-1">`;
                             allTags.forEach(tag => {
@@ -1558,7 +1600,7 @@ renderAll() {
                             });
                             html += `</div>`;
                         }
-                        
+
                         if (lastComment) {
                             html += `<div class="report-comment text-[9px] text-slate-600 mt-1">`;
                             html += `<span class="font-bold text-indigo-600">اخر ستاندب:</span> `;
@@ -1573,12 +1615,12 @@ renderAll() {
             });
             html += `</div>`;
 
-            // 2. Backlog section
+            // 2. Backlog
             if (backlog.length > 0) {
                 const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
                 const top5 = sortedBacklog.slice(0, 5);
                 const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
-                
+
                 html += `<div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">`;
                 html += `<h3 class="font-bold text-purple-700 text-sm">📋 الباك لوج (${backlog.length})</h3>`;
                 html += `<div class="flex flex-wrap gap-3 mt-2">`;
@@ -1600,7 +1642,7 @@ renderAll() {
                 html += `<div class="text-gray-400 text-sm italic mt-2">لا يوجد باك لوج في هذه المنطقة.</div>`;
             }
 
-            // 3. Tested stories in last 15 days
+            // 3. Tested in last 15 days
             if (tested.length > 0) {
                 html += `<div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">`;
                 html += `<h3 class="font-bold text-green-700 text-sm">✅ تم تسليمها (آخر 15 يوم) (${tested.length})</h3>`;
@@ -1613,455 +1655,465 @@ renderAll() {
                 html += `<div class="text-gray-400 text-sm italic mt-2">لا توجد قصص مسلمة في آخر 15 يوم.</div>`;
             }
 
-            html += `</div>`; // end area
+            // ===== 4. Area Comments =====
+            if (comments && comments.length > 0) {
+                html += `<div class="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">`;
+                html += `<h3 class="font-bold text-amber-700 text-sm flex items-center gap-2">💬 تعليقات عامة على المنطقة</h3>`;
+                html += `<div class="space-y-2 mt-2">`;
+                comments.forEach(c => {
+                    html += `
+                        <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2">
+                            <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</span>
+                            <span class="text-[10px] text-gray-400 whitespace-nowrap">${c.timestamp}</span>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            } else {
+                html += `<div class="text-gray-400 text-sm italic mt-2">لا توجد تعليقات عامة على هذه المنطقة.</div>`;
+            }
+
+            html += `</div>`;
         }
 
         content.innerHTML = html;
         modal.style.display = 'flex';
     },
-    // ------------------- END WEEKLY REPORT FUNCTIONS -------------------
 
-   renderKanban() {
-    const container = document.getElementById('kanban-container');
-    const filterSelect = document.getElementById('kanban-ba-filter');
-    const searchInput = document.getElementById('kanban-search-input');
-    const tagSearchInput = document.getElementById('kanban-tag-search-input');
+    renderKanban() {
+        const container = document.getElementById('kanban-container');
+        const filterSelect = document.getElementById('kanban-ba-filter');
+        const searchInput = document.getElementById('kanban-search-input');
+        const tagSearchInput = document.getElementById('kanban-tag-search-input');
 
-    // قراءة قيم البحث
-    const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
-    const tagSearchTerm = tagSearchInput ? tagSearchInput.value.toLowerCase() : "";
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+        const tagSearchTerm = tagSearchInput ? tagSearchInput.value.toLowerCase() : "";
 
-    // دالة مساعدة للبحث في النص (ID، العنوان، المطور، المختبر، المنطقة)
-    const matchesSearch = (s) => {
-        if (!searchTerm) return true;
-        return (s.title && s.title.toLowerCase().includes(searchTerm)) ||
-               (s.id && s.id.toString().includes(searchTerm)) ||
-               (s.assignedTo && s.assignedTo.toLowerCase().includes(searchTerm)) ||
-               (s.tester && s.tester.toLowerCase().includes(searchTerm)) ||
-               (s.area && s.area.toLowerCase().includes(searchTerm));
-    };
+        const matchesSearch = (s) => {
+            if (!searchTerm) return true;
+            return (s.title && s.title.toLowerCase().includes(searchTerm)) ||
+                (s.id && s.id.toString().includes(searchTerm)) ||
+                (s.assignedTo && s.assignedTo.toLowerCase().includes(searchTerm)) ||
+                (s.tester && s.tester.toLowerCase().includes(searchTerm)) ||
+                (s.area && s.area.toLowerCase().includes(searchTerm));
+        };
 
-    // دالة مساعدة للبحث في الوسوم (Azure Tags + Custom Tags)
-    const matchesTag = (s) => {
-        if (!tagSearchTerm) return true;
-        const allTags = [...(s.tags || []), ...(s.customTags || [])];
-        return allTags.some(t => t.toLowerCase().includes(tagSearchTerm));
-    };
+        const matchesTag = (s) => {
+            if (!tagSearchTerm) return true;
+            const allTags = [...(s.tags || []), ...(s.customTags || [])];
+            return allTags.some(t => t.toLowerCase().includes(tagSearchTerm));
+        };
 
-    // دمج القصص العادية وقصص الباك لوج لعرض المناطق في الفلتر (استبعاد السابورت)
-    const allStoriesForAreas = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
-    if (allStoriesForAreas.length === 0) return;
+        const allStoriesForAreas = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
+        if (allStoriesForAreas.length === 0) {
+            container.innerHTML = `<div class="text-center py-20 text-gray-400 col-span-full">لا توجد قصص لعرضها.</div>`;
+            return;
+        }
 
-    // استخراج المناطق الفريدة
-    const areas = [...new Set(allStoriesForAreas.map(s => s.area || "General"))].sort();
+        const areas = [...new Set(allStoriesForAreas.map(s => s.area || "General"))].sort();
 
-    // الحفاظ على التحديدات الحالية
-    const currentSelected = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
-    filterSelect.multiple = true;
-    filterSelect.size = Math.min(areas.length, 5);
+        const currentSelected = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
+        filterSelect.multiple = true;
+        filterSelect.size = Math.min(areas.length, 5);
 
-    filterSelect.innerHTML = areas.map(a => {
-        const selected = currentSelected.includes(a) ? 'selected' : '';
-        return `<option value="${a}" ${selected}>${a}</option>`;
-    }).join('');
+        filterSelect.innerHTML = areas.map(a => {
+            const selected = currentSelected.includes(a) ? 'selected' : '';
+            return `<option value="${a}" ${selected}>${a}</option>`;
+        }).join('');
 
-    filterSelect.onchange = () => { this.renderKanban(); };
+        filterSelect.onchange = () => { this.renderKanban(); };
 
-    let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
-    if (selectedAreas.length === 0) selectedAreas = areas;
+        let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
+        if (selectedAreas.length === 0) selectedAreas = areas;
 
-    // تصفية القصص حسب المنطقة ونوعها (استبعاد Support log) مع تطبيق البحث
-    const filteredRegular = currentData
-        .filter(s => !isBacklogStory(s) && isRegularStory(s) && selectedAreas.includes(s.area || "General"))
-        .filter(s => matchesSearch(s) && matchesTag(s))
-        .sort((a, b) => (a.priority || 999) - (b.priority || 999));
+        const filteredRegular = currentData
+            .filter(s => !isBacklogStory(s) && isRegularStory(s) && selectedAreas.includes(s.area || "General"))
+            .filter(s => matchesSearch(s) && matchesTag(s))
+            .sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
-    const filteredBacklog = db.backlogStories
-        .filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"))
-        .filter(s => matchesSearch(s) && matchesTag(s))
-        .sort((a, b) => (a.priority || 999) - (b.priority || 999));
+        const filteredBacklog = db.backlogStories
+            .filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"))
+            .filter(s => matchesSearch(s) && matchesTag(s))
+            .sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
-    // تعريف الأعمدة (بدون Backlog لأنه سيُضاف بشكل منفصل)
-    const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
+        const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
 
-    // دالة مساعدة لإنشاء بطاقة القصة العادية (مع شريط الزاوية للتاريخ)
-    const createRegularCard = (s) => {
-        // جلب الوسوم من Azure ومعالجتها
-        const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
-        const customTagsArr = s.customTags || [];
-        const allTagSet = new Set([...azureTags, ...customTagsArr]);
+        // بطاقات القصص (نفس الكود السابق)
+        const createRegularCard = (s) => {
+            const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
+            const customTagsArr = s.customTags || [];
+            const allTagSet = new Set([...azureTags, ...customTagsArr]);
 
-        // حساب البيانات
-        const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-        const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
-                                        .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-        const devEstRemaining = Math.max(0, devEstTotal - devEstCompleted);
+            const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+            const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+            const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State']))
+                .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+            const devEstRemaining = Math.max(0, devEstTotal - devEstCompleted);
 
-        const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
-                              .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+            const testEst = s.tasks.filter(t => t['Activity'] === 'Testing')
+                .reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
 
-        const totalBugs = s.bugs ? s.bugs.length : 0;
-        const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State'])).length : 0;
+            const totalBugs = s.bugs ? s.bugs.length : 0;
+            const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State'])).length : 0;
 
-        const totalBugEffort = s.bugs ? s.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-        const completedBugEffort = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State']))
-                                          .reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-        const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
-        const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
+            const totalBugEffort = s.bugs ? s.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
+            const completedBugEffort = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State']))
+                .reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
+            const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
+            const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
 
-        const testCases = s.testCases || [];
-        const totalTC = testCases.length;
-        const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
+            const testCases = s.testCases || [];
+            const totalTC = testCases.length;
+            const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
 
-        const commentsCount = s.standupComments ? s.standupComments.length : 0;
+            const commentsCount = s.standupComments ? s.standupComments.length : 0;
 
-        const customTagsList = db.customTags || [];
-        const storyTags = s.customTags || [];
+            const customTagsList = db.customTags || [];
+            const storyTags = s.customTags || [];
 
-        // ---- شريط الزاوية للتاريخ ----
-        const releaseDate = s.expectedRelease 
-            ? (s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB'))
-            : null;
+            const releaseDate = s.expectedRelease ?
+                (s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB')) :
+                null;
 
-        return `
-            <div class="relative bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
-                ${releaseDate ? `
-                    <div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">
-                        📅 ${releaseDate}
-                    </div>
-                ` : ''}
-
-                ${allTagSet.size > 0 ? `
-                <div class="flex flex-wrap gap-1 mb-2">
-                    ${[...allTagSet].map(tag => {
-                        const isCustom = customTagsArr.includes(tag);
-                        return `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`;
-                    }).join('')}
-                </div>` : ''}
-
-                <!-- إضافة زر إضافة وسوم مخصصة -->
-                <div class="flex flex-wrap items-center gap-1.5 mb-3 border-b border-dashed border-gray-100 pb-2 overflow-visible">
-                    ${storyTags.map(tag => `
-                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
-                            ${tag}
-                            <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
-                        </span>
-                    `).join('')}
-                    
-                    <div class="relative inline-block group">
-                        <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
-                            <span class="text-sm font-bold">+</span>
-                        </button>
-                        
-                        <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
-                            <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
-                                <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
-                                <div class="max-h-40 overflow-y-auto">
-                                    ${customTagsList.length > 0 ? customTagsList.map(tag => {
-                                        const isPicked = storyTags.includes(tag);
-                                        return `
-                                        <button 
-                                            onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')"
-                                            class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
-                                            ${tag}
-                                            ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
-                                        </button>`;
-                                    }).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags defined</div>'}
-                                </div>
-                            </div>
+            return `
+                <div class="relative bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+                    ${releaseDate ? `
+                        <div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">
+                            📅 ${releaseDate}
                         </div>
-                    </div>
-                </div>
+                    ` : ''}
 
-                <div class="flex justify-between items-center mb-2">
-                    <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
-                    <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100" title="Standup Comments">
-                        💬 <span class="font-bold">${commentsCount}</span>
-                    </button>
-                </div>
-                
-                <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
-                
-                <div class="grid grid-cols-2 gap-2 border-t pt-2">
-                    <div class="text-[11px]">
-                        <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
-                        <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
-                        <div class="flex justify-between items-center mt-1">
-                            <span class="text-blue-500 font-bold" title="Remaining / Total Estimation">${devEstRemaining}/${devEstTotal}h</span>
-                            <span class="text-red-500 text-[10px] font-bold" title="Completed Bugs">🐞${completedBugs}/${totalBugs}</span>
-                        </div>
-                        ${totalBugEffort > 0 ? `
-                        <div class="flex justify-between items-center mt-1 text-[10px] text-gray-600 border-t border-dashed border-gray-200 pt-1">
-                            <span class="font-bold text-gray-500">Bug Effort:</span>
-                            <span class="font-mono">${remainingBugEffort.toFixed(1)}/${totalBugEffort.toFixed(1)}h</span>
-                            <span class="text-xs font-bold ${remainingBugEffort === 0 ? 'text-green-600' : 'text-amber-600'}">
-                                ${bugProgressPercent}%
+                    ${allTagSet.size > 0 ? `
+                    <div class="flex flex-wrap gap-1 mb-2">
+                        ${[...allTagSet].map(tag => {
+                            const isCustom = customTagsArr.includes(tag);
+                            return `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`;
+                        }).join('')}
+                    </div>` : ''}
+
+                    <div class="flex flex-wrap items-center gap-1.5 mb-3 border-b border-dashed border-gray-100 pb-2 overflow-visible">
+                        ${storyTags.map(tag => `
+                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
+                                ${tag}
+                                <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
                             </span>
-                        </div>
-                        <div class="w-full bg-gray-200 h-0.5 rounded-full mt-0.5">
-                            <div class="${remainingBugEffort === 0 ? 'bg-green-500' : 'bg-amber-500'} h-full rounded-full" style="width: ${bugProgressPercent}%"></div>
-                        </div>
-                        ` : ''}
-                    </div>
-                    <div class="text-[11px] border-l pl-2">
-                        <div class="text-gray-400 uppercase font-bold text-[9px]">Tester</div>
-                        <div class="text-slate-700 truncate font-medium">${s.tester}</div>
-                        <div class="flex justify-between items-center mt-1">
-                            <span class="text-green-500 font-bold">${testEst}h</span>
-                            <span class="text-indigo-500 text-[10px] font-bold" title="Completed Test Cases">📋${completedTC}/${totalTC}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    };
-
-    // دالة مساعدة لإنشاء بطاقة الباك لوج (مع شريط الزاوية للتاريخ)
-    const createBacklogCard = (s) => {
-        const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
-        const customTagsArr = s.customTags || [];
-        const allTagSet = new Set([...azureTags, ...customTagsArr]);
-
-        const customTagsList = db.customTags || [];
-        const storyTags = s.customTags || [];
-
-        // ---- شريط الزاوية للتاريخ ----
-        const releaseDate = s.expectedRelease 
-            ? (s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB'))
-            : null;
-
-        return `
-            <div class="relative bg-white p-3 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
-                ${releaseDate ? `
-                    <div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">
-                        📅 ${releaseDate}
-                    </div>
-                ` : ''}
-
-                ${allTagSet.size > 0 ? `
-                <div class="flex flex-wrap gap-1 mb-2">
-                    ${[...allTagSet].map(tag => {
-                        const isCustom = customTagsArr.includes(tag);
-                        return `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`;
-                    }).join('')}
-                </div>` : ''}
-
-                <!-- إضافة زر إضافة وسوم مخصصة -->
-                <div class="flex flex-wrap items-center gap-1.5 mb-3 border-b border-dashed border-gray-100 pb-2 overflow-visible">
-                    ${storyTags.map(tag => `
-                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
-                            ${tag}
-                            <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
-                        </span>
-                    `).join('')}
-                    
-                    <div class="relative inline-block group">
-                        <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
-                            <span class="text-sm font-bold">+</span>
-                        </button>
+                        `).join('')}
                         
-                        <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
-                            <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
-                                <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
-                                <div class="max-h-40 overflow-y-auto">
-                                    ${customTagsList.length > 0 ? customTagsList.map(tag => {
-                                        const isPicked = storyTags.includes(tag);
-                                        return `
-                                        <button 
-                                            onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')"
-                                            class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
-                                            ${tag}
-                                            ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
-                                        </button>`;
-                                    }).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags defined</div>'}
+                        <div class="relative inline-block group">
+                            <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
+                                <span class="text-sm font-bold">+</span>
+                            </button>
+                            
+                            <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
+                                <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
+                                    <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
+                                    <div class="max-h-40 overflow-y-auto">
+                                        ${customTagsList.length > 0 ? customTagsList.map(tag => {
+                                            const isPicked = storyTags.includes(tag);
+                                            return `
+                                            <button 
+                                                onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')"
+                                                class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
+                                                ${tag}
+                                                ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
+                                            </button>`;
+                                        }).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags defined</div>'}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="flex justify-between items-center mb-2">
-                    <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-purple-600 cursor-pointer hover:underline">#${s.id} 🔍</div>
-                </div>
-                <div class="text-sm font-semibold text-slate-800 mb-2 line-clamp-2">${s.title}</div>
-                <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
-                    <div>
-                        <div class="text-gray-400 uppercase font-bold text-[9px]">Area</div>
-                        <div class="text-slate-700 truncate">${s.area}</div>
+                    <div class="flex justify-between items-center mb-2">
+                        <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
+                        <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100" title="Standup Comments">
+                            💬 <span class="font-bold">${commentsCount}</span>
+                        </button>
                     </div>
-                    <div>
-                        <div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div>
-                        <div class="text-slate-700 font-bold">P${s.priority}</div>
-                    </div>
-                </div>
-                ${s.expectedRelease ? `
-                <div class="mt-2 text-[10px] text-purple-600 border-t border-purple-100 pt-1">
-                    📅 Release: ${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB')}
-                </div>` : ''}
-            </div>
-        `;
-    };
-
-    // بناء الأعمدة
-    let html = '';
-
-    // 1. عمود الباك لوج (يظهر أولاً)
-    html += `
-        <div class="flex-shrink-0 w-80 bg-purple-50 rounded-xl border border-purple-200 flex flex-col max-h-screen">
-            <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                <h3 class="font-bold text-purple-700">Backlog</h3>
-                <span class="bg-purple-200 text-purple-800 text-xs px-2 py-0.5 rounded-full">${filteredBacklog.length}</span>
-            </div>
-            <div class="p-2 space-y-3 overflow-y-auto">
-                ${filteredBacklog.map(s => createBacklogCard(s)).join('')}
-                ${filteredBacklog.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">No backlog items</div>' : ''}
-            </div>
-        </div>
-    `;
-
-    // 2. الأعمدة العادية
-    html += states.map(state => {
-        const storiesInState = filteredRegular.filter(s => s.state === state);
-        return `
-            <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
-                <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                    <h3 class="font-bold text-slate-700">${state}</h3>
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
-                </div>
-                <div class="p-2 space-y-3 overflow-y-auto">
-                    ${storiesInState.map(s => createRegularCard(s)).join('')}
-                    ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    container.innerHTML = html;
-},
-    renderSupportKanban() {
-    const container = document.getElementById('support-kanban-container');
-    const filterSelect = document.getElementById('support-kanban-ba-filter');
-
-    // 1. تصفية عناصر Support log (هذا التاب مخصص للسابورت فقط)
-    const supportLogs = currentData.filter(s => s.type === 'Support log');
-    if (supportLogs.length === 0) {
-        container.innerHTML = `<div class="text-center py-20 text-gray-400 col-span-full">No Support logs found.</div>`;
-        return;
-    }
-
-    // 2. استخراج المناطق الفريدة لفلتر Business Area مع الحفاظ على التحديد
-    const areas = [...new Set(supportLogs.map(s => s.area || "General"))].sort();
-    const currentSelected = filterSelect.value;
-
-    filterSelect.innerHTML = '<option value="all">All Areas</option>' + 
-        areas.map(a => `<option value="${a}" ${a === currentSelected ? 'selected' : ''}>${a}</option>`).join('');
-
-    const selectedArea = filterSelect.value;
-    let filteredLogs = supportLogs;
-    if (selectedArea !== 'all') {
-        filteredLogs = filteredLogs.filter(s => (s.area || "General") === selectedArea);
-    }
-
-    // 3. استخراج الحالات الفريدة كأعمدة (بترتيب منطقي)
-    const allStates = [...new Set(filteredLogs.map(s => s.state))].sort();
-    const preferredOrder = ['Active', 'Resolved', 'Closed', 'On-Hold', 'Reactive', 'Rejected'];
-    const orderedStates = preferredOrder.filter(st => allStates.includes(st));
-    const remainingStates = allStates.filter(st => !preferredOrder.includes(st)).sort();
-    const finalStates = [...orderedStates, ...remainingStates];
-
-    // 4. دالة إنشاء بطاقة Support Log مع زر التعليقات
-    const createSupportCard = (s) => {
-        const tagsList = s.tags || [];
-        const commentsCount = s.standupComments ? s.standupComments.length : 0;
-        return `
-            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
-                ${tagsList.length > 0 ? `
-                <div class="flex flex-wrap gap-1 mb-2">
-                    ${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
-                </div>` : ''}
-
-                <div class="flex justify-between items-center mb-2">
-                    <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
-                    <button onclick="ui.openCommentsModal('${s.id}')" 
-                            class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100">
-                        💬 <span class="font-bold">${commentsCount}</span>
-                    </button>
-                </div>
-                
-                <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
-                
-                <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
-                    <div>
-                        <div class="text-gray-400 uppercase font-bold text-[9px]">Assigned To</div>
-                        <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
-                    </div>
-                    <div>
-                        <div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div>
-                        <div class="text-slate-700 font-bold">P${s.priority}</div>
+                    
+                    <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
+                    
+                    <div class="grid grid-cols-2 gap-2 border-t pt-2">
+                        <div class="text-[11px]">
+                            <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
+                            <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-blue-500 font-bold" title="Remaining / Total Estimation">${devEstRemaining}/${devEstTotal}h</span>
+                                <span class="text-red-500 text-[10px] font-bold" title="Completed Bugs">🐞${completedBugs}/${totalBugs}</span>
+                            </div>
+                            ${totalBugEffort > 0 ? `
+                            <div class="flex justify-between items-center mt-1 text-[10px] text-gray-600 border-t border-dashed border-gray-200 pt-1">
+                                <span class="font-bold text-gray-500">Bug Effort:</span>
+                                <span class="font-mono">${remainingBugEffort.toFixed(1)}/${totalBugEffort.toFixed(1)}h</span>
+                                <span class="text-xs font-bold ${remainingBugEffort === 0 ? 'text-green-600' : 'text-amber-600'}">
+                                    ${bugProgressPercent}%
+                                </span>
+                            </div>
+                            <div class="w-full bg-gray-200 h-0.5 rounded-full mt-0.5">
+                                <div class="${remainingBugEffort === 0 ? 'bg-green-500' : 'bg-amber-500'} h-full rounded-full" style="width: ${bugProgressPercent}%"></div>
+                            </div>
+                            ` : ''}
+                        </div>
+                        <div class="text-[11px] border-l pl-2">
+                            <div class="text-gray-400 uppercase font-bold text-[9px]">Tester</div>
+                            <div class="text-slate-700 truncate font-medium">${s.tester}</div>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-green-500 font-bold">${testEst}h</span>
+                                <span class="text-indigo-500 text-[10px] font-bold" title="Completed Test Cases">📋${completedTC}/${totalTC}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">
-                    Area: ${s.area || "General"} | Updated: ${s.changedDate ? new Date(s.changedDate).toLocaleDateString('en-GB') : 'N/A'}
-                </div>
-            </div>
-        `;
-    };
+            `;
+        };
 
-    // 5. بناء الأعمدة
-    let html = '';
-    finalStates.forEach(state => {
-        const logsInState = filteredLogs.filter(s => s.state === state);
+        const createBacklogCard = (s) => {
+            const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
+            const customTagsArr = s.customTags || [];
+            const allTagSet = new Set([...azureTags, ...customTagsArr]);
+
+            const customTagsList = db.customTags || [];
+            const storyTags = s.customTags || [];
+
+            const releaseDate = s.expectedRelease ?
+                (s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB')) :
+                null;
+
+            return `
+                <div class="relative bg-white p-3 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
+                    ${releaseDate ? `
+                        <div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">
+                            📅 ${releaseDate}
+                        </div>
+                    ` : ''}
+
+                    ${allTagSet.size > 0 ? `
+                    <div class="flex flex-wrap gap-1 mb-2">
+                        ${[...allTagSet].map(tag => {
+                            const isCustom = customTagsArr.includes(tag);
+                            return `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`;
+                        }).join('')}
+                    </div>` : ''}
+
+                    <div class="flex flex-wrap items-center gap-1.5 mb-3 border-b border-dashed border-gray-100 pb-2 overflow-visible">
+                        ${storyTags.map(tag => `
+                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
+                                ${tag}
+                                <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
+                            </span>
+                        `).join('')}
+                        
+                        <div class="relative inline-block group">
+                            <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
+                                <span class="text-sm font-bold">+</span>
+                            </button>
+                            
+                            <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
+                                <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
+                                    <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
+                                    <div class="max-h-40 overflow-y-auto">
+                                        ${customTagsList.length > 0 ? customTagsList.map(tag => {
+                                            const isPicked = storyTags.includes(tag);
+                                            return `
+                                            <button 
+                                                onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')"
+                                                class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
+                                                ${tag}
+                                                ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
+                                            </button>`;
+                                        }).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags defined</div>'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-2">
+                        <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-purple-600 cursor-pointer hover:underline">#${s.id} 🔍</div>
+                    </div>
+                    <div class="text-sm font-semibold text-slate-800 mb-2 line-clamp-2">${s.title}</div>
+                    <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
+                        <div>
+                            <div class="text-gray-400 uppercase font-bold text-[9px]">Area</div>
+                            <div class="text-slate-700 truncate">${s.area}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div>
+                            <div class="text-slate-700 font-bold">P${s.priority}</div>
+                        </div>
+                    </div>
+                    ${s.expectedRelease ? `
+                    <div class="mt-2 text-[10px] text-purple-600 border-t border-purple-100 pt-1">
+                        📅 Release: ${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB')}
+                    </div>` : ''}
+                </div>
+            `;
+        };
+
+        // بناء HTML
+        let html = '';
+
+        // ===== عرض التعليقات العامة للمناطق المحددة (فوق الأعمدة) =====
+        const commentsHtml = areaCommentManager.renderAreaComments(selectedAreas);
+        if (commentsHtml) {
+            html += `<div id="area-comments-container" class="mb-4">${commentsHtml}</div>`;
+        }
+
+        // أعمدة الكانبان
+        html += `<div class="flex flex-nowrap gap-4 overflow-x-auto pb-4">`;
+
+        // عمود الباك لوج
         html += `
-            <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
+            <div class="flex-shrink-0 w-80 bg-purple-50 rounded-xl border border-purple-200 flex flex-col max-h-screen">
                 <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                    <h3 class="font-bold text-slate-700">${state}</h3>
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${logsInState.length}</span>
+                    <h3 class="font-bold text-purple-700">Backlog</h3>
+                    <span class="bg-purple-200 text-purple-800 text-xs px-2 py-0.5 rounded-full">${filteredBacklog.length}</span>
                 </div>
                 <div class="p-2 space-y-3 overflow-y-auto">
-                    ${logsInState.map(s => createSupportCard(s)).join('')}
-                    ${logsInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
+                    ${filteredBacklog.map(s => createBacklogCard(s)).join('')}
+                    ${filteredBacklog.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">No backlog items</div>' : ''}
                 </div>
             </div>
         `;
-    });
 
-    container.innerHTML = html;
-},
+        // الأعمدة العادية
+        html += states.map(state => {
+            const storiesInState = filteredRegular.filter(s => s.state === state);
+            return `
+                <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
+                    <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
+                        <h3 class="font-bold text-slate-700">${state}</h3>
+                        <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
+                    </div>
+                    <div class="p-2 space-y-3 overflow-y-auto">
+                        ${storiesInState.map(s => createRegularCard(s)).join('')}
+                        ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        html += `</div>`;
+
+        container.innerHTML = html;
+    },
+
+    renderSupportKanban() {
+        const container = document.getElementById('support-kanban-container');
+        const filterSelect = document.getElementById('support-kanban-ba-filter');
+
+        const supportLogs = currentData.filter(s => s.type === 'Support log');
+        if (supportLogs.length === 0) {
+            container.innerHTML = `<div class="text-center py-20 text-gray-400 col-span-full">No Support logs found.</div>`;
+            return;
+        }
+
+        const areas = [...new Set(supportLogs.map(s => s.area || "General"))].sort();
+        const currentSelected = filterSelect.value;
+
+        filterSelect.innerHTML = '<option value="all">All Areas</option>' +
+            areas.map(a => `<option value="${a}" ${a === currentSelected ? 'selected' : ''}>${a}</option>`).join('');
+
+        const selectedArea = filterSelect.value;
+        let filteredLogs = supportLogs;
+        if (selectedArea !== 'all') {
+            filteredLogs = filteredLogs.filter(s => (s.area || "General") === selectedArea);
+        }
+
+        const allStates = [...new Set(filteredLogs.map(s => s.state))].sort();
+        const preferredOrder = ['Active', 'Resolved', 'Closed', 'On-Hold', 'Reactive', 'Rejected'];
+        const orderedStates = preferredOrder.filter(st => allStates.includes(st));
+        const remainingStates = allStates.filter(st => !preferredOrder.includes(st)).sort();
+        const finalStates = [...orderedStates, ...remainingStates];
+
+        const createSupportCard = (s) => {
+            const tagsList = s.tags || [];
+            const commentsCount = s.standupComments ? s.standupComments.length : 0;
+            return `
+                <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+                    ${tagsList.length > 0 ? `
+                    <div class="flex flex-wrap gap-1 mb-2">
+                        ${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}
+                    </div>` : ''}
+
+                    <div class="flex justify-between items-center mb-2">
+                        <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
+                        <button onclick="ui.openCommentsModal('${s.id}')" 
+                                class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100">
+                            💬 <span class="font-bold">${commentsCount}</span>
+                        </button>
+                    </div>
+                    
+                    <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
+                    
+                    <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
+                        <div>
+                            <div class="text-gray-400 uppercase font-bold text-[9px]">Assigned To</div>
+                            <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div>
+                            <div class="text-slate-700 font-bold">P${s.priority}</div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">
+                        Area: ${s.area || "General"} | Updated: ${s.changedDate ? new Date(s.changedDate).toLocaleDateString('en-GB') : 'N/A'}
+                    </div>
+                </div>
+            `;
+        };
+
+        let html = '';
+        finalStates.forEach(state => {
+            const logsInState = filteredLogs.filter(s => s.state === state);
+            html += `
+                <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
+                    <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
+                        <h3 class="font-bold text-slate-700">${state}</h3>
+                        <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${logsInState.length}</span>
+                    </div>
+                    <div class="p-2 space-y-3 overflow-y-auto">
+                        ${logsInState.map(s => createSupportCard(s)).join('')}
+                        ${logsInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    },
 
     renderDelivery() {
         const container = document.getElementById('delivery-grid');
-        const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || ""; 
-        
-        // Exclude backlog from delivery, and filter only regular stories (User Story & CR)
+        const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || "";
+
         const nonBacklog = currentData.filter(s => !isBacklogStory(s));
         const regularStories = nonBacklog.filter(s => isRegularStory(s));
-        
+
         const allTested = regularStories.filter(s => s.state === 'Tested' || s.state === 'Closed');
 
         const pendingStories = allTested.filter(s => {
             const isPending = !db.deliveryLogs.some(l => l.storyId === s.id.toString());
-            const matchesSearch = 
-                s.title.toLowerCase().includes(searchTerm) || 
-                s.id.toString().includes(searchTerm) || 
+            const matchesSearch =
+                s.title.toLowerCase().includes(searchTerm) ||
+                s.id.toString().includes(searchTerm) ||
                 (s.area && s.area.toLowerCase().includes(searchTerm));
             return isPending && matchesSearch;
         });
 
         const completedStories = db.deliveryLogs.map(log => {
             const story = regularStories.find(s => s.id.toString() === log.storyId.toString());
-            return { 
-                ...story, 
+            return {
+                ...story,
                 logData: log,
                 title: story ? story.title : "Story not in current CSV",
                 area: story ? story.area : "N/A"
             };
         }).filter(s => {
-            // Ensure the story is not null and is regular (already filtered by regularStories)
             if (!s.id) return false;
-            const matchesSearch = 
-                s.title.toLowerCase().includes(searchTerm) || 
-                s.logData.storyId.toString().includes(searchTerm) || 
+            const matchesSearch =
+                s.title.toLowerCase().includes(searchTerm) ||
+                s.logData.storyId.toString().includes(searchTerm) ||
                 s.logData.to.toLowerCase().includes(searchTerm) ||
                 (s.area && s.area.toLowerCase().includes(searchTerm));
             return matchesSearch;
@@ -2140,7 +2192,7 @@ renderAll() {
             return;
         }
         const to = document.getElementById(`to-${id}`).value;
-        if(!to) return alert("اكتب المستلم");
+        if (!to) return alert("اكتب المستلم");
         db.deliveryLogs.push({
             storyId: id, to, date: new Date().toLocaleDateString(), timestamp: Date.now()
         });
@@ -2171,15 +2223,14 @@ renderAll() {
         const container = document.getElementById('workload-container');
         if (!container) return;
 
-        // Exclude backlog from workload, but INCLUDE Support log (per user request)
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s)); // includes Support log
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
         const areaGroups = {};
         const MAX_HOURS = 65;
 
         const globalTaskWorkers = new Set();
         nonBacklog.forEach(story => {
-            const activeTasks = (story.tasks || []).filter(t => 
-                t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed' && 
+            const activeTasks = (story.tasks || []).filter(t =>
+                t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed' &&
                 parseFloat(t['Original Estimation'] || 0) > 0
             );
             activeTasks.forEach(t => {
@@ -2212,7 +2263,7 @@ renderAll() {
         nonBacklog.forEach(story => {
             const area = story.area || "General Business Area";
             if (!areaGroups[area]) {
-                areaGroups[area] = { 
+                areaGroups[area] = {
                     developers: {},
                     testers: {},
                     allDevsInArea: new Set(),
@@ -2228,17 +2279,17 @@ renderAll() {
             const isActiveStory = story.state !== 'Tested' && story.state !== 'Closed';
             if (isActiveStory && (story.type === 'User Story' || story.type === 'CR')) {
                 if (story.assignedTo && story.assignedTo !== "Unassigned") {
-                    areaGroups[area].activeDevStories[story.assignedTo] = 
+                    areaGroups[area].activeDevStories[story.assignedTo] =
                         (areaGroups[area].activeDevStories[story.assignedTo] || 0) + 1;
                 }
                 if (story.tester && story.tester !== "Unassigned") {
-                    areaGroups[area].activeTesterStories[story.tester] = 
+                    areaGroups[area].activeTesterStories[story.tester] =
                         (areaGroups[area].activeTesterStories[story.tester] || 0) + 1;
                 }
             }
 
-            const activeDevTasks = (story.tasks || []).filter(t => 
-                ["Development", "DB Modification"].includes(t['Activity']) && 
+            const activeDevTasks = (story.tasks || []).filter(t =>
+                ["Development", "DB Modification"].includes(t['Activity']) &&
                 t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
             );
             const dHours = activeDevTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
@@ -2246,8 +2297,8 @@ renderAll() {
                 areaGroups[area].developers[story.assignedTo] = (areaGroups[area].developers[story.assignedTo] || 0) + dHours;
             }
 
-            const activeTestTasks = (story.tasks || []).filter(t => 
-                t['Activity'] === 'Testing' && 
+            const activeTestTasks = (story.tasks || []).filter(t =>
+                t['Activity'] === 'Testing' &&
                 t['State'] !== 'To Be Reviewed' && t['State'] !== 'Closed'
             );
             const tHours = activeTestTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
@@ -2484,7 +2535,7 @@ renderAll() {
         const entries = Object.entries(staffData);
         if (entries.length === 0) return `<div class="text-gray-300 text-sm italic">No active tasks</div>`;
 
-        return entries.sort((a,b) => b[1] - a[1]).map(([name, hours]) => {
+        return entries.sort((a, b) => b[1] - a[1]).map(([name, hours]) => {
             const perc = Math.min((hours / max) * 100, 100);
             const isOver = hours > max;
             const barColor = isOver ? 'bg-red-500' : (perc > 80 ? 'bg-orange-500' : `bg-${color}-500`);
@@ -2560,11 +2611,11 @@ renderAll() {
     handleAreaDrop(event, targetIndex) {
         event.preventDefault();
         const sourceIndex = parseInt(event.dataTransfer.getData('text/plain'));
-        
+
         if (sourceIndex === targetIndex) return;
 
         const currentAreas = Array.from(new Set(currentData.filter(s => !isBacklogStory(s)).map(s => s.area || "General Business Area")));
-        
+
         const movedAreaName = currentAreas.splice(sourceIndex, 1)[0];
         currentAreas.splice(targetIndex, 0, movedAreaName);
 
@@ -2575,7 +2626,6 @@ renderAll() {
             reorderedData.push(...storiesInArea);
         });
 
-        // Keep backlog stories at the end
         const backlogStories = currentData.filter(s => isBacklogStory(s));
         currentData = [...reorderedData, ...backlogStories];
         this.renderWorkload();
@@ -2590,9 +2640,8 @@ renderAll() {
         const body = document.getElementById('modal-body');
 
         title.innerText = `[#${s.id}] ${s.title}`;
-        
+
         if (isBacklogStory(s)) {
-            // Simplified view for backlog stories
             body.innerHTML = `
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <div class="bg-slate-50 p-3 rounded-lg">
@@ -2621,7 +2670,6 @@ renderAll() {
                 </div>
             `;
         } else {
-            // Regular story view
             const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
             const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
 
@@ -2714,7 +2762,7 @@ renderAll() {
         const body = document.getElementById('modal-body');
 
         title.innerText = `[#${s.id}] Standup Updates`;
-        
+
         const comments = s.standupComments || [];
 
         body.innerHTML = `
@@ -2809,7 +2857,6 @@ renderAll() {
         const todayStr = today.toISOString().split('T')[0];
         const activities = [];
 
-        // Exclude backlog and Support log from daily activity
         const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
 
         nonBacklog.forEach(story => {
@@ -2882,10 +2929,10 @@ renderAll() {
 
     renderDailyActivitySummary(activities, grouped) {
         const total = activities.length;
-        
-        const states = activities.reduce((acc, s) => { 
-            acc[s.state] = (acc[s.state] || 0) + 1; 
-            return acc; 
+
+        const states = activities.reduce((acc, s) => {
+            acc[s.state] = (acc[s.state] || 0) + 1;
+            return acc;
         }, {});
 
         const branchStatsMap = {};
@@ -2978,7 +3025,7 @@ renderAll() {
     renderStoryCard(s) {
         const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
         let statusColor = isLate ? "bg-red-100 text-red-700" : "bg-indigo-100 text-indigo-700";
-        
+
         return `
         <div onclick="ui.openStoryModal('${s.id}')" class="group p-3 mb-2 bg-slate-50 border border-slate-100 rounded-xl hover:border-indigo-300 hover:bg-white transition-all cursor-pointer">
             <div class="flex justify-between items-start mb-2">
@@ -3045,25 +3092,25 @@ renderAll() {
         }, {});
 
         let csvContent = "\uFEFF";
-        csvContent += "Level,Identifier,Details/Title,Owner,Status\n"; 
+        csvContent += "Level,Identifier,Details/Title,Owner,Status\n";
 
         for (const branch in grouped) {
             let branchCount = 0;
             Object.values(grouped[branch]).forEach(area => {
                 Object.values(area).forEach(cust => branchCount += cust.length);
             });
-            
+
             csvContent += `BRANCH,${branch},Total Items: ${branchCount},,\n`;
 
             for (const area in grouped[branch]) {
                 let areaCount = 0;
                 Object.values(grouped[branch][area]).forEach(cust => areaCount += cust.length);
-                
+
                 csvContent += `AREA,${area},Sub-total: ${areaCount},,\n`;
 
                 for (const customer in grouped[branch][area]) {
                     const customerStories = grouped[branch][area][customer];
-                    
+
                     csvContent += `CUSTOMER,${customer},Items: ${customerStories.length},,\n`;
 
                     customerStories.forEach(s => {
@@ -3091,7 +3138,6 @@ renderAll() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // Exclude backlog and Support log from inactive
         const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
 
         const inactive = nonBacklog.filter(s => {
@@ -3179,7 +3225,7 @@ renderAll() {
         const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const staff = [...new Set(nonBacklog.map(s => s.assignedTo).concat(nonBacklog.map(s => s.tester)))];
         const staffSelect = document.getElementById('staff-select');
-        if(staffSelect) staffSelect.innerHTML = staff.map(s => `<option value="${s}">${s}</option>`).join('');
+        if (staffSelect) staffSelect.innerHTML = staff.map(s => `<option value="${s}">${s}</option>`).join('');
 
         document.getElementById('vacations-list').innerHTML = db.vacations.map((v, i) => `
             <div class="flex justify-between bg-gray-50 p-1 px-2 rounded mb-1">
@@ -3195,7 +3241,7 @@ renderAll() {
         `).join('');
 
         const usersList = document.getElementById('users-list');
-        if(usersList) {
+        if (usersList) {
             usersList.innerHTML = db.users.map((u, i) => `
                 <div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
                     <div>
@@ -3207,7 +3253,6 @@ renderAll() {
             `).join('');
         }
 
-        // Render tags
         tagManager.renderTagsSettings();
     },
 
@@ -3219,9 +3264,8 @@ renderAll() {
         const stateFilter = document.getElementById('auditor-state-filter')?.value || 'all';
 
         const areaSelect = document.getElementById('auditor-area-filter');
-        // Exclude backlog and Support log from auditor
         const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
-        
+
         if (areaSelect && areaSelect.options.length <= 1) {
             const areas = [...new Set(nonBacklog.map(s => s.area || "General"))];
             areaSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${a}">${a}</option>`).join('');
@@ -3243,11 +3287,11 @@ renderAll() {
         const rowsHtml = filtered.map(story => {
             const criteria = this.evaluateStoryCompliance(story);
             const compliancePercent = Math.round((criteria.passedCount / criteria.totalCount) * 100);
-            
+
             let barColor = 'bg-red-500';
             if (compliancePercent >= 80) barColor = 'bg-green-500';
             else if (compliancePercent >= 50) barColor = 'bg-yellow-500';
-            
+
             return `
                 <tr class="border-b hover:bg-gray-50 transition">
                     <td class="px-4 py-3 font-mono text-xs">#${story.id}</td>
@@ -3293,8 +3337,8 @@ renderAll() {
         }
         if (devTasksValid) passedCount++;
 
-        const testTasksList = story.tasks.filter(t => 
-            t['Activity'] === 'Testing' || 
+        const testTasksList = story.tasks.filter(t =>
+            t['Activity'] === 'Testing' ||
             (t['Title'] && (t['Title'].toLowerCase().includes('prep') || t['Title'].toLowerCase().includes('preparation')))
         );
         const testTasksValid = testTasksList.length > 0;
@@ -3341,9 +3385,9 @@ const settings = {
         const password = document.getElementById('new-user-pass').value;
         const role = document.getElementById('new-user-role').value;
 
-        if(!username || !password) return alert("Please fill all fields");
-        
-        if(db.users.some(u => u.username === username)) return alert("User already exists");
+        if (!username || !password) return alert("Please fill all fields");
+
+        if (db.users.some(u => u.username === username)) return alert("User already exists");
 
         db.users.push({ username, password, role });
         dataProcessor.saveToGitHub().then(() => {
@@ -3353,17 +3397,17 @@ const settings = {
     },
 
     removeUser(index) {
-        if(db.users[index].username === currentUser.username) return alert("Cannot delete yourself!");
+        if (db.users[index].username === currentUser.username) return alert("Cannot delete yourself!");
         db.users.splice(index, 1);
         dataProcessor.saveToGitHub();
         ui.renderSettings();
     },
-    
+
     addVacation() {
         const name = document.getElementById('staff-select').value;
         const date = document.getElementById('vacation-date').value;
-        if(!date) return;
-        db.vacations.push({name, date});
+        if (!date) return;
+        db.vacations.push({ name, date });
         dataProcessor.saveToGitHub();
         ui.renderSettings();
     },
@@ -3374,7 +3418,7 @@ const settings = {
     },
     addHoliday() {
         const date = document.getElementById('holiday-date').value;
-        if(!date) return;
+        if (!date) return;
         db.holidays.push(date);
         dataProcessor.saveToGitHub();
         ui.renderSettings();
@@ -3385,8 +3429,8 @@ const tagManager = {
     addTag() {
         const input = document.getElementById('new-tag-input');
         const tagName = input.value.trim();
-        if(!tagName || db.customTags.includes(tagName)) return;
-        
+        if (!tagName || db.customTags.includes(tagName)) return;
+
         db.customTags.push(tagName);
         input.value = '';
         dataProcessor.saveToGitHub();
@@ -3396,7 +3440,7 @@ const tagManager = {
 
     removeTag(tagName) {
         db.customTags = db.customTags.filter(t => t !== tagName);
-        db.currentStories.forEach(s => { if(s.customTag === tagName) delete s.customTag; });
+        db.currentStories.forEach(s => { if (s.customTag === tagName) delete s.customTag; });
         dataProcessor.saveToGitHub();
         this.renderTagsSettings();
         ui.renderAll();
@@ -3404,7 +3448,7 @@ const tagManager = {
 
     assignTagToStory(storyId, tagName) {
         const story = db.currentStories.find(s => s.ID == storyId);
-        if(story) {
+        if (story) {
             story.customTag = tagName;
             dataProcessor.saveToGitHub();
         }
@@ -3412,7 +3456,7 @@ const tagManager = {
 
     renderTagsSettings() {
         const container = document.getElementById('tags-list');
-        if(!container) return;
+        if (!container) return;
         container.innerHTML = db.customTags.map(tag => `
             <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
                 ${tag}
@@ -3422,31 +3466,29 @@ const tagManager = {
     },
 
     toggleTagInStory(storyId, tagName) {
-    // البحث في currentStories أولاً
-    let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
-    if (!story) {
-        // إذا لم يوجد، نبحث في backlogStories
-        story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
-    }
-    
-    if (story) {
-        if (!story.customTags) {
-            story.customTags = [];
+        let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
+        if (!story) {
+            story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
         }
-        
-        const index = story.customTags.indexOf(tagName);
-        if (index > -1) {
-            story.customTags.splice(index, 1);
+
+        if (story) {
+            if (!story.customTags) {
+                story.customTags = [];
+            }
+
+            const index = story.customTags.indexOf(tagName);
+            if (index > -1) {
+                story.customTags.splice(index, 1);
+            } else {
+                story.customTags.push(tagName);
+            }
+
+            dataProcessor.saveToGitHub();
+            ui.renderKanban();
         } else {
-            story.customTags.push(tagName);
+            console.error("Story not found in database for ID:", storyId);
         }
-        
-        dataProcessor.saveToGitHub();
-        ui.renderKanban(); // تحديث الكانبان بعد التغيير
-    } else {
-        console.error("Story not found in database for ID:", storyId);
     }
-}
 };
 
 const commentManager = {
@@ -3454,7 +3496,7 @@ const commentManager = {
         const story = db.currentStories.find(s => (s.id || s.ID) == storyId);
         if (story) {
             if (!story.standupComments) story.standupComments = [];
-            
+
             story.standupComments.push({
                 text: text,
                 date: new Date().toLocaleString('en-GB'),
@@ -3462,7 +3504,7 @@ const commentManager = {
             });
 
             dataProcessor.saveToGitHub();
-            ui.renderActiveCards(); 
+            ui.renderActiveCards();
         }
     }
 };
@@ -3482,20 +3524,18 @@ const azureDevOps = {
         try {
             const authHeader = 'Basic ' + btoa(':' + pat);
 
-            // 1. جلب علاقات الاستعلام الرئيسي
             const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
             const mainRes = await fetch(mainQueryUrl, { headers: { 'Authorization': authHeader } });
             const mainData = await mainRes.json();
             const mainRelations = mainData.workItemRelations || [];
             const mainIds = [...new Set(mainRelations.map(r => r.target ? r.target.id : null).filter(id => id))];
 
-            // 2. جلب IDs من استعلام Backlog (يدعم الفلات كويري)
             let backlogIds = [];
             if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
                 const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
                 const backlogRes = await fetch(backlogQueryUrl, { headers: { 'Authorization': authHeader } });
                 const backlogData = await backlogRes.json();
-                
+
                 if (backlogData.workItemRelations && backlogData.workItemRelations.length > 0) {
                     backlogIds = backlogData.workItemRelations.map(r => r.target ? r.target.id : null).filter(id => id);
                 } else if (backlogData.workItems && backlogData.workItems.length > 0) {
@@ -3504,11 +3544,9 @@ const azureDevOps = {
                 console.log(`✅ Backlog IDs extracted: ${backlogIds.length}`);
             }
 
-            // 3. دمج المعرفات لجلب التفاصيل دفعة واحدة
             const allIds = [...new Set([...mainIds, ...backlogIds])];
             if (allIds.length === 0) throw new Error("No items found in the specified queries.");
 
-            // 4. جلب تفاصيل جميع العناصر دفعات (Batch)
             const chunkSize = 200;
             let allDetails = [];
             for (let i = 0; i < allIds.length; i += chunkSize) {
@@ -3523,14 +3561,11 @@ const azureDevOps = {
                 allDetails = allDetails.concat(batchData.value);
             }
 
-            // 5. بناء خريطة للتفاصيل
             const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
 
-            // 6. معالجة القصص الرئيسية (باستخدام العلاقات لضمان الترتيب الصحيح)
             const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
             dataProcessor.processRows(mainRows);
 
-            // 7. معالجة قصص Backlog (باستخدام المعرفات الخاصة بها)
             const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
             const backlogRows = this.buildBacklogRows(backlogDetails);
             dataProcessor.processBacklogRows(backlogRows);
@@ -3546,7 +3581,6 @@ const azureDevOps = {
         }
     },
 
-    // دالة بناء الصفوف من العلاقات (مأخوذة من الكود القديم)
     buildRowsFromRelations(relations, detailsMap) {
         const rows = [];
         relations.forEach(rel => {
@@ -3625,7 +3659,7 @@ const azureDevOps = {
         });
         return rows;
     },
-    
+
     saveSettings() {
         const settings = {
             org: document.getElementById('az-org').value,
@@ -3638,12 +3672,15 @@ const azureDevOps = {
     }
 };
 
-/** 
+/**
  * Initialize
  */
 window.onload = () => {
+    // تأكد من وجود areaComments في db قبل أي شيء
+    if (!db.areaComments) db.areaComments = [];
+
     const saved = localStorage.getItem('saved_creds');
-    if(saved) {
+    if (saved) {
         const creds = JSON.parse(saved);
         document.getElementById('username').value = creds.u;
         document.getElementById('password').value = creds.p;
