@@ -2821,10 +2821,10 @@ const ui = {
     const sidebarHtml = this.renderTaskDueDateSidebar();
 
     container.innerHTML = `
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div class="lg:col-span-3">
-                <!-- تغيير الشبكة إلى عمود واحد لجعل المربعات أعرض -->
-                <div class="grid grid-cols-1 gap-4 max-w-4xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2">
+                <!-- شبكة المشاريع بعمود واحد لجعلها عريضة -->
+                <div class="grid grid-cols-1 gap-4">
                     ${projectsHtml}
                 </div>
             </div>
