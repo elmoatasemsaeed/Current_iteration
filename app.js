@@ -2838,71 +2838,71 @@ const ui = {
 
     // دالة عرض المهام المتأخرة والقريبة (الجانبية)
     renderTaskDueDateSidebar() {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const dayAfter = new Date(today);
-        dayAfter.setDate(dayAfter.getDate() + 2); // "بكره" يعني غداً
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
-        const allTasks = [];
-        db.projects.forEach(project => {
-            (project.tasks || []).forEach(task => {
-                if (task.dueDate) {
-                    const due = new Date(task.dueDate);
-                    due.setHours(0, 0, 0, 0);
-                    allTasks.push({
-                        projectName: project.name,
-                        projectId: project.id,
-                        task: task,
-                        dueDate: due
-                    });
-                }
-            });
+    const allTasks = [];
+    db.projects.forEach(project => {
+        (project.tasks || []).forEach(task => {
+            // Exclude completed tasks (done)
+            if (task.dueDate && task.status !== 'done') {
+                const due = new Date(task.dueDate);
+                due.setHours(0, 0, 0, 0);
+                allTasks.push({
+                    projectName: project.name,
+                    projectId: project.id,
+                    task: task,
+                    dueDate: due
+                });
+            }
         });
+    });
 
-        const overdue = allTasks.filter(t => t.dueDate < today);
-        const todayTasks = allTasks.filter(t => t.dueDate.getTime() === today.getTime());
-        const tomorrowTasks = allTasks.filter(t => t.dueDate.getTime() === tomorrow.getTime());
+    // Categorize tasks
+    const overdue = allTasks.filter(t => t.dueDate < today);
+    const todayTasks = allTasks.filter(t => t.dueDate.getTime() === today.getTime());
+    const tomorrowTasks = allTasks.filter(t => t.dueDate.getTime() === tomorrow.getTime());
 
-        const renderTaskList = (tasks, label, icon) => {
-            if (tasks.length === 0) return `<div class="text-xs text-gray-400 italic">لا توجد مهام</div>`;
-            return tasks.map(t => `
-                <div class="text-xs bg-white p-2 rounded border border-gray-100 mb-1 shadow-sm hover:shadow transition cursor-pointer" 
-                     onclick="ui.openProjectDetails('${t.projectId}')">
-                    <div class="font-bold text-slate-700">${t.task.title}</div>
-                    <div class="text-[10px] text-gray-500">📁 ${t.projectName}</div>
-                    <div class="text-[10px] text-gray-400">📅 ${t.task.dueDate}</div>
+    const renderTaskList = (tasks) => {
+        if (tasks.length === 0) return `<div class="text-xs text-gray-400 italic">No tasks</div>`;
+        return tasks.map(t => `
+            <div class="text-xs bg-white p-2 rounded border border-gray-100 mb-1 shadow-sm hover:shadow transition cursor-pointer" 
+                 onclick="ui.openProjectDetails('${t.projectId}')">
+                <div class="font-bold text-slate-700 truncate" title="${t.task.title}">${t.task.title}</div>
+                <div class="text-[10px] text-gray-500">📁 ${t.projectName}</div>
+                <div class="text-[10px] text-gray-400">📅 ${t.task.dueDate}</div>
+            </div>
+        `).join('');
+    };
+
+    return `
+        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 sticky top-4">
+            <h3 class="font-bold text-slate-700 text-lg mb-3 flex items-center gap-2">⏰ Tasks by Due Date</h3>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex items-center gap-2 text-red-600 font-bold text-sm border-b border-red-100 pb-1">
+                        <span>🔴</span> Overdue (${overdue.length})
+                    </div>
+                    <div class="mt-2 space-y-1">${renderTaskList(overdue)}</div>
                 </div>
-            `).join('');
-        };
-
-        return `
-            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 sticky top-4">
-                <h3 class="font-bold text-slate-700 text-lg mb-3 flex items-center gap-2">⏰ المهام حسب الموعد</h3>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex items-center gap-2 text-red-600 font-bold text-sm border-b border-red-100 pb-1">
-                            <span>🔴</span> متأخرة (${overdue.length})
-                        </div>
-                        <div class="mt-2 space-y-1">${renderTaskList(overdue)}</div>
+                <div>
+                    <div class="flex items-center gap-2 text-amber-600 font-bold text-sm border-b border-amber-100 pb-1">
+                        <span>🟡</span> Today (${todayTasks.length})
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2 text-amber-600 font-bold text-sm border-b border-amber-100 pb-1">
-                            <span>🟡</span> اليوم (${todayTasks.length})
-                        </div>
-                        <div class="mt-2 space-y-1">${renderTaskList(todayTasks)}</div>
+                    <div class="mt-2 space-y-1">${renderTaskList(todayTasks)}</div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 text-blue-600 font-bold text-sm border-b border-blue-100 pb-1">
+                        <span>🔵</span> Tomorrow (${tomorrowTasks.length})
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2 text-blue-600 font-bold text-sm border-b border-blue-100 pb-1">
-                            <span>🔵</span> بكره (${tomorrowTasks.length})
-                        </div>
-                        <div class="mt-2 space-y-1">${renderTaskList(tomorrowTasks)}</div>
-                    </div>
+                    <div class="mt-2 space-y-1">${renderTaskList(tomorrowTasks)}</div>
                 </div>
             </div>
-        `;
-    },
+        </div>
+    `;
+},
 
     // ===== تعديل عرض تفاصيل المشروع (إضافة تعديل التاريخ) =====
     openProjectDetails(projectId) {
