@@ -2780,61 +2780,60 @@ const ui = {
     },
     // ================= PROJECTS TAB =================
     renderProjectsTab() {
-        const container = document.getElementById('projects-container');
-        const countSpan = document.getElementById('projects-count');
-        if (!container) return;
-        const activeProjects = db.projects.filter(p => p.status !== 'closed');
-        const closedProjects = db.projects.filter(p => p.status === 'closed');
-        const allProjects = [...activeProjects, ...closedProjects];
-        countSpan.textContent = `${allProjects.length} projects (${activeProjects.length} active)`;
+    const container = document.getElementById('projects-container');
+    const countSpan = document.getElementById('projects-count');
+    if (!container) return;
+    const activeProjects = db.projects.filter(p => p.status !== 'closed');
+    const closedProjects = db.projects.filter(p => p.status === 'closed');
+    const allProjects = [...activeProjects, ...closedProjects];
+    countSpan.textContent = `${allProjects.length} projects (${activeProjects.length} active)`;
 
-        if (allProjects.length === 0) {
-            container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No projects created yet. Go to Settings to add one.</div>`;
-            return;
-        }
+    if (allProjects.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No projects created yet. Go to Settings to add one.</div>`;
+        return;
+    }
 
-        // بناء المشاريع كبطاقات
-        const projectsHtml = allProjects.map(p => {
-            const statusClass = p.status === 'active' ? 'border-green-500 bg-green-50' :
-                                p.status === 'hold' ? 'border-amber-500 bg-amber-50' : 'border-gray-400 bg-gray-100';
-            const statusText = p.status === 'active' ? '🟢 Active' :
-                               p.status === 'hold' ? '🟡 On Hold' : '🔴 Closed';
-            const storyCount = p.linkedStoryIds ? p.linkedStoryIds.length : 0;
-            const taskCount = p.tasks ? p.tasks.length : 0;
-            return `
-                <div onclick="ui.openProjectDetails('${p.id}')" class="bg-white rounded-xl shadow-md border-l-4 ${statusClass} p-5 hover:shadow-lg cursor-pointer transition-all">
-                    <div class="flex justify-between items-start">
-                        <h3 class="text-xl font-bold text-slate-800">${p.name}</h3>
-                        <span class="text-xs font-bold px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-green-200 text-green-800' : p.status === 'hold' ? 'bg-amber-200 text-amber-800' : 'bg-gray-300 text-gray-700'}">${statusText}</span>
-                    </div>
-                    <div class="mt-2 text-sm text-slate-600"><span class="font-bold">Team:</span> ${p.team}</div>
-                    <div class="text-sm text-slate-600"><span class="font-bold">Due Date:</span> ${p.dueDate}</div>
-                    <div class="mt-3 flex gap-3 text-xs text-gray-500">
-                        <span>📚 Stories: ${storyCount}</span>
-                        <span>📋 Tasks: ${taskCount}</span>
-                    </div>
-                    ${p.status === 'hold' ? `<div class="mt-2 text-xs text-amber-700 bg-amber-100 p-2 rounded">⏸ Hold: ${p.holdReason} (until ${p.holdEndDate})</div>` : ''}
-                    ${p.status === 'closed' ? `<div class="mt-2 text-xs text-gray-500">🗓 Closed on: ${p.closeDate}</div>` : ''}
+    const projectsHtml = allProjects.map(p => {
+        const statusClass = p.status === 'active' ? 'border-green-500 bg-green-50' :
+                            p.status === 'hold' ? 'border-amber-500 bg-amber-50' : 'border-gray-400 bg-gray-100';
+        const statusText = p.status === 'active' ? '🟢 Active' :
+                           p.status === 'hold' ? '🟡 On Hold' : '🔴 Closed';
+        const storyCount = p.linkedStoryIds ? p.linkedStoryIds.length : 0;
+        const taskCount = p.tasks ? p.tasks.length : 0;
+        return `
+            <div onclick="ui.openProjectDetails('${p.id}')" class="bg-white rounded-xl shadow-md border-l-4 ${statusClass} p-5 hover:shadow-lg cursor-pointer transition-all">
+                <div class="flex justify-between items-start">
+                    <h3 class="text-xl font-bold text-slate-800">${p.name}</h3>
+                    <span class="text-xs font-bold px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-green-200 text-green-800' : p.status === 'hold' ? 'bg-amber-200 text-amber-800' : 'bg-gray-300 text-gray-700'}">${statusText}</span>
                 </div>
-            `;
-        }).join('');
-
-        // ===== القائمة الجانبية للمهام حسب التاريخ =====
-        const sidebarHtml = this.renderTaskDueDateSidebar();
-
-        container.innerHTML = `
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <div class="lg:col-span-3">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        ${projectsHtml}
-                    </div>
+                <div class="mt-2 text-sm text-slate-600"><span class="font-bold">Team:</span> ${p.team}</div>
+                <div class="text-sm text-slate-600"><span class="font-bold">Due Date:</span> ${p.dueDate}</div>
+                <div class="mt-3 flex gap-3 text-xs text-gray-500">
+                    <span>📚 Stories: ${storyCount}</span>
+                    <span>📋 Tasks: ${taskCount}</span>
                 </div>
-                <div class="lg:col-span-1">
-                    ${sidebarHtml}
-                </div>
+                ${p.status === 'hold' ? `<div class="mt-2 text-xs text-amber-700 bg-amber-100 p-2 rounded">⏸ Hold: ${p.holdReason} (until ${p.holdEndDate})</div>` : ''}
+                ${p.status === 'closed' ? `<div class="mt-2 text-xs text-gray-500">🗓 Closed on: ${p.closeDate}</div>` : ''}
             </div>
         `;
-    },
+    }).join('');
+
+    const sidebarHtml = this.renderTaskDueDateSidebar();
+
+    container.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div class="lg:col-span-3">
+                <!-- تغيير الشبكة إلى عمود واحد لجعل المربعات أعرض -->
+                <div class="grid grid-cols-1 gap-4 max-w-4xl mx-auto">
+                    ${projectsHtml}
+                </div>
+            </div>
+            <div class="lg:col-span-1">
+                ${sidebarHtml}
+            </div>
+        </div>
+    `;
+},
 
     // دالة عرض المهام المتأخرة والقريبة (الجانبية)
     renderTaskDueDateSidebar() {
