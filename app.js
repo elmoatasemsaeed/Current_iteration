@@ -26,7 +26,9 @@ let db = {
     currentStories: [],
     customTags: [],
     backlogStories: [],
-    areaComments: []
+    areaComments: [],
+    projects: [],
+    archivedProjects: []
 };
 
 let currentData = [];
@@ -44,7 +46,11 @@ const archiver = {
         const TenDaysAgo = Date.now() - (31 * 24 * 60 * 60 * 1000);
         const logsToArchive = db.deliveryLogs.filter(log => log.timestamp < TenDaysAgo);
         const logsToKeep = db.deliveryLogs.filter(log => log.timestamp >= TenDaysAgo);
-        if (logsToArchive.length === 0) return;
+        if (logsToArchive.length === 0) {
+            // Still check for closed projects older than 7 days
+            this.archiveClosedProjects();
+            return;
+        }
         try {
             let archiveData = [];
             try {
@@ -63,6 +69,18 @@ const archiver = {
             console.log(`${logsToArchive.length} records moved to archive.`);
         } catch (error) {
             console.error("Archive process failed:", error);
+        }
+        this.archiveClosedProjects();
+    },
+    async archiveClosedProjects() {
+        const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+        const closedProjects = db.projects.filter(p => p.status === 'closed' && new Date(p.closeDate).getTime() < sevenDaysAgo);
+        if (closedProjects.length > 0) {
+            db.archivedProjects = db.archivedProjects || [];
+            db.archivedProjects.push(...closedProjects);
+            db.projects = db.projects.filter(p => !closedProjects.includes(p));
+            await dataProcessor.saveToGitHub();
+            console.log(`${closedProjects.length} projects archived.`);
         }
     },
     async saveFileToGitHub(path, data) {
@@ -120,6 +138,8 @@ const auth = {
                     if (!db.customTags) db.customTags = [];
                     if (!db.backlogStories) db.backlogStories = [];
                     if (!db.areaComments) db.areaComments = [];
+                    if (!db.projects) db.projects = [];
+                    if (!db.archivedProjects) db.archivedProjects = [];
                     sessionStorage.setItem('gh_token', t);
                     sessionStorage.setItem('az_pat', azPat);
                     if (rem) localStorage.setItem('saved_creds', JSON.stringify({ u, p, t, azPat }));
@@ -215,6 +235,8 @@ const dataProcessor = {
                 if (!db.customTags) db.customTags = [];
                 if (!db.backlogStories) db.backlogStories = [];
                 if (!db.areaComments) db.areaComments = [];
+                if (!db.projects) db.projects = [];
+                if (!db.archivedProjects) db.archivedProjects = [];
                 const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                     headers: { 'Authorization': `token ${token}` }
                 });
@@ -288,12 +310,14 @@ const dataProcessor = {
                     iterationPath: row['Iteration Path'] || "",
                     devActualTime: parseFloat(row['TimeSheet_DevActualTime']) || 0,
                     testActualTime: parseFloat(row['TimeSheet_TestingActualTime']) || 0,
-                    isBacklog: false
+                    isBacklog: false,
+                    linkedProjectId: null
                 };
                 const existingStory = db.currentStories.find(s => s.id == currentStory.id);
                 if (existingStory) {
                     if (existingStory.customTags) currentStory.customTags = existingStory.customTags;
                     if (existingStory.standupComments) currentStory.standupComments = existingStory.standupComments;
+                    if (existingStory.linkedProjectId) currentStory.linkedProjectId = existingStory.linkedProjectId;
                 }
                 newStories.push(currentStory);
             } else if (row['Work Item Type'] === 'Task' && currentStory) {
@@ -348,7 +372,8 @@ const dataProcessor = {
                 iterationPath: row['Iteration Path'] || "",
                 devActualTime: 0,
                 testActualTime: 0,
-                isBacklog: true
+                isBacklog: true,
+                linkedProjectId: null
             };
         }).filter(s => s !== null);
         db.backlogStories = backlogStories;
@@ -609,6 +634,174 @@ const areaCommentManager = {
 };
 
 /**
+ * Project Manager – إدارة المشاريع
+ */
+const projectManager = {
+    generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    },
+    addProject() {
+        const name = document.getElementById('project-name').value.trim();
+        const team = document.getElementById('project-team').value.trim();
+        const dueDate = document.getElementById('project-due-date').value;
+        if (!name || !team || !dueDate) return alert('Please fill all fields');
+        const newProject = {
+            id: this.generateId(),
+            name,
+            team,
+            dueDate,
+            status: 'active',
+            holdReason: '',
+            holdEndDate: '',
+            closeDate: '',
+            tasks: [],
+            linkedStoryIds: []
+        };
+        db.projects.push(newProject);
+        dataProcessor.saveToGitHub().then(() => {
+            alert('Project added successfully');
+            ui.renderAll();
+            ui.renderProjectsTab();
+            ui.renderSettings();
+        });
+    },
+    deleteProject(projectId) {
+        if (!confirm('Are you sure you want to delete this project?')) return;
+        db.projects = db.projects.filter(p => p.id !== projectId);
+        // Also remove links from stories
+        db.currentStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
+        db.backlogStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderAll();
+            ui.renderProjectsTab();
+            ui.renderSettings();
+        });
+    },
+    getProjectById(id) {
+        return db.projects.find(p => p.id === id);
+    },
+    // Link / Unlink story to project
+    linkStoryToProject(storyId, projectId) {
+        let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
+        if (!story) story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
+        if (!story) return;
+        // If already linked to another project, unlink first
+        if (story.linkedProjectId) {
+            const oldProject = this.getProjectById(story.linkedProjectId);
+            if (oldProject) {
+                oldProject.linkedStoryIds = oldProject.linkedStoryIds.filter(id => id != storyId);
+            }
+        }
+        story.linkedProjectId = projectId;
+        const project = this.getProjectById(projectId);
+        if (project && !project.linkedStoryIds.includes(storyId.toString())) {
+            project.linkedStoryIds.push(storyId.toString());
+        }
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderAll();
+        });
+    },
+    unlinkStoryFromProject(storyId) {
+        let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
+        if (!story) story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
+        if (!story || !story.linkedProjectId) return;
+        const project = this.getProjectById(story.linkedProjectId);
+        if (project) {
+            project.linkedStoryIds = project.linkedStoryIds.filter(id => id != storyId);
+        }
+        delete story.linkedProjectId;
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderAll();
+        });
+    },
+    // Project status management
+    holdProject(projectId) {
+        const reason = prompt('Enter reason for holding the project:');
+        if (reason === null) return;
+        const endDate = prompt('Expected end date of hold (YYYY-MM-DD):');
+        if (endDate === null) return;
+        const project = this.getProjectById(projectId);
+        if (!project) return;
+        project.status = 'hold';
+        project.holdReason = reason;
+        project.holdEndDate = endDate;
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderAll();
+            ui.renderProjectsTab();
+        });
+    },
+    closeProject(projectId) {
+        if (!confirm('Are you sure you want to close this project? It will be archived after 7 days.')) return;
+        const project = this.getProjectById(projectId);
+        if (!project) return;
+        project.status = 'closed';
+        project.closeDate = new Date().toISOString().split('T')[0];
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderAll();
+            ui.renderProjectsTab();
+        });
+    },
+    // Task management inside project
+    addTask(projectId, title, dueDate) {
+        if (!title || !dueDate) return alert('Please fill task title and due date');
+        const project = this.getProjectById(projectId);
+        if (!project) return;
+        const newTask = {
+            id: this.generateId(),
+            title,
+            dueDate,
+            status: 'todo',
+            comments: []
+        };
+        project.tasks.push(newTask);
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderProjectDetailsModal(projectId);
+        });
+    },
+    deleteTask(projectId, taskId) {
+        if (!confirm('Delete this task?')) return;
+        const project = this.getProjectById(projectId);
+        if (!project) return;
+        project.tasks = project.tasks.filter(t => t.id !== taskId);
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderProjectDetailsModal(projectId);
+        });
+    },
+    updateTaskStatus(projectId, taskId, newStatus) {
+        const project = this.getProjectById(projectId);
+        if (!project) return;
+        const task = project.tasks.find(t => t.id === taskId);
+        if (!task) return;
+        task.status = newStatus;
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderProjectDetailsModal(projectId);
+        });
+    },
+    addTaskComment(projectId, taskId, commentText) {
+        if (!commentText.trim()) return;
+        const project = this.getProjectById(projectId);
+        if (!project) return;
+        const task = project.tasks.find(t => t.id === taskId);
+        if (!task) return;
+        task.comments.push({ text: commentText.trim(), timestamp: new Date().toLocaleString('ar-EG', { hour12: false }) });
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderProjectDetailsModal(projectId);
+        });
+    },
+    deleteTaskComment(projectId, taskId, commentIndex) {
+        if (!confirm('Delete this comment?')) return;
+        const project = this.getProjectById(projectId);
+        if (!project) return;
+        const task = project.tasks.find(t => t.id === taskId);
+        if (!task) return;
+        task.comments.splice(commentIndex, 1);
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderProjectDetailsModal(projectId);
+        });
+    }
+};
+
+/**
  * UI Rendering
  */
 const ui = {
@@ -616,6 +809,7 @@ const ui = {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
         this.renderAll();
+        if (tabId === 'projects') this.renderProjectsTab();
     },
     renderAll() {
         this.renderDashboard();
@@ -637,6 +831,7 @@ const ui = {
             case 'tab-kanban': this.renderKanban(); break;
             case 'tab-auditor': this.renderAuditorChecklist(); break;
             case 'tab-support-kanban': this.renderSupportKanban(); break;
+            case 'tab-projects': this.renderProjectsTab(); break;
             default: break;
         }
     },
@@ -1037,6 +1232,20 @@ const ui = {
                     const customTagsList = db.customTags || [];
                     const storyTags = s.customTags || [];
                     const comments = s.standupComments || [];
+
+                    // Project dropdown
+                    const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => `<option value="${p.id}" ${s.linkedProjectId === p.id ? 'selected' : ''}>${p.name}</option>`).join('');
+                    const projectSelectHtml = `
+                        <div class="mt-2 flex items-center gap-2 border-t border-dashed border-gray-200 pt-2">
+                            <span class="text-[10px] font-bold text-gray-400">📁 Project:</span>
+                            <select onchange="projectManager.linkStoryToProject('${s.id}', this.value)" class="text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-blue-400 outline-none flex-1">
+                                <option value="">None</option>
+                                ${projectOptions}
+                            </select>
+                            ${s.linkedProjectId ? `<button onclick="projectManager.unlinkStoryFromProject('${s.id}')" class="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>` : ''}
+                        </div>
+                    `;
+
                     return `
                     <div class="relative bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-visible flex flex-col mb-4">
                         ${activeDaysCount > 0 ? `
@@ -1085,6 +1294,7 @@ const ui = {
                                 </div>
                             </div>
                             <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${s.title}</h3>
+                            ${projectSelectHtml}
                             <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
                                 <div>
                                     <div class="flex items-center gap-2 mb-1">
@@ -1463,6 +1673,20 @@ const ui = {
             const customTagsList = db.customTags || [];
             const storyTags = s.customTags || [];
             const releaseDate = s.expectedRelease ? (s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB')) : null;
+
+            // Project dropdown
+            const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => `<option value="${p.id}" ${s.linkedProjectId === p.id ? 'selected' : ''}>${p.name}</option>`).join('');
+            const projectSelectHtml = `
+                <div class="mt-2 flex items-center gap-2 border-t border-dashed border-gray-200 pt-2">
+                    <span class="text-[10px] font-bold text-gray-400">📁 Project:</span>
+                    <select onchange="projectManager.linkStoryToProject('${s.id}', this.value)" class="text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-blue-400 outline-none flex-1">
+                        <option value="">None</option>
+                        ${projectOptions}
+                    </select>
+                    ${s.linkedProjectId ? `<button onclick="projectManager.unlinkStoryFromProject('${s.id}')" class="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>` : ''}
+                </div>
+            `;
+
             return `
                 <div class="relative bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
                     ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">📅 ${releaseDate}</div>` : ''}
@@ -1503,6 +1727,7 @@ const ui = {
                         <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100">💬 <span class="font-bold">${commentsCount}</span></button>
                     </div>
                     <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
+                    ${projectSelectHtml}
                     <div class="grid grid-cols-2 gap-2 border-t pt-2">
                         <div class="text-[11px]">
                             <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
@@ -1542,6 +1767,20 @@ const ui = {
             const customTagsList = db.customTags || [];
             const storyTags = s.customTags || [];
             const releaseDate = s.expectedRelease ? (s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB')) : null;
+
+            // Project dropdown for backlog
+            const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => `<option value="${p.id}" ${s.linkedProjectId === p.id ? 'selected' : ''}>${p.name}</option>`).join('');
+            const projectSelectHtml = `
+                <div class="mt-2 flex items-center gap-2 border-t border-dashed border-gray-200 pt-2">
+                    <span class="text-[10px] font-bold text-gray-400">📁 Project:</span>
+                    <select onchange="projectManager.linkStoryToProject('${s.id}', this.value)" class="text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-blue-400 outline-none flex-1">
+                        <option value="">None</option>
+                        ${projectOptions}
+                    </select>
+                    ${s.linkedProjectId ? `<button onclick="projectManager.unlinkStoryFromProject('${s.id}')" class="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>` : ''}
+                </div>
+            `;
+
             return `
                 <div class="relative bg-white p-3 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
                     ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">📅 ${releaseDate}</div>` : ''}
@@ -1581,6 +1820,7 @@ const ui = {
                         <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-purple-600 cursor-pointer hover:underline">#${s.id} 🔍</div>
                     </div>
                     <div class="text-sm font-semibold text-slate-800 mb-2 line-clamp-2">${s.title}</div>
+                    ${projectSelectHtml}
                     <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
                         <div><div class="text-gray-400 uppercase font-bold text-[9px]">Area</div><div class="text-slate-700 truncate">${s.area}</div></div>
                         <div><div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div><div class="text-slate-700 font-bold">P${s.priority}</div></div>
@@ -1624,8 +1864,6 @@ const ui = {
             `;
         }).join('');
         html += `</div>`;
-
-        // لم نعد نعرض التعليقات العامة هنا، بل عبر الزر
 
         container.innerHTML = html;
     },
@@ -2421,6 +2659,21 @@ const ui = {
             `).join('');
         }
         tagManager.renderTagsSettings();
+
+        // Projects list in settings
+        const projectsList = document.getElementById('projects-list');
+        if (projectsList) {
+            projectsList.innerHTML = db.projects.map(p => `
+                <div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
+                    <div>
+                        <span class="font-bold text-slate-700">${p.name}</span>
+                        <span class="text-xs ml-2 px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-600' : p.status === 'hold' ? 'bg-amber-100 text-amber-600' : 'bg-gray-200 text-gray-500'}">${p.status}</span>
+                        <span class="text-xs text-gray-400 ml-2">Team: ${p.team}</span>
+                    </div>
+                    <button onclick="projectManager.deleteProject('${p.id}')" class="text-red-500 hover:text-red-700 font-bold text-xl">&times;</button>
+                </div>
+            `).join('');
+        }
     },
     renderAuditorChecklist() {
         const tbody = document.getElementById('auditor-table-body');
@@ -2500,6 +2753,159 @@ const ui = {
         if (reviews.length > 0) reviewsValid = reviews.every(r => ['Closed', 'Resolved'].includes(r.state));
         if (reviewsValid) passedCount++;
         return { passedCount, totalCount, priority: priorityValid, iterationPath: iterationPathValid, devTasks: devTasksValid, testTasks: testTasksValid, testCasesPass: testCasesValid, bugsClosed: bugsValid, reviewsClosed: reviewsValid };
+    },
+    // ================= PROJECTS TAB =================
+    renderProjectsTab() {
+        const container = document.getElementById('projects-container');
+        const countSpan = document.getElementById('projects-count');
+        if (!container) return;
+        const activeProjects = db.projects.filter(p => p.status !== 'closed');
+        const closedProjects = db.projects.filter(p => p.status === 'closed');
+        const allProjects = [...activeProjects, ...closedProjects];
+        countSpan.textContent = `${allProjects.length} projects (${activeProjects.length} active)`;
+        if (allProjects.length === 0) {
+            container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No projects created yet. Go to Settings to add one.</div>`;
+            return;
+        }
+        container.innerHTML = allProjects.map(p => {
+            const statusClass = p.status === 'active' ? 'border-green-500 bg-green-50' :
+                                p.status === 'hold' ? 'border-amber-500 bg-amber-50' : 'border-gray-400 bg-gray-100';
+            const statusText = p.status === 'active' ? '🟢 Active' :
+                               p.status === 'hold' ? '🟡 On Hold' : '🔴 Closed';
+            const storyCount = p.linkedStoryIds ? p.linkedStoryIds.length : 0;
+            const taskCount = p.tasks ? p.tasks.length : 0;
+            return `
+                <div onclick="ui.openProjectDetails('${p.id}')" class="bg-white rounded-xl shadow-md border-l-4 ${statusClass} p-5 hover:shadow-lg cursor-pointer transition-all">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold text-slate-800">${p.name}</h3>
+                        <span class="text-xs font-bold px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-green-200 text-green-800' : p.status === 'hold' ? 'bg-amber-200 text-amber-800' : 'bg-gray-300 text-gray-700'}">${statusText}</span>
+                    </div>
+                    <div class="mt-2 text-sm text-slate-600"><span class="font-bold">Team:</span> ${p.team}</div>
+                    <div class="text-sm text-slate-600"><span class="font-bold">Due Date:</span> ${p.dueDate}</div>
+                    <div class="mt-3 flex gap-3 text-xs text-gray-500">
+                        <span>📚 Stories: ${storyCount}</span>
+                        <span>📋 Tasks: ${taskCount}</span>
+                    </div>
+                    ${p.status === 'hold' ? `<div class="mt-2 text-xs text-amber-700 bg-amber-100 p-2 rounded">⏸ Hold: ${p.holdReason} (until ${p.holdEndDate})</div>` : ''}
+                    ${p.status === 'closed' ? `<div class="mt-2 text-xs text-gray-500">🗓 Closed on: ${p.closeDate}</div>` : ''}
+                </div>
+            `;
+        }).join('');
+    },
+    openProjectDetails(projectId) {
+        const project = projectManager.getProjectById(projectId);
+        if (!project) return;
+        // Use the same story modal but with dynamic content
+        const modal = document.getElementById('story-modal');
+        const title = document.getElementById('modal-title');
+        const body = document.getElementById('modal-body');
+        title.innerText = `📁 ${project.name}`;
+
+        let linkedStoriesHtml = '';
+        const allStories = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
+        const linkedStories = allStories.filter(s => s.linkedProjectId === project.id);
+        if (linkedStories.length > 0) {
+            linkedStoriesHtml = `
+                <div class="space-y-2">
+                    <h4 class="font-bold text-indigo-700 text-sm border-b pb-1">📚 Linked Stories (${linkedStories.length})</h4>
+                    ${linkedStories.map(s => `
+                        <div class="flex justify-between items-center bg-indigo-50 p-2 rounded border border-indigo-100">
+                            <span onclick="ui.openStoryModal('${s.id}')" class="text-sm cursor-pointer hover:underline">#${s.id} - ${s.title}</span>
+                            <span class="text-xs bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded">${isBacklogStory(s) ? 'Backlog' : s.state}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else {
+            linkedStoriesHtml = `<div class="text-gray-400 text-sm italic">No stories linked to this project.</div>`;
+        }
+
+        // Tasks section
+        let tasksHtml = `
+            <div class="mt-4">
+                <h4 class="font-bold text-purple-700 text-sm border-b pb-1">📋 Project Tasks</h4>
+                <div class="space-y-2 mt-2">
+                    ${project.tasks.map(t => `
+                        <div class="bg-white border rounded p-3 shadow-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium text-slate-700">${t.title}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded ${t.status === 'done' ? 'bg-green-200 text-green-700' : t.status === 'active' ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'}">${t.status}</span>
+                                    <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','todo')" class="text-[10px] bg-gray-100 hover:bg-gray-200 px-1.5 py-0.5 rounded">To Do</button>
+                                    <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','active')" class="text-[10px] bg-blue-100 hover:bg-blue-200 px-1.5 py-0.5 rounded">Active</button>
+                                    <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','done')" class="text-[10px] bg-green-100 hover:bg-green-200 px-1.5 py-0.5 rounded">Done</button>
+                                    <button onclick="projectManager.deleteTask('${project.id}','${t.id}')" class="text-red-500 hover:text-red-700 text-sm font-bold">×</button>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-400">Due: ${t.dueDate}</div>
+                            <div class="mt-2 space-y-1">
+                                ${t.comments.map((c, idx) => `
+                                    <div class="flex justify-between items-start bg-gray-50 p-1.5 rounded border border-gray-100">
+                                        <span class="text-sm">${c.text}</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[9px] text-gray-400">${c.timestamp}</span>
+                                            <button onclick="projectManager.deleteTaskComment('${project.id}','${t.id}',${idx})" class="text-red-400 hover:text-red-600 text-xs">✕</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                                <div class="flex gap-1 mt-1">
+                                    <input type="text" id="comment-input-${t.id}" placeholder="Add comment..." class="flex-1 text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-purple-400 outline-none">
+                                    <button onclick="projectManager.addTaskComment('${project.id}','${t.id}', document.getElementById('comment-input-${t.id}').value); document.getElementById('comment-input-${t.id}').value='';" class="bg-purple-600 text-white px-2 py-1 rounded text-xs">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                    ${project.tasks.length === 0 ? '<div class="text-gray-400 text-sm italic">No tasks added yet.</div>' : ''}
+                </div>
+                <div class="mt-3 flex gap-2">
+                    <input type="text" id="new-task-title-${project.id}" placeholder="Task title..." class="flex-1 border rounded px-3 py-1.5 text-sm">
+                    <input type="date" id="new-task-due-${project.id}" class="border rounded px-3 py-1.5 text-sm">
+                    <button onclick="projectManager.addTask('${project.id}', document.getElementById('new-task-title-${project.id}').value, document.getElementById('new-task-due-${project.id}').value); document.getElementById('new-task-title-${project.id}').value=''; document.getElementById('new-task-due-${project.id}').value='';" class="bg-purple-600 text-white px-4 py-1.5 rounded text-sm">Add Task</button>
+                </div>
+            </div>
+        `;
+
+        // Project controls
+        let controlsHtml = '';
+        if (project.status === 'active') {
+            controlsHtml = `
+                <div class="flex gap-3 mt-4">
+                    <button onclick="projectManager.holdProject('${project.id}')" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold">⏸ Hold</button>
+                    <button onclick="projectManager.closeProject('${project.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold">🔒 Close</button>
+                </div>
+            `;
+        } else if (project.status === 'hold') {
+            controlsHtml = `
+                <div class="flex gap-3 mt-4">
+                    <button onclick="projectManager.closeProject('${project.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold">🔒 Close</button>
+                    <span class="text-sm text-amber-700 bg-amber-100 p-2 rounded">⏸ On Hold until ${project.holdEndDate}</span>
+                </div>
+            `;
+        } else {
+            controlsHtml = `<div class="mt-4 text-sm text-gray-500 bg-gray-100 p-2 rounded">This project is closed since ${project.closeDate}</div>`;
+        }
+
+        body.innerHTML = `
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-2 text-sm bg-slate-50 p-4 rounded-xl">
+                    <div><span class="font-bold">Team:</span> ${project.team}</div>
+                    <div><span class="font-bold">Due Date:</span> ${project.dueDate}</div>
+                    <div><span class="font-bold">Status:</span> ${project.status}</div>
+                    ${project.status === 'hold' ? `<div><span class="font-bold">Hold Reason:</span> ${project.holdReason}</div>` : ''}
+                    ${project.status === 'closed' ? `<div><span class="font-bold">Closed:</span> ${project.closeDate}</div>` : ''}
+                </div>
+                ${controlsHtml}
+                <div class="border-t pt-4">${linkedStoriesHtml}</div>
+                <div class="border-t pt-4">${tasksHtml}</div>
+            </div>
+        `;
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    },
+    // ================================================
+    renderProjectDetailsModal: function(projectId) {
+        // Re-render the project details modal
+        this.openProjectDetails(projectId);
     }
 };
 
@@ -2741,6 +3147,8 @@ const azureDevOps = {
 
 window.onload = () => {
     if (!db.areaComments) db.areaComments = [];
+    if (!db.projects) db.projects = [];
+    if (!db.archivedProjects) db.archivedProjects = [];
     const saved = localStorage.getItem('saved_creds');
     if (saved) {
         const creds = JSON.parse(saved);
