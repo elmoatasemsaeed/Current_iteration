@@ -144,6 +144,7 @@
                     <button onclick="ui.switchTab('kanban')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap font-medium">Kanban Board</button>
                     <button onclick="ui.switchTab('support-kanban')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap font-medium">Support Kanban</button>
                     <button onclick="ui.switchTab('auditor')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Auditor Checklist</button>
+                    <button onclick="ui.switchTab('projects')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Projects</button>
                     <button onclick="ui.switchTab('settings')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Settings</button>
                 </nav>
             </div>
@@ -273,6 +274,21 @@
                         </div>
                         <button onclick="azureDevOps.saveSettings()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Save Azure Settings</button>
                     </div>
+                    <div class="bg-white p-6 rounded-xl border mt-6">
+                        <h3 class="text-xl font-bold mb-4 text-blue-800 flex items-center gap-2">
+                            🏗️ Project Management
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <input type="text" id="project-name" placeholder="Project Name" class="border p-2 rounded">
+                            <input type="text" id="project-team" placeholder="Implementation Team" class="border p-2 rounded">
+                            <input type="date" id="project-due-date" class="border p-2 rounded">
+                        </div>
+                        <button onclick="projectManager.addProject()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Add Project</button>
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="text-sm font-bold text-gray-500 mb-2">Existing Projects:</h4>
+                            <div id="projects-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -382,6 +398,18 @@
                     </table>
                 </div>
             </section>
+
+            <!-- ======================== TAB PROJECTS ======================== -->
+            <section id="tab-projects" class="tab-content space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl shadow-sm border">
+                    <h2 class="text-2xl font-bold text-slate-800">📁 Projects</h2>
+                    <span class="text-sm text-gray-500" id="projects-count">0 projects</span>
+                </div>
+                <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- سيتم تعبئتها بواسطة JavaScript -->
+                </div>
+            </section>
+            <!-- ============================================================ -->
         </main>
     </div>
 
