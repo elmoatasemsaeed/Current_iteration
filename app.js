@@ -677,6 +677,30 @@ const projectManager = {
             ui.renderSettings();
         });
     },
+    // ===== دوال جديدة لتعديل التواريخ =====
+    updateProjectDueDate(projectId, newDate) {
+        const project = this.getProjectById(projectId);
+        if (!project) return;
+        if (!newDate) return alert('الرجاء إدخال تاريخ صحيح');
+        project.dueDate = newDate;
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderProjectsTab();
+            ui.openProjectDetails(projectId);
+        });
+    },
+    updateTaskDueDate(projectId, taskId, newDate) {
+        const project = this.getProjectById(projectId);
+        if (!project) return;
+        const task = project.tasks.find(t => t.id === taskId);
+        if (!task) return;
+        if (!newDate) return alert('الرجاء إدخال تاريخ صحيح');
+        task.dueDate = newDate;
+        dataProcessor.saveToGitHub().then(() => {
+            ui.renderProjectsTab();
+            ui.openProjectDetails(projectId);
+        });
+    },
+    // ===== نهاية الدوال الجديدة =====
     getProjectById(id) {
         return db.projects.find(p => p.id === id);
     },
@@ -2763,11 +2787,14 @@ const ui = {
         const closedProjects = db.projects.filter(p => p.status === 'closed');
         const allProjects = [...activeProjects, ...closedProjects];
         countSpan.textContent = `${allProjects.length} projects (${activeProjects.length} active)`;
+
         if (allProjects.length === 0) {
             container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No projects created yet. Go to Settings to add one.</div>`;
             return;
         }
-        container.innerHTML = allProjects.map(p => {
+
+        // بناء المشاريع كبطاقات
+        const projectsHtml = allProjects.map(p => {
             const statusClass = p.status === 'active' ? 'border-green-500 bg-green-50' :
                                 p.status === 'hold' ? 'border-amber-500 bg-amber-50' : 'border-gray-400 bg-gray-100';
             const statusText = p.status === 'active' ? '🟢 Active' :
@@ -2791,11 +2818,97 @@ const ui = {
                 </div>
             `;
         }).join('');
+
+        // ===== القائمة الجانبية للمهام حسب التاريخ =====
+        const sidebarHtml = this.renderTaskDueDateSidebar();
+
+        container.innerHTML = `
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <div class="lg:col-span-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${projectsHtml}
+                    </div>
+                </div>
+                <div class="lg:col-span-1">
+                    ${sidebarHtml}
+                </div>
+            </div>
+        `;
     },
+
+    // دالة عرض المهام المتأخرة والقريبة (الجانبية)
+    renderTaskDueDateSidebar() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const dayAfter = new Date(today);
+        dayAfter.setDate(dayAfter.getDate() + 2); // "بكره" يعني غداً
+
+        const allTasks = [];
+        db.projects.forEach(project => {
+            (project.tasks || []).forEach(task => {
+                if (task.dueDate) {
+                    const due = new Date(task.dueDate);
+                    due.setHours(0, 0, 0, 0);
+                    allTasks.push({
+                        projectName: project.name,
+                        projectId: project.id,
+                        task: task,
+                        dueDate: due
+                    });
+                }
+            });
+        });
+
+        const overdue = allTasks.filter(t => t.dueDate < today);
+        const todayTasks = allTasks.filter(t => t.dueDate.getTime() === today.getTime());
+        const tomorrowTasks = allTasks.filter(t => t.dueDate.getTime() === tomorrow.getTime());
+
+        const renderTaskList = (tasks, label, icon) => {
+            if (tasks.length === 0) return `<div class="text-xs text-gray-400 italic">لا توجد مهام</div>`;
+            return tasks.map(t => `
+                <div class="text-xs bg-white p-2 rounded border border-gray-100 mb-1 shadow-sm hover:shadow transition cursor-pointer" 
+                     onclick="ui.openProjectDetails('${t.projectId}')">
+                    <div class="font-bold text-slate-700">${t.task.title}</div>
+                    <div class="text-[10px] text-gray-500">📁 ${t.projectName}</div>
+                    <div class="text-[10px] text-gray-400">📅 ${t.task.dueDate}</div>
+                </div>
+            `).join('');
+        };
+
+        return `
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 sticky top-4">
+                <h3 class="font-bold text-slate-700 text-lg mb-3 flex items-center gap-2">⏰ المهام حسب الموعد</h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex items-center gap-2 text-red-600 font-bold text-sm border-b border-red-100 pb-1">
+                            <span>🔴</span> متأخرة (${overdue.length})
+                        </div>
+                        <div class="mt-2 space-y-1">${renderTaskList(overdue)}</div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 text-amber-600 font-bold text-sm border-b border-amber-100 pb-1">
+                            <span>🟡</span> اليوم (${todayTasks.length})
+                        </div>
+                        <div class="mt-2 space-y-1">${renderTaskList(todayTasks)}</div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 text-blue-600 font-bold text-sm border-b border-blue-100 pb-1">
+                            <span>🔵</span> بكره (${tomorrowTasks.length})
+                        </div>
+                        <div class="mt-2 space-y-1">${renderTaskList(tomorrowTasks)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    // ===== تعديل عرض تفاصيل المشروع (إضافة تعديل التاريخ) =====
     openProjectDetails(projectId) {
         const project = projectManager.getProjectById(projectId);
         if (!project) return;
-        // Use the same story modal but with dynamic content
+
         const modal = document.getElementById('story-modal');
         const title = document.getElementById('modal-title');
         const body = document.getElementById('modal-body');
@@ -2820,50 +2933,55 @@ const ui = {
             linkedStoriesHtml = `<div class="text-gray-400 text-sm italic">No stories linked to this project.</div>`;
         }
 
-        // Tasks section
-        let tasksHtml = `
-            <div class="mt-4">
-                <h4 class="font-bold text-purple-700 text-sm border-b pb-1">📋 Project Tasks</h4>
-                <div class="space-y-2 mt-2">
-                    ${project.tasks.map(t => `
-                        <div class="bg-white border rounded p-3 shadow-sm">
-                            <div class="flex justify-between items-center">
-                                <span class="font-medium text-slate-700">${t.title}</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs font-bold px-2 py-0.5 rounded ${t.status === 'done' ? 'bg-green-200 text-green-700' : t.status === 'active' ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'}">${t.status}</span>
-                                    <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','todo')" class="text-[10px] bg-gray-100 hover:bg-gray-200 px-1.5 py-0.5 rounded">To Do</button>
-                                    <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','active')" class="text-[10px] bg-blue-100 hover:bg-blue-200 px-1.5 py-0.5 rounded">Active</button>
-                                    <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','done')" class="text-[10px] bg-green-100 hover:bg-green-200 px-1.5 py-0.5 rounded">Done</button>
-                                    <button onclick="projectManager.deleteTask('${project.id}','${t.id}')" class="text-red-500 hover:text-red-700 text-sm font-bold">×</button>
-                                </div>
-                            </div>
-                            <div class="text-xs text-gray-400">Due: ${t.dueDate}</div>
-                            <div class="mt-2 space-y-1">
-                                ${t.comments.map((c, idx) => `
-                                    <div class="flex justify-between items-start bg-gray-50 p-1.5 rounded border border-gray-100">
-                                        <span class="text-sm">${c.text}</span>
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-[9px] text-gray-400">${c.timestamp}</span>
-                                            <button onclick="projectManager.deleteTaskComment('${project.id}','${t.id}',${idx})" class="text-red-400 hover:text-red-600 text-xs">✕</button>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                                <div class="flex gap-1 mt-1">
-                                    <input type="text" id="comment-input-${t.id}" placeholder="Add comment..." class="flex-1 text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-purple-400 outline-none">
-                                    <button onclick="projectManager.addTaskComment('${project.id}','${t.id}', document.getElementById('comment-input-${t.id}').value); document.getElementById('comment-input-${t.id}').value='';" class="bg-purple-600 text-white px-2 py-1 rounded text-xs">Add</button>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                    ${project.tasks.length === 0 ? '<div class="text-gray-400 text-sm italic">No tasks added yet.</div>' : ''}
-                </div>
-                <div class="mt-3 flex gap-2">
-                    <input type="text" id="new-task-title-${project.id}" placeholder="Task title..." class="flex-1 border rounded px-3 py-1.5 text-sm">
-                    <input type="date" id="new-task-due-${project.id}" class="border rounded px-3 py-1.5 text-sm">
-                    <button onclick="projectManager.addTask('${project.id}', document.getElementById('new-task-title-${project.id}').value, document.getElementById('new-task-due-${project.id}').value); document.getElementById('new-task-title-${project.id}').value=''; document.getElementById('new-task-due-${project.id}').value='';" class="bg-purple-600 text-white px-4 py-1.5 rounded text-sm">Add Task</button>
-                </div>
+        // ===== إضافة تعديل تاريخ المشروع =====
+        const projectDueHtml = `
+            <div class="flex items-center gap-2 mt-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
+                <span class="text-sm font-bold text-gray-600">📅 Due Date:</span>
+                <input type="date" id="project-due-edit-${project.id}" value="${project.dueDate || ''}" 
+                       class="border rounded px-2 py-1 text-sm flex-1">
+                <button onclick="projectManager.updateProjectDueDate('${project.id}', document.getElementById('project-due-edit-${project.id}').value)" 
+                        class="bg-indigo-600 text-white px-3 py-1 rounded text-sm">تحديث</button>
             </div>
         `;
+
+        // ===== تعديل عرض المهام لإضافة تعديل التاريخ لكل مهمة =====
+        const tasksHtmlWithEdit = project.tasks.map(t => {
+            return `
+                <div class="bg-white border rounded p-3 shadow-sm">
+                    <div class="flex justify-between items-center flex-wrap gap-2">
+                        <span class="font-medium text-slate-700">${t.title}</span>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded ${t.status === 'done' ? 'bg-green-200 text-green-700' : t.status === 'active' ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'}">${t.status}</span>
+                            <div class="flex items-center gap-1">
+                                <input type="date" id="task-due-${t.id}" value="${t.dueDate || ''}" class="text-xs border rounded px-1 py-0.5 w-28">
+                                <button onclick="projectManager.updateTaskDueDate('${project.id}','${t.id}', document.getElementById('task-due-${t.id}').value)" 
+                                        class="text-[10px] bg-purple-500 text-white px-2 py-0.5 rounded">تحديث</button>
+                            </div>
+                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','todo')" class="text-[10px] bg-gray-100 hover:bg-gray-200 px-1.5 py-0.5 rounded">To Do</button>
+                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','active')" class="text-[10px] bg-blue-100 hover:bg-blue-200 px-1.5 py-0.5 rounded">Active</button>
+                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','done')" class="text-[10px] bg-green-100 hover:bg-green-200 px-1.5 py-0.5 rounded">Done</button>
+                            <button onclick="projectManager.deleteTask('${project.id}','${t.id}')" class="text-red-500 hover:text-red-700 text-sm font-bold">×</button>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-400">Due: ${t.dueDate || 'غير محدد'}</div>
+                    <div class="mt-2 space-y-1">
+                        ${t.comments.map((c, idx) => `
+                            <div class="flex justify-between items-start bg-gray-50 p-1.5 rounded border border-gray-100">
+                                <span class="text-sm">${c.text}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[9px] text-gray-400">${c.timestamp}</span>
+                                    <button onclick="projectManager.deleteTaskComment('${project.id}','${t.id}',${idx})" class="text-red-400 hover:text-red-600 text-xs">✕</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                        <div class="flex gap-1 mt-1">
+                            <input type="text" id="comment-input-${t.id}" placeholder="Add comment..." class="flex-1 text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-purple-400 outline-none">
+                            <button onclick="projectManager.addTaskComment('${project.id}','${t.id}', document.getElementById('comment-input-${t.id}').value); document.getElementById('comment-input-${t.id}').value='';" class="bg-purple-600 text-white px-2 py-1 rounded text-xs">Add</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
 
         // Project controls
         let controlsHtml = '';
@@ -2889,19 +3007,28 @@ const ui = {
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-2 text-sm bg-slate-50 p-4 rounded-xl">
                     <div><span class="font-bold">Team:</span> ${project.team}</div>
-                    <div><span class="font-bold">Due Date:</span> ${project.dueDate}</div>
                     <div><span class="font-bold">Status:</span> ${project.status}</div>
                     ${project.status === 'hold' ? `<div><span class="font-bold">Hold Reason:</span> ${project.holdReason}</div>` : ''}
                     ${project.status === 'closed' ? `<div><span class="font-bold">Closed:</span> ${project.closeDate}</div>` : ''}
                 </div>
+                ${projectDueHtml}
                 ${controlsHtml}
                 <div class="border-t pt-4">${linkedStoriesHtml}</div>
-                <div class="border-t pt-4">${tasksHtml}</div>
+                <div class="border-t pt-4">
+                    <h4 class="font-bold text-purple-700 text-sm border-b pb-1">📋 Project Tasks</h4>
+                    <div class="space-y-2 mt-2">${tasksHtmlWithEdit || '<div class="text-gray-400 text-sm italic">No tasks added yet.</div>'}</div>
+                    <div class="mt-3 flex gap-2">
+                        <input type="text" id="new-task-title-${project.id}" placeholder="Task title..." class="flex-1 border rounded px-3 py-1.5 text-sm">
+                        <input type="date" id="new-task-due-${project.id}" class="border rounded px-3 py-1.5 text-sm">
+                        <button onclick="projectManager.addTask('${project.id}', document.getElementById('new-task-title-${project.id}').value, document.getElementById('new-task-due-${project.id}').value); document.getElementById('new-task-title-${project.id}').value=''; document.getElementById('new-task-due-${project.id}').value='';" class="bg-purple-600 text-white px-4 py-1.5 rounded text-sm">Add Task</button>
+                    </div>
+                </div>
             </div>
         `;
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     },
+
     // ================================================
     renderProjectDetailsModal: function(projectId) {
         // Re-render the project details modal
