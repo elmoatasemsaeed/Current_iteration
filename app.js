@@ -658,11 +658,16 @@ const projectManager = {
             linkedStoryIds: []
         };
         db.projects.push(newProject);
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             alert('Project added successfully');
             ui.renderAll();
             ui.renderProjectsTab();
             ui.renderSettings();
+        }).catch(err => {
+            alert('فشل الحفظ: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     deleteProject(projectId) {
@@ -671,10 +676,15 @@ const projectManager = {
         // Also remove links from stories
         db.currentStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
         db.backlogStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderAll();
             ui.renderProjectsTab();
             ui.renderSettings();
+        }).catch(err => {
+            alert('فشل الحذف: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     // ===== دوال جديدة لتعديل التواريخ =====
@@ -683,9 +693,14 @@ const projectManager = {
         if (!project) return;
         if (!newDate) return alert('الرجاء إدخال تاريخ صحيح');
         project.dueDate = newDate;
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectsTab();
             ui.openProjectDetails(projectId);
+        }).catch(err => {
+            alert('فشل الحفظ: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     updateTaskDueDate(projectId, taskId, newDate) {
@@ -695,9 +710,14 @@ const projectManager = {
         if (!task) return;
         if (!newDate) return alert('الرجاء إدخال تاريخ صحيح');
         task.dueDate = newDate;
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectsTab();
             ui.openProjectDetails(projectId);
+        }).catch(err => {
+            alert('فشل الحفظ: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     // ===== نهاية الدوال الجديدة =====
@@ -721,8 +741,13 @@ const projectManager = {
         if (project && !project.linkedStoryIds.includes(storyId.toString())) {
             project.linkedStoryIds.push(storyId.toString());
         }
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderAll();
+        }).catch(err => {
+            alert('فشل الربط: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     unlinkStoryFromProject(storyId) {
@@ -734,8 +759,13 @@ const projectManager = {
             project.linkedStoryIds = project.linkedStoryIds.filter(id => id != storyId);
         }
         delete story.linkedProjectId;
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderAll();
+        }).catch(err => {
+            alert('فشل فك الربط: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     // Project status management
@@ -749,9 +779,14 @@ const projectManager = {
         project.status = 'hold';
         project.holdReason = reason;
         project.holdEndDate = endDate;
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderAll();
             ui.renderProjectsTab();
+        }).catch(err => {
+            alert('فشل وضع المشروع على Hold: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     closeProject(projectId) {
@@ -760,9 +795,14 @@ const projectManager = {
         if (!project) return;
         project.status = 'closed';
         project.closeDate = new Date().toISOString().split('T')[0];
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderAll();
             ui.renderProjectsTab();
+        }).catch(err => {
+            alert('فشل إغلاق المشروع: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     // Task management inside project
@@ -778,8 +818,13 @@ const projectManager = {
             comments: []
         };
         project.tasks.push(newTask);
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectDetailsModal(projectId);
+        }).catch(err => {
+            alert('فشل إضافة المهمة: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     deleteTask(projectId, taskId) {
@@ -787,8 +832,13 @@ const projectManager = {
         const project = this.getProjectById(projectId);
         if (!project) return;
         project.tasks = project.tasks.filter(t => t.id !== taskId);
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectDetailsModal(projectId);
+        }).catch(err => {
+            alert('فشل حذف المهمة: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     updateTaskStatus(projectId, taskId, newStatus) {
@@ -797,8 +847,13 @@ const projectManager = {
         const task = project.tasks.find(t => t.id === taskId);
         if (!task) return;
         task.status = newStatus;
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectDetailsModal(projectId);
+        }).catch(err => {
+            alert('فشل تحديث الحالة: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     addTaskComment(projectId, taskId, commentText) {
@@ -808,8 +863,13 @@ const projectManager = {
         const task = project.tasks.find(t => t.id === taskId);
         if (!task) return;
         task.comments.push({ text: commentText.trim(), timestamp: new Date().toLocaleString('ar-EG', { hour12: false }) });
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectDetailsModal(projectId);
+        }).catch(err => {
+            alert('فشل إضافة التعليق: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     },
     deleteTaskComment(projectId, taskId, commentIndex) {
@@ -819,8 +879,13 @@ const projectManager = {
         const task = project.tasks.find(t => t.id === taskId);
         if (!task) return;
         task.comments.splice(commentIndex, 1);
+        ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectDetailsModal(projectId);
+        }).catch(err => {
+            alert('فشل حذف التعليق: ' + err.message);
+        }).finally(() => {
+            ui.hideLoader();
         });
     }
 };
@@ -829,6 +894,28 @@ const projectManager = {
  * UI Rendering
  */
 const ui = {
+    // ===== دوال مؤشر التحميل =====
+    showLoader() {
+        let loader = document.getElementById('project-loader');
+        if (!loader) {
+            loader = document.createElement('div');
+            loader.id = 'project-loader';
+            loader.className = 'fixed inset-0 bg-black/30 flex items-center justify-center z-[3000] hidden';
+            loader.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-2xl flex items-center gap-4">
+                    <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                    <span class="font-bold text-slate-700">جاري الحفظ...</span>
+                </div>
+            `;
+            document.body.appendChild(loader);
+        }
+        loader.classList.remove('hidden');
+    },
+    hideLoader() {
+        const loader = document.getElementById('project-loader');
+        if (loader) loader.classList.add('hidden');
+    },
+    // ===== بقية دوال UI =====
     switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
@@ -2780,130 +2867,130 @@ const ui = {
     },
     // ================= PROJECTS TAB =================
     renderProjectsTab() {
-    const container = document.getElementById('projects-container');
-    const countSpan = document.getElementById('projects-count');
-    if (!container) return;
-    const activeProjects = db.projects.filter(p => p.status !== 'closed');
-    const closedProjects = db.projects.filter(p => p.status === 'closed');
-    const allProjects = [...activeProjects, ...closedProjects];
-    countSpan.textContent = `${allProjects.length} projects (${activeProjects.length} active)`;
+        const container = document.getElementById('projects-container');
+        const countSpan = document.getElementById('projects-count');
+        if (!container) return;
+        const activeProjects = db.projects.filter(p => p.status !== 'closed');
+        const closedProjects = db.projects.filter(p => p.status === 'closed');
+        const allProjects = [...activeProjects, ...closedProjects];
+        countSpan.textContent = `${allProjects.length} projects (${activeProjects.length} active)`;
 
-    if (allProjects.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No projects created yet. Go to Settings to add one.</div>`;
-        return;
-    }
+        if (allProjects.length === 0) {
+            container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No projects created yet. Go to Settings to add one.</div>`;
+            return;
+        }
 
-    const projectsHtml = allProjects.map(p => {
-        const statusClass = p.status === 'active' ? 'border-green-500 bg-green-50' :
-                            p.status === 'hold' ? 'border-amber-500 bg-amber-50' : 'border-gray-400 bg-gray-100';
-        const statusText = p.status === 'active' ? '🟢 Active' :
-                           p.status === 'hold' ? '🟡 On Hold' : '🔴 Closed';
-        const storyCount = p.linkedStoryIds ? p.linkedStoryIds.length : 0;
-        const taskCount = p.tasks ? p.tasks.length : 0;
-        return `
-            <div onclick="ui.openProjectDetails('${p.id}')" class="bg-white rounded-xl shadow-md border-l-4 ${statusClass} p-5 hover:shadow-lg cursor-pointer transition-all">
-                <div class="flex justify-between items-start">
-                    <h3 class="text-xl font-bold text-slate-800">${p.name}</h3>
-                    <span class="text-xs font-bold px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-green-200 text-green-800' : p.status === 'hold' ? 'bg-amber-200 text-amber-800' : 'bg-gray-300 text-gray-700'}">${statusText}</span>
+        const projectsHtml = allProjects.map(p => {
+            const statusClass = p.status === 'active' ? 'border-green-500 bg-green-50' :
+                                p.status === 'hold' ? 'border-amber-500 bg-amber-50' : 'border-gray-400 bg-gray-100';
+            const statusText = p.status === 'active' ? '🟢 Active' :
+                               p.status === 'hold' ? '🟡 On Hold' : '🔴 Closed';
+            const storyCount = p.linkedStoryIds ? p.linkedStoryIds.length : 0;
+            const taskCount = p.tasks ? p.tasks.length : 0;
+            return `
+                <div onclick="ui.openProjectDetails('${p.id}')" class="bg-white rounded-xl shadow-md border-l-4 ${statusClass} p-5 hover:shadow-lg cursor-pointer transition-all">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold text-slate-800">${p.name}</h3>
+                        <span class="text-xs font-bold px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-green-200 text-green-800' : p.status === 'hold' ? 'bg-amber-200 text-amber-800' : 'bg-gray-300 text-gray-700'}">${statusText}</span>
+                    </div>
+                    <div class="mt-2 text-sm text-slate-600"><span class="font-bold">Team:</span> ${p.team}</div>
+                    <div class="text-sm text-slate-600"><span class="font-bold">Due Date:</span> ${p.dueDate}</div>
+                    <div class="mt-3 flex gap-3 text-xs text-gray-500">
+                        <span>📚 Stories: ${storyCount}</span>
+                        <span>📋 Tasks: ${taskCount}</span>
+                    </div>
+                    ${p.status === 'hold' ? `<div class="mt-2 text-xs text-amber-700 bg-amber-100 p-2 rounded">⏸ Hold: ${p.holdReason} (until ${p.holdEndDate})</div>` : ''}
+                    ${p.status === 'closed' ? `<div class="mt-2 text-xs text-gray-500">🗓 Closed on: ${p.closeDate}</div>` : ''}
                 </div>
-                <div class="mt-2 text-sm text-slate-600"><span class="font-bold">Team:</span> ${p.team}</div>
-                <div class="text-sm text-slate-600"><span class="font-bold">Due Date:</span> ${p.dueDate}</div>
-                <div class="mt-3 flex gap-3 text-xs text-gray-500">
-                    <span>📚 Stories: ${storyCount}</span>
-                    <span>📋 Tasks: ${taskCount}</span>
+            `;
+        }).join('');
+
+        const sidebarHtml = this.renderTaskDueDateSidebar();
+
+        container.innerHTML = `
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2">
+                    <!-- شبكة المشاريع بعمود واحد لجعلها عريضة -->
+                    <div class="grid grid-cols-1 gap-4">
+                        ${projectsHtml}
+                    </div>
                 </div>
-                ${p.status === 'hold' ? `<div class="mt-2 text-xs text-amber-700 bg-amber-100 p-2 rounded">⏸ Hold: ${p.holdReason} (until ${p.holdEndDate})</div>` : ''}
-                ${p.status === 'closed' ? `<div class="mt-2 text-xs text-gray-500">🗓 Closed on: ${p.closeDate}</div>` : ''}
+                <div class="lg:col-span-1">
+                    ${sidebarHtml}
+                </div>
             </div>
         `;
-    }).join('');
-
-    const sidebarHtml = this.renderTaskDueDateSidebar();
-
-    container.innerHTML = `
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2">
-                <!-- شبكة المشاريع بعمود واحد لجعلها عريضة -->
-                <div class="grid grid-cols-1 gap-4">
-                    ${projectsHtml}
-                </div>
-            </div>
-            <div class="lg:col-span-1">
-                ${sidebarHtml}
-            </div>
-        </div>
-    `;
-},
+    },
 
     // دالة عرض المهام المتأخرة والقريبة (الجانبية)
     renderTaskDueDateSidebar() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const allTasks = [];
-    db.projects.forEach(project => {
-        (project.tasks || []).forEach(task => {
-            // Exclude completed tasks (done)
-            if (task.dueDate && task.status !== 'done') {
-                const due = new Date(task.dueDate);
-                due.setHours(0, 0, 0, 0);
-                allTasks.push({
-                    projectName: project.name,
-                    projectId: project.id,
-                    task: task,
-                    dueDate: due
-                });
-            }
+        const allTasks = [];
+        db.projects.forEach(project => {
+            (project.tasks || []).forEach(task => {
+                // Exclude completed tasks (done)
+                if (task.dueDate && task.status !== 'done') {
+                    const due = new Date(task.dueDate);
+                    due.setHours(0, 0, 0, 0);
+                    allTasks.push({
+                        projectName: project.name,
+                        projectId: project.id,
+                        task: task,
+                        dueDate: due
+                    });
+                }
+            });
         });
-    });
 
-    // Categorize tasks
-    const overdue = allTasks.filter(t => t.dueDate < today);
-    const todayTasks = allTasks.filter(t => t.dueDate.getTime() === today.getTime());
-    const tomorrowTasks = allTasks.filter(t => t.dueDate.getTime() === tomorrow.getTime());
+        // Categorize tasks
+        const overdue = allTasks.filter(t => t.dueDate < today);
+        const todayTasks = allTasks.filter(t => t.dueDate.getTime() === today.getTime());
+        const tomorrowTasks = allTasks.filter(t => t.dueDate.getTime() === tomorrow.getTime());
 
-    const renderTaskList = (tasks) => {
-        if (tasks.length === 0) return `<div class="text-xs text-gray-400 italic">No tasks</div>`;
-        return tasks.map(t => `
-            <div class="text-xs bg-white p-2 rounded border border-gray-100 mb-1 shadow-sm hover:shadow transition cursor-pointer" 
-                 onclick="ui.openProjectDetails('${t.projectId}')">
-                <div class="font-bold text-slate-700 truncate" title="${t.task.title}">${t.task.title}</div>
-                <div class="text-[10px] text-gray-500">📁 ${t.projectName}</div>
-                <div class="text-[10px] text-gray-400">📅 ${t.task.dueDate}</div>
+        const renderTaskList = (tasks) => {
+            if (tasks.length === 0) return `<div class="text-xs text-gray-400 italic">No tasks</div>`;
+            return tasks.map(t => `
+                <div class="text-xs bg-white p-2 rounded border border-gray-100 mb-1 shadow-sm hover:shadow transition cursor-pointer" 
+                     onclick="ui.openProjectDetails('${t.projectId}')">
+                    <div class="font-bold text-slate-700 truncate" title="${t.task.title}">${t.task.title}</div>
+                    <div class="text-[10px] text-gray-500">📁 ${t.projectName}</div>
+                    <div class="text-[10px] text-gray-400">📅 ${t.task.dueDate}</div>
+                </div>
+            `).join('');
+        };
+
+        return `
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 sticky top-4">
+                <h3 class="font-bold text-slate-700 text-lg mb-3 flex items-center gap-2">⏰ Tasks by Due Date</h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex items-center gap-2 text-red-600 font-bold text-sm border-b border-red-100 pb-1">
+                            <span>🔴</span> Overdue (${overdue.length})
+                        </div>
+                        <div class="mt-2 space-y-1">${renderTaskList(overdue)}</div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 text-amber-600 font-bold text-sm border-b border-amber-100 pb-1">
+                            <span>🟡</span> Today (${todayTasks.length})
+                        </div>
+                        <div class="mt-2 space-y-1">${renderTaskList(todayTasks)}</div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 text-blue-600 font-bold text-sm border-b border-blue-100 pb-1">
+                            <span>🔵</span> Tomorrow (${tomorrowTasks.length})
+                        </div>
+                        <div class="mt-2 space-y-1">${renderTaskList(tomorrowTasks)}</div>
+                    </div>
+                </div>
             </div>
-        `).join('');
-    };
+        `;
+    },
 
-    return `
-        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 sticky top-4">
-            <h3 class="font-bold text-slate-700 text-lg mb-3 flex items-center gap-2">⏰ Tasks by Due Date</h3>
-            <div class="space-y-4">
-                <div>
-                    <div class="flex items-center gap-2 text-red-600 font-bold text-sm border-b border-red-100 pb-1">
-                        <span>🔴</span> Overdue (${overdue.length})
-                    </div>
-                    <div class="mt-2 space-y-1">${renderTaskList(overdue)}</div>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2 text-amber-600 font-bold text-sm border-b border-amber-100 pb-1">
-                        <span>🟡</span> Today (${todayTasks.length})
-                    </div>
-                    <div class="mt-2 space-y-1">${renderTaskList(todayTasks)}</div>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2 text-blue-600 font-bold text-sm border-b border-blue-100 pb-1">
-                        <span>🔵</span> Tomorrow (${tomorrowTasks.length})
-                    </div>
-                    <div class="mt-2 space-y-1">${renderTaskList(tomorrowTasks)}</div>
-                </div>
-            </div>
-        </div>
-    `;
-},
-
-    // ===== تعديل عرض تفاصيل المشروع (إضافة تعديل التاريخ) =====
+    // ===== تعديل عرض تفاصيل المشروع (إضافة تعديل التاريخ والهايلايت) =====
     openProjectDetails(projectId) {
         const project = projectManager.getProjectById(projectId);
         if (!project) return;
@@ -2943,10 +3030,14 @@ const ui = {
             </div>
         `;
 
-        // ===== تعديل عرض المهام لإضافة تعديل التاريخ لكل مهمة =====
+        // ===== تعديل عرض المهام لإضافة تعديل التاريخ والهايلايت =====
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const tasksHtmlWithEdit = project.tasks.map(t => {
+            const isDueTodayOrPast = t.dueDate ? new Date(t.dueDate) <= today : false;
+            const dueClass = isDueTodayOrPast ? 'bg-red-50 border-red-300 text-red-800' : '';
             return `
-                <div class="bg-white border rounded p-3 shadow-sm">
+                <div class="bg-white border rounded p-3 shadow-sm ${dueClass}">
                     <div class="flex justify-between items-center flex-wrap gap-2">
                         <span class="font-medium text-slate-700">${t.title}</span>
                         <div class="flex items-center gap-2 flex-wrap">
@@ -2962,6 +3053,7 @@ const ui = {
                             <button onclick="projectManager.deleteTask('${project.id}','${t.id}')" class="text-red-500 hover:text-red-700 text-sm font-bold">×</button>
                         </div>
                     </div>
+                    ${isDueTodayOrPast ? `<div class="text-xs text-red-600 font-bold mt-1">⚠️ مستحق اليوم أو مضى عليه</div>` : ''}
                     <div class="text-xs text-gray-400">Due: ${t.dueDate || 'غير محدد'}</div>
                     <div class="mt-2 space-y-1">
                         ${t.comments.map((c, idx) => `
