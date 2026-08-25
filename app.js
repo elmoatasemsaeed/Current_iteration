@@ -261,20 +261,31 @@ const dataProcessor = {
             }
         } catch (e) {
             console.error("Sync Error:", e);
-            alert("خطأ في المزامنة مع GitHub: " + e.message);
+            ui.showToast("خطأ في المزامنة مع GitHub: " + e.message, "error");
         }
     },
-    handleCSV(event) {
+    async handleCSV(event) {
         const file = event.target.files[0];
-        Papa.parse(file, {
-            header: true,
-            skipEmptyLines: true,
-            complete: (results) => {
-                this.processRows(results.data);
-            }
-        });
+        ui.showLoader();
+        try {
+            const results = await new Promise((resolve, reject) => {
+                Papa.parse(file, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: resolve,
+                    error: reject
+                });
+            });
+            await this.processRows(results.data);
+            ui.showToast("تم تحديث البيانات بنجاح", "success");
+        } catch (error) {
+            console.error("CSV processing error:", error);
+            ui.showToast("فشل معالجة الملف: " + error.message, "error");
+        } finally {
+            ui.hideLoader();
+        }
     },
-    processRows(rows) {
+    async processRows(rows) {
         const newStories = [];
         let currentStory = null;
         rows.forEach(row => {
@@ -340,9 +351,9 @@ const dataProcessor = {
         });
         this.calculateTimelines(newStories);
         db.currentStories = newStories;
-        this.saveToGitHub().then(() => alert("تم تحديث البيانات بنجاح"));
+        await this.saveToGitHub();
     },
-    processBacklogRows(rows) {
+    async processBacklogRows(rows) {
         console.log(`Processing ${rows.length} backlog rows`);
         const backlogStories = rows.map(row => {
             const state = row['State'] || "";
@@ -377,13 +388,9 @@ const dataProcessor = {
             };
         }).filter(s => s !== null);
         db.backlogStories = backlogStories;
-        this.saveToGitHub().then(() => {
-            console.log(`Saved ${backlogStories.length} backlog stories`);
-            ui.renderAll();
-        }).catch(err => {
-            console.error('Failed to save backlog:', err);
-            alert('فشل حفظ الباك لوج: ' + err.message);
-        });
+        await this.saveToGitHub();
+        console.log(`Saved ${backlogStories.length} backlog stories`);
+        ui.renderAll();
     },
     calculateTimelines(stories) {
         stories.sort((a, b) => (a.priority || 999) - (b.priority || 999));
@@ -528,7 +535,7 @@ const areaCommentManager = {
             ui.renderKanban();
         }).catch(err => {
             console.error('Failed to save area comment:', err);
-            alert('فشل حفظ التعليق: ' + err.message);
+            ui.showToast('فشل حفظ التعليق: ' + err.message, 'error');
         });
     },
     // فتح النافذة المنبثقة مع تعليقات المناطق المحددة
@@ -621,7 +628,7 @@ const areaCommentManager = {
                     ui.renderKanban(); // تحديث الكانبان أيضاً
                 }).catch(err => {
                     console.error('Failed to delete comment:', err);
-                    alert('فشل حذف التعليق: ' + err.message);
+                    ui.showToast('فشل حذف التعليق: ' + err.message, 'error');
                 });
             }
         }
@@ -660,12 +667,12 @@ const projectManager = {
         db.projects.push(newProject);
         ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
-            alert('Project added successfully');
+            ui.showToast('Project added successfully', 'success');
             ui.renderAll();
             ui.renderProjectsTab();
             ui.renderSettings();
         }).catch(err => {
-            alert('فشل الحفظ: ' + err.message);
+            ui.showToast('فشل الحفظ: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -678,11 +685,12 @@ const projectManager = {
         db.backlogStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
         ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
+            ui.showToast('Project deleted', 'success');
             ui.renderAll();
             ui.renderProjectsTab();
             ui.renderSettings();
         }).catch(err => {
-            alert('فشل الحذف: ' + err.message);
+            ui.showToast('فشل الحذف: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -691,14 +699,14 @@ const projectManager = {
     updateProjectDueDate(projectId, newDate) {
         const project = this.getProjectById(projectId);
         if (!project) return;
-        if (!newDate) return alert('الرجاء إدخال تاريخ صحيح');
+        if (!newDate) return ui.showToast('الرجاء إدخال تاريخ صحيح', 'error');
         project.dueDate = newDate;
         ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectsTab();
             ui.openProjectDetails(projectId);
         }).catch(err => {
-            alert('فشل الحفظ: ' + err.message);
+            ui.showToast('فشل الحفظ: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -708,14 +716,14 @@ const projectManager = {
         if (!project) return;
         const task = project.tasks.find(t => t.id === taskId);
         if (!task) return;
-        if (!newDate) return alert('الرجاء إدخال تاريخ صحيح');
+        if (!newDate) return ui.showToast('الرجاء إدخال تاريخ صحيح', 'error');
         task.dueDate = newDate;
         ui.showLoader();
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectsTab();
             ui.openProjectDetails(projectId);
         }).catch(err => {
-            alert('فشل الحفظ: ' + err.message);
+            ui.showToast('فشل الحفظ: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -745,7 +753,7 @@ const projectManager = {
         dataProcessor.saveToGitHub().then(() => {
             ui.renderAll();
         }).catch(err => {
-            alert('فشل الربط: ' + err.message);
+            ui.showToast('فشل الربط: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -763,7 +771,7 @@ const projectManager = {
         dataProcessor.saveToGitHub().then(() => {
             ui.renderAll();
         }).catch(err => {
-            alert('فشل فك الربط: ' + err.message);
+            ui.showToast('فشل فك الربط: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -784,7 +792,7 @@ const projectManager = {
             ui.renderAll();
             ui.renderProjectsTab();
         }).catch(err => {
-            alert('فشل وضع المشروع على Hold: ' + err.message);
+            ui.showToast('فشل وضع المشروع على Hold: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -800,14 +808,14 @@ const projectManager = {
             ui.renderAll();
             ui.renderProjectsTab();
         }).catch(err => {
-            alert('فشل إغلاق المشروع: ' + err.message);
+            ui.showToast('فشل إغلاق المشروع: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
     },
     // Task management inside project
     addTask(projectId, title, dueDate) {
-        if (!title || !dueDate) return alert('Please fill task title and due date');
+        if (!title || !dueDate) return ui.showToast('Please fill task title and due date', 'error');
         const project = this.getProjectById(projectId);
         if (!project) return;
         const newTask = {
@@ -822,7 +830,7 @@ const projectManager = {
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectDetailsModal(projectId);
         }).catch(err => {
-            alert('فشل إضافة المهمة: ' + err.message);
+            ui.showToast('فشل إضافة المهمة: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -836,7 +844,7 @@ const projectManager = {
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectDetailsModal(projectId);
         }).catch(err => {
-            alert('فشل حذف المهمة: ' + err.message);
+            ui.showToast('فشل حذف المهمة: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -851,7 +859,7 @@ const projectManager = {
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectDetailsModal(projectId);
         }).catch(err => {
-            alert('فشل تحديث الحالة: ' + err.message);
+            ui.showToast('فشل تحديث الحالة: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -867,7 +875,7 @@ const projectManager = {
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectDetailsModal(projectId);
         }).catch(err => {
-            alert('فشل إضافة التعليق: ' + err.message);
+            ui.showToast('فشل إضافة التعليق: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -883,7 +891,7 @@ const projectManager = {
         dataProcessor.saveToGitHub().then(() => {
             ui.renderProjectDetailsModal(projectId);
         }).catch(err => {
-            alert('فشل حذف التعليق: ' + err.message);
+            ui.showToast('فشل حذف التعليق: ' + err.message, 'error');
         }).finally(() => {
             ui.hideLoader();
         });
@@ -914,6 +922,16 @@ const ui = {
     hideLoader() {
         const loader = document.getElementById('project-loader');
         if (loader) loader.classList.add('hidden');
+    },
+    // ===== دالة عرض رسائل toast =====
+    showToast(message, type = 'success') {
+        const existing = document.querySelector('.toast-message');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = `toast-message fixed top-4 right-4 z-[5000] px-6 py-3 rounded-xl shadow-2xl text-white font-bold text-sm transition-all duration-500 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+        toast.innerText = message;
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
     },
     // ===== بقية دوال UI =====
     switchTab(tabId) {
@@ -2096,9 +2114,9 @@ const ui = {
         container.innerHTML = html;
     },
     markDelivered(id) {
-        if (currentUser.role !== 'admin') return alert("عذراً، لا تملك صلاحية تنفيذ هذا الإجراء.");
+        if (currentUser.role !== 'admin') return ui.showToast("عذراً، لا تملك صلاحية تنفيذ هذا الإجراء.", "error");
         const to = document.getElementById(`to-${id}`).value;
-        if (!to) return alert("اكتب المستلم");
+        if (!to) return ui.showToast("اكتب المستلم", "error");
         db.deliveryLogs.push({ storyId: id, to, date: new Date().toLocaleDateString(), timestamp: Date.now() });
         dataProcessor.saveToGitHub();
         this.renderDelivery();
@@ -2647,7 +2665,7 @@ const ui = {
                 assignedTo: story.assignedTo
             });
         });
-        if (activities.length === 0) return alert("لا توجد أنشطة مسجلة بتاريخ اليوم لتصديرها");
+        if (activities.length === 0) return ui.showToast("لا توجد أنشطة مسجلة بتاريخ اليوم لتصديرها", "error");
         const grouped = activities.reduce((acc, item) => {
             if (!acc[item.branch]) acc[item.branch] = {};
             if (!acc[item.branch][item.area]) acc[item.branch][item.area] = {};
@@ -3135,7 +3153,7 @@ const settings = {
         if (!username || !password) return alert("Please fill all fields");
         if (db.users.some(u => u.username === username)) return alert("User already exists");
         db.users.push({ username, password, role });
-        dataProcessor.saveToGitHub().then(() => { alert("User added successfully"); ui.renderSettings(); });
+        dataProcessor.saveToGitHub().then(() => { ui.showToast("User added successfully", "success"); ui.renderSettings(); });
     },
     removeUser(index) {
         if (db.users[index].username === currentUser.username) return alert("Cannot delete yourself!");
@@ -3225,10 +3243,15 @@ const commentManager = {
 const azureDevOps = {
     async sync() {
         const pat = sessionStorage.getItem('az_pat');
-        if (!pat) return alert("Azure PAT is missing. Please login again.");
+        if (!pat) {
+            ui.showToast("Azure PAT مفقود. الرجاء تسجيل الدخول مجدداً.", "error");
+            return;
+        }
         const syncBtn = document.querySelector("button[onclick='azureDevOps.sync()']");
-        syncBtn.innerText = "⏳ Syncing...";
+        const originalText = syncBtn.innerHTML;
+        syncBtn.innerHTML = "⏳ جاري المزامنة...";
         syncBtn.disabled = true;
+        ui.showLoader();
         try {
             const authHeader = 'Basic ' + btoa(':' + pat);
             const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
@@ -3265,16 +3288,17 @@ const azureDevOps = {
             }
             const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
             const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
-            dataProcessor.processRows(mainRows);
+            await dataProcessor.processRows(mainRows);
             const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
             const backlogRows = this.buildBacklogRows(backlogDetails);
-            dataProcessor.processBacklogRows(backlogRows);
-            alert("✅ تمت المزامنة بنجاح مع Azure!");
+            await dataProcessor.processBacklogRows(backlogRows);
+            ui.showToast("✅ تمت المزامنة بنجاح مع Azure!", "success");
         } catch (error) {
             console.error("Azure Sync Error:", error);
-            alert("❌ فشل الاتصال بـ Azure: " + error.message);
+            ui.showToast("❌ فشل الاتصال بـ Azure: " + error.message, "error");
         } finally {
-            syncBtn.innerHTML = "🔄 <span class='hidden md:inline'>Sync from Azure</span>";
+            ui.hideLoader();
+            syncBtn.innerHTML = originalText;
             syncBtn.disabled = false;
         }
     },
@@ -3359,7 +3383,7 @@ const azureDevOps = {
             backlogQueryId: document.getElementById('az-backlog-query-id').value
         };
         localStorage.setItem('az_settings', JSON.stringify(settings));
-        alert("تم حفظ إعدادات Azure بنجاح");
+        ui.showToast("تم حفظ إعدادات Azure بنجاح", "success");
     }
 };
 
