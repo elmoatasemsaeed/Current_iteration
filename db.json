@@ -3236,11 +3236,13 @@
       "tester": "Mohamed Ragab",
       "area": "Internal lab",
       "priority": 1,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "EBGH_62",
-      "changedDate": "2026-08-25T11:25:24.233Z",
+      "changedDate": "2026-08-25T11:34:21.743Z",
       "tasks": [
         {
           "ID": 183430,
@@ -3607,7 +3609,7 @@
       "id": 180623,
       "title": "Ayenda Hospital - Develop a cash receipt in A5 paper size",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Tested",
       "assignedTo": "Ahmed Gamal",
       "tester": "Mostafa Mamdouh",
       "area": "Registration",
@@ -3616,7 +3618,7 @@
       "expectedRelease": null,
       "branch": "Iraq",
       "customer": "Ayenda Private Hospital_83",
-      "changedDate": "2026-08-24T10:46:11.530Z",
+      "changedDate": "2026-08-25T12:26:54.873Z",
       "tasks": [
         {
           "ID": 184377,
@@ -3793,8 +3795,8 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-August 23-12",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-08-25T10:42:19.487Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-08-25T10:42:19.487Z",
+          "State": "Closed",
+          "Changed Date": "2026-08-25T12:26:52.107Z",
           "Customer": "Ayenda Private Hospital_83"
         },
         {
@@ -3956,8 +3958,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-08-26T08:00:00.000Z",
-        "testEnd": "2026-08-27T07:00:00.000Z",
-        "finalEnd": "2026-08-27T07:00:00.000Z"
+        "testEnd": "2026-08-30T07:00:00.000Z",
+        "finalEnd": "2026-08-30T07:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [],
@@ -4929,27 +4931,13 @@
           "State": "Active",
           "Changed Date": "2026-08-23T06:49:46.667Z",
           "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 185144,
-          "Work Item Type": "Task",
-          "Title": "refactor special promotions",
-          "Assigned To": "eslam anwar",
-          "Activity": "Development",
-          "Original Estimation": 4,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp",
-          "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-08-25T10:46:05.517Z"
         }
       ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-07-09T06:00:00.000Z",
+        "devEnd": "2026-07-08T08:00:00.000Z",
         "testEnd": "2026-08-24T08:00:00.000Z",
         "finalEnd": "2026-08-24T08:00:00.000Z"
       },
@@ -6067,8 +6055,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-08-27T09:00:00.000Z",
-        "testEnd": "2026-08-30T06:00:00.000Z",
-        "finalEnd": "2026-08-30T06:00:00.000Z"
+        "testEnd": "2026-08-30T07:00:00.000Z",
+        "finalEnd": "2026-08-30T07:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -8581,16 +8569,159 @@
           "State": "New",
           "Changed Date": "2026-08-25T10:35:05.417Z",
           "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 185163,
+          "Work Item Type": "Task",
+          "Title": "FD001 => Reorder the TAT search criteria labels and controls according to the CR layout",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-08-25T11:52:33.993Z",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-08-25T12:29:09.69Z",
+          "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 185164,
+          "Work Item Type": "Task",
+          "Title": "FD009 => Add the Patient Class dropdown and convert Location to a matching multi-select dropdown",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-08-25T11:53:20.753Z",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-08-25T12:28:28.01Z",
+          "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 185165,
+          "Work Item Type": "Task",
+          "Title": "FD004 => Cascade Location by Patient Class while preserving permissions and valid selections",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "Development",
+          "Original Estimation": 2.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-08-25T11:54:10.113Z",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-08-25T12:28:53.7Z",
+          "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 185166,
+          "Work Item Type": "Task",
+          "Title": "BD009 => Update both TAT header insertion paths with Patient Class and multiple Location parameters",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "DB Modification",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-08-25T11:54:56.99Z",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-08-25T12:26:16.427Z",
+          "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 185167,
+          "Work Item Type": "Task",
+          "Title": "TR011 => Add the Patient Class label to the shared TAT View/Print report header",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-08-25T11:55:28.75Z",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-08-25T12:27:12.843Z",
+          "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 185168,
+          "Work Item Type": "Task",
+          "Title": "TR012 => Add the Patient Class value control to the shared TAT report header",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-08-25T11:56:02.137Z",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-08-25T12:27:52.96Z",
+          "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 185169,
+          "Work Item Type": "Task",
+          "Title": "TR006 => Reposition and resize Patient Class and Location fields in the TAT report header",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-08-25T11:56:43.45Z",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-08-25T12:26:52.363Z",
+          "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 185170,
+          "Work Item Type": "Task",
+          "Title": "TR014 => Bind Patient Class and multiple Location values returned by the TAT header procedure",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "Development",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-08-25T11:57:17.007Z",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-08-25T12:25:58.537Z",
+          "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 185171,
+          "Work Item Type": "Task",
+          "Title": "FD011 => Review the TAT criteria, cascading, DB contract, and View/Print report flow",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-08-25T11:57:55.193Z",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-08-25T12:26:33.013Z",
+          "Customer": "Alameda_0062"
         }
       ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
       "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
+        "devEnd": "2026-08-27T13:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
       },
       "customTags": [],
       "standupComments": [],
@@ -9402,7 +9533,7 @@
       "expectedRelease": "2026-09-05T21:00:00.000Z",
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-08-24T16:54:09.147Z",
+      "changedDate": "2026-08-25T12:17:54.577Z",
       "tasks": [
         {
           "ID": 184374,
@@ -9536,6 +9667,21 @@
           "State": "Active",
           "Changed Date": "2026-08-25T09:11:27.787Z",
           "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 185161,
+          "Work Item Type": "Bug",
+          "Title": "Version Of HL7 At Ack Response Msg",
+          "Assigned To": "Mohamed Ayman",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-08-25T11:45:16.9Z",
+          "Customer": "Alameda_0062"
         }
       ],
       "testCases": [],
@@ -9562,7 +9708,7 @@
       ],
       "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 0,
-      "testActualTime": 0,
+      "testActualTime": 3.5,
       "isBacklog": false,
       "linkedProjectId": null
     },
@@ -12993,8 +13139,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-08-17T08:00:00.000Z",
-        "testEnd": "2026-09-09T06:00:00.000Z",
-        "finalEnd": "2026-09-09T06:00:00.000Z"
+        "testEnd": "2026-09-09T07:00:00.000Z",
+        "finalEnd": "2026-09-09T07:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [
@@ -14496,14 +14642,14 @@
           "Title": "FrontEnd: refactor Thumbnail && Cover  image",
           "Assigned To": "mostafa kamel",
           "Activity": "Development",
-          "Original Estimation": 6,
+          "Original Estimation": 20,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-08-25T10:50:47.817Z",
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-08-25T10:50:50.983Z",
+          "Changed Date": "2026-08-25T11:33:26.547Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -14511,7 +14657,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-08-26T12:00:00.000Z",
+        "devEnd": "2026-08-31T10:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -16359,9 +16505,9 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-24T10:00:00.000Z",
-        "testEnd": "2026-10-01T08:00:00.000Z",
-        "finalEnd": "2026-10-01T08:00:00.000Z"
+        "devEnd": "2026-09-23T12:00:00.000Z",
+        "testEnd": "2026-09-30T08:00:00.000Z",
+        "finalEnd": "2026-09-30T08:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [],
@@ -16771,8 +16917,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-09-20T09:00:00.000Z",
-        "testEnd": "2026-10-01T08:00:00.000Z",
-        "finalEnd": "2026-10-01T08:00:00.000Z"
+        "testEnd": "2026-09-30T08:00:00.000Z",
+        "finalEnd": "2026-09-30T08:00:00.000Z"
       },
       "customTags": [],
       "standupComments": [],
@@ -16800,7 +16946,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-08-24T15:58:18.093Z",
+      "changedDate": "2026-08-25T12:24:10.987Z",
       "tasks": [
         {
           "ID": 182666,
@@ -16834,7 +16980,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-08-09T10:09:56.203Z",
           "State": "Closed",
-          "Changed Date": "2026-08-24T14:33:42.523Z",
+          "Changed Date": "2026-08-25T12:24:10.987Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -16851,7 +16997,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-08-09T10:10:04.433Z",
           "State": "Closed",
-          "Changed Date": "2026-08-24T14:33:42.523Z",
+          "Changed Date": "2026-08-25T12:24:10.987Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -16868,7 +17014,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-08-09T10:10:18.06Z",
           "State": "Closed",
-          "Changed Date": "2026-08-24T14:33:42.523Z",
+          "Changed Date": "2026-08-25T12:24:10.987Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -16885,7 +17031,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-08-09T10:10:10.587Z",
           "State": "Closed",
-          "Changed Date": "2026-08-24T14:33:42.523Z",
+          "Changed Date": "2026-08-25T12:24:10.987Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -16902,7 +17048,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-08-09T10:10:24.107Z",
           "State": "Closed",
-          "Changed Date": "2026-08-24T14:33:42.523Z",
+          "Changed Date": "2026-08-25T12:24:10.987Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -17003,7 +17149,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-08-14T11:29:03.507Z",
           "State": "Closed",
-          "Changed Date": "2026-08-24T14:33:42.523Z",
+          "Changed Date": "2026-08-25T12:24:10.987Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -23560,7 +23706,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-08-16T15:23:14.713Z",
+      "changedDate": "2026-08-25T11:46:24.610Z",
       "tasks": [
         {
           "ID": 182386,
@@ -24513,7 +24659,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-03T12:00:00.000Z",
+        "devEnd": "2026-09-08T10:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -27893,7 +28039,8 @@
           "Iteration Path": "Home Visit\\2026\\home_visit July 12-26",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-08-24T06:03:44.387Z",
+          "Tags": "not a bug",
+          "Changed Date": "2026-08-25T12:02:08.64Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -29231,7 +29378,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-03T12:00:00.000Z",
+        "devEnd": "2026-09-08T10:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -29727,7 +29874,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-03T12:00:00.000Z",
+        "devEnd": "2026-09-08T10:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -30813,10 +30960,10 @@
     },
     {
       "id": 172206,
-      "title": "support reg.branch filter do not respect user privileges customization and take role privileges in consideration",
+      "title": "all pages depends on financial privileges respect the modification in \" financial branches\" of  role of user modified outside it",
       "type": "Support log",
-      "state": "Reactive",
-      "assignedTo": "Dina Ahmed",
+      "state": "Active",
+      "assignedTo": "Mahmoud Ahmed",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
@@ -30826,7 +30973,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-07-26T08:17:12.807Z",
+      "changedDate": "2026-08-25T11:56:08.470Z",
       "tasks": [
         {
           "ID": 172247,
@@ -30849,7 +30996,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-02T12:00:00.000Z",
+        "devEnd": "2026-08-26T09:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -30857,41 +31004,6 @@
       "standupComments": [],
       "iterationPath": "LDM",
       "devActualTime": 2,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
-      "id": 172214,
-      "title": "dashboard FinancialOverview retrieve wrong data while searching with specific branch",
-      "type": "Support log",
-      "state": "Reactive",
-      "assignedTo": "Dina Ahmed",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 999,
-      "tags": [
-        "DONE",
-        " resloved but not published"
-      ],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Internal CR_2000",
-      "changedDate": "2026-07-22T08:35:29.537Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM\\Front Team\\2026\\Front-May 11-25",
-      "devActualTime": 3,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null
@@ -31246,7 +31358,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-08-26T07:00:00.000Z",
+        "devEnd": "2026-08-26T09:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -31552,7 +31664,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Trust Lab Dr Sanaa Abdel Shafie_178",
-      "changedDate": "2026-08-16T15:14:44.177Z",
+      "changedDate": "2026-08-25T12:05:24.587Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -31567,7 +31679,7 @@
       "standupComments": [],
       "iterationPath": "LDM",
       "devActualTime": 3.25,
-      "testActualTime": 0,
+      "testActualTime": 1,
       "isBacklog": false,
       "linkedProjectId": null
     },
@@ -32906,7 +33018,7 @@
       "id": 184452,
       "title": "Metra_ProductionPublish_we need to publish SLs (182634 & 178150 & 173006 & 179253 & 179708 & 185061 & 184894 & 185084) on Live",
       "type": "Support log",
-      "state": "On-Hold",
+      "state": "Active",
       "assignedTo": "Mohamed Samy",
       "tester": "Unassigned",
       "area": "Internal lab",
@@ -32918,7 +33030,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Metra Labs_468",
-      "changedDate": "2026-08-25T11:08:25.273Z",
+      "changedDate": "2026-08-25T12:24:10.987Z",
       "tasks": [
         {
           "ID": 184496,
@@ -33247,13 +33359,12 @@
       "area": "Internal lab",
       "priority": 999,
       "tags": [
-        "On Hold",
-        " wait saddam"
+        "wait saddam"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Dr Mohamed Khedr Lab_0382",
-      "changedDate": "2026-08-20T08:22:00.123Z",
+      "changedDate": "2026-08-25T12:21:20.653Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -33452,7 +33563,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Assuit University Hospitals_412",
-      "changedDate": "2026-08-25T11:30:52.737Z",
+      "changedDate": "2026-08-25T12:18:22.383Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -33466,7 +33577,7 @@
       "customTags": [],
       "standupComments": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-July 16-30",
-      "devActualTime": 8.5,
+      "devActualTime": 10.5,
       "testActualTime": 1.32,
       "isBacklog": false,
       "linkedProjectId": null
@@ -33783,7 +33894,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Metra Labs_468",
-      "changedDate": "2026-08-24T14:56:35.133Z",
+      "changedDate": "2026-08-25T12:24:10.987Z",
       "tasks": [
         {
           "ID": 185087,
@@ -33865,7 +33976,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Correct Evidence Medical Lab_15289",
-      "changedDate": "2026-08-25T08:05:10.797Z",
+      "changedDate": "2026-08-25T12:16:09.173Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -33879,7 +33990,7 @@
       "customTags": [],
       "standupComments": [],
       "iterationPath": "LDM",
-      "devActualTime": 0,
+      "devActualTime": 3.5,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null
@@ -35429,209 +35540,6 @@
       "linkedProjectId": null
     },
     {
-      "id": 172845,
-      "title": "Internal CR - Financial Reports -  Revamp Payer price list",
-      "type": "User Story",
-      "state": "Approved",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 70,
-      "tags": [
-        "Revamp General Reports"
-      ],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2026-06-02T09:25:42.983Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true,
-      "linkedProjectId": null
-    },
-    {
-      "id": 172848,
-      "title": "Internal CR - Financial Reports - Revamp Contract Price list",
-      "type": "User Story",
-      "state": "Approved",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 70,
-      "tags": [
-        "Revamp General Reports"
-      ],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2026-06-02T09:25:42.983Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true,
-      "linkedProjectId": null
-    },
-    {
-      "id": 172849,
-      "title": "Internal CR - Financial Reports - Monthly statistics amounts per contract",
-      "type": "User Story",
-      "state": "Approved",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 70,
-      "tags": [
-        "Revamp General Reports"
-      ],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2026-06-02T09:25:42.983Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true,
-      "linkedProjectId": null
-    },
-    {
-      "id": 172850,
-      "title": "Internal CR - Financial Reports -  Patients' payment statistics",
-      "type": "User Story",
-      "state": "Approved",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 70,
-      "tags": [
-        "Revamp General Reports"
-      ],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2026-06-02T09:25:42.983Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true,
-      "linkedProjectId": null
-    },
-    {
-      "id": 172857,
-      "title": "Internal CR - Financial Reports -  Revamp Patient Remaining",
-      "type": "User Story",
-      "state": "Approved",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 70,
-      "tags": [
-        "Revamp General Reports"
-      ],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2026-06-02T09:25:42.983Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true,
-      "linkedProjectId": null
-    },
-    {
-      "id": 172860,
-      "title": "Internal CR - Financial Reports -  Revamp Branch Invoice",
-      "type": "User Story",
-      "state": "Approved",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 70,
-      "tags": [
-        "Revamp General Reports"
-      ],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2026-06-02T09:25:42.983Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true,
-      "linkedProjectId": null
-    },
-    {
-      "id": 172861,
-      "title": "Internal CR - Financial Reports -  Revamp Branches Income",
-      "type": "User Story",
-      "state": "Approved",
-      "assignedTo": "Unassigned",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 70,
-      "tags": [
-        "Revamp General Reports"
-      ],
-      "expectedRelease": null,
-      "branch": "N/A",
-      "customer": "General",
-      "changedDate": "2026-06-02T09:25:42.983Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {},
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": true,
-      "linkedProjectId": null
-    },
-    {
       "id": 173191,
       "title": "Alameda - Lab Based Surveillance Report: Add a new filter for Registration Branch and display it at the report / exported Excel sheet",
       "type": "User Story",
@@ -36373,7 +36281,7 @@
       "expectedRelease": null,
       "branch": "N/A",
       "customer": "General",
-      "changedDate": "2026-08-25T11:29:58.687Z",
+      "changedDate": "2026-08-25T11:33:14.043Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -37113,6 +37021,209 @@
       "customTags": [],
       "standupComments": [],
       "iterationPath": "MobileApp",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true,
+      "linkedProjectId": null
+    },
+    {
+      "id": 172845,
+      "title": "Internal CR - Financial Reports -  Revamp Payer price list",
+      "type": "User Story",
+      "state": "Approved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 70,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2026-06-02T09:25:42.983Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true,
+      "linkedProjectId": null
+    },
+    {
+      "id": 172848,
+      "title": "Internal CR - Financial Reports - Revamp Contract Price list",
+      "type": "User Story",
+      "state": "Approved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 70,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2026-06-02T09:25:42.983Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true,
+      "linkedProjectId": null
+    },
+    {
+      "id": 172849,
+      "title": "Internal CR - Financial Reports - Monthly statistics amounts per contract",
+      "type": "User Story",
+      "state": "Approved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 70,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2026-06-02T09:25:42.983Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true,
+      "linkedProjectId": null
+    },
+    {
+      "id": 172850,
+      "title": "Internal CR - Financial Reports -  Patients' payment statistics",
+      "type": "User Story",
+      "state": "Approved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 70,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2026-06-02T09:25:42.983Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true,
+      "linkedProjectId": null
+    },
+    {
+      "id": 172857,
+      "title": "Internal CR - Financial Reports -  Revamp Patient Remaining",
+      "type": "User Story",
+      "state": "Approved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 70,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2026-06-02T09:25:42.983Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true,
+      "linkedProjectId": null
+    },
+    {
+      "id": 172860,
+      "title": "Internal CR - Financial Reports -  Revamp Branch Invoice",
+      "type": "User Story",
+      "state": "Approved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 70,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2026-06-02T09:25:42.983Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": true,
+      "linkedProjectId": null
+    },
+    {
+      "id": 172861,
+      "title": "Internal CR - Financial Reports -  Revamp Branches Income",
+      "type": "User Story",
+      "state": "Approved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 70,
+      "tags": [
+        "Revamp General Reports"
+      ],
+      "expectedRelease": null,
+      "branch": "N/A",
+      "customer": "General",
+      "changedDate": "2026-06-02T09:25:42.983Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {},
+      "customTags": [],
+      "standupComments": [],
+      "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": true,
