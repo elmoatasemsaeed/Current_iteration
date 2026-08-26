@@ -1751,289 +1751,222 @@ const ui = {
         });
         container.innerHTML = html;
     },
-    generateWeeklyReport() {
-    const filterSelect = document.getElementById('kanban-ba-filter');
-    if (!filterSelect) return;
-    const selectedOptions = Array.from(filterSelect.selectedOptions);
-    let selectedAreas = selectedOptions.map(opt => opt.value);
-    const allAreas = [...new Set([
-        ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
-        ...db.backlogStories.map(s => s.area || "General")
-    ])];
-    if (selectedAreas.length === 0) selectedAreas = allAreas;
-    const reportData = {};
-    const targetStates = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
-    const fifteenDaysAgo = new Date();
-    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-    selectedAreas.forEach(area => {
-        const areaData = { states: {}, backlog: [], tested: [], comments: [] };
-        targetStates.forEach(state => {
-            areaData.states[state] = currentData.filter(s =>
-                !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area && s.state === state
+      generateWeeklyReport() {
+        const filterSelect = document.getElementById('kanban-ba-filter');
+        if (!filterSelect) return;
+        const selectedOptions = Array.from(filterSelect.selectedOptions);
+        let selectedAreas = selectedOptions.map(opt => opt.value);
+        const allAreas = [...new Set([
+            ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
+            ...db.backlogStories.map(s => s.area || "General")
+        ])];
+        if (selectedAreas.length === 0) selectedAreas = allAreas;
+
+        const reportData = {};
+        const targetStates = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
+        const fifteenDaysAgo = new Date();
+        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+
+        selectedAreas.forEach(area => {
+            const areaData = { states: {}, backlog: [], tested: [], comments: [] };
+            targetStates.forEach(state => {
+                areaData.states[state] = currentData.filter(s =>
+                    !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area && s.state === state
+                );
+            });
+            areaData.backlog = db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s));
+            areaData.tested = currentData.filter(s =>
+                !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area &&
+                s.state === 'Tested' && s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
             );
+            areaData.comments = db.areaComments.filter(c => c.area === area);
+            reportData[area] = areaData;
         });
-        areaData.backlog = db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s));
-        areaData.tested = currentData.filter(s =>
-            !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area &&
-            s.state === 'Tested' && s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
-        );
-        areaData.comments = db.areaComments.filter(c => c.area === area);
-        reportData[area] = areaData;
-    });
-    this.showWeeklyReportModal(reportData);
-},
 
-showWeeklyReportModal(reportData) {
-    let modal = document.getElementById('weekly-report-modal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'weekly-report-modal';
-        modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[2000] p-4';
-        modal.innerHTML = `
-            <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col relative" style="direction: rtl;">
-                <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-2xl">
-                    <h3 class="text-xl font-bold text-slate-800">📋 التقرير الأسبوعي</h3>
-                    <div class="flex gap-2">
-                        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition">🖨️ طباعة</button>
-                        <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
-                    </div>
-                </div>
-                <div class="p-6 overflow-y-auto" id="weekly-report-content"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        const style = document.createElement('style');
-        style.textContent = `
-            @media print {
-                body * { visibility: hidden; }
-                #weekly-report-modal, #weekly-report-modal * { visibility: visible; }
-                #weekly-report-modal {
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                    background: white;
-                    margin: 0;
-                    padding: 15px;
-                    box-shadow: none;
-                    border-radius: 0;
-                    max-height: none;
-                    overflow: visible;
-                    direction: rtl;
-                }
-                #weekly-report-modal .sticky, #weekly-report-modal .border-b { position: relative; top: auto; }
-                #weekly-report-modal .p-6 { padding: 10px; }
-                #weekly-report-modal button { display: none !important; }
-                .page-break-after { page-break-after: always; }
-                .report-story-card { border: 1px solid #e2e8f0; padding: 4px 8px; margin-bottom: 4px; border-radius: 4px; font-size: 10px !important; }
-                .report-story-card .title { font-size: 10px !important; font-weight: bold; }
-                .report-tag { display: inline-block; padding: 0 4px; margin: 1px; font-size: 8px; border-radius: 2px; background: #f1f5f9; border: 1px solid #cbd5e1; }
-                .report-custom-tag { background: #f3e8ff; border-color: #a78bfa; }
-                .report-comment { background: #f0f4ff; padding: 2px 6px; border-radius: 3px; border-right: 2px solid #6366f1; margin-top: 2px; font-size: 9px; }
-                .state-column { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc; }
-                .state-column h4 { font-size: 11px; font-weight: bold; margin-bottom: 4px; }
-            }
-        `;
-        modal.querySelector('.bg-white').appendChild(style);
-    }
-    const content = document.getElementById('weekly-report-content');
-    let html = '';
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
-    html += `<div class="text-center mb-6 border-b pb-4">
-        <h1 class="text-2xl font-bold text-slate-800">تقرير الحالة الأسبوعي</h1>
-        <p class="text-sm text-gray-500">تاريخ التقرير: ${dateStr}</p>
-    </div>`;
-    const truncateTitle = (title) => {
-        if (!title) return '';
-        const words = title.split(' ');
-        if (words.length <= 6) return title;
-        return words.slice(0, 6).join(' ') + ' ...';
-    };
-    for (const area in reportData) {
-        const data = reportData[area];
-        const { states, backlog, tested, comments } = data;
-        html += `<div class="mb-12 page-break-after">`;
-        html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${area}</h2>`;
+        this.showWeeklyReportModal(reportData);
+    },
 
-        if (comments && comments.length > 0) {
-            html += `<div class="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">`;
-            html += `<h3 class="font-bold text-amber-700 text-sm flex items-center gap-2 mb-3">💬 تعليقات عامة على المنطقة</h3>`;
-            html += `<div class="space-y-2">`;
-            comments.forEach(c => {
-                html += `
-                    <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2">
-                        <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</span>
-                        <span class="text-[10px] text-gray-400 whitespace-nowrap">${c.timestamp}</span>
-                    </div>
-                `;
-            });
-            html += `</div></div>`;
-        } else {
-            html += `<div class="text-gray-400 text-sm italic mb-4">لا توجد تعليقات عامة على هذه المنطقة.</div>`;
-        }
-
-        html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">`;
-        const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
-        stateOrder.forEach(state => {
-            const stories = states[state] || [];
-            html += `<div class="state-column bg-gray-50 rounded-lg border border-gray-200 p-3">`;
-            html += `<h4 class="font-bold text-sm text-slate-700 border-b pb-1 mb-2">${state} (${stories.length})</h4>`;
-            if (stories.length === 0) {
-                html += `<div class="text-gray-400 text-[10px] italic">لا توجد</div>`;
-            } else {
-                stories.forEach(s => {
-                    const lastComment = s.standupComments && s.standupComments.length > 0 ? s.standupComments[s.standupComments.length - 1] : null;
-                    const azureTags = s.tags || [];
-                    const customTags = s.customTags || [];
-                    const allTags = [...new Set([...azureTags, ...customTags])];
-                    html += `<div class="report-story-card bg-white rounded border border-gray-100 p-2 mb-2 shadow-sm">`;
-                    html += `<div class="flex justify-between items-start gap-2">`;
-                    html += `<span class="font-mono text-[9px] text-gray-400">#${s.id}</span>`;
-                    html += `<span class="title text-xs font-bold text-slate-800 flex-1">${truncateTitle(s.title)}</span>`;
-                    html += `</div>`;
-                    if (allTags.length > 0) {
-                        html += `<div class="flex flex-wrap gap-1 mt-1">`;
-                        allTags.forEach(tag => {
-                            const isCustom = customTags.includes(tag);
-                            html += `<span class="report-tag px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-100 text-purple-700 border border-purple-300 report-custom-tag' : 'bg-gray-100 text-gray-600 border border-gray-200'}">${tag}${isCustom ? ' ★' : ''}</span>`;
-                        });
-                        html += `</div>`;
-                    }
-                    if (lastComment) {
-                        html += `<div class="report-comment text-[9px] text-slate-600 mt-1">`;
-                        html += `<span class="font-bold text-indigo-600">اخر ستاندب:</span> `;
-                        html += `<span>"${lastComment.text}"</span>`;
-                        html += `<span class="text-[8px] text-gray-400 mr-1">(${lastComment.date})</span>`;
-                        html += `</div>`;
-                    }
-                    html += `</div>`;
-                });
-            }
-            html += `</div>`;
-        });
-        html += `</div>`;
-
-        if (backlog.length > 0) {
-            const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
-            const top5 = sortedBacklog.slice(0, 5);
-            const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
-            html += `<div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">`;
-            html += `<h3 class="font-bold text-purple-700 text-sm">📋 الباك لوج (${backlog.length})</h3>`;
-            html += `<div class="flex flex-wrap gap-3 mt-2">`;
-            top5.forEach(s => {
-                html += `<div class="bg-white px-3 py-1 rounded-full border border-purple-100 text-xs flex items-center gap-2 shadow-sm">`;
-                html += `<span class="font-mono text-gray-400">#${s.id}</span>`;
-                html += `<span class="font-medium text-slate-700">${truncateTitle(s.title)}</span>`;
-                html += `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded text-[9px] font-bold">P${s.priority}</span>`;
-                html += `</div>`;
-            });
-            if (top5.length < backlog.length) html += `<span class="text-xs text-gray-400">... وغيرها</span>`;
-            if (withoutPriority.length > 0) html += `<div class="w-full text-xs text-red-600 mt-1">⚠️ يوجد ${withoutPriority.length} قصة بدون أولوية (Priority = 999)</div>`;
-            html += `</div></div>`;
-        } else {
-            html += `<div class="text-gray-400 text-sm italic mt-2">لا يوجد باك لوج في هذه المنطقة.</div>`;
-        }
-
-        if (tested.length > 0) {
-            html += `<div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">`;
-            html += `<h3 class="font-bold text-green-700 text-sm">✅ تم تسليمها (آخر 15 يوم) (${tested.length})</h3>`;
-            html += `<div class="flex flex-wrap gap-2 mt-2">`;
-            tested.forEach(s => {
-                html += `<span class="bg-white text-green-800 px-2 py-0.5 rounded-full border border-green-100 text-xs font-mono">#${s.id}</span>`;
-            });
-            html += `</div></div>`;
-        } else {
-            html += `<div class="text-gray-400 text-sm italic mt-2">لا توجد قصص مسلمة في آخر 15 يوم.</div>`;
-        }
-
-        html += `</div>`;
-    }
-    content.innerHTML = html;
-    modal.style.display = 'flex';
-},
-    renderDelivery() {
-        const container = document.getElementById('delivery-grid');
-        const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || "";
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
-        const regularStories = nonBacklog.filter(s => isRegularStory(s));
-        const allTested = regularStories.filter(s => s.state === 'Tested' || s.state === 'Closed');
-        const pendingStories = allTested.filter(s => {
-            const isPending = !db.deliveryLogs.some(l => l.storyId === s.id.toString());
-            const matchesSearch = s.title.toLowerCase().includes(searchTerm) || s.id.toString().includes(searchTerm) || (s.area && s.area.toLowerCase().includes(searchTerm));
-            return isPending && matchesSearch;
-        });
-        const completedStories = db.deliveryLogs.map(log => {
-            const story = regularStories.find(s => s.id.toString() === log.storyId.toString());
-            return { ...story, logData: log, title: story ? story.title : "Story not in current CSV", area: story ? story.area : "N/A" };
-        }).filter(s => {
-            if (!s.id) return false;
-            const matchesSearch = s.title.toLowerCase().includes(searchTerm) || s.logData.storyId.toString().includes(searchTerm) || s.logData.to.toLowerCase().includes(searchTerm) || (s.area && s.area.toLowerCase().includes(searchTerm));
-            return matchesSearch;
-        }).reverse();
-        if (pendingStories.length === 0 && completedStories.length === 0) {
-            container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">${searchTerm ? 'لا توجد نتائج تطابق بحثك في قسم التسليم.' : 'لا توجد عناصر حالياً.'}</div>`;
-            return;
-        }
-        const createCardHtml = (s, isLogged) => {
-            return `
-                <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
-                    <div class="flex justify-between items-start mb-2"><span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span></div>
-                    <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
-                    <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">${isLogged ? '✓ تم التسليم' : '*Tested*'}</span>
-                    <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
-                    ${isLogged ? `
-                        <div class="relative group mt-2" dir="rtl">
-                            <div class="text-xs bg-green-50 text-green-700 p-3 pr-12 rounded-lg border border-green-100 min-h-[60px] leading-relaxed">
-                                <b>المستلم:</b> ${s.logData.to}<br>
-                                <b>التاريخ:</b> ${s.logData.date}
-                            </div>
-                            ${currentUser && currentUser.role === 'admin' ? `
-                                <button onclick="ui.editDelivery('${s.logData.storyId}')" class="absolute top-2 left-2 bg-white border border-green-200 shadow-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 rounded-md p-1.5 text-[10px] transition-all z-10 flex items-center gap-1">
-                                    <span>✏️</span>
-                                    <span class="text-[9px] font-bold">تعديل</span>
-                                </button>
-                            ` : ''}
+    showWeeklyReportModal(reportData) {
+        let modal = document.getElementById('weekly-report-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'weekly-report-modal';
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[2000] p-4';
+            // All static text in English
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col relative">
+                    <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-2xl">
+                        <h3 class="text-xl font-bold text-slate-800">📋 Weekly Report</h3>
+                        <div class="flex gap-2">
+                            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition">🖨️ Print</button>
+                            <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
                         </div>
-                    ` : (currentUser && currentUser.role === 'admin' ? `
-                        <div class="flex gap-2 mt-auto">
-                            <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
-                            <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">تأكيد</button>
-                        </div>
-                    ` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
+                    </div>
+                    <div class="p-6 overflow-y-auto" id="weekly-report-content"></div>
                 </div>
             `;
-        };
-        let html = `
-            <div class="col-span-full mb-4"><h3 class="text-lg font-bold text-blue-700 flex items-center gap-2">📦 بانتظار التسليم (${pendingStories.length})</h3></div>
-            ${pendingStories.map(s => createCardHtml(s, false)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
-            <div class="col-span-full my-8 border-t-2 border-dashed border-gray-200"></div>
-            <div class="col-span-full mb-4"><h3 class="text-lg font-bold text-gray-500 flex items-center gap-2">✅ تم التسليم مؤخراً (${completedStories.length})</h3></div>
-            ${completedStories.map(s => createCardHtml(s, true)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
-        `;
-        container.innerHTML = html;
-    },
-    markDelivered(id) {
-        if (currentUser.role !== 'admin') return ui.showToast("عذراً، لا تملك صلاحية تنفيذ هذا الإجراء.", "error");
-        const to = document.getElementById(`to-${id}`).value;
-        if (!to) return ui.showToast("اكتب المستلم", "error");
-        db.deliveryLogs.push({ storyId: id, to, date: new Date().toLocaleDateString(), timestamp: Date.now() });
-        dataProcessor.saveToGitHub();
-        this.renderDelivery();
-    },
-    editDelivery(id) {
-        if (currentUser.role !== 'admin') return;
-        const confirmEdit = confirm("هل تريد إلغاء التسليم الحالي وتعديله؟");
-        if (confirmEdit) {
-            db.deliveryLogs = db.deliveryLogs.filter(log => log.storyId.toString() !== id.toString());
-            dataProcessor.saveToGitHub().then(() => {
-                this.renderDelivery();
-                setTimeout(() => {
-                    const input = document.getElementById(`to-${id}`);
-                    if (input) { input.focus(); input.classList.add('ring-2', 'ring-orange-400'); }
-                }, 100);
-            });
+            document.body.appendChild(modal);
+
+            // Print styles (unchanged, but can keep as is)
+            const style = document.createElement('style');
+            style.textContent = `
+                @media print {
+                    body * { visibility: hidden; }
+                    #weekly-report-modal, #weekly-report-modal * { visibility: visible; }
+                    #weekly-report-modal {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        background: white;
+                        margin: 0;
+                        padding: 15px;
+                        box-shadow: none;
+                        border-radius: 0;
+                        max-height: none;
+                        overflow: visible;
+                        direction: ltr;
+                    }
+                    #weekly-report-modal .sticky, #weekly-report-modal .border-b { position: relative; top: auto; }
+                    #weekly-report-modal .p-6 { padding: 10px; }
+                    #weekly-report-modal button { display: none !important; }
+                    .page-break-after { page-break-after: always; }
+                    .report-story-card { border: 1px solid #e2e8f0; padding: 4px 8px; margin-bottom: 4px; border-radius: 4px; font-size: 10px !important; }
+                    .report-story-card .title { font-size: 10px !important; font-weight: bold; }
+                    .report-tag { display: inline-block; padding: 0 4px; margin: 1px; font-size: 8px; border-radius: 2px; background: #f1f5f9; border: 1px solid #cbd5e1; }
+                    .report-custom-tag { background: #f3e8ff; border-color: #a78bfa; }
+                    .report-comment { background: #f0f4ff; padding: 2px 6px; border-radius: 3px; border-right: 2px solid #6366f1; margin-top: 2px; font-size: 9px; }
+                    .state-column { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc; }
+                    .state-column h4 { font-size: 11px; font-weight: bold; margin-bottom: 4px; }
+                }
+            `;
+            modal.querySelector('.bg-white').appendChild(style);
         }
+
+        const content = document.getElementById('weekly-report-content');
+        let html = '';
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        html += `<div class="text-center mb-6 border-b pb-4">
+            <h1 class="text-2xl font-bold text-slate-800">Weekly Status Report</h1>
+            <p class="text-sm text-gray-500">Report Date: ${dateStr}</p>
+        </div>`;
+
+        const truncateTitle = (title) => {
+            if (!title) return '';
+            const words = title.split(' ');
+            if (words.length <= 6) return title;
+            return words.slice(0, 6).join(' ') + ' ...';
+        };
+
+        for (const area in reportData) {
+            const data = reportData[area];
+            const { states, backlog, tested, comments } = data;
+
+            html += `<div class="mb-12 page-break-after">`;
+            html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${area}</h2>`;
+
+            // Area comments (RTL)
+            if (comments && comments.length > 0) {
+                html += `<div class="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">`;
+                html += `<h3 class="font-bold text-amber-700 text-sm flex items-center gap-2 mb-3">💬 General Area Comments</h3>`;
+                html += `<div class="space-y-2" dir="rtl">`; // RTL container
+                comments.forEach(c => {
+                    html += `
+                        <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2" dir="rtl" style="text-align: right;">
+                            <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</span>
+                            <span class="text-[10px] text-gray-400 whitespace-nowrap">${c.timestamp}</span>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            } else {
+                html += `<div class="text-gray-400 text-sm italic mb-4">No general comments for this area.</div>`;
+            }
+
+            // States columns
+            html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">`;
+            const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
+            stateOrder.forEach(state => {
+                const stories = states[state] || [];
+                html += `<div class="state-column bg-gray-50 rounded-lg border border-gray-200 p-3">`;
+                html += `<h4 class="font-bold text-sm text-slate-700 border-b pb-1 mb-2">${state} (${stories.length})</h4>`;
+                if (stories.length === 0) {
+                    html += `<div class="text-gray-400 text-[10px] italic">None</div>`;
+                } else {
+                    stories.forEach(s => {
+                        const lastComment = s.standupComments && s.standupComments.length > 0 ? s.standupComments[s.standupComments.length - 1] : null;
+                        const azureTags = s.tags || [];
+                        const customTags = s.customTags || [];
+                        const allTags = [...new Set([...azureTags, ...customTags])];
+                        html += `<div class="report-story-card bg-white rounded border border-gray-100 p-2 mb-2 shadow-sm">`;
+                        html += `<div class="flex justify-between items-start gap-2">`;
+                        html += `<span class="font-mono text-[9px] text-gray-400">#${s.id}</span>`;
+                        html += `<span class="title text-xs font-bold text-slate-800 flex-1">${truncateTitle(s.title)}</span>`;
+                        html += `</div>`;
+                        if (allTags.length > 0) {
+                            html += `<div class="flex flex-wrap gap-1 mt-1">`;
+                            allTags.forEach(tag => {
+                                const isCustom = customTags.includes(tag);
+                                html += `<span class="report-tag px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-100 text-purple-700 border border-purple-300 report-custom-tag' : 'bg-gray-100 text-gray-600 border border-gray-200'}">${tag}${isCustom ? ' ★' : ''}</span>`;
+                            });
+                            html += `</div>`;
+                        }
+                        if (lastComment) {
+                            html += `<div class="report-comment text-[9px] text-slate-600 mt-1" dir="rtl" style="text-align: right;">`;
+                            html += `<span class="font-bold text-indigo-600">Last Standup:</span> `;
+                            html += `<span style="direction: rtl; text-align: right;">"${lastComment.text}"</span>`;
+                            html += `<span class="text-[8px] text-gray-400 mr-1">(${lastComment.date})</span>`;
+                            html += `</div>`;
+                        }
+                        html += `</div>`;
+                    });
+                }
+                html += `</div>`;
+            });
+            html += `</div>`;
+
+            // Backlog
+            if (backlog.length > 0) {
+                const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
+                const top5 = sortedBacklog.slice(0, 5);
+                const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
+                html += `<div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">`;
+                html += `<h3 class="font-bold text-purple-700 text-sm">📋 Backlog (${backlog.length})</h3>`;
+                html += `<div class="flex flex-wrap gap-3 mt-2">`;
+                top5.forEach(s => {
+                    html += `<div class="bg-white px-3 py-1 rounded-full border border-purple-100 text-xs flex items-center gap-2 shadow-sm">`;
+                    html += `<span class="font-mono text-gray-400">#${s.id}</span>`;
+                    html += `<span class="font-medium text-slate-700">${truncateTitle(s.title)}</span>`;
+                    html += `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded text-[9px] font-bold">P${s.priority}</span>`;
+                    html += `</div>`;
+                });
+                if (top5.length < backlog.length) html += `<span class="text-xs text-gray-400">... and others</span>`;
+                if (withoutPriority.length > 0) html += `<div class="w-full text-xs text-red-600 mt-1">⚠️ There are ${withoutPriority.length} stories without priority (Priority = 999)</div>`;
+                html += `</div></div>`;
+            } else {
+                html += `<div class="text-gray-400 text-sm italic mt-2">No backlog items in this area.</div>`;
+            }
+
+            // Delivered (last 15 days)
+            if (tested.length > 0) {
+                html += `<div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">`;
+                html += `<h3 class="font-bold text-green-700 text-sm">✅ Delivered (Last 15 days) (${tested.length})</h3>`;
+                html += `<div class="flex flex-wrap gap-2 mt-2">`;
+                tested.forEach(s => {
+                    html += `<span class="bg-white text-green-800 px-2 py-0.5 rounded-full border border-green-100 text-xs font-mono">#${s.id}</span>`;
+                });
+                html += `</div></div>`;
+            } else {
+                html += `<div class="text-gray-400 text-sm italic mt-2">No stories delivered in the last 15 days.</div>`;
+            }
+
+            html += `</div>`;
+        }
+
+        content.innerHTML = html;
+        modal.style.display = 'flex';
     },
     renderWorkload() {
         const container = document.getElementById('workload-container');
