@@ -1058,7 +1058,7 @@ const ui = {
             loader.innerHTML = `
                 <div class="bg-white p-6 rounded-xl shadow-2xl flex items-center gap-4">
                     <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span class="font-bold text-slate-700">جاري الحفظ...</span>
+                    <span class="font-bold text-slate-700">صلي ع النبي ...</span>
                 </div>
             `;
             document.body.appendChild(loader);
