@@ -1784,290 +1784,328 @@ const ui = {
     },
 
     showWeeklyReportModal(reportData) {
-        let modal = document.getElementById('weekly-report-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'weekly-report-modal';
-            modal.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-3 sm:p-6';
-            modal.innerHTML = `
-                <div class="bg-slate-50 rounded-2xl shadow-2xl max-w-7xl w-full max-h-[92vh] flex flex-col relative overflow-hidden border border-slate-200 font-sans" style="direction: ltr;">
-                    <!-- Modal Header -->
-                    <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 bg-white sticky top-0 z-20 shadow-xs">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xl shadow-inner">📋</div>
-                            <div>
-                                <h3 class="text-lg font-black text-slate-800 leading-tight">Weekly Status Report</h3>
-                                <p class="text-xs text-slate-400 font-medium">Tracking, synchronization, and delivery overview across Business Areas</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="window.print()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm hover:shadow active:scale-95 cursor-pointer">
-                                <span>🖨️</span>
-                                <span>Print Report</span>
-                            </button>
-                            <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400 hover:text-rose-500 text-xl font-bold transition leading-none cursor-pointer">&times;</button>
+    let modal = document.getElementById('weekly-report-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'weekly-report-modal';
+        modal.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-3 sm:p-6';
+        modal.innerHTML = `
+            <div class="bg-white rounded-3xl shadow-2xl max-w-7xl w-full max-h-[92vh] flex flex-col relative overflow-hidden border border-slate-200/80 font-sans" style="direction: ltr;">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200/80 bg-white/90 backdrop-blur-sm sticky top-0 z-20">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-2xl shadow-lg shadow-indigo-200/60">📊</div>
+                        <div>
+                            <h3 class="text-xl font-extrabold text-slate-800 leading-tight tracking-tight">Weekly Status Report</h3>
+                            <p class="text-xs text-slate-500 font-medium">Cross‑area progress, synchronisation, and delivery overview</p>
                         </div>
                     </div>
-                    <!-- Modal Content -->
-                    <div class="p-6 overflow-y-auto space-y-8 custom-scrollbar" id="weekly-report-content"></div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="window.print()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-md hover:shadow-lg active:scale-95 cursor-pointer border border-indigo-400/30">
+                            <span>🖨️</span>
+                            <span>Print Report</span>
+                        </button>
+                        <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-rose-600 text-2xl font-light transition leading-none cursor-pointer">&times;</button>
+                    </div>
                 </div>
-            `;
-            document.body.appendChild(modal);
+                <!-- Modal Content -->
+                <div class="p-6 overflow-y-auto space-y-8 custom-scrollbar" id="weekly-report-content"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
 
-            const style = document.createElement('style');
-            style.textContent = `
-                @media print {
-                    @page { margin: 12mm 10mm; size: A4 portrait; }
-                    body * { visibility: hidden !important; }
-                    #weekly-report-modal, #weekly-report-modal * { visibility: visible !important; }
-                    #weekly-report-modal {
-                        position: absolute !important;
-                        left: 0 !important;
-                        top: 0 !important;
-                        width: 100% !important;
-                        background: #ffffff !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                        box-shadow: none !important;
-                        border-radius: 0 !important;
-                        max-height: none !important;
-                        overflow: visible !important;
-                        direction: ltr !important;
-                    }
-                    #weekly-report-modal .sticky, 
-                    #weekly-report-modal .border-b,
-                    #weekly-report-modal button { display: none !important; }
-                    #weekly-report-modal .p-6 { padding: 0 !important; }
-                    .page-break-after { page-break-after: always; break-after: page; }
-                    .report-area-card { box-shadow: none !important; border: 1px solid #cbd5e1 !important; margin-bottom: 20px !important; }
-                    .state-column { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        // إضافة أنماط الطباعة والتصميم
+        const style = document.createElement('style');
+        style.textContent = `
+            @media print {
+                @page { margin: 14mm 12mm; size: A4 portrait; }
+                body * { visibility: hidden !important; }
+                #weekly-report-modal, #weekly-report-modal * { visibility: visible !important; }
+                #weekly-report-modal {
+                    position: absolute !important;
+                    left: 0 !important;
+                    top: 0 !important;
+                    width: 100% !important;
+                    background: white !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    box-shadow: none !important;
+                    border-radius: 0 !important;
+                    max-height: none !important;
+                    overflow: visible !important;
+                    direction: ltr !important;
                 }
-            `;
-            modal.appendChild(style);
-        }
+                #weekly-report-modal .sticky, 
+                #weekly-report-modal .border-b,
+                #weekly-report-modal button { display: none !important; }
+                #weekly-report-modal .p-6 { padding: 0 !important; }
+                .page-break-after { page-break-after: always; break-after: page; }
+                .report-area-card { box-shadow: none !important; border: 1px solid #cbd5e1 !important; margin-bottom: 24px !important; border-radius: 12px !important; padding: 20px !important; }
+                .state-column { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                .no-print { display: none !important; }
+                .badge-print { background-color: #e2e8f0 !important; color: #1e293b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+            .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+            .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 12px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 12px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        `;
+        modal.appendChild(style);
+    }
 
-        const content = document.getElementById('weekly-report-content');
-        let html = '';
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const content = document.getElementById('weekly-report-content');
+    let html = '';
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-        const truncateTitle = (title) => {
-            if (!title) return '';
-            const words = title.split(' ');
-            if (words.length <= 7) return title;
-            return words.slice(0, 7).join(' ') + ' ...';
-        };
+    const truncateTitle = (title) => {
+        if (!title) return '';
+        const words = title.split(' ');
+        if (words.length <= 7) return title;
+        return words.slice(0, 7).join(' ') + ' ...';
+    };
 
-        const stateColorConfigs = {
-            'Active': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', badge: 'bg-blue-100 text-blue-700' },
-            'Active - With Bugs': { bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700', badge: 'bg-rose-100 text-rose-700' },
-            'Resolved': { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', badge: 'bg-emerald-100 text-emerald-700' },
-            'On-Hold': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', badge: 'bg-amber-100 text-amber-700' }
-        };
+    const stateColorConfigs = {
+        'Active': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', badge: 'bg-blue-100 text-blue-700' },
+        'Active - With Bugs': { bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700', badge: 'bg-rose-100 text-rose-700' },
+        'Resolved': { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', badge: 'bg-emerald-100 text-emerald-700' },
+        'On-Hold': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', badge: 'bg-amber-100 text-amber-700' }
+    };
 
-        // Top Document Header Banner
-        html += `
-            <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="space-y-1 text-center md:text-left">
-                    <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-black tracking-wide uppercase border border-indigo-100">Executive Summary</span>
-                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">Weekly Progress & Status Report</h1>
-                    <p class="text-xs text-slate-500 flex items-center gap-1.5 justify-center md:justify-start">
-                        <span>🗓️</span> <span>Generated on:</span> <b class="text-slate-700">${dateStr}</b>
-                    </p>
+    // حساب الإحصائيات الإجمالية للتقرير
+    let totalActive = 0, totalResolved = 0, totalOnHold = 0, totalBacklog = 0, totalTested = 0, totalComments = 0;
+    for (const area in reportData) {
+        const data = reportData[area];
+        totalActive += (data.states['Active'] || []).length + (data.states['Active - With Bugs'] || []).length;
+        totalResolved += (data.states['Resolved'] || []).length;
+        totalOnHold += (data.states['On-Hold'] || []).length;
+        totalBacklog += (data.backlog || []).length;
+        totalTested += (data.tested || []).length;
+        totalComments += (data.comments || []).length;
+    }
+
+    // Header – Executive Summary
+    html += `
+        <div class="bg-gradient-to-br from-indigo-50/80 via-white to-slate-50/80 rounded-2xl p-6 border border-slate-200/80 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black tracking-wide uppercase border border-indigo-200">Executive Summary</span>
+                    <span class="text-xs text-slate-400 font-medium">${Object.keys(reportData).length} areas</span>
                 </div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Weekly Progress & Status Report</h1>
+                <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                    <span>🗓️</span> <span>Generated on:</span> <b class="text-slate-700">${dateStr}</b>
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <div class="bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-slate-200/70 text-center min-w-[80px] shadow-xs">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Active</div>
+                    <div class="text-2xl font-black text-blue-600">${totalActive}</div>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-slate-200/70 text-center min-w-[80px] shadow-xs">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Resolved</div>
+                    <div class="text-2xl font-black text-emerald-600">${totalResolved}</div>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-slate-200/70 text-center min-w-[80px] shadow-xs">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">On‑Hold</div>
+                    <div class="text-2xl font-black text-amber-600">${totalOnHold}</div>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-slate-200/70 text-center min-w-[80px] shadow-xs">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Backlog</div>
+                    <div class="text-2xl font-black text-purple-600">${totalBacklog}</div>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-slate-200/70 text-center min-w-[80px] shadow-xs">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Tested</div>
+                    <div class="text-2xl font-black text-teal-600">${totalTested}</div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Loop over each area
+    for (const area in reportData) {
+        const data = reportData[area];
+        const { states, backlog, tested, comments } = data;
+
+        const totalActiveArea = (states['Active'] || []).length + (states['Active - With Bugs'] || []).length;
+        const totalResolvedArea = (states['Resolved'] || []).length;
+        const totalOnHoldArea = (states['On-Hold'] || []).length;
+
+        html += `<div class="report-area-card bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-6 page-break-after">`;
+
+        // Area header with metrics
+        html += `
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 border-b border-slate-100 pb-4">
                 <div class="flex items-center gap-3">
-                    <div class="bg-slate-50 border border-slate-100 px-4 py-2.5 rounded-xl text-center min-w-[100px]">
-                        <div class="text-[10px] font-bold text-slate-400 uppercase">Areas Included</div>
-                        <div class="text-xl font-black text-indigo-600">${Object.keys(reportData).length}</div>
-                    </div>
+                    <span class="w-4 h-4 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 ring-4 ring-indigo-100"></span>
+                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">${area}</h2>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                    <span class="bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1 rounded-full font-bold">Active: ${totalActiveArea}</span>
+                    <span class="bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold">Resolved: ${totalResolvedArea}</span>
+                    <span class="bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1 rounded-full font-bold">On‑Hold: ${totalOnHoldArea}</span>
+                    <span class="bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1 rounded-full font-bold">Backlog: ${backlog.length}</span>
+                    <span class="bg-teal-100 text-teal-700 border border-teal-200 px-3 py-1 rounded-full font-bold">Tested: ${tested.length}</span>
                 </div>
             </div>
         `;
 
-        for (const area in reportData) {
-            const data = reportData[area];
-            const { states, backlog, tested, comments } = data;
-            
-            const totalActive = (states['Active'] || []).length + (states['Active - With Bugs'] || []).length;
-            const totalResolved = (states['Resolved'] || []).length;
-            const totalOnHold = (states['On-Hold'] || []).length;
-
-            html += `<div class="report-area-card bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 space-y-6 page-break-after">`;
-            
-            // Area Title & Key Metrics Pill Bar
+        // Area comments (if any)
+        if (comments && comments.length > 0) {
             html += `
-                <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 border-b border-slate-100 pb-4">
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-3.5 h-3.5 rounded-full bg-indigo-600 ring-4 ring-indigo-50"></span>
-                        <h2 class="text-xl font-black text-slate-800 tracking-tight">${area}</h2>
+                <div class="bg-gradient-to-r from-amber-50/80 to-orange-50/80 rounded-xl p-4 border border-amber-200/70 shadow-inner">
+                    <div class="flex items-center gap-2 mb-2 text-amber-800 font-bold text-xs">
+                        <span>💬</span> <span>Area Notes</span>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2 text-xs">
-                        <span class="bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1 rounded-lg font-bold">Active: ${totalActive}</span>
-                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-100 px-3 py-1 rounded-lg font-bold">Resolved: ${totalResolved}</span>
-                        <span class="bg-amber-50 text-amber-700 border border-amber-100 px-3 py-1 rounded-lg font-bold">On-Hold: ${totalOnHold}</span>
-                        <span class="bg-purple-50 text-purple-700 border border-purple-100 px-3 py-1 rounded-lg font-bold">Backlog: ${backlog.length}</span>
-                        <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-lg font-bold">Recently Tested: ${tested.length}</span>
-                    </div>
-                </div>
+                    <div class="space-y-2">
             `;
-
-            // Area General Comments (Alert Style - Arabic/RTL preserved)
-            if (comments && comments.length > 0) {
+            comments.forEach(c => {
                 html += `
-                    <div class="bg-gradient-to-r from-amber-50 to-orange-50/50 rounded-xl p-4 border border-amber-200/70 shadow-xs">
-                        <div class="flex items-center gap-2 mb-2 text-amber-800 font-bold text-xs">
-                            <span>💬</span> <span>Area Notes & Comments</span>
-                        </div>
-                        <div class="space-y-2">
+                    <div class="bg-white/90 backdrop-blur-sm p-3 rounded-lg border border-amber-100/80 flex justify-between items-start gap-3 shadow-xs">
+                        <p class="text-xs text-slate-700 font-medium leading-relaxed" style="direction: rtl; text-align: right; width: 100%;">${c.text}</p>
+                        <span class="text-[10px] font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded whitespace-nowrap">${c.timestamp}</span>
+                    </div>
                 `;
-                comments.forEach(c => {
-                    html += `
-                        <div class="bg-white/90 backdrop-blur-xs p-3 rounded-lg border border-amber-100/80 flex justify-between items-start gap-3 shadow-xs">
-                            <p class="text-xs text-slate-700 font-medium leading-relaxed" style="direction: rtl; text-align: right; width: 100%;">${c.text}</p>
-                            <span class="text-[10px] font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded whitespace-nowrap">${c.timestamp}</span>
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
-            } else {
-                html += `<div class="text-slate-400 text-xs italic bg-slate-50/60 p-3 rounded-xl border border-dashed border-slate-200 text-center">No general comments recorded for this area.</div>`;
-            }
-
-            // Status Columns (Kanban Style Grid)
-            html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">`;
-            const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
-            
-            stateOrder.forEach(state => {
-                const stories = states[state] || [];
-                const conf = stateColorConfigs[state] || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', badge: 'bg-slate-100 text-slate-700' };
-
-                html += `
-                    <div class="state-column rounded-xl border ${conf.border} ${conf.bg} p-3 flex flex-col justify-start space-y-3">
-                        <div class="flex justify-between items-center border-b ${conf.border} pb-2">
-                            <h4 class="font-black text-xs ${conf.text} tracking-tight">${state}</h4>
-                            <span class="${conf.badge} text-[10px] font-bold px-2 py-0.5 rounded-md">${stories.length}</span>
-                        </div>
-                        <div class="space-y-2.5">
-                `;
-
-                if (stories.length === 0) {
-                    html += `<div class="text-center py-6 text-slate-400 text-[11px] italic">No items</div>`;
-                } else {
-                    stories.forEach(s => {
-                        const lastComment = s.standupComments && s.standupComments.length > 0 ? s.standupComments[s.standupComments.length - 1] : null;
-                        const azureTags = s.tags || [];
-                        const customTags = s.customTags || [];
-                        const allTags = [...new Set([...azureTags, ...customTags])];
-
-                        html += `
-                            <div class="report-story-card bg-white rounded-xl p-3 border border-slate-200/70 shadow-xs hover:border-slate-300 transition flex flex-col space-y-2">
-                                <div class="flex justify-between items-start gap-1.5">
-                                    <span class="font-mono text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">#${s.id}</span>
-                                    <span class="text-[11px] font-bold text-slate-800 flex-1 leading-snug" title="${s.title}">${truncateTitle(s.title)}</span>
-                                </div>
-                        `;
-
-                        if (allTags.length > 0) {
-                            html += `<div class="flex flex-wrap gap-1">`;
-                            allTags.forEach(tag => {
-                                const isCustom = customTags.includes(tag);
-                                html += `<span class="px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">${tag}${isCustom ? ' ★' : ''}</span>`;
-                            });
-                            html += `</div>`;
-                        }
-
-                        // Last Standup Comment (RTL preserved)
-                        if (lastComment) {
-                            html += `
-                                <div class="bg-indigo-50/50 rounded-lg p-2 border-l-2 border-indigo-500 text-[10px] text-slate-600 space-y-0.5 mt-1">
-                                    <div class="flex justify-between items-center text-[9px] text-indigo-700 font-bold">
-                                        <span>Latest Standup</span>
-                                        <span class="text-slate-400 font-normal">(${lastComment.date})</span>
-                                    </div>
-                                    <p class="italic text-slate-700 leading-snug" style="direction: rtl; text-align: right;">"${lastComment.text}"</p>
-                                </div>
-                            `;
-                        }
-
-                        html += `</div>`;
-                    });
-                }
-
-                html += `</div></div>`;
             });
-            html += `</div>`;
-
-            // Backlog Section
-            if (backlog.length > 0) {
-                const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
-                const top5 = sortedBacklog.slice(0, 5);
-                const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
-
-                html += `
-                    <div class="bg-purple-50/60 rounded-xl p-4 border border-purple-200/70 shadow-xs space-y-3">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-bold text-purple-900 text-xs flex items-center gap-1.5">
-                                <span>📋</span> <span>Backlog (Top Priorities)</span>
-                            </h3>
-                            <span class="bg-purple-200 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Total: ${backlog.length}</span>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-2">
-                `;
-                top5.forEach(s => {
-                    html += `
-                        <div class="bg-white px-3 py-1.5 rounded-lg border border-purple-100 text-xs flex items-center gap-2 shadow-xs">
-                            <span class="font-mono text-[10px] font-bold text-slate-400">#${s.id}</span>
-                            <span class="font-medium text-slate-700 text-xs">${truncateTitle(s.title)}</span>
-                            <span class="bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded text-[9px] font-black">P${s.priority}</span>
-                        </div>
-                    `;
-                });
-                if (top5.length < backlog.length) {
-                    html += `<span class="text-xs text-purple-600 font-bold px-2">+${backlog.length - top5.length} more stories...</span>`;
-                }
-                html += `</div>`;
-                if (withoutPriority.length > 0) {
-                    html += `
-                        <div class="text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-                            <span>⚠️</span> <span>There are ${withoutPriority.length} stories without assigned priority (Priority = 999).</span>
-                        </div>
-                    `;
-                }
-                html += `</div>`;
-            } else {
-                html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">No backlog items registered in this area.</div>`;
-            }
-
-            // Tested Stories (Last 15 Days)
-            if (tested.length > 0) {
-                html += `
-                    <div class="bg-emerald-50/60 rounded-xl p-4 border border-emerald-200/70 shadow-xs space-y-2">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-bold text-emerald-900 text-xs flex items-center gap-1.5">
-                                <span>✅</span> <span>Delivered / Tested (Last 15 Days)</span>
-                            </h3>
-                            <span class="bg-emerald-200 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${tested.length} Stories</span>
-                        </div>
-                        <div class="flex flex-wrap gap-2 pt-1">
-                `;
-                tested.forEach(s => {
-                    html += `
-                        <span class="bg-white text-emerald-800 px-3 py-1 rounded-lg border border-emerald-200/80 text-xs font-mono font-bold shadow-xs flex items-center gap-1">
-                            <span class="text-emerald-500">✓</span> #${s.id}
-                        </span>
-                    `;
-                });
-                html += `</div></div>`;
-            } else {
-                html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">No stories delivered in the last 15 days.</div>`;
-            }
-
-            html += `</div>`; // End of report-area-card
+            html += `</div></div>`;
+        } else {
+            html += `<div class="text-slate-400 text-xs italic bg-slate-50/60 p-3 rounded-xl border border-dashed border-slate-200 text-center">No general comments for this area.</div>`;
         }
 
-        content.innerHTML = html;
-        modal.style.display = 'flex';
-    },
+        // Status columns (Kanban style)
+        html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">`;
+        const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
+
+        stateOrder.forEach(state => {
+            const stories = states[state] || [];
+            const conf = stateColorConfigs[state] || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', badge: 'bg-slate-100 text-slate-700' };
+
+            html += `
+                <div class="state-column rounded-xl border ${conf.border} ${conf.bg} p-3 flex flex-col justify-start space-y-3">
+                    <div class="flex justify-between items-center border-b ${conf.border} pb-2">
+                        <h4 class="font-black text-xs ${conf.text} tracking-tight">${state}</h4>
+                        <span class="${conf.badge} text-[10px] font-bold px-2 py-0.5 rounded-full">${stories.length}</span>
+                    </div>
+                    <div class="space-y-2.5">
+            `;
+
+            if (stories.length === 0) {
+                html += `<div class="text-center py-6 text-slate-400 text-[11px] italic">No items</div>`;
+            } else {
+                stories.forEach(s => {
+                    const lastComment = s.standupComments && s.standupComments.length > 0 ? s.standupComments[s.standupComments.length - 1] : null;
+                    const azureTags = s.tags || [];
+                    const customTags = s.customTags || [];
+                    const allTags = [...new Set([...azureTags, ...customTags])];
+
+                    html += `
+                        <div class="report-story-card bg-white rounded-xl p-3 border border-slate-200/70 shadow-xs hover:border-slate-300 transition flex flex-col space-y-2">
+                            <div class="flex justify-between items-start gap-1.5">
+                                <span class="font-mono text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">#${s.id}</span>
+                                <span class="text-[11px] font-bold text-slate-800 flex-1 leading-snug" title="${s.title}">${truncateTitle(s.title)}</span>
+                            </div>
+                    `;
+
+                    if (allTags.length > 0) {
+                        html += `<div class="flex flex-wrap gap-1">`;
+                        allTags.forEach(tag => {
+                            const isCustom = customTags.includes(tag);
+                            html += `<span class="px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">${tag}${isCustom ? ' ★' : ''}</span>`;
+                        });
+                        html += `</div>`;
+                    }
+
+                    if (lastComment) {
+                        html += `
+                            <div class="bg-indigo-50/60 rounded-lg p-2 border-l-2 border-indigo-500 text-[10px] text-slate-600 space-y-0.5 mt-1">
+                                <div class="flex justify-between items-center text-[9px] text-indigo-700 font-bold">
+                                    <span>Latest Standup</span>
+                                    <span class="text-slate-400 font-normal">(${lastComment.date})</span>
+                                </div>
+                                <p class="italic text-slate-700 leading-snug" style="direction: rtl; text-align: right;">"${lastComment.text}"</p>
+                            </div>
+                        `;
+                    }
+
+                    html += `</div>`;
+                });
+            }
+
+            html += `</div></div>`;
+        });
+        html += `</div>`;
+
+        // Backlog section
+        if (backlog.length > 0) {
+            const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
+            const top5 = sortedBacklog.slice(0, 5);
+            const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
+
+            html += `
+                <div class="bg-purple-50/60 rounded-xl p-4 border border-purple-200/70 shadow-inner space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-purple-900 text-xs flex items-center gap-1.5">
+                            <span>📋</span> <span>Backlog (Top Priorities)</span>
+                        </h3>
+                        <span class="bg-purple-200 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Total: ${backlog.length}</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+            `;
+            top5.forEach(s => {
+                html += `
+                    <div class="bg-white px-3 py-1.5 rounded-lg border border-purple-100 text-xs flex items-center gap-2 shadow-xs">
+                        <span class="font-mono text-[10px] font-bold text-slate-400">#${s.id}</span>
+                        <span class="font-medium text-slate-700 text-xs">${truncateTitle(s.title)}</span>
+                        <span class="bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded text-[9px] font-black">P${s.priority}</span>
+                    </div>
+                `;
+            });
+            if (top5.length < backlog.length) {
+                html += `<span class="text-xs text-purple-600 font-bold px-2">+${backlog.length - top5.length} more stories...</span>`;
+            }
+            html += `</div>`;
+            if (withoutPriority.length > 0) {
+                html += `
+                    <div class="text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                        <span>⚠️</span> <span>${withoutPriority.length} story(ies) without priority (Priority = 999).</span>
+                    </div>
+                `;
+            }
+            html += `</div>`;
+        } else {
+            html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">No backlog items.</div>`;
+        }
+
+        // Tested stories (last 15 days)
+        if (tested.length > 0) {
+            html += `
+                <div class="bg-emerald-50/60 rounded-xl p-4 border border-emerald-200/70 shadow-inner space-y-2">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-emerald-900 text-xs flex items-center gap-1.5">
+                            <span>✅</span> <span>Delivered / Tested (Last 15 Days)</span>
+                        </h3>
+                        <span class="bg-emerald-200 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${tested.length} Stories</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 pt-1">
+            `;
+            tested.forEach(s => {
+                html += `
+                    <span class="bg-white text-emerald-800 px-3 py-1 rounded-lg border border-emerald-200/80 text-xs font-mono font-bold shadow-xs flex items-center gap-1">
+                        <span class="text-emerald-500">✓</span> #${s.id}
+                    </span>
+                `;
+            });
+            html += `</div></div>`;
+        } else {
+            html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">No stories delivered in the last 15 days.</div>`;
+        }
+
+        html += `</div>`; // end area card
+    }
+
+    content.innerHTML = html;
+    modal.style.display = 'flex';
+},
     renderDelivery() {
         const container = document.getElementById('delivery-grid');
         const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || "";
