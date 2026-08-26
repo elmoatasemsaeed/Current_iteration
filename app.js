@@ -1792,7 +1792,7 @@ const ui = {
         modal.innerHTML = `
             <div class="bg-white rounded-3xl shadow-2xl max-w-7xl w-full max-h-[92vh] flex flex-col relative overflow-hidden border border-slate-200/80 font-sans" style="direction: ltr;">
                 <!-- Modal Header -->
-                <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200/80 bg-white/90 backdrop-blur-sm sticky top-0 z-20">
+                <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200/80 bg-white/90 backdrop-blur-sm sticky top-0 z-20 print:hidden">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-2xl shadow-lg shadow-indigo-200/60">📊</div>
                         <div>
@@ -1818,32 +1818,87 @@ const ui = {
         const style = document.createElement('style');
         style.textContent = `
             @media print {
-                @page { margin: 14mm 12mm; size: A4 portrait; }
-                body * { visibility: hidden !important; }
-                #weekly-report-modal, #weekly-report-modal * { visibility: visible !important; }
+                /* إخفاء كل شيء خارج المودال */
+                body * {
+                    visibility: hidden !important;
+                }
+                #weekly-report-modal,
+                #weekly-report-modal * {
+                    visibility: visible !important;
+                }
                 #weekly-report-modal {
                     position: absolute !important;
                     left: 0 !important;
                     top: 0 !important;
                     width: 100% !important;
+                    max-height: none !important;
+                    height: auto !important;
                     background: white !important;
                     margin: 0 !important;
                     padding: 0 !important;
                     box-shadow: none !important;
+                    border: none !important;
                     border-radius: 0 !important;
-                    max-height: none !important;
+                    backdrop-filter: none !important;
                     overflow: visible !important;
                     direction: ltr !important;
                 }
-                #weekly-report-modal .sticky, 
+                #weekly-report-modal .bg-white {
+                    box-shadow: none !important;
+                    border: none !important;
+                    border-radius: 0 !important;
+                    max-height: none !important;
+                    height: auto !important;
+                    overflow: visible !important;
+                }
+                #weekly-report-modal .sticky,
                 #weekly-report-modal .border-b,
-                #weekly-report-modal button { display: none !important; }
-                #weekly-report-modal .p-6 { padding: 0 !important; }
-                .page-break-after { page-break-after: always; break-after: page; }
-                .report-area-card { box-shadow: none !important; border: 1px solid #cbd5e1 !important; margin-bottom: 24px !important; border-radius: 12px !important; padding: 20px !important; }
-                .state-column { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                .no-print { display: none !important; }
-                .badge-print { background-color: #e2e8f0 !important; color: #1e293b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                #weekly-report-modal button,
+                #weekly-report-modal .print\\:hidden {
+                    display: none !important;
+                }
+                #weekly-report-modal .p-6 {
+                    padding: 16px 20px !important;
+                }
+                .page-break-after {
+                    page-break-after: always;
+                    break-after: page;
+                }
+                .report-area-card {
+                    box-shadow: none !important;
+                    border: 1px solid #cbd5e1 !important;
+                    margin-bottom: 20px !important;
+                    border-radius: 12px !important;
+                    padding: 16px !important;
+                    background: white !important;
+                }
+                .state-column {
+                    background-color: #f8fafc !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                .badge-print {
+                    background-color: #e2e8f0 !important;
+                    color: #1e293b !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                /* إصلاح عرض الألوان */
+                .bg-blue-50, .bg-rose-50, .bg-emerald-50, .bg-amber-50,
+                .bg-indigo-50, .bg-purple-50, .bg-teal-50, .bg-slate-50,
+                .bg-white, .bg-gradient-to-r, .bg-gradient-to-br {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                /* عرض الحواشي */
+                .report-story-card {
+                    border: 1px solid #e2e8f0 !important;
+                    page-break-inside: avoid !important;
+                }
+                /* إخفاء شريط التمرير */
+                .custom-scrollbar {
+                    overflow: visible !important;
+                }
             }
             .custom-scrollbar::-webkit-scrollbar { width: 6px; }
             .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 12px; }
@@ -1872,7 +1927,7 @@ const ui = {
         'On-Hold': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', badge: 'bg-amber-100 text-amber-700' }
     };
 
-    // حساب الإحصائيات الإجمالية للتقرير
+    // حساب الإحصائيات الإجمالية
     let totalActive = 0, totalResolved = 0, totalOnHold = 0, totalBacklog = 0, totalTested = 0, totalComments = 0;
     for (const area in reportData) {
         const data = reportData[area];
@@ -1884,7 +1939,7 @@ const ui = {
         totalComments += (data.comments || []).length;
     }
 
-    // Header – Executive Summary
+    // رأس التقرير – الملخص التنفيذي
     html += `
         <div class="bg-gradient-to-br from-indigo-50/80 via-white to-slate-50/80 rounded-2xl p-6 border border-slate-200/80 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="space-y-1">
@@ -1922,7 +1977,7 @@ const ui = {
         </div>
     `;
 
-    // Loop over each area
+    // عرض كل منطقة
     for (const area in reportData) {
         const data = reportData[area];
         const { states, backlog, tested, comments } = data;
@@ -1933,7 +1988,7 @@ const ui = {
 
         html += `<div class="report-area-card bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-6 page-break-after">`;
 
-        // Area header with metrics
+        // رأس المنطقة
         html += `
             <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 border-b border-slate-100 pb-4">
                 <div class="flex items-center gap-3">
@@ -1950,7 +2005,7 @@ const ui = {
             </div>
         `;
 
-        // Area comments (if any)
+        // التعليقات العامة
         if (comments && comments.length > 0) {
             html += `
                 <div class="bg-gradient-to-r from-amber-50/80 to-orange-50/80 rounded-xl p-4 border border-amber-200/70 shadow-inner">
@@ -1972,7 +2027,7 @@ const ui = {
             html += `<div class="text-slate-400 text-xs italic bg-slate-50/60 p-3 rounded-xl border border-dashed border-slate-200 text-center">No general comments for this area.</div>`;
         }
 
-        // Status columns (Kanban style)
+        // أعمدة الحالات
         html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">`;
         const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
 
@@ -2035,7 +2090,7 @@ const ui = {
         });
         html += `</div>`;
 
-        // Backlog section
+        // الباك لوج
         if (backlog.length > 0) {
             const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
             const top5 = sortedBacklog.slice(0, 5);
@@ -2076,7 +2131,7 @@ const ui = {
             html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">No backlog items.</div>`;
         }
 
-        // Tested stories (last 15 days)
+        // القصص المختبرة
         if (tested.length > 0) {
             html += `
                 <div class="bg-emerald-50/60 rounded-xl p-4 border border-emerald-200/70 shadow-inner space-y-2">
@@ -2100,7 +2155,7 @@ const ui = {
             html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">No stories delivered in the last 15 days.</div>`;
         }
 
-        html += `</div>`; // end area card
+        html += `</div>`; // نهاية بطاقة المنطقة
     }
 
     content.innerHTML = html;
