@@ -1790,20 +1790,20 @@ const ui = {
             modal.id = 'weekly-report-modal';
             modal.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-3 sm:p-6';
             modal.innerHTML = `
-                <div class="bg-slate-50 rounded-2xl shadow-2xl max-w-7xl w-full max-h-[92vh] flex flex-col relative overflow-hidden border border-slate-200 font-sans" style="direction: rtl;">
+                <div class="bg-slate-50 rounded-2xl shadow-2xl max-w-7xl w-full max-h-[92vh] flex flex-col relative overflow-hidden border border-slate-200 font-sans" style="direction: ltr;">
                     <!-- Modal Header -->
                     <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 bg-white sticky top-0 z-20 shadow-xs">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xl shadow-inner">📋</div>
                             <div>
-                                <h3 class="text-lg font-black text-slate-800 leading-tight">التقرير الأسبوعي الشامل للأداء</h3>
-                                <p class="text-xs text-slate-400 font-medium">متابعة ومزامنة وتدقيق تسليم المشروعات ونطاقات العمل</p>
+                                <h3 class="text-lg font-black text-slate-800 leading-tight">Weekly Status Report</h3>
+                                <p class="text-xs text-slate-400 font-medium">Tracking, synchronization, and delivery overview across Business Areas</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
                             <button onclick="window.print()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm hover:shadow active:scale-95 cursor-pointer">
                                 <span>🖨️</span>
-                                <span>طباعة التقرير</span>
+                                <span>Print Report</span>
                             </button>
                             <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400 hover:text-rose-500 text-xl font-bold transition leading-none cursor-pointer">&times;</button>
                         </div>
@@ -1832,7 +1832,7 @@ const ui = {
                         border-radius: 0 !important;
                         max-height: none !important;
                         overflow: visible !important;
-                        direction: rtl !important;
+                        direction: ltr !important;
                     }
                     #weekly-report-modal .sticky, 
                     #weekly-report-modal .border-b,
@@ -1849,7 +1849,7 @@ const ui = {
         const content = document.getElementById('weekly-report-content');
         let html = '';
         const now = new Date();
-        const dateStr = now.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
         const truncateTitle = (title) => {
             if (!title) return '';
@@ -1868,16 +1868,16 @@ const ui = {
         // Top Document Header Banner
         html += `
             <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="space-y-1 text-center md:text-right">
-                    <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-black tracking-wide uppercase border border-indigo-100">Status Brief</span>
-                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">تقرير متابعة الحالة الأسبوعي</h1>
+                <div class="space-y-1 text-center md:text-left">
+                    <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-black tracking-wide uppercase border border-indigo-100">Executive Summary</span>
+                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">Weekly Progress & Status Report</h1>
                     <p class="text-xs text-slate-500 flex items-center gap-1.5 justify-center md:justify-start">
-                        <span>🗓️</span> <span>صدر بتاريخ:</span> <b class="text-slate-700">${dateStr}</b>
+                        <span>🗓️</span> <span>Generated on:</span> <b class="text-slate-700">${dateStr}</b>
                     </p>
                 </div>
                 <div class="flex items-center gap-3">
                     <div class="bg-slate-50 border border-slate-100 px-4 py-2.5 rounded-xl text-center min-w-[100px]">
-                        <div class="text-[10px] font-bold text-slate-400 uppercase">المناطق المشمولة</div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase">Areas Included</div>
                         <div class="text-xl font-black text-indigo-600">${Object.keys(reportData).length}</div>
                     </div>
                 </div>
@@ -1902,35 +1902,35 @@ const ui = {
                         <h2 class="text-xl font-black text-slate-800 tracking-tight">${area}</h2>
                     </div>
                     <div class="flex flex-wrap items-center gap-2 text-xs">
-                        <span class="bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1 rounded-lg font-bold">نشط: ${totalActive}</span>
-                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-100 px-3 py-1 rounded-lg font-bold">جاهز للفحص: ${totalResolved}</span>
-                        <span class="bg-amber-50 text-amber-700 border border-amber-100 px-3 py-1 rounded-lg font-bold">معلق: ${totalOnHold}</span>
-                        <span class="bg-purple-50 text-purple-700 border border-purple-100 px-3 py-1 rounded-lg font-bold">باك لوج: ${backlog.length}</span>
-                        <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-lg font-bold">مكتمل حديثاً: ${tested.length}</span>
+                        <span class="bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1 rounded-lg font-bold">Active: ${totalActive}</span>
+                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-100 px-3 py-1 rounded-lg font-bold">Resolved: ${totalResolved}</span>
+                        <span class="bg-amber-50 text-amber-700 border border-amber-100 px-3 py-1 rounded-lg font-bold">On-Hold: ${totalOnHold}</span>
+                        <span class="bg-purple-50 text-purple-700 border border-purple-100 px-3 py-1 rounded-lg font-bold">Backlog: ${backlog.length}</span>
+                        <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-lg font-bold">Recently Tested: ${tested.length}</span>
                     </div>
                 </div>
             `;
 
-            // Area General Comments (Alert Style)
+            // Area General Comments (Alert Style - Arabic/RTL preserved)
             if (comments && comments.length > 0) {
                 html += `
                     <div class="bg-gradient-to-r from-amber-50 to-orange-50/50 rounded-xl p-4 border border-amber-200/70 shadow-xs">
                         <div class="flex items-center gap-2 mb-2 text-amber-800 font-bold text-xs">
-                            <span>💬</span> <span>ملاحظات عامة على نطاق العمل</span>
+                            <span>💬</span> <span>Area Notes & Comments</span>
                         </div>
                         <div class="space-y-2">
                 `;
                 comments.forEach(c => {
                     html += `
                         <div class="bg-white/90 backdrop-blur-xs p-3 rounded-lg border border-amber-100/80 flex justify-between items-start gap-3 shadow-xs">
-                            <p class="text-xs text-slate-700 font-medium leading-relaxed">${c.text}</p>
+                            <p class="text-xs text-slate-700 font-medium leading-relaxed" style="direction: rtl; text-align: right; width: 100%;">${c.text}</p>
                             <span class="text-[10px] font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded whitespace-nowrap">${c.timestamp}</span>
                         </div>
                     `;
                 });
                 html += `</div></div>`;
             } else {
-                html += `<div class="text-slate-400 text-xs italic bg-slate-50/60 p-3 rounded-xl border border-dashed border-slate-200 text-center">لا توجد ملاحظات عامة مسجلة على هذه المنطقة.</div>`;
+                html += `<div class="text-slate-400 text-xs italic bg-slate-50/60 p-3 rounded-xl border border-dashed border-slate-200 text-center">No general comments recorded for this area.</div>`;
             }
 
             // Status Columns (Kanban Style Grid)
@@ -1951,7 +1951,7 @@ const ui = {
                 `;
 
                 if (stories.length === 0) {
-                    html += `<div class="text-center py-6 text-slate-400 text-[11px] italic">لا توجد عناصر</div>`;
+                    html += `<div class="text-center py-6 text-slate-400 text-[11px] italic">No items</div>`;
                 } else {
                     stories.forEach(s => {
                         const lastComment = s.standupComments && s.standupComments.length > 0 ? s.standupComments[s.standupComments.length - 1] : null;
@@ -1976,14 +1976,15 @@ const ui = {
                             html += `</div>`;
                         }
 
+                        // Last Standup Comment (RTL preserved)
                         if (lastComment) {
                             html += `
-                                <div class="bg-indigo-50/50 rounded-lg p-2 border-r-2 border-indigo-500 text-[10px] text-slate-600 space-y-0.5 mt-1">
+                                <div class="bg-indigo-50/50 rounded-lg p-2 border-l-2 border-indigo-500 text-[10px] text-slate-600 space-y-0.5 mt-1">
                                     <div class="flex justify-between items-center text-[9px] text-indigo-700 font-bold">
-                                        <span>آخر ستاندب</span>
+                                        <span>Latest Standup</span>
                                         <span class="text-slate-400 font-normal">(${lastComment.date})</span>
                                     </div>
-                                    <p class="italic text-slate-700 leading-snug">"${lastComment.text}"</p>
+                                    <p class="italic text-slate-700 leading-snug" style="direction: rtl; text-align: right;">"${lastComment.text}"</p>
                                 </div>
                             `;
                         }
@@ -2006,9 +2007,9 @@ const ui = {
                     <div class="bg-purple-50/60 rounded-xl p-4 border border-purple-200/70 shadow-xs space-y-3">
                         <div class="flex justify-between items-center">
                             <h3 class="font-bold text-purple-900 text-xs flex items-center gap-1.5">
-                                <span>📋</span> <span>الباك لوج (الأولوية الأعلى)</span>
+                                <span>📋</span> <span>Backlog (Top Priorities)</span>
                             </h3>
-                            <span class="bg-purple-200 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">إجمالي ${backlog.length}</span>
+                            <span class="bg-purple-200 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Total: ${backlog.length}</span>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                 `;
@@ -2022,19 +2023,19 @@ const ui = {
                     `;
                 });
                 if (top5.length < backlog.length) {
-                    html += `<span class="text-xs text-purple-600 font-bold px-2">و ${backlog.length - top5.length} قصص أخرى...</span>`;
+                    html += `<span class="text-xs text-purple-600 font-bold px-2">+${backlog.length - top5.length} more stories...</span>`;
                 }
                 html += `</div>`;
                 if (withoutPriority.length > 0) {
                     html += `
                         <div class="text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-                            <span>⚠️</span> <span>يوجد ${withoutPriority.length} قصة بالباك لوج غير محدد لها أولوية (Priority = 999).</span>
+                            <span>⚠️</span> <span>There are ${withoutPriority.length} stories without assigned priority (Priority = 999).</span>
                         </div>
                     `;
                 }
                 html += `</div>`;
             } else {
-                html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">لا يوجد باك لوج مسجل في هذه المنطقة.</div>`;
+                html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">No backlog items registered in this area.</div>`;
             }
 
             // Tested Stories (Last 15 Days)
@@ -2043,9 +2044,9 @@ const ui = {
                     <div class="bg-emerald-50/60 rounded-xl p-4 border border-emerald-200/70 shadow-xs space-y-2">
                         <div class="flex justify-between items-center">
                             <h3 class="font-bold text-emerald-900 text-xs flex items-center gap-1.5">
-                                <span>✅</span> <span>تم تسليمها واعتمادها (خلال آخر 15 يوم)</span>
+                                <span>✅</span> <span>Delivered / Tested (Last 15 Days)</span>
                             </h3>
-                            <span class="bg-emerald-200 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${tested.length} قصة</span>
+                            <span class="bg-emerald-200 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${tested.length} Stories</span>
                         </div>
                         <div class="flex flex-wrap gap-2 pt-1">
                 `;
@@ -2058,7 +2059,7 @@ const ui = {
                 });
                 html += `</div></div>`;
             } else {
-                html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">لا توجد قصص مسلمة حديثاً (خلال آخر 15 يوم).</div>`;
+                html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">No stories delivered in the last 15 days.</div>`;
             }
 
             html += `</div>`; // End of report-area-card
