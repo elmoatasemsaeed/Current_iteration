@@ -1797,7 +1797,7 @@ const ui = {
                             <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xl shadow-inner">📋</div>
                             <div>
                                 <h3 class="text-lg font-black text-slate-800 leading-tight">Weekly Status Report</h3>
-                                <p class="text-xs text-slate-400 font-medium">Executive Summary & Comprehensive Delivery Overview</p>
+                                <p class="text-xs text-slate-400 font-medium">Tracking, synchronization, and delivery overview across Business Areas</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
@@ -1865,172 +1865,25 @@ const ui = {
             'On-Hold': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', badge: 'bg-amber-100 text-amber-700' }
         };
 
-        // --- Calculate Global Aggregated KPIs ---
-        const areaNames = Object.keys(reportData);
-        let gActive = 0;
-        let gActiveWithBugs = 0;
-        let gResolved = 0;
-        let gOnHold = 0;
-        let gBacklog = 0;
-        let gTested = 0;
-
-        const summaryRows = areaNames.map(area => {
-            const data = reportData[area];
-            const activeCount = (data.states['Active'] || []).length;
-            const activeBugsCount = (data.states['Active - With Bugs'] || []).length;
-            const totalActive = activeCount + activeBugsCount;
-            const resolvedCount = (data.states['Resolved'] || []).length;
-            const onHoldCount = (data.states['On-Hold'] || []).length;
-            const backlogCount = (data.backlog || []).length;
-            const testedCount = (data.tested || []).length;
-            const totalWork = totalActive + resolvedCount + onHoldCount;
-
-            gActive += activeCount;
-            gActiveWithBugs += activeBugsCount;
-            gResolved += resolvedCount;
-            gOnHold += onHoldCount;
-            gBacklog += backlogCount;
-            gTested += testedCount;
-
-            const progressRate = totalWork > 0 ? Math.round((resolvedCount / totalWork) * 100) : 0;
-
-            return {
-                area,
-                activeCount,
-                activeBugsCount,
-                totalActive,
-                resolvedCount,
-                onHoldCount,
-                backlogCount,
-                testedCount,
-                totalWork,
-                progressRate
-            };
-        });
-
-        const gTotalActive = gActive + gActiveWithBugs;
-        const gTotalWork = gTotalActive + gResolved + gOnHold;
-        const gOverallProgress = gTotalWork > 0 ? Math.round((gResolved / gTotalWork) * 100) : 0;
-
-        // ==========================================
-        // 1. COVER PAGE / EXECUTIVE SUMMARY
-        // ==========================================
+        // Top Document Header Banner
         html += `
-            <div class="report-area-card bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-8 page-break-after">
-                <!-- Cover Header -->
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-6">
-                    <div>
-                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 border border-indigo-100 rounded-full text-indigo-700 text-xs font-bold uppercase tracking-wider mb-2">
-                            <span>Executive Summary Cover</span>
-                        </div>
-                        <h1 class="text-3xl font-black text-slate-800 tracking-tight">Weekly Executive Performance Overview</h1>
-                        <p class="text-xs text-slate-400 mt-1 flex items-center gap-2">
-                            <span>🗓️</span> <span>Generated on:</span> <b class="text-slate-600">${dateStr}</b>
-                        </p>
-                    </div>
-                    <div class="bg-indigo-600 text-white px-5 py-3 rounded-2xl shadow-lg shadow-indigo-100 text-right min-w-[150px]">
-                        <div class="text-[10px] uppercase font-bold text-indigo-200">Overall Progress</div>
-                        <div class="text-2xl font-black">${gOverallProgress}%</div>
-                        <div class="text-[9px] text-indigo-100 mt-0.5">Resolved vs In-Flight</div>
-                    </div>
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="space-y-1 text-center md:text-left">
+                    <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-black tracking-wide uppercase border border-indigo-100">Executive Summary</span>
+                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">Weekly Progress & Status Report</h1>
+                    <p class="text-xs text-slate-500 flex items-center gap-1.5 justify-center md:justify-start">
+                        <span>🗓️</span> <span>Generated on:</span> <b class="text-slate-700">${dateStr}</b>
+                    </p>
                 </div>
-
-                <!-- Aggregated KPI Cards -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4 text-center">
-                        <div class="text-[10px] font-bold uppercase text-slate-400">Total Areas</div>
-                        <div class="text-2xl font-black text-slate-800 mt-1">${areaNames.length}</div>
-                    </div>
-                    <div class="bg-blue-50 border border-blue-200/80 rounded-xl p-4 text-center">
-                        <div class="text-[10px] font-bold uppercase text-blue-600">Active (Dev)</div>
-                        <div class="text-2xl font-black text-blue-800 mt-1">${gTotalActive}</div>
-                        ${gActiveWithBugs > 0 ? `<div class="text-[9px] font-bold text-rose-600 mt-0.5">${gActiveWithBugs} with bugs</div>` : ''}
-                    </div>
-                    <div class="bg-emerald-50 border border-emerald-200/80 rounded-xl p-4 text-center">
-                        <div class="text-[10px] font-bold uppercase text-emerald-600">Resolved (QA)</div>
-                        <div class="text-2xl font-black text-emerald-800 mt-1">${gResolved}</div>
-                    </div>
-                    <div class="bg-amber-50 border border-amber-200/80 rounded-xl p-4 text-center">
-                        <div class="text-[10px] font-bold uppercase text-amber-600">On-Hold</div>
-                        <div class="text-2xl font-black text-amber-800 mt-1">${gOnHold}</div>
-                    </div>
-                    <div class="bg-purple-50 border border-purple-200/80 rounded-xl p-4 text-center">
-                        <div class="text-[10px] font-bold uppercase text-purple-600">Total Backlog</div>
-                        <div class="text-2xl font-black text-purple-800 mt-1">${gBacklog}</div>
-                    </div>
-                    <div class="bg-teal-50 border border-teal-200/80 rounded-xl p-4 text-center">
-                        <div class="text-[10px] font-bold uppercase text-teal-600">Tested (15d)</div>
-                        <div class="text-2xl font-black text-teal-800 mt-1">${gTested}</div>
-                    </div>
-                </div>
-
-                <!-- Comprehensive Area Breakdown Table -->
-                <div class="space-y-3">
-                    <h3 class="text-sm font-black text-slate-700 flex items-center gap-2">
-                        <span>📊</span> <span>Business Areas Performance Matrix</span>
-                    </h3>
-                    <div class="overflow-x-auto rounded-xl border border-slate-200">
-                        <table class="w-full text-xs text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-100/80 text-slate-600 border-b border-slate-200 font-bold uppercase text-[10px]">
-                                    <th class="p-3">Business Area</th>
-                                    <th class="p-3 text-center text-blue-700">Active</th>
-                                    <th class="p-3 text-center text-emerald-700">Resolved</th>
-                                    <th class="p-3 text-center text-amber-700">On-Hold</th>
-                                    <th class="p-3 text-center text-purple-700">Backlog</th>
-                                    <th class="p-3 text-center text-teal-700">Tested (15d)</th>
-                                    <th class="p-3 text-center text-slate-800">In-Flight</th>
-                                    <th class="p-3 text-center text-indigo-700">Ready %</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
-                                ${summaryRows.map(row => `
-                                    <tr class="hover:bg-slate-50/80 transition font-medium">
-                                        <td class="p-3 text-slate-800 font-bold flex items-center gap-2">
-                                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
-                                            ${row.area}
-                                        </td>
-                                        <td class="p-3 text-center font-mono font-bold text-blue-700">
-                                            ${row.totalActive}
-                                            ${row.activeBugsCount > 0 ? `<span class="text-[9px] text-rose-500 font-normal"> (🐞${row.activeBugsCount})</span>` : ''}
-                                        </td>
-                                        <td class="p-3 text-center font-mono font-bold text-emerald-700">${row.resolvedCount}</td>
-                                        <td class="p-3 text-center font-mono font-bold text-amber-700">${row.onHoldCount}</td>
-                                        <td class="p-3 text-center font-mono font-bold text-purple-700">${row.backlogCount}</td>
-                                        <td class="p-3 text-center font-mono font-bold text-teal-700">${row.testedCount}</td>
-                                        <td class="p-3 text-center font-mono font-bold text-slate-800">${row.totalWork}</td>
-                                        <td class="p-3 text-center">
-                                            <div class="flex items-center justify-center gap-2">
-                                                <div class="w-16 bg-slate-200 h-1.5 rounded-full overflow-hidden hidden sm:block">
-                                                    <div class="bg-indigo-600 h-full rounded-full" style="width: ${row.progressRate}%"></div>
-                                                </div>
-                                                <span class="font-mono font-bold text-indigo-700 text-[11px]">${row.progressRate}%</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                            <tfoot>
-                                <tr class="bg-slate-100 font-black text-slate-800 border-t-2 border-slate-300">
-                                    <td class="p-3 uppercase">Total / Average</td>
-                                    <td class="p-3 text-center text-blue-800 font-mono">${gTotalActive}</td>
-                                    <td class="p-3 text-center text-emerald-800 font-mono">${gResolved}</td>
-                                    <td class="p-3 text-center text-amber-800 font-mono">${gOnHold}</td>
-                                    <td class="p-3 text-center text-purple-800 font-mono">${gBacklog}</td>
-                                    <td class="p-3 text-center text-teal-800 font-mono">${gTested}</td>
-                                    <td class="p-3 text-center text-slate-900 font-mono">${gTotalWork}</td>
-                                    <td class="p-3 text-center font-mono text-indigo-900 font-black">${gOverallProgress}%</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                <div class="flex items-center gap-3">
+                    <div class="bg-slate-50 border border-slate-100 px-4 py-2.5 rounded-xl text-center min-w-[100px]">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase">Areas Included</div>
+                        <div class="text-xl font-black text-indigo-600">${Object.keys(reportData).length}</div>
                     </div>
                 </div>
             </div>
         `;
 
-        // ==========================================
-        // 2. DETAILED AREA SECTIONS
-        // ==========================================
         for (const area in reportData) {
             const data = reportData[area];
             const { states, backlog, tested, comments } = data;
