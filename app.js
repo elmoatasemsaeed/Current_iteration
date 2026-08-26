@@ -1752,412 +1752,203 @@ const ui = {
         container.innerHTML = html;
     },
     generateWeeklyReport() {
-        const filterSelect = document.getElementById('kanban-ba-filter');
-        if (!filterSelect) return;
-        const selectedOptions = Array.from(filterSelect.selectedOptions);
-        let selectedAreas = selectedOptions.map(opt => opt.value);
-        const allAreas = [...new Set([
-            ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
-            ...db.backlogStories.map(s => s.area || "General")
-        ])];
-        if (selectedAreas.length === 0) selectedAreas = allAreas;
-        const reportData = {};
-        const targetStates = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
-        const fifteenDaysAgo = new Date();
-        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-        selectedAreas.forEach(area => {
-            const areaData = { states: {}, backlog: [], tested: [], comments: [] };
-            targetStates.forEach(state => {
-                areaData.states[state] = currentData.filter(s =>
-                    !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area && s.state === state
-                );
-            });
-            areaData.backlog = db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s));
-            areaData.tested = currentData.filter(s =>
-                !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area &&
-                s.state === 'Tested' && s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
+    const filterSelect = document.getElementById('kanban-ba-filter');
+    if (!filterSelect) return;
+    const selectedOptions = Array.from(filterSelect.selectedOptions);
+    let selectedAreas = selectedOptions.map(opt => opt.value);
+    const allAreas = [...new Set([
+        ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
+        ...db.backlogStories.map(s => s.area || "General")
+    ])];
+    if (selectedAreas.length === 0) selectedAreas = allAreas;
+    const reportData = {};
+    const targetStates = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+    selectedAreas.forEach(area => {
+        const areaData = { states: {}, backlog: [], tested: [], comments: [] };
+        targetStates.forEach(state => {
+            areaData.states[state] = currentData.filter(s =>
+                !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area && s.state === state
             );
-            areaData.comments = db.areaComments.filter(c => c.area === area);
-            reportData[area] = areaData;
         });
-        this.showWeeklyReportModal(reportData);
-    },
+        areaData.backlog = db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s));
+        areaData.tested = currentData.filter(s =>
+            !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area &&
+            s.state === 'Tested' && s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
+        );
+        areaData.comments = db.areaComments.filter(c => c.area === area);
+        reportData[area] = areaData;
+    });
+    this.showWeeklyReportModal(reportData);
+},
 
-    showWeeklyReportModal(reportData) {
+showWeeklyReportModal(reportData) {
     let modal = document.getElementById('weekly-report-modal');
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'weekly-report-modal';
-        modal.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-3 sm:p-6';
+        modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[2000] p-4';
         modal.innerHTML = `
-            <div class="bg-white rounded-3xl shadow-2xl max-w-7xl w-full max-h-[92vh] flex flex-col relative overflow-hidden border border-slate-200/80 font-sans" style="direction: ltr;">
-                <!-- Modal Header -->
-                <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200/80 bg-white/90 backdrop-blur-sm sticky top-0 z-20 print:hidden">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-2xl shadow-lg shadow-indigo-200/60">📊</div>
-                        <div>
-                            <h3 class="text-xl font-extrabold text-slate-800 leading-tight tracking-tight">Weekly Status Report</h3>
-                            <p class="text-xs text-slate-500 font-medium">Cross‑area progress, synchronisation, and delivery overview</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <button onclick="window.print()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-md hover:shadow-lg active:scale-95 cursor-pointer border border-indigo-400/30">
-                            <span>🖨️</span>
-                            <span>Print Report</span>
-                        </button>
-                        <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-rose-600 text-2xl font-light transition leading-none cursor-pointer">&times;</button>
+            <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col relative" style="direction: rtl;">
+                <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-2xl">
+                    <h3 class="text-xl font-bold text-slate-800">📋 التقرير الأسبوعي</h3>
+                    <div class="flex gap-2">
+                        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition">🖨️ طباعة</button>
+                        <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
                     </div>
                 </div>
-                <!-- Modal Content -->
-                <div class="p-6 overflow-y-auto space-y-8 custom-scrollbar" id="weekly-report-content"></div>
+                <div class="p-6 overflow-y-auto" id="weekly-report-content"></div>
             </div>
         `;
         document.body.appendChild(modal);
-
-        // إضافة أنماط الطباعة والتصميم
         const style = document.createElement('style');
         style.textContent = `
             @media print {
-                /* إخفاء كل شيء خارج المودال */
-                body * {
-                    visibility: hidden !important;
-                }
-                #weekly-report-modal,
-                #weekly-report-modal * {
-                    visibility: visible !important;
-                }
+                body * { visibility: hidden; }
+                #weekly-report-modal, #weekly-report-modal * { visibility: visible; }
                 #weekly-report-modal {
-                    position: absolute !important;
-                    left: 0 !important;
-                    top: 0 !important;
-                    width: 100% !important;
-                    max-height: none !important;
-                    height: auto !important;
-                    background: white !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    box-shadow: none !important;
-                    border: none !important;
-                    border-radius: 0 !important;
-                    backdrop-filter: none !important;
-                    overflow: visible !important;
-                    direction: ltr !important;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    background: white;
+                    margin: 0;
+                    padding: 15px;
+                    box-shadow: none;
+                    border-radius: 0;
+                    max-height: none;
+                    overflow: visible;
+                    direction: rtl;
                 }
-                #weekly-report-modal .bg-white {
-                    box-shadow: none !important;
-                    border: none !important;
-                    border-radius: 0 !important;
-                    max-height: none !important;
-                    height: auto !important;
-                    overflow: visible !important;
-                }
-                #weekly-report-modal .sticky,
-                #weekly-report-modal .border-b,
-                #weekly-report-modal button,
-                #weekly-report-modal .print\\:hidden {
-                    display: none !important;
-                }
-                #weekly-report-modal .p-6 {
-                    padding: 16px 20px !important;
-                }
-                .page-break-after {
-                    page-break-after: always;
-                    break-after: page;
-                }
-                .report-area-card {
-                    box-shadow: none !important;
-                    border: 1px solid #cbd5e1 !important;
-                    margin-bottom: 20px !important;
-                    border-radius: 12px !important;
-                    padding: 16px !important;
-                    background: white !important;
-                }
-                .state-column {
-                    background-color: #f8fafc !important;
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                }
-                .badge-print {
-                    background-color: #e2e8f0 !important;
-                    color: #1e293b !important;
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                }
-                /* إصلاح عرض الألوان */
-                .bg-blue-50, .bg-rose-50, .bg-emerald-50, .bg-amber-50,
-                .bg-indigo-50, .bg-purple-50, .bg-teal-50, .bg-slate-50,
-                .bg-white, .bg-gradient-to-r, .bg-gradient-to-br {
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                }
-                /* عرض الحواشي */
-                .report-story-card {
-                    border: 1px solid #e2e8f0 !important;
-                    page-break-inside: avoid !important;
-                }
-                /* إخفاء شريط التمرير */
-                .custom-scrollbar {
-                    overflow: visible !important;
-                }
+                #weekly-report-modal .sticky, #weekly-report-modal .border-b { position: relative; top: auto; }
+                #weekly-report-modal .p-6 { padding: 10px; }
+                #weekly-report-modal button { display: none !important; }
+                .page-break-after { page-break-after: always; }
+                .report-story-card { border: 1px solid #e2e8f0; padding: 4px 8px; margin-bottom: 4px; border-radius: 4px; font-size: 10px !important; }
+                .report-story-card .title { font-size: 10px !important; font-weight: bold; }
+                .report-tag { display: inline-block; padding: 0 4px; margin: 1px; font-size: 8px; border-radius: 2px; background: #f1f5f9; border: 1px solid #cbd5e1; }
+                .report-custom-tag { background: #f3e8ff; border-color: #a78bfa; }
+                .report-comment { background: #f0f4ff; padding: 2px 6px; border-radius: 3px; border-right: 2px solid #6366f1; margin-top: 2px; font-size: 9px; }
+                .state-column { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc; }
+                .state-column h4 { font-size: 11px; font-weight: bold; margin-bottom: 4px; }
             }
-            .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-            .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 12px; }
-            .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 12px; }
-            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         `;
-        modal.appendChild(style);
+        modal.querySelector('.bg-white').appendChild(style);
     }
-
     const content = document.getElementById('weekly-report-content');
     let html = '';
     const now = new Date();
-    const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
+    const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+    html += `<div class="text-center mb-6 border-b pb-4">
+        <h1 class="text-2xl font-bold text-slate-800">تقرير الحالة الأسبوعي</h1>
+        <p class="text-sm text-gray-500">تاريخ التقرير: ${dateStr}</p>
+    </div>`;
     const truncateTitle = (title) => {
         if (!title) return '';
         const words = title.split(' ');
-        if (words.length <= 7) return title;
-        return words.slice(0, 7).join(' ') + ' ...';
+        if (words.length <= 6) return title;
+        return words.slice(0, 6).join(' ') + ' ...';
     };
-
-    const stateColorConfigs = {
-        'Active': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', badge: 'bg-blue-100 text-blue-700' },
-        'Active - With Bugs': { bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700', badge: 'bg-rose-100 text-rose-700' },
-        'Resolved': { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', badge: 'bg-emerald-100 text-emerald-700' },
-        'On-Hold': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', badge: 'bg-amber-100 text-amber-700' }
-    };
-
-    // حساب الإحصائيات الإجمالية
-    let totalActive = 0, totalResolved = 0, totalOnHold = 0, totalBacklog = 0, totalTested = 0, totalComments = 0;
-    for (const area in reportData) {
-        const data = reportData[area];
-        totalActive += (data.states['Active'] || []).length + (data.states['Active - With Bugs'] || []).length;
-        totalResolved += (data.states['Resolved'] || []).length;
-        totalOnHold += (data.states['On-Hold'] || []).length;
-        totalBacklog += (data.backlog || []).length;
-        totalTested += (data.tested || []).length;
-        totalComments += (data.comments || []).length;
-    }
-
-    // رأس التقرير – الملخص التنفيذي
-    html += `
-        <div class="bg-gradient-to-br from-indigo-50/80 via-white to-slate-50/80 rounded-2xl p-6 border border-slate-200/80 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                    <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black tracking-wide uppercase border border-indigo-200">Executive Summary</span>
-                    <span class="text-xs text-slate-400 font-medium">${Object.keys(reportData).length} areas</span>
-                </div>
-                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Weekly Progress & Status Report</h1>
-                <p class="text-xs text-slate-500 flex items-center gap-1.5">
-                    <span>🗓️</span> <span>Generated on:</span> <b class="text-slate-700">${dateStr}</b>
-                </p>
-            </div>
-            <div class="flex flex-wrap gap-3">
-                <div class="bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-slate-200/70 text-center min-w-[80px] shadow-xs">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">Active</div>
-                    <div class="text-2xl font-black text-blue-600">${totalActive}</div>
-                </div>
-                <div class="bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-slate-200/70 text-center min-w-[80px] shadow-xs">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">Resolved</div>
-                    <div class="text-2xl font-black text-emerald-600">${totalResolved}</div>
-                </div>
-                <div class="bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-slate-200/70 text-center min-w-[80px] shadow-xs">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">On‑Hold</div>
-                    <div class="text-2xl font-black text-amber-600">${totalOnHold}</div>
-                </div>
-                <div class="bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-slate-200/70 text-center min-w-[80px] shadow-xs">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">Backlog</div>
-                    <div class="text-2xl font-black text-purple-600">${totalBacklog}</div>
-                </div>
-                <div class="bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-slate-200/70 text-center min-w-[80px] shadow-xs">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">Tested</div>
-                    <div class="text-2xl font-black text-teal-600">${totalTested}</div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // عرض كل منطقة
     for (const area in reportData) {
         const data = reportData[area];
         const { states, backlog, tested, comments } = data;
+        html += `<div class="mb-12 page-break-after">`;
+        html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${area}</h2>`;
 
-        const totalActiveArea = (states['Active'] || []).length + (states['Active - With Bugs'] || []).length;
-        const totalResolvedArea = (states['Resolved'] || []).length;
-        const totalOnHoldArea = (states['On-Hold'] || []).length;
-
-        html += `<div class="report-area-card bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-6 page-break-after">`;
-
-        // رأس المنطقة
-        html += `
-            <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 border-b border-slate-100 pb-4">
-                <div class="flex items-center gap-3">
-                    <span class="w-4 h-4 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 ring-4 ring-indigo-100"></span>
-                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">${area}</h2>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 text-xs">
-                    <span class="bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1 rounded-full font-bold">Active: ${totalActiveArea}</span>
-                    <span class="bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold">Resolved: ${totalResolvedArea}</span>
-                    <span class="bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1 rounded-full font-bold">On‑Hold: ${totalOnHoldArea}</span>
-                    <span class="bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1 rounded-full font-bold">Backlog: ${backlog.length}</span>
-                    <span class="bg-teal-100 text-teal-700 border border-teal-200 px-3 py-1 rounded-full font-bold">Tested: ${tested.length}</span>
-                </div>
-            </div>
-        `;
-
-        // التعليقات العامة
         if (comments && comments.length > 0) {
-            html += `
-                <div class="bg-gradient-to-r from-amber-50/80 to-orange-50/80 rounded-xl p-4 border border-amber-200/70 shadow-inner">
-                    <div class="flex items-center gap-2 mb-2 text-amber-800 font-bold text-xs">
-                        <span>💬</span> <span>Area Notes</span>
-                    </div>
-                    <div class="space-y-2">
-            `;
+            html += `<div class="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">`;
+            html += `<h3 class="font-bold text-amber-700 text-sm flex items-center gap-2 mb-3">💬 تعليقات عامة على المنطقة</h3>`;
+            html += `<div class="space-y-2">`;
             comments.forEach(c => {
                 html += `
-                    <div class="bg-white/90 backdrop-blur-sm p-3 rounded-lg border border-amber-100/80 flex justify-between items-start gap-3 shadow-xs">
-                        <p class="text-xs text-slate-700 font-medium leading-relaxed" style="direction: rtl; text-align: right; width: 100%;">${c.text}</p>
-                        <span class="text-[10px] font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded whitespace-nowrap">${c.timestamp}</span>
+                    <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2">
+                        <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</span>
+                        <span class="text-[10px] text-gray-400 whitespace-nowrap">${c.timestamp}</span>
                     </div>
                 `;
             });
             html += `</div></div>`;
         } else {
-            html += `<div class="text-slate-400 text-xs italic bg-slate-50/60 p-3 rounded-xl border border-dashed border-slate-200 text-center">No general comments for this area.</div>`;
+            html += `<div class="text-gray-400 text-sm italic mb-4">لا توجد تعليقات عامة على هذه المنطقة.</div>`;
         }
 
-        // أعمدة الحالات
-        html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">`;
+        html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">`;
         const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
-
         stateOrder.forEach(state => {
             const stories = states[state] || [];
-            const conf = stateColorConfigs[state] || { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', badge: 'bg-slate-100 text-slate-700' };
-
-            html += `
-                <div class="state-column rounded-xl border ${conf.border} ${conf.bg} p-3 flex flex-col justify-start space-y-3">
-                    <div class="flex justify-between items-center border-b ${conf.border} pb-2">
-                        <h4 class="font-black text-xs ${conf.text} tracking-tight">${state}</h4>
-                        <span class="${conf.badge} text-[10px] font-bold px-2 py-0.5 rounded-full">${stories.length}</span>
-                    </div>
-                    <div class="space-y-2.5">
-            `;
-
+            html += `<div class="state-column bg-gray-50 rounded-lg border border-gray-200 p-3">`;
+            html += `<h4 class="font-bold text-sm text-slate-700 border-b pb-1 mb-2">${state} (${stories.length})</h4>`;
             if (stories.length === 0) {
-                html += `<div class="text-center py-6 text-slate-400 text-[11px] italic">No items</div>`;
+                html += `<div class="text-gray-400 text-[10px] italic">لا توجد</div>`;
             } else {
                 stories.forEach(s => {
                     const lastComment = s.standupComments && s.standupComments.length > 0 ? s.standupComments[s.standupComments.length - 1] : null;
                     const azureTags = s.tags || [];
                     const customTags = s.customTags || [];
                     const allTags = [...new Set([...azureTags, ...customTags])];
-
-                    html += `
-                        <div class="report-story-card bg-white rounded-xl p-3 border border-slate-200/70 shadow-xs hover:border-slate-300 transition flex flex-col space-y-2">
-                            <div class="flex justify-between items-start gap-1.5">
-                                <span class="font-mono text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">#${s.id}</span>
-                                <span class="text-[11px] font-bold text-slate-800 flex-1 leading-snug" title="${s.title}">${truncateTitle(s.title)}</span>
-                            </div>
-                    `;
-
+                    html += `<div class="report-story-card bg-white rounded border border-gray-100 p-2 mb-2 shadow-sm">`;
+                    html += `<div class="flex justify-between items-start gap-2">`;
+                    html += `<span class="font-mono text-[9px] text-gray-400">#${s.id}</span>`;
+                    html += `<span class="title text-xs font-bold text-slate-800 flex-1">${truncateTitle(s.title)}</span>`;
+                    html += `</div>`;
                     if (allTags.length > 0) {
-                        html += `<div class="flex flex-wrap gap-1">`;
+                        html += `<div class="flex flex-wrap gap-1 mt-1">`;
                         allTags.forEach(tag => {
                             const isCustom = customTags.includes(tag);
-                            html += `<span class="px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">${tag}${isCustom ? ' ★' : ''}</span>`;
+                            html += `<span class="report-tag px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-100 text-purple-700 border border-purple-300 report-custom-tag' : 'bg-gray-100 text-gray-600 border border-gray-200'}">${tag}${isCustom ? ' ★' : ''}</span>`;
                         });
                         html += `</div>`;
                     }
-
                     if (lastComment) {
-                        html += `
-                            <div class="bg-indigo-50/60 rounded-lg p-2 border-l-2 border-indigo-500 text-[10px] text-slate-600 space-y-0.5 mt-1">
-                                <div class="flex justify-between items-center text-[9px] text-indigo-700 font-bold">
-                                    <span>Latest Standup</span>
-                                    <span class="text-slate-400 font-normal">(${lastComment.date})</span>
-                                </div>
-                                <p class="italic text-slate-700 leading-snug" style="direction: rtl; text-align: right;">"${lastComment.text}"</p>
-                            </div>
-                        `;
+                        html += `<div class="report-comment text-[9px] text-slate-600 mt-1">`;
+                        html += `<span class="font-bold text-indigo-600">اخر ستاندب:</span> `;
+                        html += `<span>"${lastComment.text}"</span>`;
+                        html += `<span class="text-[8px] text-gray-400 mr-1">(${lastComment.date})</span>`;
+                        html += `</div>`;
                     }
-
                     html += `</div>`;
                 });
             }
-
-            html += `</div></div>`;
+            html += `</div>`;
         });
         html += `</div>`;
 
-        // الباك لوج
         if (backlog.length > 0) {
             const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
             const top5 = sortedBacklog.slice(0, 5);
             const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
-
-            html += `
-                <div class="bg-purple-50/60 rounded-xl p-4 border border-purple-200/70 shadow-inner space-y-3">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-purple-900 text-xs flex items-center gap-1.5">
-                            <span>📋</span> <span>Backlog (Top Priorities)</span>
-                        </h3>
-                        <span class="bg-purple-200 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Total: ${backlog.length}</span>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2">
-            `;
+            html += `<div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">`;
+            html += `<h3 class="font-bold text-purple-700 text-sm">📋 الباك لوج (${backlog.length})</h3>`;
+            html += `<div class="flex flex-wrap gap-3 mt-2">`;
             top5.forEach(s => {
-                html += `
-                    <div class="bg-white px-3 py-1.5 rounded-lg border border-purple-100 text-xs flex items-center gap-2 shadow-xs">
-                        <span class="font-mono text-[10px] font-bold text-slate-400">#${s.id}</span>
-                        <span class="font-medium text-slate-700 text-xs">${truncateTitle(s.title)}</span>
-                        <span class="bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded text-[9px] font-black">P${s.priority}</span>
-                    </div>
-                `;
+                html += `<div class="bg-white px-3 py-1 rounded-full border border-purple-100 text-xs flex items-center gap-2 shadow-sm">`;
+                html += `<span class="font-mono text-gray-400">#${s.id}</span>`;
+                html += `<span class="font-medium text-slate-700">${truncateTitle(s.title)}</span>`;
+                html += `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded text-[9px] font-bold">P${s.priority}</span>`;
+                html += `</div>`;
             });
-            if (top5.length < backlog.length) {
-                html += `<span class="text-xs text-purple-600 font-bold px-2">+${backlog.length - top5.length} more stories...</span>`;
-            }
-            html += `</div>`;
-            if (withoutPriority.length > 0) {
-                html += `
-                    <div class="text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-                        <span>⚠️</span> <span>${withoutPriority.length} story(ies) without priority (Priority = 999).</span>
-                    </div>
-                `;
-            }
-            html += `</div>`;
+            if (top5.length < backlog.length) html += `<span class="text-xs text-gray-400">... وغيرها</span>`;
+            if (withoutPriority.length > 0) html += `<div class="w-full text-xs text-red-600 mt-1">⚠️ يوجد ${withoutPriority.length} قصة بدون أولوية (Priority = 999)</div>`;
+            html += `</div></div>`;
         } else {
-            html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">No backlog items.</div>`;
+            html += `<div class="text-gray-400 text-sm italic mt-2">لا يوجد باك لوج في هذه المنطقة.</div>`;
         }
 
-        // القصص المختبرة
         if (tested.length > 0) {
-            html += `
-                <div class="bg-emerald-50/60 rounded-xl p-4 border border-emerald-200/70 shadow-inner space-y-2">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-emerald-900 text-xs flex items-center gap-1.5">
-                            <span>✅</span> <span>Delivered / Tested (Last 15 Days)</span>
-                        </h3>
-                        <span class="bg-emerald-200 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${tested.length} Stories</span>
-                    </div>
-                    <div class="flex flex-wrap gap-2 pt-1">
-            `;
+            html += `<div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">`;
+            html += `<h3 class="font-bold text-green-700 text-sm">✅ تم تسليمها (آخر 15 يوم) (${tested.length})</h3>`;
+            html += `<div class="flex flex-wrap gap-2 mt-2">`;
             tested.forEach(s => {
-                html += `
-                    <span class="bg-white text-emerald-800 px-3 py-1 rounded-lg border border-emerald-200/80 text-xs font-mono font-bold shadow-xs flex items-center gap-1">
-                        <span class="text-emerald-500">✓</span> #${s.id}
-                    </span>
-                `;
+                html += `<span class="bg-white text-green-800 px-2 py-0.5 rounded-full border border-green-100 text-xs font-mono">#${s.id}</span>`;
             });
             html += `</div></div>`;
         } else {
-            html += `<div class="text-slate-400 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100">No stories delivered in the last 15 days.</div>`;
+            html += `<div class="text-gray-400 text-sm italic mt-2">لا توجد قصص مسلمة في آخر 15 يوم.</div>`;
         }
 
-        html += `</div>`; // نهاية بطاقة المنطقة
+        html += `</div>`;
     }
-
     content.innerHTML = html;
     modal.style.display = 'flex';
 },
