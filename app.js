@@ -41,13 +41,205 @@ function isRegularStory(story) {
     return story && (story.type === 'User Story' || story.type === 'CR');
 }
 
+// =================================================================
+// HELPER FUNCTIONS (Refactored to eliminate duplication)
+// =================================================================
+
+/**
+ * Renders the tag dropdown for a story.
+ */
+function renderTagDropdown(storyId, selectedTags = []) {
+    const customTagsList = db.customTags || [];
+    if (customTagsList.length === 0) return '';
+    return `
+        <div class="relative inline-block group">
+            <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
+                <span class="text-sm font-bold">+</span>
+            </button>
+            <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
+                <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
+                    <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
+                    <div class="max-h-40 overflow-y-auto">
+                        ${customTagsList.map(tag => {
+                            const isPicked = selectedTags.includes(tag);
+                            return `
+                                <button onclick="tagManager.toggleTagInStory('${storyId}', '${tag}')" 
+                                        class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
+                                    ${tag}
+                                    ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Renders the project selection dropdown for a story.
+ */
+function renderProjectSelect(story) {
+    const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => 
+        `<option value="${p.id}" ${story.linkedProjectId === p.id ? 'selected' : ''}>${p.name}</option>`
+    ).join('');
+    if (!projectOptions) return '';
+    return `
+        <div class="mt-2 flex items-center gap-2 border-t border-dashed border-gray-200 pt-2">
+            <span class="text-[10px] font-bold text-gray-400">📁 Project:</span>
+            <select onchange="projectManager.linkStoryToProject('${story.id}', this.value)" class="text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-blue-400 outline-none flex-1">
+                <option value="">None</option>
+                ${projectOptions}
+            </select>
+            ${story.linkedProjectId ? `<button onclick="projectManager.unlinkStoryFromProject('${story.id}')" class="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>` : ''}
+        </div>
+    `;
+}
+
+/**
+ * Renders standup comments for a story.
+ */
+function renderComments(story) {
+    const comments = story.standupComments || [];
+    if (!comments.length) return '';
+    return `
+        <div class="space-y-2 max-h-28 overflow-y-auto pr-1">
+            ${comments.slice().reverse().map(c => `
+                <div class="bg-white p-2 rounded-lg border border-indigo-100/50 shadow-sm">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">${c.date}</span>
+                    </div>
+                    <p class="text-[11px] text-slate-600 leading-tight italic">"${c.text}"</p>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+/**
+ * Unified story card generator.
+ */
+function createStoryCard(story, options = {}) {
+    const {
+        mode = 'regular',        // 'regular', 'backlog', 'support'
+        showProjectSelect = true,
+        showTagDropdown = true,
+        showCommentsButton = true,
+        customClass = '',
+        showStatus = true,
+    } = options;
+
+    const isBacklog = mode === 'backlog';
+    const isSupport = mode === 'support';
+
+    const tags = [...new Set([...(story.tags || []), ...(story.customTags || [])])];
+    const commentsCount = (story.standupComments || []).length;
+    const releaseDate = story.expectedRelease ? (story.expectedRelease instanceof Date ? story.expectedRelease.toLocaleDateString('en-GB') : new Date(story.expectedRelease).toLocaleDateString('en-GB')) : null;
+
+    let statusHtml = '';
+    if (showStatus && !isBacklog) {
+        const state = story.state || '';
+        statusHtml = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${state === 'Tested' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${state}</span>`;
+    }
+
+    let projectSelectHtml = showProjectSelect && !isBacklog ? renderProjectSelect(story) : '';
+    let tagDropdownHtml = showTagDropdown ? renderTagDropdown(story.id, story.customTags || []) : '';
+    let commentsHtml = showCommentsButton && !isBacklog ? 
+        `<button onclick="ui.openCommentsModal('${story.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100">💬 <span class="font-bold">${commentsCount}</span></button>` : '';
+
+    let extraFields = '';
+    if (isBacklog) {
+        extraFields = `
+            <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
+                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Area</div><div class="text-slate-700 truncate">${story.area}</div></div>
+                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div><div class="text-slate-700 font-bold">P${story.priority}</div></div>
+            </div>
+        `;
+    } else if (isSupport) {
+        extraFields = `
+            <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
+                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Assigned To</div><div class="text-slate-700 truncate font-medium">${story.assignedTo}</div></div>
+                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div><div class="text-slate-700 font-bold">P${story.priority}</div></div>
+            </div>
+            <div class="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">Area: ${story.area || "General"} | Updated: ${story.changedDate ? new Date(story.changedDate).toLocaleDateString('en-GB') : 'N/A'}</div>
+        `;
+    } else {
+        // regular mode
+        const devEst = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity'])).reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        const testEst = story.tasks.filter(t => t['Activity'] === 'Testing').reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+        const totalBugs = story.bugs ? story.bugs.length : 0;
+        const completedBugs = story.bugs ? story.bugs.filter(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State'])).length : 0;
+        const testCases = story.testCases || [];
+        const totalTC = testCases.length;
+        const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
+        extraFields = `
+            <div class="grid grid-cols-2 gap-2 border-t pt-2">
+                <div class="text-[11px]">
+                    <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
+                    <div class="text-slate-700 truncate font-medium">${story.assignedTo}</div>
+                    <div class="flex justify-between items-center mt-1">
+                        <span class="text-blue-500 font-bold">${devEst}h</span>
+                        <span class="text-red-500 text-[10px] font-bold">🐞${completedBugs}/${totalBugs}</span>
+                    </div>
+                </div>
+                <div class="text-[11px] border-l pl-2">
+                    <div class="text-gray-400 uppercase font-bold text-[9px]">Tester</div>
+                    <div class="text-slate-700 truncate font-medium">${story.tester}</div>
+                    <div class="flex justify-between items-center mt-1">
+                        <span class="text-green-500 font-bold">${testEst}h</span>
+                        <span class="text-indigo-500 text-[10px] font-bold">📋${completedTC}/${totalTC}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    const borderClass = isBacklog ? 'border-purple-200' : (isSupport ? 'border-gray-200' : 'border-gray-100');
+    return `
+        <div class="relative bg-white p-3 rounded-lg shadow-sm border ${borderClass} hover:shadow-md transition ${customClass}">
+            ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">📅 ${releaseDate}</div>` : ''}
+            ${tags.length > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${tags.map(tag => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(story.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`).join('')}</div>` : ''}
+            ${tagDropdownHtml}
+            <div class="flex justify-between items-center mb-2">
+                <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${story.id} 🔍</div>
+                ${commentsHtml}
+            </div>
+            <div onclick="ui.openStoryModal('${story.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${story.title}</div>
+            ${projectSelectHtml}
+            ${extraFields}
+        </div>
+    `;
+}
+
+/**
+ * Unified save operation with loader, toast, and error handling.
+ */
+function executeWithSave(action, successMsg = 'تم الحفظ بنجاح', errorMsg = 'فشل الحفظ', callback = null) {
+    ui.showLoader();
+    Promise.resolve(action())
+        .then(() => dataProcessor.saveToGitHub())
+        .then(() => {
+            ui.showToast(successMsg, 'success');
+            if (callback) callback();
+            else ui.renderAll();
+        })
+        .catch(err => {
+            console.error(err);
+            ui.showToast(`${errorMsg}: ${err.message}`, 'error');
+        })
+        .finally(() => ui.hideLoader());
+}
+
+// =================================================================
+// ARCHIVER
+// =================================================================
 const archiver = {
     async runArchive() {
         const TenDaysAgo = Date.now() - (31 * 24 * 60 * 60 * 1000);
         const logsToArchive = db.deliveryLogs.filter(log => log.timestamp < TenDaysAgo);
         const logsToKeep = db.deliveryLogs.filter(log => log.timestamp >= TenDaysAgo);
         if (logsToArchive.length === 0) {
-            // Still check for closed projects older than 7 days
             this.archiveClosedProjects();
             return;
         }
@@ -105,6 +297,9 @@ const archiver = {
     }
 };
 
+// =================================================================
+// AUTH
+// =================================================================
 const auth = {
     async handleLogin() {
         const u = document.getElementById('username').value;
@@ -178,6 +373,9 @@ const auth = {
     }
 };
 
+// =================================================================
+// DATA PROCESSOR
+// =================================================================
 const dataProcessor = {
     _savePromise: null,
     async saveToGitHub() {
@@ -459,6 +657,9 @@ const dataProcessor = {
     }
 };
 
+// =================================================================
+// DATE ENGINE
+// =================================================================
 const dateEngine = {
     isWorkDay(date, person) {
         const day = date.getDay();
@@ -520,9 +721,9 @@ const dateEngine = {
     }
 };
 
-/**
- * Area Comment Manager – مع دعم النافذة المنبثقة والحذف
- */
+// =================================================================
+// AREA COMMENT MANAGER
+// =================================================================
 const areaCommentManager = {
     addComment(area, text) {
         if (!area || !text || !text.trim()) return;
@@ -538,15 +739,12 @@ const areaCommentManager = {
             ui.showToast('فشل حفظ التعليق: ' + err.message, 'error');
         });
     },
-    // فتح النافذة المنبثقة مع تعليقات المناطق المحددة
     openCommentsPopup() {
         const modal = document.getElementById('comments-popup');
         if (!modal) return;
-        // جلب المناطق المختارة حالياً من فلتر الكانبان
         const filterSelect = document.getElementById('kanban-ba-filter');
         let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
         if (selectedAreas.length === 0) {
-            // إذا لم تكن هناك مناطق محددة، نأخذ جميع المناطق المتاحة
             const allStories = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
             const areas = [...new Set(allStories.map(s => s.area || "General"))].sort();
             this.renderCommentsPopup(areas);
@@ -612,7 +810,6 @@ const areaCommentManager = {
         if (!text) return;
         this.addComment(area, text);
         textarea.value = '';
-        // بعد الإضافة، نعيد فتح البوباب لتحديث المحتوى
         this.openCommentsPopup();
     },
     deleteComment(area, index) {
@@ -624,8 +821,8 @@ const areaCommentManager = {
             if (globalIndex > -1) {
                 db.areaComments.splice(globalIndex, 1);
                 dataProcessor.saveToGitHub().then(() => {
-                    this.openCommentsPopup(); // إعادة فتح البوباب لتحديث المحتوى
-                    ui.renderKanban(); // تحديث الكانبان أيضاً
+                    this.openCommentsPopup();
+                    ui.renderKanban();
                 }).catch(err => {
                     console.error('Failed to delete comment:', err);
                     ui.showToast('فشل حذف التعليق: ' + err.message, 'error');
@@ -633,16 +830,14 @@ const areaCommentManager = {
             }
         }
     },
-    // دوال قديمة للحفاظ على التوافق (يمكن الاستغناء عنها لاحقاً)
     renderAreaComments(areas) {
-        // لم تعد مستخدمة، لكن نتركها لتجنب الأخطاء
         return '';
     }
 };
 
-/**
- * Project Manager – إدارة المشاريع
- */
+// =================================================================
+// PROJECT MANAGER (Refactored with executeWithSave)
+// =================================================================
 const projectManager = {
     generateId() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
@@ -664,52 +859,36 @@ const projectManager = {
             tasks: [],
             linkedStoryIds: []
         };
-        db.projects.push(newProject);
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.showToast('Project added successfully', 'success');
-            ui.renderAll();
-            ui.renderProjectsTab();
-            ui.renderSettings();
-        }).catch(err => {
-            ui.showToast('فشل الحفظ: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => { db.projects.push(newProject); },
+            'تم إضافة المشروع بنجاح',
+            'فشل إضافة المشروع',
+            () => { ui.renderAll(); ui.renderProjectsTab(); ui.renderSettings(); }
+        );
     },
     deleteProject(projectId) {
         if (!confirm('Are you sure you want to delete this project?')) return;
-        db.projects = db.projects.filter(p => p.id !== projectId);
-        // Also remove links from stories
-        db.currentStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
-        db.backlogStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.showToast('Project deleted', 'success');
-            ui.renderAll();
-            ui.renderProjectsTab();
-            ui.renderSettings();
-        }).catch(err => {
-            ui.showToast('فشل الحذف: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => {
+                db.projects = db.projects.filter(p => p.id !== projectId);
+                db.currentStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
+                db.backlogStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
+            },
+            'تم حذف المشروع',
+            'فشل حذف المشروع',
+            () => { ui.renderAll(); ui.renderProjectsTab(); ui.renderSettings(); }
+        );
     },
-    // ===== دوال جديدة لتعديل التواريخ =====
     updateProjectDueDate(projectId, newDate) {
         const project = this.getProjectById(projectId);
         if (!project) return;
         if (!newDate) return ui.showToast('الرجاء إدخال تاريخ صحيح', 'error');
-        project.dueDate = newDate;
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderProjectsTab();
-            ui.openProjectDetails(projectId);
-        }).catch(err => {
-            ui.showToast('فشل الحفظ: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => { project.dueDate = newDate; },
+            'تم تحديث تاريخ المشروع',
+            'فشل تحديث التاريخ',
+            () => { ui.renderProjectsTab(); ui.openProjectDetails(projectId); }
+        );
     },
     updateTaskDueDate(projectId, taskId, newDate) {
         const project = this.getProjectById(projectId);
@@ -717,27 +896,20 @@ const projectManager = {
         const task = project.tasks.find(t => t.id === taskId);
         if (!task) return;
         if (!newDate) return ui.showToast('الرجاء إدخال تاريخ صحيح', 'error');
-        task.dueDate = newDate;
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderProjectsTab();
-            ui.openProjectDetails(projectId);
-        }).catch(err => {
-            ui.showToast('فشل الحفظ: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => { task.dueDate = newDate; },
+            'تم تحديث تاريخ المهمة',
+            'فشل تحديث التاريخ',
+            () => { ui.renderProjectsTab(); ui.openProjectDetails(projectId); }
+        );
     },
-    // ===== نهاية الدوال الجديدة =====
     getProjectById(id) {
         return db.projects.find(p => p.id === id);
     },
-    // Link / Unlink story to project
     linkStoryToProject(storyId, projectId) {
         let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
         if (!story) story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
         if (!story) return;
-        // If already linked to another project, unlink first
         if (story.linkedProjectId) {
             const oldProject = this.getProjectById(story.linkedProjectId);
             if (oldProject) {
@@ -749,14 +921,12 @@ const projectManager = {
         if (project && !project.linkedStoryIds.includes(storyId.toString())) {
             project.linkedStoryIds.push(storyId.toString());
         }
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderAll();
-        }).catch(err => {
-            ui.showToast('فشل الربط: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => {},
+            'تم ربط القصة بالمشروع',
+            'فشل الربط',
+            () => ui.renderAll()
+        );
     },
     unlinkStoryFromProject(storyId) {
         let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
@@ -767,16 +937,13 @@ const projectManager = {
             project.linkedStoryIds = project.linkedStoryIds.filter(id => id != storyId);
         }
         delete story.linkedProjectId;
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderAll();
-        }).catch(err => {
-            ui.showToast('فشل فك الربط: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => {},
+            'تم فك الربط',
+            'فشل فك الربط',
+            () => ui.renderAll()
+        );
     },
-    // Project status management
     holdProject(projectId) {
         const reason = prompt('Enter reason for holding the project:');
         if (reason === null) return;
@@ -784,36 +951,31 @@ const projectManager = {
         if (endDate === null) return;
         const project = this.getProjectById(projectId);
         if (!project) return;
-        project.status = 'hold';
-        project.holdReason = reason;
-        project.holdEndDate = endDate;
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderAll();
-            ui.renderProjectsTab();
-        }).catch(err => {
-            ui.showToast('فشل وضع المشروع على Hold: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => {
+                project.status = 'hold';
+                project.holdReason = reason;
+                project.holdEndDate = endDate;
+            },
+            'تم وضع المشروع على Hold',
+            'فشل وضع المشروع على Hold',
+            () => { ui.renderAll(); ui.renderProjectsTab(); }
+        );
     },
     closeProject(projectId) {
         if (!confirm('Are you sure you want to close this project? It will be archived after 7 days.')) return;
         const project = this.getProjectById(projectId);
         if (!project) return;
-        project.status = 'closed';
-        project.closeDate = new Date().toISOString().split('T')[0];
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderAll();
-            ui.renderProjectsTab();
-        }).catch(err => {
-            ui.showToast('فشل إغلاق المشروع: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => {
+                project.status = 'closed';
+                project.closeDate = new Date().toISOString().split('T')[0];
+            },
+            'تم إغلاق المشروع',
+            'فشل إغلاق المشروع',
+            () => { ui.renderAll(); ui.renderProjectsTab(); }
+        );
     },
-    // Task management inside project
     addTask(projectId, title, dueDate) {
         if (!title || !dueDate) return ui.showToast('Please fill task title and due date', 'error');
         const project = this.getProjectById(projectId);
@@ -825,44 +987,35 @@ const projectManager = {
             status: 'todo',
             comments: []
         };
-        project.tasks.push(newTask);
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderProjectDetailsModal(projectId);
-        }).catch(err => {
-            ui.showToast('فشل إضافة المهمة: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => { project.tasks.push(newTask); },
+            'تم إضافة المهمة',
+            'فشل إضافة المهمة',
+            () => ui.renderProjectDetailsModal(projectId)
+        );
     },
     deleteTask(projectId, taskId) {
         if (!confirm('Delete this task?')) return;
         const project = this.getProjectById(projectId);
         if (!project) return;
-        project.tasks = project.tasks.filter(t => t.id !== taskId);
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderProjectDetailsModal(projectId);
-        }).catch(err => {
-            ui.showToast('فشل حذف المهمة: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => { project.tasks = project.tasks.filter(t => t.id !== taskId); },
+            'تم حذف المهمة',
+            'فشل حذف المهمة',
+            () => ui.renderProjectDetailsModal(projectId)
+        );
     },
     updateTaskStatus(projectId, taskId, newStatus) {
         const project = this.getProjectById(projectId);
         if (!project) return;
         const task = project.tasks.find(t => t.id === taskId);
         if (!task) return;
-        task.status = newStatus;
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderProjectDetailsModal(projectId);
-        }).catch(err => {
-            ui.showToast('فشل تحديث الحالة: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => { task.status = newStatus; },
+            'تم تحديث حالة المهمة',
+            'فشل تحديث الحالة',
+            () => ui.renderProjectDetailsModal(projectId)
+        );
     },
     addTaskComment(projectId, taskId, commentText) {
         if (!commentText.trim()) return;
@@ -870,15 +1023,12 @@ const projectManager = {
         if (!project) return;
         const task = project.tasks.find(t => t.id === taskId);
         if (!task) return;
-        task.comments.push({ text: commentText.trim(), timestamp: new Date().toLocaleString('ar-EG', { hour12: false }) });
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderProjectDetailsModal(projectId);
-        }).catch(err => {
-            ui.showToast('فشل إضافة التعليق: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => { task.comments.push({ text: commentText.trim(), timestamp: new Date().toLocaleString('ar-EG', { hour12: false }) }); },
+            'تم إضافة التعليق',
+            'فشل إضافة التعليق',
+            () => ui.renderProjectDetailsModal(projectId)
+        );
     },
     deleteTaskComment(projectId, taskId, commentIndex) {
         if (!confirm('Delete this comment?')) return;
@@ -886,23 +1036,19 @@ const projectManager = {
         if (!project) return;
         const task = project.tasks.find(t => t.id === taskId);
         if (!task) return;
-        task.comments.splice(commentIndex, 1);
-        ui.showLoader();
-        dataProcessor.saveToGitHub().then(() => {
-            ui.renderProjectDetailsModal(projectId);
-        }).catch(err => {
-            ui.showToast('فشل حذف التعليق: ' + err.message, 'error');
-        }).finally(() => {
-            ui.hideLoader();
-        });
+        executeWithSave(
+            () => { task.comments.splice(commentIndex, 1); },
+            'تم حذف التعليق',
+            'فشل حذف التعليق',
+            () => ui.renderProjectDetailsModal(projectId)
+        );
     }
 };
 
-/**
- * UI Rendering
- */
+// =================================================================
+// UI RENDERING
+// =================================================================
 const ui = {
-    // ===== دوال مؤشر التحميل =====
     showLoader() {
         let loader = document.getElementById('project-loader');
         if (!loader) {
@@ -923,7 +1069,6 @@ const ui = {
         const loader = document.getElementById('project-loader');
         if (loader) loader.classList.add('hidden');
     },
-    // ===== دالة عرض رسائل toast =====
     showToast(message, type = 'success') {
         const existing = document.querySelector('.toast-message');
         if (existing) existing.remove();
@@ -933,7 +1078,6 @@ const ui = {
         document.body.appendChild(toast);
         setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
     },
-    // ===== بقية دوال UI =====
     switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
@@ -1358,22 +1502,12 @@ const ui = {
                     const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
                     let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
                     const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
-                    const customTagsList = db.customTags || [];
                     const storyTags = s.customTags || [];
                     const comments = s.standupComments || [];
 
-                    // Project dropdown
-                    const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => `<option value="${p.id}" ${s.linkedProjectId === p.id ? 'selected' : ''}>${p.name}</option>`).join('');
-                    const projectSelectHtml = `
-                        <div class="mt-2 flex items-center gap-2 border-t border-dashed border-gray-200 pt-2">
-                            <span class="text-[10px] font-bold text-gray-400">📁 Project:</span>
-                            <select onchange="projectManager.linkStoryToProject('${s.id}', this.value)" class="text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-blue-400 outline-none flex-1">
-                                <option value="">None</option>
-                                ${projectOptions}
-                            </select>
-                            ${s.linkedProjectId ? `<button onclick="projectManager.unlinkStoryFromProject('${s.id}')" class="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>` : ''}
-                        </div>
-                    `;
+                    const tagDropdownHtml = renderTagDropdown(s.id, storyTags);
+                    const projectSelectHtml = renderProjectSelect(s);
+                    const commentsHtml = renderComments(s);
 
                     return `
                     <div class="relative bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-visible flex flex-col mb-4">
@@ -1401,26 +1535,7 @@ const ui = {
                                         <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
                                     </span>
                                 `).join('')}
-                                <div class="relative inline-block group">
-                                    <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
-                                        <span class="text-sm font-bold">+</span>
-                                    </button>
-                                    <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
-                                        <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
-                                            <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
-                                            <div class="max-h-40 overflow-y-auto">
-                                                ${customTagsList.length > 0 ? customTagsList.map(tag => {
-                                                    const isPicked = storyTags.includes(tag);
-                                                    return `
-                                                    <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
-                                                        ${tag}
-                                                        ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
-                                                    </button>`;
-                                                }).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags defined</div>'}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                ${tagDropdownHtml}
                             </div>
                             <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${s.title}</h3>
                             ${projectSelectHtml}
@@ -1496,17 +1611,7 @@ const ui = {
                                 <div class="flex gap-2 mb-3">
                                     <input type="text" placeholder="Add comment and press Enter..." class="flex-1 text-[11px] p-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none" onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; }">
                                 </div>
-                                <div class="space-y-2 max-h-28 overflow-y-auto pr-1">
-                                    ${comments.slice().reverse().map(c => `
-                                        <div class="bg-white p-2 rounded-lg border border-indigo-100/50 shadow-sm">
-                                            <div class="flex justify-between items-center mb-1">
-                                                <span class="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">${c.date}</span>
-                                            </div>
-                                            <p class="text-[11px] text-slate-600 leading-tight italic">"${c.text}"</p>
-                                        </div>
-                                    `).join('')}
-                                    ${comments.length === 0 ? '<p class="text-[10px] text-gray-400 italic py-1">No updates recorded yet.</p>' : ''}
-                                </div>
+                                ${commentsHtml || '<p class="text-[10px] text-gray-400 italic py-1">No updates recorded yet.</p>'}
                             </div>
                         </div>
                         <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
@@ -1521,210 +1626,6 @@ const ui = {
                 }).join('')}
             `;
         }).join('');
-    },
-    generateWeeklyReport() {
-        const filterSelect = document.getElementById('kanban-ba-filter');
-        if (!filterSelect) return;
-        const selectedOptions = Array.from(filterSelect.selectedOptions);
-        let selectedAreas = selectedOptions.map(opt => opt.value);
-        const allAreas = [...new Set([
-            ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
-            ...db.backlogStories.map(s => s.area || "General")
-        ])];
-        if (selectedAreas.length === 0) selectedAreas = allAreas;
-        const reportData = {};
-        const targetStates = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
-        const fifteenDaysAgo = new Date();
-        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-        selectedAreas.forEach(area => {
-            const areaData = { states: {}, backlog: [], tested: [], comments: [] };
-            targetStates.forEach(state => {
-                areaData.states[state] = currentData.filter(s =>
-                    !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area && s.state === state
-                );
-            });
-            areaData.backlog = db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s));
-            areaData.tested = currentData.filter(s =>
-                !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area &&
-                s.state === 'Tested' && s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
-            );
-            areaData.comments = db.areaComments.filter(c => c.area === area);
-            reportData[area] = areaData;
-        });
-        this.showWeeklyReportModal(reportData);
-    },
-    showWeeklyReportModal(reportData) {
-        let modal = document.getElementById('weekly-report-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'weekly-report-modal';
-            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[2000] p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col relative" style="direction: rtl;">
-                    <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-2xl">
-                        <h3 class="text-xl font-bold text-slate-800">📋 التقرير الأسبوعي</h3>
-                        <div class="flex gap-2">
-                            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition">🖨️ طباعة</button>
-                            <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
-                        </div>
-                    </div>
-                    <div class="p-6 overflow-y-auto" id="weekly-report-content"></div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            const style = document.createElement('style');
-            style.textContent = `
-                @media print {
-                    body * { visibility: hidden; }
-                    #weekly-report-modal, #weekly-report-modal * { visibility: visible; }
-                    #weekly-report-modal {
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                        width: 100%;
-                        background: white;
-                        margin: 0;
-                        padding: 15px;
-                        box-shadow: none;
-                        border-radius: 0;
-                        max-height: none;
-                        overflow: visible;
-                        direction: rtl;
-                    }
-                    #weekly-report-modal .sticky, #weekly-report-modal .border-b { position: relative; top: auto; }
-                    #weekly-report-modal .p-6 { padding: 10px; }
-                    #weekly-report-modal button { display: none !important; }
-                    .page-break-after { page-break-after: always; }
-                    .report-story-card { border: 1px solid #e2e8f0; padding: 4px 8px; margin-bottom: 4px; border-radius: 4px; font-size: 10px !important; }
-                    .report-story-card .title { font-size: 10px !important; font-weight: bold; }
-                    .report-tag { display: inline-block; padding: 0 4px; margin: 1px; font-size: 8px; border-radius: 2px; background: #f1f5f9; border: 1px solid #cbd5e1; }
-                    .report-custom-tag { background: #f3e8ff; border-color: #a78bfa; }
-                    .report-comment { background: #f0f4ff; padding: 2px 6px; border-radius: 3px; border-right: 2px solid #6366f1; margin-top: 2px; font-size: 9px; }
-                    .state-column { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc; }
-                    .state-column h4 { font-size: 11px; font-weight: bold; margin-bottom: 4px; }
-                }
-            `;
-            modal.querySelector('.bg-white').appendChild(style);
-        }
-        const content = document.getElementById('weekly-report-content');
-        let html = '';
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
-        html += `<div class="text-center mb-6 border-b pb-4">
-            <h1 class="text-2xl font-bold text-slate-800">تقرير الحالة الأسبوعي</h1>
-            <p class="text-sm text-gray-500">تاريخ التقرير: ${dateStr}</p>
-        </div>`;
-        const truncateTitle = (title) => {
-            if (!title) return '';
-            const words = title.split(' ');
-            if (words.length <= 6) return title;
-            return words.slice(0, 6).join(' ') + ' ...';
-        };
-        for (const area in reportData) {
-            const data = reportData[area];
-            const { states, backlog, tested, comments } = data;
-            html += `<div class="mb-12 page-break-after">`;
-            html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${area}</h2>`;
-
-            // ===== التعليقات العامة في الأعلى =====
-            if (comments && comments.length > 0) {
-                html += `<div class="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">`;
-                html += `<h3 class="font-bold text-amber-700 text-sm flex items-center gap-2 mb-3">💬 تعليقات عامة على المنطقة</h3>`;
-                html += `<div class="space-y-2">`;
-                comments.forEach(c => {
-                    html += `
-                        <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2">
-                            <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</span>
-                            <span class="text-[10px] text-gray-400 whitespace-nowrap">${c.timestamp}</span>
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
-            } else {
-                html += `<div class="text-gray-400 text-sm italic mb-4">لا توجد تعليقات عامة على هذه المنطقة.</div>`;
-            }
-
-            // ===== جدول الحالات =====
-            html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">`;
-            const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
-            stateOrder.forEach(state => {
-                const stories = states[state] || [];
-                html += `<div class="state-column bg-gray-50 rounded-lg border border-gray-200 p-3">`;
-                html += `<h4 class="font-bold text-sm text-slate-700 border-b pb-1 mb-2">${state} (${stories.length})</h4>`;
-                if (stories.length === 0) {
-                    html += `<div class="text-gray-400 text-[10px] italic">لا توجد</div>`;
-                } else {
-                    stories.forEach(s => {
-                        const lastComment = s.standupComments && s.standupComments.length > 0 ? s.standupComments[s.standupComments.length - 1] : null;
-                        const azureTags = s.tags || [];
-                        const customTags = s.customTags || [];
-                        const allTags = [...new Set([...azureTags, ...customTags])];
-                        html += `<div class="report-story-card bg-white rounded border border-gray-100 p-2 mb-2 shadow-sm">`;
-                        html += `<div class="flex justify-between items-start gap-2">`;
-                        html += `<span class="font-mono text-[9px] text-gray-400">#${s.id}</span>`;
-                        html += `<span class="title text-xs font-bold text-slate-800 flex-1">${truncateTitle(s.title)}</span>`;
-                        html += `</div>`;
-                        if (allTags.length > 0) {
-                            html += `<div class="flex flex-wrap gap-1 mt-1">`;
-                            allTags.forEach(tag => {
-                                const isCustom = customTags.includes(tag);
-                                html += `<span class="report-tag px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-100 text-purple-700 border border-purple-300 report-custom-tag' : 'bg-gray-100 text-gray-600 border border-gray-200'}">${tag}${isCustom ? ' ★' : ''}</span>`;
-                            });
-                            html += `</div>`;
-                        }
-                        if (lastComment) {
-                            html += `<div class="report-comment text-[9px] text-slate-600 mt-1">`;
-                            html += `<span class="font-bold text-indigo-600">اخر ستاندب:</span> `;
-                            html += `<span>"${lastComment.text}"</span>`;
-                            html += `<span class="text-[8px] text-gray-400 mr-1">(${lastComment.date})</span>`;
-                            html += `</div>`;
-                        }
-                        html += `</div>`;
-                    });
-                }
-                html += `</div>`;
-            });
-            html += `</div>`;
-
-            // ===== الباك لوج =====
-            if (backlog.length > 0) {
-                const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
-                const top5 = sortedBacklog.slice(0, 5);
-                const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
-                html += `<div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">`;
-                html += `<h3 class="font-bold text-purple-700 text-sm">📋 الباك لوج (${backlog.length})</h3>`;
-                html += `<div class="flex flex-wrap gap-3 mt-2">`;
-                top5.forEach(s => {
-                    html += `<div class="bg-white px-3 py-1 rounded-full border border-purple-100 text-xs flex items-center gap-2 shadow-sm">`;
-                    html += `<span class="font-mono text-gray-400">#${s.id}</span>`;
-                    html += `<span class="font-medium text-slate-700">${truncateTitle(s.title)}</span>`;
-                    html += `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded text-[9px] font-bold">P${s.priority}</span>`;
-                    html += `</div>`;
-                });
-                if (top5.length < backlog.length) html += `<span class="text-xs text-gray-400">... وغيرها</span>`;
-                if (withoutPriority.length > 0) html += `<div class="w-full text-xs text-red-600 mt-1">⚠️ يوجد ${withoutPriority.length} قصة بدون أولوية (Priority = 999)</div>`;
-                html += `</div></div>`;
-            } else {
-                html += `<div class="text-gray-400 text-sm italic mt-2">لا يوجد باك لوج في هذه المنطقة.</div>`;
-            }
-
-            // ===== تم تسليمها مؤخراً =====
-            if (tested.length > 0) {
-                html += `<div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">`;
-                html += `<h3 class="font-bold text-green-700 text-sm">✅ تم تسليمها (آخر 15 يوم) (${tested.length})</h3>`;
-                html += `<div class="flex flex-wrap gap-2 mt-2">`;
-                tested.forEach(s => {
-                    html += `<span class="bg-white text-green-800 px-2 py-0.5 rounded-full border border-green-100 text-xs font-mono">#${s.id}</span>`;
-                });
-                html += `</div></div>`;
-            } else {
-                html += `<div class="text-gray-400 text-sm italic mt-2">لا توجد قصص مسلمة في آخر 15 يوم.</div>`;
-            }
-
-            html += `</div>`;
-        }
-        content.innerHTML = html;
-        modal.style.display = 'flex';
     },
     renderKanban() {
         const container = document.getElementById('kanban-container');
@@ -1780,203 +1681,20 @@ const ui = {
 
         const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
 
-        const createRegularCard = (s) => {
-            const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
-            const customTagsArr = s.customTags || [];
-            const allTagSet = new Set([...azureTags, ...customTagsArr]);
-            const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-            const devEstTotal = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-            const devEstCompleted = devTasks.filter(t => !['New', 'Active'].includes(t['State'])).reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-            const devEstRemaining = Math.max(0, devEstTotal - devEstCompleted);
-            const testEst = s.tasks.filter(t => t['Activity'] === 'Testing').reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-            const totalBugs = s.bugs ? s.bugs.length : 0;
-            const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State'])).length : 0;
-            const totalBugEffort = s.bugs ? s.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-            const completedBugEffort = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-            const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
-            const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
-            const testCases = s.testCases || [];
-            const totalTC = testCases.length;
-            const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
-            const commentsCount = s.standupComments ? s.standupComments.length : 0;
-            const customTagsList = db.customTags || [];
-            const storyTags = s.customTags || [];
-            const releaseDate = s.expectedRelease ? (s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB')) : null;
-
-            // Project dropdown
-            const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => `<option value="${p.id}" ${s.linkedProjectId === p.id ? 'selected' : ''}>${p.name}</option>`).join('');
-            const projectSelectHtml = `
-                <div class="mt-2 flex items-center gap-2 border-t border-dashed border-gray-200 pt-2">
-                    <span class="text-[10px] font-bold text-gray-400">📁 Project:</span>
-                    <select onchange="projectManager.linkStoryToProject('${s.id}', this.value)" class="text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-blue-400 outline-none flex-1">
-                        <option value="">None</option>
-                        ${projectOptions}
-                    </select>
-                    ${s.linkedProjectId ? `<button onclick="projectManager.unlinkStoryFromProject('${s.id}')" class="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>` : ''}
-                </div>
-            `;
-
-            return `
-                <div class="relative bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
-                    ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">📅 ${releaseDate}</div>` : ''}
-                    ${allTagSet.size > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${[...allTagSet].map(tag => {
-                        const isCustom = customTagsArr.includes(tag);
-                        return `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`;
-                    }).join('')}</div>` : ''}
-                    <div class="flex flex-wrap items-center gap-1.5 mb-3 border-b border-dashed border-gray-100 pb-2 overflow-visible">
-                        ${storyTags.map(tag => `
-                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
-                                ${tag}
-                                <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
-                            </span>
-                        `).join('')}
-                        <div class="relative inline-block group">
-                            <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
-                                <span class="text-sm font-bold">+</span>
-                            </button>
-                            <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
-                                <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
-                                    <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
-                                    <div class="max-h-40 overflow-y-auto">
-                                        ${customTagsList.length > 0 ? customTagsList.map(tag => {
-                                            const isPicked = storyTags.includes(tag);
-                                            return `
-                                            <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
-                                                ${tag}
-                                                ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
-                                            </button>`;
-                                        }).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags defined</div>'}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center mb-2">
-                        <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
-                        <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100">💬 <span class="font-bold">${commentsCount}</span></button>
-                    </div>
-                    <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
-                    ${projectSelectHtml}
-                    <div class="grid grid-cols-2 gap-2 border-t pt-2">
-                        <div class="text-[11px]">
-                            <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
-                            <div class="text-slate-700 truncate font-medium">${s.assignedTo}</div>
-                            <div class="flex justify-between items-center mt-1">
-                                <span class="text-blue-500 font-bold">${devEstRemaining}/${devEstTotal}h</span>
-                                <span class="text-red-500 text-[10px] font-bold">🐞${completedBugs}/${totalBugs}</span>
-                            </div>
-                            ${totalBugEffort > 0 ? `
-                            <div class="flex justify-between items-center mt-1 text-[10px] text-gray-600 border-t border-dashed border-gray-200 pt-1">
-                                <span class="font-bold text-gray-500">Bug Effort:</span>
-                                <span class="font-mono">${remainingBugEffort.toFixed(1)}/${totalBugEffort.toFixed(1)}h</span>
-                                <span class="text-xs font-bold ${remainingBugEffort === 0 ? 'text-green-600' : 'text-amber-600'}">${bugProgressPercent}%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 h-0.5 rounded-full mt-0.5">
-                                <div class="${remainingBugEffort === 0 ? 'bg-green-500' : 'bg-amber-500'} h-full rounded-full" style="width: ${bugProgressPercent}%"></div>
-                            </div>
-                            ` : ''}
-                        </div>
-                        <div class="text-[11px] border-l pl-2">
-                            <div class="text-gray-400 uppercase font-bold text-[9px]">Tester</div>
-                            <div class="text-slate-700 truncate font-medium">${s.tester}</div>
-                            <div class="flex justify-between items-center mt-1">
-                                <span class="text-green-500 font-bold">${testEst}h</span>
-                                <span class="text-indigo-500 text-[10px] font-bold">📋${completedTC}/${totalTC}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        };
-
-        const createBacklogCard = (s) => {
-            const azureTags = s.tags ? (typeof s.tags === 'string' ? s.tags.split(';') : s.tags) : [];
-            const customTagsArr = s.customTags || [];
-            const allTagSet = new Set([...azureTags, ...customTagsArr]);
-            const customTagsList = db.customTags || [];
-            const storyTags = s.customTags || [];
-            const releaseDate = s.expectedRelease ? (s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB')) : null;
-
-            // Project dropdown for backlog
-            const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => `<option value="${p.id}" ${s.linkedProjectId === p.id ? 'selected' : ''}>${p.name}</option>`).join('');
-            const projectSelectHtml = `
-                <div class="mt-2 flex items-center gap-2 border-t border-dashed border-gray-200 pt-2">
-                    <span class="text-[10px] font-bold text-gray-400">📁 Project:</span>
-                    <select onchange="projectManager.linkStoryToProject('${s.id}', this.value)" class="text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-blue-400 outline-none flex-1">
-                        <option value="">None</option>
-                        ${projectOptions}
-                    </select>
-                    ${s.linkedProjectId ? `<button onclick="projectManager.unlinkStoryFromProject('${s.id}')" class="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>` : ''}
-                </div>
-            `;
-
-            return `
-                <div class="relative bg-white p-3 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
-                    ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">📅 ${releaseDate}</div>` : ''}
-                    ${allTagSet.size > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${[...allTagSet].map(tag => {
-                        const isCustom = customTagsArr.includes(tag);
-                        return `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${isCustom ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`;
-                    }).join('')}</div>` : ''}
-                    <div class="flex flex-wrap items-center gap-1.5 mb-3 border-b border-dashed border-gray-100 pb-2 overflow-visible">
-                        ${storyTags.map(tag => `
-                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
-                                ${tag}
-                                <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
-                            </span>
-                        `).join('')}
-                        <div class="relative inline-block group">
-                            <button class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-50 border border-gray-200 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all pb-0.5">
-                                <span class="text-sm font-bold">+</span>
-                            </button>
-                            <div class="hidden group-hover:block absolute left-0 top-full mt-0 pt-2 w-48 z-[999]">
-                                <div class="bg-white border border-gray-100 shadow-2xl rounded-lg py-1 overflow-hidden">
-                                    <div class="px-3 py-1.5 text-[9px] font-bold text-gray-400 border-b border-gray-50 bg-gray-50/50">Select Tag</div>
-                                    <div class="max-h-40 overflow-y-auto">
-                                        ${customTagsList.length > 0 ? customTagsList.map(tag => {
-                                            const isPicked = storyTags.includes(tag);
-                                            return `
-                                            <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
-                                                ${tag}
-                                                ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
-                                            </button>`;
-                                        }).join('') : '<div class="px-3 py-2 text-[10px] text-gray-400">No tags defined</div>'}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center mb-2">
-                        <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-purple-600 cursor-pointer hover:underline">#${s.id} 🔍</div>
-                    </div>
-                    <div class="text-sm font-semibold text-slate-800 mb-2 line-clamp-2">${s.title}</div>
-                    ${projectSelectHtml}
-                    <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
-                        <div><div class="text-gray-400 uppercase font-bold text-[9px]">Area</div><div class="text-slate-700 truncate">${s.area}</div></div>
-                        <div><div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div><div class="text-slate-700 font-bold">P${s.priority}</div></div>
-                    </div>
-                    ${s.expectedRelease ? `<div class="mt-2 text-[10px] text-purple-600 border-t border-purple-100 pt-1">📅 Release: ${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString('en-GB') : new Date(s.expectedRelease).toLocaleDateString('en-GB')}</div>` : ''}
-                </div>
-            `;
-        };
-
-        // بناء HTML: الأعمدة فقط (التعليقات العامة أصبحت في popup)
         let html = '';
-        // أعمدة الكانبان
-        html += `<div class="flex flex-nowrap gap-4 overflow-x-auto pb-4">`;
-        // Backlog column
         html += `
-            <div class="flex-shrink-0 w-80 bg-purple-50 rounded-xl border border-purple-200 flex flex-col max-h-screen">
-                <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                    <h3 class="font-bold text-purple-700">Backlog</h3>
-                    <span class="bg-purple-200 text-purple-800 text-xs px-2 py-0.5 rounded-full">${filteredBacklog.length}</span>
+            <div class="flex flex-nowrap gap-4 overflow-x-auto pb-4">
+                <div class="flex-shrink-0 w-80 bg-purple-50 rounded-xl border border-purple-200 flex flex-col max-h-screen">
+                    <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
+                        <h3 class="font-bold text-purple-700">Backlog</h3>
+                        <span class="bg-purple-200 text-purple-800 text-xs px-2 py-0.5 rounded-full">${filteredBacklog.length}</span>
+                    </div>
+                    <div class="p-2 space-y-3 overflow-y-auto">
+                        ${filteredBacklog.map(s => createStoryCard(s, { mode: 'backlog', showProjectSelect: true, showTagDropdown: true, showCommentsButton: false })).join('')}
+                        ${filteredBacklog.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">No backlog items</div>' : ''}
+                    </div>
                 </div>
-                <div class="p-2 space-y-3 overflow-y-auto">
-                    ${filteredBacklog.map(s => createBacklogCard(s)).join('')}
-                    ${filteredBacklog.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">No backlog items</div>' : ''}
-                </div>
-            </div>
         `;
-        // Regular columns
         html += states.map(state => {
             const storiesInState = filteredRegular.filter(s => s.state === state);
             return `
@@ -1986,14 +1704,13 @@ const ui = {
                         <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
                     </div>
                     <div class="p-2 space-y-3 overflow-y-auto">
-                        ${storiesInState.map(s => createRegularCard(s)).join('')}
+                        ${storiesInState.map(s => createStoryCard(s, { mode: 'regular', showProjectSelect: true, showTagDropdown: true })).join('')}
                         ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
                     </div>
                 </div>
             `;
         }).join('');
         html += `</div>`;
-
         container.innerHTML = html;
     },
     renderSupportKanban() {
@@ -2015,25 +1732,7 @@ const ui = {
         const orderedStates = preferredOrder.filter(st => allStates.includes(st));
         const remainingStates = allStates.filter(st => !preferredOrder.includes(st)).sort();
         const finalStates = [...orderedStates, ...remainingStates];
-        const createSupportCard = (s) => {
-            const tagsList = s.tags || [];
-            const commentsCount = s.standupComments ? s.standupComments.length : 0;
-            return `
-                <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
-                    ${tagsList.length > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${tagsList.map(tag => `<span class="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">${tag.trim()}</span>`).join('')}</div>` : ''}
-                    <div class="flex justify-between items-center mb-2">
-                        <div onclick="ui.openStoryModal('${s.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${s.id} 🔍</div>
-                        <button onclick="ui.openCommentsModal('${s.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100">💬 <span class="font-bold">${commentsCount}</span></button>
-                    </div>
-                    <div onclick="ui.openStoryModal('${s.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${s.title}</div>
-                    <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
-                        <div><div class="text-gray-400 uppercase font-bold text-[9px]">Assigned To</div><div class="text-slate-700 truncate font-medium">${s.assignedTo}</div></div>
-                        <div><div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div><div class="text-slate-700 font-bold">P${s.priority}</div></div>
-                    </div>
-                    <div class="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">Area: ${s.area || "General"} | Updated: ${s.changedDate ? new Date(s.changedDate).toLocaleDateString('en-GB') : 'N/A'}</div>
-                </div>
-            `;
-        };
+
         let html = '';
         finalStates.forEach(state => {
             const logsInState = filteredLogs.filter(s => s.state === state);
@@ -2044,7 +1743,7 @@ const ui = {
                         <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${logsInState.length}</span>
                     </div>
                     <div class="p-2 space-y-3 overflow-y-auto">
-                        ${logsInState.map(s => createSupportCard(s)).join('')}
+                        ${logsInState.map(s => createStoryCard(s, { mode: 'support', showProjectSelect: false, showTagDropdown: true, showCommentsButton: true })).join('')}
                         ${logsInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
                     </div>
                 </div>
@@ -2052,6 +1751,207 @@ const ui = {
         });
         container.innerHTML = html;
     },
+    generateWeeklyReport() {
+    const filterSelect = document.getElementById('kanban-ba-filter');
+    if (!filterSelect) return;
+    const selectedOptions = Array.from(filterSelect.selectedOptions);
+    let selectedAreas = selectedOptions.map(opt => opt.value);
+    const allAreas = [...new Set([
+        ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
+        ...db.backlogStories.map(s => s.area || "General")
+    ])];
+    if (selectedAreas.length === 0) selectedAreas = allAreas;
+    const reportData = {};
+    const targetStates = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+    selectedAreas.forEach(area => {
+        const areaData = { states: {}, backlog: [], tested: [], comments: [] };
+        targetStates.forEach(state => {
+            areaData.states[state] = currentData.filter(s =>
+                !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area && s.state === state
+            );
+        });
+        areaData.backlog = db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s));
+        areaData.tested = currentData.filter(s =>
+            !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area &&
+            s.state === 'Tested' && s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
+        );
+        areaData.comments = db.areaComments.filter(c => c.area === area);
+        reportData[area] = areaData;
+    });
+    this.showWeeklyReportModal(reportData);
+},
+
+showWeeklyReportModal(reportData) {
+    let modal = document.getElementById('weekly-report-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'weekly-report-modal';
+        modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[2000] p-4';
+        modal.innerHTML = `
+            <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col relative" style="direction: rtl;">
+                <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-2xl">
+                    <h3 class="text-xl font-bold text-slate-800">📋 التقرير الأسبوعي</h3>
+                    <div class="flex gap-2">
+                        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition">🖨️ طباعة</button>
+                        <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
+                    </div>
+                </div>
+                <div class="p-6 overflow-y-auto" id="weekly-report-content"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        const style = document.createElement('style');
+        style.textContent = `
+            @media print {
+                body * { visibility: hidden; }
+                #weekly-report-modal, #weekly-report-modal * { visibility: visible; }
+                #weekly-report-modal {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    background: white;
+                    margin: 0;
+                    padding: 15px;
+                    box-shadow: none;
+                    border-radius: 0;
+                    max-height: none;
+                    overflow: visible;
+                    direction: rtl;
+                }
+                #weekly-report-modal .sticky, #weekly-report-modal .border-b { position: relative; top: auto; }
+                #weekly-report-modal .p-6 { padding: 10px; }
+                #weekly-report-modal button { display: none !important; }
+                .page-break-after { page-break-after: always; }
+                .report-story-card { border: 1px solid #e2e8f0; padding: 4px 8px; margin-bottom: 4px; border-radius: 4px; font-size: 10px !important; }
+                .report-story-card .title { font-size: 10px !important; font-weight: bold; }
+                .report-tag { display: inline-block; padding: 0 4px; margin: 1px; font-size: 8px; border-radius: 2px; background: #f1f5f9; border: 1px solid #cbd5e1; }
+                .report-custom-tag { background: #f3e8ff; border-color: #a78bfa; }
+                .report-comment { background: #f0f4ff; padding: 2px 6px; border-radius: 3px; border-right: 2px solid #6366f1; margin-top: 2px; font-size: 9px; }
+                .state-column { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc; }
+                .state-column h4 { font-size: 11px; font-weight: bold; margin-bottom: 4px; }
+            }
+        `;
+        modal.querySelector('.bg-white').appendChild(style);
+    }
+    const content = document.getElementById('weekly-report-content');
+    let html = '';
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+    html += `<div class="text-center mb-6 border-b pb-4">
+        <h1 class="text-2xl font-bold text-slate-800">تقرير الحالة الأسبوعي</h1>
+        <p class="text-sm text-gray-500">تاريخ التقرير: ${dateStr}</p>
+    </div>`;
+    const truncateTitle = (title) => {
+        if (!title) return '';
+        const words = title.split(' ');
+        if (words.length <= 6) return title;
+        return words.slice(0, 6).join(' ') + ' ...';
+    };
+    for (const area in reportData) {
+        const data = reportData[area];
+        const { states, backlog, tested, comments } = data;
+        html += `<div class="mb-12 page-break-after">`;
+        html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${area}</h2>`;
+
+        if (comments && comments.length > 0) {
+            html += `<div class="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">`;
+            html += `<h3 class="font-bold text-amber-700 text-sm flex items-center gap-2 mb-3">💬 تعليقات عامة على المنطقة</h3>`;
+            html += `<div class="space-y-2">`;
+            comments.forEach(c => {
+                html += `
+                    <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2">
+                        <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</span>
+                        <span class="text-[10px] text-gray-400 whitespace-nowrap">${c.timestamp}</span>
+                    </div>
+                `;
+            });
+            html += `</div></div>`;
+        } else {
+            html += `<div class="text-gray-400 text-sm italic mb-4">لا توجد تعليقات عامة على هذه المنطقة.</div>`;
+        }
+
+        html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">`;
+        const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
+        stateOrder.forEach(state => {
+            const stories = states[state] || [];
+            html += `<div class="state-column bg-gray-50 rounded-lg border border-gray-200 p-3">`;
+            html += `<h4 class="font-bold text-sm text-slate-700 border-b pb-1 mb-2">${state} (${stories.length})</h4>`;
+            if (stories.length === 0) {
+                html += `<div class="text-gray-400 text-[10px] italic">لا توجد</div>`;
+            } else {
+                stories.forEach(s => {
+                    const lastComment = s.standupComments && s.standupComments.length > 0 ? s.standupComments[s.standupComments.length - 1] : null;
+                    const azureTags = s.tags || [];
+                    const customTags = s.customTags || [];
+                    const allTags = [...new Set([...azureTags, ...customTags])];
+                    html += `<div class="report-story-card bg-white rounded border border-gray-100 p-2 mb-2 shadow-sm">`;
+                    html += `<div class="flex justify-between items-start gap-2">`;
+                    html += `<span class="font-mono text-[9px] text-gray-400">#${s.id}</span>`;
+                    html += `<span class="title text-xs font-bold text-slate-800 flex-1">${truncateTitle(s.title)}</span>`;
+                    html += `</div>`;
+                    if (allTags.length > 0) {
+                        html += `<div class="flex flex-wrap gap-1 mt-1">`;
+                        allTags.forEach(tag => {
+                            const isCustom = customTags.includes(tag);
+                            html += `<span class="report-tag px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-100 text-purple-700 border border-purple-300 report-custom-tag' : 'bg-gray-100 text-gray-600 border border-gray-200'}">${tag}${isCustom ? ' ★' : ''}</span>`;
+                        });
+                        html += `</div>`;
+                    }
+                    if (lastComment) {
+                        html += `<div class="report-comment text-[9px] text-slate-600 mt-1">`;
+                        html += `<span class="font-bold text-indigo-600">اخر ستاندب:</span> `;
+                        html += `<span>"${lastComment.text}"</span>`;
+                        html += `<span class="text-[8px] text-gray-400 mr-1">(${lastComment.date})</span>`;
+                        html += `</div>`;
+                    }
+                    html += `</div>`;
+                });
+            }
+            html += `</div>`;
+        });
+        html += `</div>`;
+
+        if (backlog.length > 0) {
+            const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
+            const top5 = sortedBacklog.slice(0, 5);
+            const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
+            html += `<div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">`;
+            html += `<h3 class="font-bold text-purple-700 text-sm">📋 الباك لوج (${backlog.length})</h3>`;
+            html += `<div class="flex flex-wrap gap-3 mt-2">`;
+            top5.forEach(s => {
+                html += `<div class="bg-white px-3 py-1 rounded-full border border-purple-100 text-xs flex items-center gap-2 shadow-sm">`;
+                html += `<span class="font-mono text-gray-400">#${s.id}</span>`;
+                html += `<span class="font-medium text-slate-700">${truncateTitle(s.title)}</span>`;
+                html += `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded text-[9px] font-bold">P${s.priority}</span>`;
+                html += `</div>`;
+            });
+            if (top5.length < backlog.length) html += `<span class="text-xs text-gray-400">... وغيرها</span>`;
+            if (withoutPriority.length > 0) html += `<div class="w-full text-xs text-red-600 mt-1">⚠️ يوجد ${withoutPriority.length} قصة بدون أولوية (Priority = 999)</div>`;
+            html += `</div></div>`;
+        } else {
+            html += `<div class="text-gray-400 text-sm italic mt-2">لا يوجد باك لوج في هذه المنطقة.</div>`;
+        }
+
+        if (tested.length > 0) {
+            html += `<div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">`;
+            html += `<h3 class="font-bold text-green-700 text-sm">✅ تم تسليمها (آخر 15 يوم) (${tested.length})</h3>`;
+            html += `<div class="flex flex-wrap gap-2 mt-2">`;
+            tested.forEach(s => {
+                html += `<span class="bg-white text-green-800 px-2 py-0.5 rounded-full border border-green-100 text-xs font-mono">#${s.id}</span>`;
+            });
+            html += `</div></div>`;
+        } else {
+            html += `<div class="text-gray-400 text-sm italic mt-2">لا توجد قصص مسلمة في آخر 15 يوم.</div>`;
+        }
+
+        html += `</div>`;
+    }
+    content.innerHTML = html;
+    modal.style.display = 'flex';
+},
     renderDelivery() {
         const container = document.getElementById('delivery-grid');
         const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || "";
@@ -2789,7 +2689,6 @@ const ui = {
         }
         tagManager.renderTagsSettings();
 
-        // Projects list in settings
         const projectsList = document.getElementById('projects-list');
         if (projectsList) {
             projectsList.innerHTML = db.projects.map(p => `
@@ -2883,7 +2782,6 @@ const ui = {
         if (reviewsValid) passedCount++;
         return { passedCount, totalCount, priority: priorityValid, iterationPath: iterationPathValid, devTasks: devTasksValid, testTasks: testTasksValid, testCasesPass: testCasesValid, bugsClosed: bugsValid, reviewsClosed: reviewsValid };
     },
-    // ================= PROJECTS TAB =================
     renderProjectsTab() {
         const container = document.getElementById('projects-container');
         const countSpan = document.getElementById('projects-count');
@@ -2928,7 +2826,6 @@ const ui = {
         container.innerHTML = `
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2">
-                    <!-- شبكة المشاريع بعمود واحد لجعلها عريضة -->
                     <div class="grid grid-cols-1 gap-4">
                         ${projectsHtml}
                     </div>
@@ -2939,8 +2836,6 @@ const ui = {
             </div>
         `;
     },
-
-    // دالة عرض المهام المتأخرة والقريبة (الجانبية)
     renderTaskDueDateSidebar() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -2950,7 +2845,6 @@ const ui = {
         const allTasks = [];
         db.projects.forEach(project => {
             (project.tasks || []).forEach(task => {
-                // Exclude completed tasks (done)
                 if (task.dueDate && task.status !== 'done') {
                     const due = new Date(task.dueDate);
                     due.setHours(0, 0, 0, 0);
@@ -2964,7 +2858,6 @@ const ui = {
             });
         });
 
-        // Categorize tasks
         const overdue = allTasks.filter(t => t.dueDate < today);
         const todayTasks = allTasks.filter(t => t.dueDate.getTime() === today.getTime());
         const tomorrowTasks = allTasks.filter(t => t.dueDate.getTime() === tomorrow.getTime());
@@ -3007,8 +2900,6 @@ const ui = {
             </div>
         `;
     },
-
-    // ===== تعديل عرض تفاصيل المشروع (إضافة تعديل التاريخ والهايلايت) =====
     openProjectDetails(projectId) {
         const project = projectManager.getProjectById(projectId);
         if (!project) return;
@@ -3037,7 +2928,6 @@ const ui = {
             linkedStoriesHtml = `<div class="text-gray-400 text-sm italic">No stories linked to this project.</div>`;
         }
 
-        // ===== إضافة تعديل تاريخ المشروع =====
         const projectDueHtml = `
             <div class="flex items-center gap-2 mt-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
                 <span class="text-sm font-bold text-gray-600">📅 Due Date:</span>
@@ -3048,10 +2938,9 @@ const ui = {
             </div>
         `;
 
-        // ===== تعديل عرض المهام لإضافة تعديل التاريخ والهايلايت =====
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const tasksHtmlWithEdit = project.tasks.map(t => {
+        const tasksHtmlWithEdit = (project.tasks || []).map(t => {
             const isDueTodayOrPast = t.dueDate ? new Date(t.dueDate) <= today : false;
             const dueClass = isDueTodayOrPast ? 'bg-red-50 border-red-300 text-red-800' : '';
             return `
@@ -3074,7 +2963,7 @@ const ui = {
                     ${isDueTodayOrPast ? `<div class="text-xs text-red-600 font-bold mt-1">⚠️ مستحق اليوم أو مضى عليه</div>` : ''}
                     <div class="text-xs text-gray-400">Due: ${t.dueDate || 'غير محدد'}</div>
                     <div class="mt-2 space-y-1">
-                        ${t.comments.map((c, idx) => `
+                        ${(t.comments || []).map((c, idx) => `
                             <div class="flex justify-between items-start bg-gray-50 p-1.5 rounded border border-gray-100">
                                 <span class="text-sm">${c.text}</span>
                                 <div class="flex items-center gap-2">
@@ -3092,7 +2981,6 @@ const ui = {
             `;
         }).join('');
 
-        // Project controls
         let controlsHtml = '';
         if (project.status === 'active') {
             controlsHtml = `
@@ -3137,14 +3025,14 @@ const ui = {
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     },
-
-    // ================================================
     renderProjectDetailsModal: function(projectId) {
-        // Re-render the project details modal
         this.openProjectDetails(projectId);
     }
 };
 
+// =================================================================
+// SETTINGS, TAG MANAGER, COMMENT MANAGER, AZURE DEVOPS
+// =================================================================
 const settings = {
     addUser() {
         const username = document.getElementById('new-user-name').value;
