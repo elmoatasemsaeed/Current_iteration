@@ -236,7 +236,7 @@ function executeWithSave(action, successMsg = 'تم الحفظ بنجاح', erro
 // =================================================================
 const archiver = {
     async runArchive() {
-        const TenDaysAgo = Date.now() - (31 * 24 * 60 * 60 * 1000);
+        const TenDaysAgo = Date.now() - (15 * 24 * 60 * 60 * 1000);
         const logsToArchive = db.deliveryLogs.filter(log => log.timestamp < TenDaysAgo);
         const logsToKeep = db.deliveryLogs.filter(log => log.timestamp >= TenDaysAgo);
         if (logsToArchive.length === 0) {
