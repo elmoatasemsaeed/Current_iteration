@@ -3746,16 +3746,17 @@
           "ID": 185376,
           "Work Item Type": "Bug",
           "Title": "Get accession details // while searching with order ID exiting no data retrived",
-          "Assigned To": "Mohamed Ayman",
+          "Assigned To": "Dina Ahmed",
           "Activity": "",
           "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 2.65,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-08-30T10:56:58.377Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-08-30T14:05:11.317Z",
+          "Resolved Date": "2026-08-30T14:21:17.937Z",
+          "State": "Resolved",
+          "Changed Date": "2026-08-30T14:21:17.937Z",
           "Customer": "Med Lab KSA_290"
         },
         {
@@ -12609,6 +12610,21 @@
           "State": "Active",
           "Changed Date": "2026-08-29T11:45:18.26Z",
           "Customer": "Abha Private Hospital_14"
+        },
+        {
+          "ID": 185499,
+          "Work Item Type": "Task",
+          "Title": "DB: fix ORA-22835: Buffer too small for CLOB to CHAR or BLOB to RAW conversion (actual: 6067, maximum: 4000) on LDM_TEST_RW",
+          "Assigned To": "Mohamed Qassem",
+          "Activity": "DB Modification",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-08-30T14:10:26.173Z",
+          "Customer": "Abha Private Hospital_14"
         }
       ],
       "bugs": [],
@@ -13302,11 +13318,13 @@
       "tester": "Hebatullah Mohamed",
       "area": "LDM Integration",
       "priority": 5,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-08-30T13:45:56.803Z",
+      "changedDate": "2026-08-30T14:12:10.700Z",
       "tasks": [],
       "bugs": [
         {
@@ -32680,6 +32698,21 @@
           "State": "New",
           "Changed Date": "2026-08-25T14:32:19.497Z",
           "Customer": "Assuit University Hospitals_412"
+        },
+        {
+          "ID": 185501,
+          "Work Item Type": "Task",
+          "Title": "Transfer frequency check days setup to Minimum Retest Interval General template",
+          "Assigned To": "Ahmed Attia",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-July 16-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-08-30T14:14:44.62Z",
+          "Customer": "Assuit University Hospitals_412"
         }
       ],
       "bugs": [
@@ -33501,7 +33534,7 @@
       "id": 185373,
       "title": "Alfa - Result Issue (#47936)",
       "type": "Support log",
-      "state": "Active",
+      "state": "On-Hold",
       "assignedTo": "mohamed.abdelghany",
       "tester": "Unassigned",
       "area": "Internal lab",
@@ -33512,7 +33545,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alfa Lab Egypt_424",
-      "changedDate": "2026-08-30T12:55:52.157Z",
+      "changedDate": "2026-08-30T14:22:38.337Z",
       "tasks": [
         {
           "ID": 185387,
@@ -33527,7 +33560,8 @@
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-08-30T10:05:13.273Z",
+          "Tags": "wait .net  response",
+          "Changed Date": "2026-08-30T14:12:58.45Z",
           "Customer": "Alfa Lab Egypt_424"
         }
       ],
@@ -33544,38 +33578,6 @@
       "iterationPath": "LDM",
       "devActualTime": 0,
       "testActualTime": 0.5,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
-      "id": 185381,
-      "title": "Alborg KSA - Extract every item that have been checked-in at least one time",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "El-Hussein Mohamed",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Al Borg KSA_530",
-      "changedDate": "2026-08-30T11:17:31.010Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "standupComments": [],
-      "iterationPath": "MaterialManagement\\2026",
-      "devActualTime": 0.75,
-      "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null
     },
