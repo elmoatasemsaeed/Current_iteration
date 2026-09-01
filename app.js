@@ -2042,66 +2042,85 @@ showWeeklyReportModal(reportData) {
     modal.style.display = 'flex';
 },
     renderDelivery() {
-        const container = document.getElementById('delivery-grid');
-        const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || "";
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
-        const regularStories = nonBacklog.filter(s => isRegularStory(s));
-        const allTested = regularStories.filter(s => s.state === 'Tested' || s.state === 'Closed');
-        const pendingStories = allTested.filter(s => {
-            const isPending = !db.deliveryLogs.some(l => l.storyId === s.id.toString());
-            const matchesSearch = s.title.toLowerCase().includes(searchTerm) || s.id.toString().includes(searchTerm) || (s.area && s.area.toLowerCase().includes(searchTerm));
-            return isPending && matchesSearch;
-        });
-        const completedStories = db.deliveryLogs.map(log => {
-            const story = regularStories.find(s => s.id.toString() === log.storyId.toString());
-            return { ...story, logData: log, title: story ? story.title : "Story not in current CSV", area: story ? story.area : "N/A" };
-        }).filter(s => {
-            if (!s.id) return false;
-            const matchesSearch = s.title.toLowerCase().includes(searchTerm) || s.logData.storyId.toString().includes(searchTerm) || s.logData.to.toLowerCase().includes(searchTerm) || (s.area && s.area.toLowerCase().includes(searchTerm));
-            return matchesSearch;
-        }).reverse();
-        if (pendingStories.length === 0 && completedStories.length === 0) {
-            container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">${searchTerm ? 'لا توجد نتائج تطابق بحثك في قسم التسليم.' : 'لا توجد عناصر حالياً.'}</div>`;
-            return;
-        }
-        const createCardHtml = (s, isLogged) => {
-            return `
-                <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
-                    <div class="flex justify-between items-start mb-2"><span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span></div>
-                    <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
-                    <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">${isLogged ? '✓ تم التسليم' : '*Tested*'}</span>
-                    <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
-                    ${isLogged ? `
-                        <div class="relative group mt-2" dir="rtl">
-                            <div class="text-xs bg-green-50 text-green-700 p-3 pr-12 rounded-lg border border-green-100 min-h-[60px] leading-relaxed">
-                                <b>المستلم:</b> ${s.logData.to}<br>
-                                <b>التاريخ:</b> ${s.logData.date}
-                            </div>
-                            ${currentUser && currentUser.role === 'admin' ? `
-                                <button onclick="ui.editDelivery('${s.logData.storyId}')" class="absolute top-2 left-2 bg-white border border-green-200 shadow-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 rounded-md p-1.5 text-[10px] transition-all z-10 flex items-center gap-1">
-                                    <span>✏️</span>
-                                    <span class="text-[9px] font-bold">تعديل</span>
-                                </button>
-                            ` : ''}
-                        </div>
-                    ` : (currentUser && currentUser.role === 'admin' ? `
-                        <div class="flex gap-2 mt-auto">
-                            <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
-                            <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">تأكيد</button>
-                        </div>
-                    ` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
+    const container = document.getElementById('delivery-grid');
+    const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || "";
+    const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+    const regularStories = nonBacklog.filter(s => isRegularStory(s));
+    const allTested = regularStories.filter(s => s.state === 'Tested' || s.state === 'Closed');
+    const pendingStories = allTested.filter(s => {
+        const isPending = !db.deliveryLogs.some(l => l.storyId === s.id.toString());
+        const matchesSearch = s.title.toLowerCase().includes(searchTerm) || s.id.toString().includes(searchTerm) || (s.area && s.area.toLowerCase().includes(searchTerm));
+        return isPending && matchesSearch;
+    });
+    const completedStories = db.deliveryLogs.map(log => {
+        const story = regularStories.find(s => s.id.toString() === log.storyId.toString());
+        return { ...story, logData: log, title: story ? story.title : "Story not in current CSV", area: story ? story.area : "N/A" };
+    }).filter(s => {
+        if (!s.id) return false;
+        const matchesSearch = s.title.toLowerCase().includes(searchTerm) || s.logData.storyId.toString().includes(searchTerm) || s.logData.to.toLowerCase().includes(searchTerm) || (s.area && s.area.toLowerCase().includes(searchTerm));
+        return matchesSearch;
+    }).reverse();
+
+    // تعريف دالة إنشاء البطاقة مع عرض التاجز في الأعلى
+    const createCardHtml = (s, isLogged) => {
+        // تجميع التاجز (من s.tags و s.customTags)
+        const tags = [...new Set([...(s.tags || []), ...(s.customTags || [])])];
+        const tagsHtml = tags.length > 0 ? `
+            <div class="flex flex-wrap gap-1 mb-2">
+                ${tags.map(tag => `
+                    <span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(s.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">
+                        ${tag.trim()}
+                    </span>
+                `).join('')}
+            </div>
+        ` : '';
+
+        return `
+            <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
+                ${tagsHtml}  <!-- التاجز تظهر في الأعلى -->
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span>
                 </div>
-            `;
-        };
-        let html = `
-            <div class="col-span-full mb-4"><h3 class="text-lg font-bold text-blue-700 flex items-center gap-2">📦 بانتظار التسليم (${pendingStories.length})</h3></div>
-            ${pendingStories.map(s => createCardHtml(s, false)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
-            <div class="col-span-full my-8 border-t-2 border-dashed border-gray-200"></div>
-            <div class="col-span-full mb-4"><h3 class="text-lg font-bold text-gray-500 flex items-center gap-2">✅ تم التسليم مؤخراً (${completedStories.length})</h3></div>
-            ${completedStories.map(s => createCardHtml(s, true)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
+                <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
+                <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">${isLogged ? '✓ تم التسليم' : '*Tested*'}</span>
+                <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
+                ${isLogged ? `
+                    <div class="relative group mt-2" dir="rtl">
+                        <div class="text-xs bg-green-50 text-green-700 p-3 pr-12 rounded-lg border border-green-100 min-h-[60px] leading-relaxed">
+                            <b>المستلم:</b> ${s.logData.to}<br>
+                            <b>التاريخ:</b> ${s.logData.date}
+                        </div>
+                        ${currentUser && currentUser.role === 'admin' ? `
+                            <button onclick="ui.editDelivery('${s.logData.storyId}')" class="absolute top-2 left-2 bg-white border border-green-200 shadow-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 rounded-md p-1.5 text-[10px] transition-all z-10 flex items-center gap-1">
+                                <span>✏️</span>
+                                <span class="text-[9px] font-bold">تعديل</span>
+                            </button>
+                        ` : ''}
+                    </div>
+                ` : (currentUser && currentUser.role === 'admin' ? `
+                    <div class="flex gap-2 mt-auto">
+                        <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
+                        <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">تأكيد</button>
+                    </div>
+                ` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
+            </div>
         `;
-        container.innerHTML = html;
-    },
+    };
+
+    if (pendingStories.length === 0 && completedStories.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">${searchTerm ? 'لا توجد نتائج تطابق بحثك في قسم التسليم.' : 'لا توجد عناصر حالياً.'}</div>`;
+        return;
+    }
+
+    let html = `
+        <div class="col-span-full mb-4"><h3 class="text-lg font-bold text-blue-700 flex items-center gap-2">📦 بانتظار التسليم (${pendingStories.length})</h3></div>
+        ${pendingStories.map(s => createCardHtml(s, false)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
+        <div class="col-span-full my-8 border-t-2 border-dashed border-gray-200"></div>
+        <div class="col-span-full mb-4"><h3 class="text-lg font-bold text-gray-500 flex items-center gap-2">✅ تم التسليم مؤخراً (${completedStories.length})</h3></div>
+        ${completedStories.map(s => createCardHtml(s, true)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
+    `;
+    container.innerHTML = html;
+},
     markDelivered(id) {
         if (currentUser.role !== 'admin') return ui.showToast("عذراً، لا تملك صلاحية تنفيذ هذا الإجراء.", "error");
         const to = document.getElementById(`to-${id}`).value;
