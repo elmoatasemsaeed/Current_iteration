@@ -1,3 +1,6 @@
+تم إرسال الملف الكامل `app.js` بالتعديلات المطلوبة (فصل تعليقات الـ Standup في مخزن مركزي، مع آلية تنظيف تلقائي لحذف تعليقات القصص المؤرشفة). يمكنك نسخه واستخدامه مباشرة.
+
+```javascript
 /**
  * Configuration & Global State
  */
@@ -28,7 +31,9 @@ let db = {
     backlogStories: [],
     areaComments: [],
     projects: [],
-    archivedProjects: []
+    archivedProjects: [],
+    // [NEW] Standup comments stored separately by story ID
+    standupCommentsStore: {}
 };
 
 let currentData = [];
@@ -42,7 +47,73 @@ function isRegularStory(story) {
 }
 
 // =================================================================
-// HELPER FUNCTIONS (Refactored to eliminate duplication)
+// STANDUP COMMENTS HELPERS (New Centralized Logic)
+// =================================================================
+
+/**
+ * Retrieves standup comments for a given story ID from the central store.
+ */
+function getStandupComments(storyId) {
+    if (db.standupCommentsStore && db.standupCommentsStore[storyId]) {
+        return db.standupCommentsStore[storyId];
+    }
+    return [];
+}
+
+/**
+ * Migrates old standup comments from story objects to the central store (run once).
+ */
+function migrateStandupComments() {
+    if (!db.standupCommentsStore) db.standupCommentsStore = {};
+    let migrated = false;
+
+    const migrateStories = (stories) => {
+        (stories || []).forEach(story => {
+            if (story.standupComments && story.standupComments.length > 0) {
+                if (!db.standupCommentsStore[story.id]) {
+                    db.standupCommentsStore[story.id] = [];
+                }
+                db.standupCommentsStore[story.id] = story.standupComments;
+                delete story.standupComments;
+                migrated = true;
+            }
+        });
+    };
+
+    migrateStories(db.currentStories);
+    migrateStories(db.backlogStories);
+
+    if (migrated) {
+        console.log('✅ Standup comments migrated to central store.');
+    }
+}
+
+/**
+ * Prunes standup comments for stories that no longer exist in the active dataset.
+ * Prevents the database file from growing indefinitely.
+ */
+function pruneStandupComments() {
+    if (!db.standupCommentsStore) return;
+
+    const activeIds = new Set();
+    (db.currentStories || []).forEach(s => activeIds.add(s.id.toString()));
+    (db.backlogStories || []).forEach(s => activeIds.add(s.id.toString()));
+
+    let prunedCount = 0;
+    Object.keys(db.standupCommentsStore).forEach(id => {
+        if (!activeIds.has(id.toString())) {
+            delete db.standupCommentsStore[id];
+            prunedCount++;
+        }
+    });
+
+    if (prunedCount > 0) {
+        console.log(`🧹 Pruned ${prunedCount} orphaned standup comment entries.`);
+    }
+}
+
+// =================================================================
+// HELPER FUNCTIONS (Updated to use getStandupComments)
 // =================================================================
 
 /**
@@ -98,10 +169,10 @@ function renderProjectSelect(story) {
 }
 
 /**
- * Renders standup comments for a story.
+ * Renders standup comments for a story using the central store.
  */
 function renderComments(story) {
-    const comments = story.standupComments || [];
+    const comments = getStandupComments(story.id);
     if (!comments.length) return '';
     return `
         <div class="space-y-2 max-h-28 overflow-y-auto pr-1">
@@ -118,7 +189,7 @@ function renderComments(story) {
 }
 
 /**
- * Unified story card generator.
+ * Unified story card generator (Updated to use centralized comments).
  */
 function createStoryCard(story, options = {}) {
     const {
@@ -134,7 +205,7 @@ function createStoryCard(story, options = {}) {
     const isSupport = mode === 'support';
 
     const tags = [...new Set([...(story.tags || []), ...(story.customTags || [])])];
-    const commentsCount = (story.standupComments || []).length;
+    const commentsCount = getStandupComments(story.id).length;
     const releaseDate = story.expectedRelease ? (story.expectedRelease instanceof Date ? story.expectedRelease.toLocaleDateString('en-GB') : new Date(story.expectedRelease).toLocaleDateString('en-GB')) : null;
 
     let statusHtml = '';
@@ -335,6 +406,11 @@ const auth = {
                     if (!db.areaComments) db.areaComments = [];
                     if (!db.projects) db.projects = [];
                     if (!db.archivedProjects) db.archivedProjects = [];
+                    if (!db.standupCommentsStore) db.standupCommentsStore = {};
+                    
+                    // Migrate old comments if necessary
+                    migrateStandupComments();
+                    
                     sessionStorage.setItem('gh_token', t);
                     sessionStorage.setItem('az_pat', azPat);
                     if (rem) localStorage.setItem('saved_creds', JSON.stringify({ u, p, t, azPat }));
@@ -374,7 +450,7 @@ const auth = {
 };
 
 // =================================================================
-// DATA PROCESSOR
+// DATA PROCESSOR (Updated with prune logic)
 // =================================================================
 const dataProcessor = {
     _savePromise: null,
@@ -435,11 +511,14 @@ const dataProcessor = {
                 if (!db.areaComments) db.areaComments = [];
                 if (!db.projects) db.projects = [];
                 if (!db.archivedProjects) db.archivedProjects = [];
+                if (!db.standupCommentsStore) db.standupCommentsStore = {};
+                
                 const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                     headers: { 'Authorization': `token ${token}` }
                 });
                 const metaData = await metaRes.json();
                 db.sha = metaData.sha;
+                
                 const convertDates = (story) => {
                     if (story.expectedRelease) story.expectedRelease = new Date(story.expectedRelease);
                     if (story.changedDate) story.changedDate = new Date(story.changedDate);
@@ -452,6 +531,12 @@ const dataProcessor = {
                 if (db.backlogStories && db.backlogStories.length > 0) {
                     db.backlogStories = db.backlogStories.map(convertDates);
                 }
+                
+                // Migrate old comments (just in case)
+                migrateStandupComments();
+                // Prune comments for stories that no longer exist
+                pruneStandupComments();
+                
                 ui.renderAll();
             } else {
                 console.log("File not found, creating new DB...");
@@ -515,7 +600,7 @@ const dataProcessor = {
                     reviews: [],
                     calc: {},
                     customTags: [],
-                    standupComments: [],
+                    // REMOVED: standupComments field (now in central store)
                     iterationPath: row['Iteration Path'] || "",
                     devActualTime: parseFloat(row['TimeSheet_DevActualTime']) || 0,
                     testActualTime: parseFloat(row['TimeSheet_TestingActualTime']) || 0,
@@ -525,7 +610,7 @@ const dataProcessor = {
                 const existingStory = db.currentStories.find(s => s.id == currentStory.id);
                 if (existingStory) {
                     if (existingStory.customTags) currentStory.customTags = existingStory.customTags;
-                    if (existingStory.standupComments) currentStory.standupComments = existingStory.standupComments;
+                    // Standup comments are NOT copied here anymore; they live in standupCommentsStore.
                     if (existingStory.linkedProjectId) currentStory.linkedProjectId = existingStory.linkedProjectId;
                 }
                 newStories.push(currentStory);
@@ -549,6 +634,9 @@ const dataProcessor = {
         });
         this.calculateTimelines(newStories);
         db.currentStories = newStories;
+        
+        // Prune orphaned comments after updating active stories
+        pruneStandupComments();
         await this.saveToGitHub();
     },
     async processBacklogRows(rows) {
@@ -577,7 +665,7 @@ const dataProcessor = {
                 reviews: [],
                 calc: {},
                 customTags: [],
-                standupComments: [],
+                // REMOVED: standupComments field.
                 iterationPath: row['Iteration Path'] || "",
                 devActualTime: 0,
                 testActualTime: 0,
@@ -586,6 +674,9 @@ const dataProcessor = {
             };
         }).filter(s => s !== null);
         db.backlogStories = backlogStories;
+        
+        // Prune orphaned comments after updating backlog
+        pruneStandupComments();
         await this.saveToGitHub();
         console.log(`Saved ${backlogStories.length} backlog stories`);
         ui.renderAll();
@@ -836,7 +927,7 @@ const areaCommentManager = {
 };
 
 // =================================================================
-// PROJECT MANAGER (Refactored with executeWithSave)
+// PROJECT MANAGER
 // =================================================================
 const projectManager = {
     generateId() {
@@ -1046,7 +1137,7 @@ const projectManager = {
 };
 
 // =================================================================
-// UI RENDERING
+// UI RENDERING (Updated to use centralized comments)
 // =================================================================
 const ui = {
     showLoader() {
@@ -1503,7 +1594,7 @@ const ui = {
                     let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
                     const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
                     const storyTags = s.customTags || [];
-                    const comments = s.standupComments || [];
+                    const comments = getStandupComments(s.id);
 
                     const tagDropdownHtml = renderTagDropdown(s.id, storyTags);
                     const projectSelectHtml = renderProjectSelect(s);
@@ -1883,7 +1974,7 @@ showWeeklyReportModal(reportData) {
                 html += `<div class="text-gray-400 text-[10px] italic">لا توجد</div>`;
             } else {
                 stories.forEach(s => {
-                    const lastComment = s.standupComments && s.standupComments.length > 0 ? s.standupComments[s.standupComments.length - 1] : null;
+                    const lastComment = getStandupComments(s.id).length > 0 ? getStandupComments(s.id)[getStandupComments(s.id).length - 1] : null;
                     const azureTags = s.tags || [];
                     const customTags = s.customTags || [];
                     const allTags = [...new Set([...azureTags, ...customTags])];
@@ -2348,7 +2439,7 @@ showWeeklyReportModal(reportData) {
         const title = document.getElementById('modal-title');
         const body = document.getElementById('modal-body');
         title.innerText = `[#${s.id}] Standup Updates`;
-        const comments = s.standupComments || [];
+        const comments = getStandupComments(s.id);
         body.innerHTML = `
             <div class="bg-slate-50/30 px-2">
                 <div class="flex gap-2 mb-4">
@@ -3118,13 +3209,15 @@ const tagManager = {
 
 const commentManager = {
     updateComment(storyId, text) {
-        const story = db.currentStories.find(s => (s.id || s.ID) == storyId);
-        if (story) {
-            if (!story.standupComments) story.standupComments = [];
-            story.standupComments.push({ text: text, date: new Date().toLocaleString('en-GB'), timestamp: Date.now() });
-            dataProcessor.saveToGitHub();
-            ui.renderActiveCards();
-        }
+        if (!db.standupCommentsStore) db.standupCommentsStore = {};
+        if (!db.standupCommentsStore[storyId]) db.standupCommentsStore[storyId] = [];
+        db.standupCommentsStore[storyId].push({
+            text: text,
+            date: new Date().toLocaleString('en-GB'),
+            timestamp: Date.now()
+        });
+        dataProcessor.saveToGitHub();
+        ui.renderActiveCards();
     }
 };
 
@@ -3279,6 +3372,7 @@ window.onload = () => {
     if (!db.areaComments) db.areaComments = [];
     if (!db.projects) db.projects = [];
     if (!db.archivedProjects) db.archivedProjects = [];
+    if (!db.standupCommentsStore) db.standupCommentsStore = {};
     const saved = localStorage.getItem('saved_creds');
     if (saved) {
         const creds = JSON.parse(saved);
