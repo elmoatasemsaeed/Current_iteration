@@ -1,4 +1,3 @@
-
 /**
  * Configuration & Global State
  */
@@ -18,6 +17,16 @@ const AZURE_CONFIG = {
     QUERY_ID: "8a732680-07a6-4dff-bdbd-7800644f61b9",
     BACKLOG_QUERY_ID: "8e60a3dd-d754-44d2-95ec-993c4e0d135b"
 };
+
+/**
+ * Escapes HTML special characters to prevent XSS attacks.
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = str.toString();
+    return div.innerHTML;
+}
 
 let db = {
     users: [],
@@ -132,9 +141,9 @@ function renderTagDropdown(storyId, selectedTags = []) {
                         ${customTagsList.map(tag => {
                             const isPicked = selectedTags.includes(tag);
                             return `
-                                <button onclick="tagManager.toggleTagInStory('${storyId}', '${tag}')" 
+                                <button onclick="tagManager.toggleTagInStory('${storyId}', '${encodeURIComponent(tag)}')" 
                                         class="w-full text-left px-3 py-2 text-[11px] font-medium ${isPicked ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'} transition-colors flex items-center justify-between">
-                                    ${tag}
+                                    ${escapeHtml(tag)}
                                     ${isPicked ? '<span class="text-purple-600 font-bold">✓</span>' : ''}
                                 </button>
                             `;
@@ -151,7 +160,7 @@ function renderTagDropdown(storyId, selectedTags = []) {
  */
 function renderProjectSelect(story) {
     const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => 
-        `<option value="${p.id}" ${story.linkedProjectId === p.id ? 'selected' : ''}>${p.name}</option>`
+        `<option value="${escapeHtml(p.id)}" ${story.linkedProjectId === p.id ? 'selected' : ''}>${escapeHtml(p.name)}</option>`
     ).join('');
     if (!projectOptions) return '';
     return `
@@ -177,9 +186,9 @@ function renderComments(story) {
             ${comments.slice().reverse().map(c => `
                 <div class="bg-white p-2 rounded-lg border border-indigo-100/50 shadow-sm">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">${c.date}</span>
+                        <span class="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">${escapeHtml(c.date)}</span>
                     </div>
-                    <p class="text-[11px] text-slate-600 leading-tight italic">"${c.text}"</p>
+                    <p class="text-[11px] text-slate-600 leading-tight italic">"${escapeHtml(c.text)}"</p>
                 </div>
             `).join('')}
         </div>
@@ -209,7 +218,7 @@ function createStoryCard(story, options = {}) {
     let statusHtml = '';
     if (showStatus && !isBacklog) {
         const state = story.state || '';
-        statusHtml = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${state === 'Tested' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${state}</span>`;
+        statusHtml = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${state === 'Tested' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${escapeHtml(state)}</span>`;
     }
 
     let projectSelectHtml = showProjectSelect && !isBacklog ? renderProjectSelect(story) : '';
@@ -221,17 +230,17 @@ function createStoryCard(story, options = {}) {
     if (isBacklog) {
         extraFields = `
             <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
-                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Area</div><div class="text-slate-700 truncate">${story.area}</div></div>
-                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div><div class="text-slate-700 font-bold">P${story.priority}</div></div>
+                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Area</div><div class="text-slate-700 truncate">${escapeHtml(story.area)}</div></div>
+                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div><div class="text-slate-700 font-bold">P${escapeHtml(story.priority)}</div></div>
             </div>
         `;
     } else if (isSupport) {
         extraFields = `
             <div class="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
-                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Assigned To</div><div class="text-slate-700 truncate font-medium">${story.assignedTo}</div></div>
-                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div><div class="text-slate-700 font-bold">P${story.priority}</div></div>
+                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Assigned To</div><div class="text-slate-700 truncate font-medium">${escapeHtml(story.assignedTo)}</div></div>
+                <div><div class="text-gray-400 uppercase font-bold text-[9px]">Priority</div><div class="text-slate-700 font-bold">P${escapeHtml(story.priority)}</div></div>
             </div>
-            <div class="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">Area: ${story.area || "General"} | Updated: ${story.changedDate ? new Date(story.changedDate).toLocaleDateString('en-GB') : 'N/A'}</div>
+            <div class="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">Area: ${escapeHtml(story.area || "General")} | Updated: ${story.changedDate ? new Date(story.changedDate).toLocaleDateString('en-GB') : 'N/A'}</div>
         `;
     } else {
         // regular mode
@@ -246,7 +255,7 @@ function createStoryCard(story, options = {}) {
             <div class="grid grid-cols-2 gap-2 border-t pt-2">
                 <div class="text-[11px]">
                     <div class="text-gray-400 uppercase font-bold text-[9px]">Dev</div>
-                    <div class="text-slate-700 truncate font-medium">${story.assignedTo}</div>
+                    <div class="text-slate-700 truncate font-medium">${escapeHtml(story.assignedTo)}</div>
                     <div class="flex justify-between items-center mt-1">
                         <span class="text-blue-500 font-bold">${devEst}h</span>
                         <span class="text-red-500 text-[10px] font-bold">🐞${completedBugs}/${totalBugs}</span>
@@ -254,7 +263,7 @@ function createStoryCard(story, options = {}) {
                 </div>
                 <div class="text-[11px] border-l pl-2">
                     <div class="text-gray-400 uppercase font-bold text-[9px]">Tester</div>
-                    <div class="text-slate-700 truncate font-medium">${story.tester}</div>
+                    <div class="text-slate-700 truncate font-medium">${escapeHtml(story.tester)}</div>
                     <div class="flex justify-between items-center mt-1">
                         <span class="text-green-500 font-bold">${testEst}h</span>
                         <span class="text-indigo-500 text-[10px] font-bold">📋${completedTC}/${totalTC}</span>
@@ -267,14 +276,14 @@ function createStoryCard(story, options = {}) {
     const borderClass = isBacklog ? 'border-purple-200' : (isSupport ? 'border-gray-200' : 'border-gray-100');
     return `
         <div class="relative bg-white p-3 rounded-lg shadow-sm border ${borderClass} hover:shadow-md transition ${customClass}">
-            ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">📅 ${releaseDate}</div>` : ''}
-            ${tags.length > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${tags.map(tag => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(story.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${tag.trim()}</span>`).join('')}</div>` : ''}
+            ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">📅 ${escapeHtml(releaseDate)}</div>` : ''}
+            ${tags.length > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${tags.map(tag => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(story.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${escapeHtml(tag.trim())}</span>`).join('')}</div>` : ''}
             ${tagDropdownHtml}
             <div class="flex justify-between items-center mb-2">
                 <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${story.id} 🔍</div>
                 ${commentsHtml}
             </div>
-            <div onclick="ui.openStoryModal('${story.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${story.title}</div>
+            <div onclick="ui.openStoryModal('${story.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${escapeHtml(story.title)}</div>
             ${projectSelectHtml}
             ${extraFields}
         </div>
@@ -598,7 +607,6 @@ const dataProcessor = {
                     reviews: [],
                     calc: {},
                     customTags: [],
-                    // REMOVED: standupComments field (now in central store)
                     iterationPath: row['Iteration Path'] || "",
                     devActualTime: parseFloat(row['TimeSheet_DevActualTime']) || 0,
                     testActualTime: parseFloat(row['TimeSheet_TestingActualTime']) || 0,
@@ -608,7 +616,6 @@ const dataProcessor = {
                 const existingStory = db.currentStories.find(s => s.id == currentStory.id);
                 if (existingStory) {
                     if (existingStory.customTags) currentStory.customTags = existingStory.customTags;
-                    // Standup comments are NOT copied here anymore; they live in standupCommentsStore.
                     if (existingStory.linkedProjectId) currentStory.linkedProjectId = existingStory.linkedProjectId;
                 }
                 newStories.push(currentStory);
@@ -663,7 +670,6 @@ const dataProcessor = {
                 reviews: [],
                 calc: {},
                 customTags: [],
-                // REMOVED: standupComments field.
                 iterationPath: row['Iteration Path'] || "",
                 devActualTime: 0,
                 testActualTime: 0,
@@ -861,7 +867,7 @@ const areaCommentManager = {
             html += `
                 <div class="mb-6 border-b border-gray-100 pb-4 last:border-0">
                     <div class="flex justify-between items-center mb-3">
-                        <h4 class="font-bold text-indigo-700 text-sm">📍 ${area}</h4>
+                        <h4 class="font-bold text-indigo-700 text-sm">📍 ${escapeHtml(area)}</h4>
                         <span class="text-xs text-gray-400">${comments.length} تعليق</span>
                     </div>
                     <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
@@ -869,10 +875,10 @@ const areaCommentManager = {
                         ${comments.map((c, index) => `
                             <div class="flex justify-between items-start bg-gray-50 p-3 rounded-lg border border-gray-100 comment-item">
                                 <div class="flex-1">
-                                    <p class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</p>
-                                    <p class="text-[10px] text-gray-400 mt-1">${c.timestamp}</p>
+                                    <p class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${escapeHtml(c.text)}</p>
+                                    <p class="text-[10px] text-gray-400 mt-1">${escapeHtml(c.timestamp)}</p>
                                 </div>
-                                <button onclick="areaCommentManager.deleteComment('${area}', ${index})" class="text-red-400 hover:text-red-600 text-sm font-bold ml-2" title="حذف التعليق">✕</button>
+                                <button onclick="areaCommentManager.deleteComment('${encodeURIComponent(area)}', ${index})" class="text-red-400 hover:text-red-600 text-sm font-bold ml-2" title="حذف التعليق">✕</button>
                             </div>
                         `).join('')}
                     </div>
@@ -882,7 +888,7 @@ const areaCommentManager = {
                                   class="flex-1 border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
                                   rows="1"
                                   style="direction: rtl; text-align: right;"></textarea>
-                        <button onclick="areaCommentManager.addCommentFromPopup('${area}')" 
+                        <button onclick="areaCommentManager.addCommentFromPopup('${encodeURIComponent(area)}')" 
                                 class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition whitespace-nowrap">
                             إضافة
                         </button>
@@ -1252,7 +1258,7 @@ const ui = {
                     <table class="w-full text-sm">
                         <thead><tr class="bg-gray-50 border-b">
                             <th class="text-left p-2 font-bold text-gray-600">Business Area</th>
-                            ${sortedStates.map(state => `<th class="text-center p-2 font-bold text-gray-600">${state}</th>`).join('')}
+                            ${sortedStates.map(state => `<th class="text-center p-2 font-bold text-gray-600">${escapeHtml(state)}</th>`).join('')}
                             <th class="text-center p-2 font-bold text-indigo-600">Total</th>
                         </tr></thead>
                         <tbody>
@@ -1269,7 +1275,7 @@ const ui = {
             }).join('');
             grandTotal += rowTotal;
             areaStatsHtml += `<tr class="border-b hover:bg-gray-50">
-                <td class="p-2 font-medium text-slate-700">${area}</td>
+                <td class="p-2 font-medium text-slate-700">${escapeHtml(area)}</td>
                 ${rowCells}
                 <td class="text-center p-2 border-t font-bold text-indigo-600">${rowTotal}</td>
             </tr>`;
@@ -1299,8 +1305,8 @@ const ui = {
         `;
         sortedBranches.forEach(([branch, count]) => {
             branchStatsHtml += `
-                <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 text-center cursor-pointer hover:bg-indigo-100 transition" onclick="ui.showBranchModal('${branch}')">
-                    <div class="text-xs font-bold text-indigo-600 truncate" title="${branch}">${branch}</div>
+                <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 text-center cursor-pointer hover:bg-indigo-100 transition" onclick="ui.showBranchModal('${encodeURIComponent(branch)}')">
+                    <div class="text-xs font-bold text-indigo-600 truncate" title="${escapeHtml(branch)}">${escapeHtml(branch)}</div>
                     <div class="text-2xl font-black text-indigo-800">${count}</div>
                 </div>
             `;
@@ -1320,8 +1326,8 @@ const ui = {
         `;
         sortedCustomers.forEach(([customer, count]) => {
             customerStatsHtml += `
-                <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 text-center cursor-pointer hover:bg-emerald-100 transition" onclick="ui.showCustomerModal('${customer}')">
-                    <div class="text-xs font-bold text-emerald-600 truncate" title="${customer}">${customer}</div>
+                <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 text-center cursor-pointer hover:bg-emerald-100 transition" onclick="ui.showCustomerModal('${encodeURIComponent(customer)}')">
+                    <div class="text-xs font-bold text-emerald-600 truncate" title="${escapeHtml(customer)}">${escapeHtml(customer)}</div>
                     <div class="text-2xl font-black text-emerald-800">${count}</div>
                 </div>
             `;
@@ -1382,12 +1388,12 @@ const ui = {
                         <div class="flex justify-between items-start mb-2">
                             <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">In ${diffDays} Days</span>
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">P${s.priority || '?'}</span>
+                                <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">P${escapeHtml(s.priority || '?')}</span>
                                 <span class="text-[10px] text-gray-400">#${s.id}</span>
                             </div>
                         </div>
-                        <div class="text-sm font-bold text-slate-800 truncate" title="${s.title}">${isBacklog}${s.title}</div>
-                        <div class="text-[11px] text-gray-500 mt-1">Area: ${s.area}</div>
+                        <div class="text-sm font-bold text-slate-800 truncate" title="${escapeHtml(s.title)}">${isBacklog}${escapeHtml(s.title)}</div>
+                        <div class="text-[11px] text-gray-500 mt-1">Area: ${escapeHtml(s.area)}</div>
                         ${isBacklogStory(s) ? '<div class="text-[10px] text-purple-600 font-bold mt-1">📋 Backlog</div>' : ''}
                         <div class="mt-3 flex justify-between items-center">
                             <div class="text-[10px] font-bold uppercase text-gray-400">Release:</div>
@@ -1459,14 +1465,14 @@ const ui = {
                     }
                     html += `
                         <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
-                            <span class="font-bold text-slate-700">${name}</span>
+                            <span class="font-bold text-slate-700">${escapeHtml(name)}</span>
                             <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold">${count} Stories</span>
                         </div>
                     `;
                 } else {
                     html += `
                         <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
-                            <span class="font-bold text-slate-700">${name}</span>
+                            <span class="font-bold text-slate-700">${escapeHtml(name)}</span>
                             <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">Free</span>
                         </div>
                     `;
@@ -1537,7 +1543,7 @@ const ui = {
             <div class="col-span-full mt-8 mb-4">
                 <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
                     <span class="w-2 h-6 bg-indigo-600 rounded-full"></span>
-                    ${area} 
+                    ${escapeHtml(area)} 
                     <span class="text-sm font-normal text-gray-400">(${storiesInArea.length})</span>
                 </h2>
             </div>
@@ -1603,12 +1609,10 @@ const ui = {
                 let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
                 const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
 
-                // ===== استخدام الـ Helpers =====
                 const tagDropdownHtml = renderTagDropdown(s.id, s.customTags || []);
                 const projectSelectHtml = renderProjectSelect(s);
                 const commentsHtml = renderComments(s);
                 const commentsCount = getStandupComments(s.id).length;
-                // ==============================
 
                 return `
                 <div class="relative bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-visible flex flex-col mb-4">
@@ -1621,26 +1625,24 @@ const ui = {
                     <div class="p-5 flex-1">
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex gap-2">
-                                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${statusText}</span>
-                                <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${s.priority || 999}</span>
+                                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${escapeHtml(statusText)}</span>
+                                <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${escapeHtml(s.priority || 999)}</span>
                             </div>
                             <span onclick="ui.openStoryModal('${s.id}')" class="text-xs font-mono text-gray-400 cursor-pointer hover:text-indigo-600">#${s.id} 🔍</span>
                         </div>
                         <div class="flex flex-wrap gap-1 mt-2 mb-3">
-                            ${s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${t}</span>`).join('')}
+                            ${s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${escapeHtml(t)}</span>`).join('')}
                         </div>
-                        <!-- التاجز المخصصة + زر الإضافة -->
                         <div class="flex flex-wrap items-center gap-1.5 mb-4 border-b border-dashed border-gray-100 pb-3 overflow-visible">
                             ${(s.customTags || []).map(tag => `
                                 <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
-                                    ${tag}
-                                    <button onclick="tagManager.toggleTagInStory('${s.id}', '${tag}')" class="hover:text-purple-900 font-black ml-1">×</button>
+                                    ${escapeHtml(tag)}
+                                    <button onclick="tagManager.toggleTagInStory('${s.id}', '${encodeURIComponent(tag)}')" class="hover:text-purple-900 font-black ml-1">×</button>
                                 </span>
                             `).join('')}
                             ${tagDropdownHtml}
                         </div>
-                        <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${s.title}</h3>
-                        <!-- المشروع -->
+                        <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${escapeHtml(s.title)}</h3>
                         ${projectSelectHtml}
                         <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
                             <div>
@@ -1650,7 +1652,7 @@ const ui = {
                                 </div>
                                 <div class="flex flex-col gap-0.5">
                                     <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span> ${s.assignedTo}
+                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span> ${escapeHtml(s.assignedTo)}
                                     </p>
                                     <div class="ml-8 mt-1">
                                         <div class="flex justify-between items-center mb-0.5">
@@ -1678,9 +1680,9 @@ const ui = {
                                             ` : ''}
                                         </div>
                                         ` : ''}
-                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${devStartDisplay}</p>
+                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${escapeHtml(devStartDisplay)}</p>
                                         ${devVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${devVacDaysNow} Days</p>` : ''}
-                                        <p class="text-[10px] text-green-600 font-bold">Resolved: ${devResolveDate}</p>
+                                        <p class="text-[10px] text-green-600 font-bold">Resolved: ${escapeHtml(devResolveDate)}</p>
                                         <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalDevEffort}h</p>
                                     </div>
                                 </div>
@@ -1692,7 +1694,7 @@ const ui = {
                                 </div>
                                 <div class="flex flex-col gap-0.5">
                                     <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span> ${s.tester}
+                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span> ${escapeHtml(s.tester)}
                                     </p>
                                     <div class="ml-8 mt-1">
                                         <div class="flex justify-between items-center mb-0.5">
@@ -1702,14 +1704,13 @@ const ui = {
                                         <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
                                             <div class="bg-indigo-500 h-full" style="width: ${progressPercent}%"></div>
                                         </div>
-                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${testStartDisplay}</p>
+                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${escapeHtml(testStartDisplay)}</p>
                                         ${testVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${testVacDaysNow} Days</p>` : ''}
                                         <p class="text-[10px] text-indigo-600 font-bold">Est QA: ${totalTestEffort}h</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- التعليقات (Standup Updates) -->
                         <div class="mt-2 pt-4 border-t border-gray-50 bg-slate-50/30 -mx-5 px-5">
                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2 block">Standup Updates</label>
                             <div class="flex gap-2 mb-3">
@@ -1766,7 +1767,7 @@ const ui = {
         filterSelect.size = Math.min(areas.length, 5);
         filterSelect.innerHTML = areas.map(a => {
             const selected = currentSelected.includes(a) ? 'selected' : '';
-            return `<option value="${a}" ${selected}>${a}</option>`;
+            return `<option value="${escapeHtml(a)}" ${selected}>${escapeHtml(a)}</option>`;
         }).join('');
         filterSelect.onchange = () => { this.renderKanban(); };
 
@@ -1804,7 +1805,7 @@ const ui = {
             return `
                 <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
                     <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                        <h3 class="font-bold text-slate-700">${state}</h3>
+                        <h3 class="font-bold text-slate-700">${escapeHtml(state)}</h3>
                         <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
                     </div>
                     <div class="p-2 space-y-3 overflow-y-auto">
@@ -1827,7 +1828,7 @@ const ui = {
         }
         const areas = [...new Set(supportLogs.map(s => s.area || "General"))].sort();
         const currentSelected = filterSelect.value;
-        filterSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${a}" ${a === currentSelected ? 'selected' : ''}>${a}</option>`).join('');
+        filterSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${escapeHtml(a)}" ${a === currentSelected ? 'selected' : ''}>${escapeHtml(a)}</option>`).join('');
         const selectedArea = filterSelect.value;
         let filteredLogs = supportLogs;
         if (selectedArea !== 'all') filteredLogs = filteredLogs.filter(s => (s.area || "General") === selectedArea);
@@ -1843,7 +1844,7 @@ const ui = {
             html += `
                 <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
                     <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                        <h3 class="font-bold text-slate-700">${state}</h3>
+                        <h3 class="font-bold text-slate-700">${escapeHtml(state)}</h3>
                         <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${logsInState.length}</span>
                     </div>
                     <div class="p-2 space-y-3 overflow-y-auto">
@@ -1946,7 +1947,7 @@ showWeeklyReportModal(reportData) {
     const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
     html += `<div class="text-center mb-6 border-b pb-4">
         <h1 class="text-2xl font-bold text-slate-800">تقرير الحالة الأسبوعي</h1>
-        <p class="text-sm text-gray-500">تاريخ التقرير: ${dateStr}</p>
+        <p class="text-sm text-gray-500">تاريخ التقرير: ${escapeHtml(dateStr)}</p>
     </div>`;
     const truncateTitle = (title) => {
         if (!title) return '';
@@ -1958,7 +1959,7 @@ showWeeklyReportModal(reportData) {
         const data = reportData[area];
         const { states, backlog, tested, comments } = data;
         html += `<div class="mb-12 page-break-after">`;
-        html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${area}</h2>`;
+        html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${escapeHtml(area)}</h2>`;
 
         if (comments && comments.length > 0) {
             html += `<div class="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">`;
@@ -1967,8 +1968,8 @@ showWeeklyReportModal(reportData) {
             comments.forEach(c => {
                 html += `
                     <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2">
-                        <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${c.text}</span>
-                        <span class="text-[10px] text-gray-400 whitespace-nowrap">${c.timestamp}</span>
+                        <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${escapeHtml(c.text)}</span>
+                        <span class="text-[10px] text-gray-400 whitespace-nowrap">${escapeHtml(c.timestamp)}</span>
                     </div>
                 `;
             });
@@ -1982,7 +1983,7 @@ showWeeklyReportModal(reportData) {
         stateOrder.forEach(state => {
             const stories = states[state] || [];
             html += `<div class="state-column bg-gray-50 rounded-lg border border-gray-200 p-3">`;
-            html += `<h4 class="font-bold text-sm text-slate-700 border-b pb-1 mb-2">${state} (${stories.length})</h4>`;
+            html += `<h4 class="font-bold text-sm text-slate-700 border-b pb-1 mb-2">${escapeHtml(state)} (${stories.length})</h4>`;
             if (stories.length === 0) {
                 html += `<div class="text-gray-400 text-[10px] italic">لا توجد</div>`;
             } else {
@@ -1994,21 +1995,21 @@ showWeeklyReportModal(reportData) {
                     html += `<div class="report-story-card bg-white rounded border border-gray-100 p-2 mb-2 shadow-sm">`;
                     html += `<div class="flex justify-between items-start gap-2">`;
                     html += `<span class="font-mono text-[9px] text-gray-400">#${s.id}</span>`;
-                    html += `<span class="title text-xs font-bold text-slate-800 flex-1">${truncateTitle(s.title)}</span>`;
+                    html += `<span class="title text-xs font-bold text-slate-800 flex-1">${escapeHtml(truncateTitle(s.title))}</span>`;
                     html += `</div>`;
                     if (allTags.length > 0) {
                         html += `<div class="flex flex-wrap gap-1 mt-1">`;
                         allTags.forEach(tag => {
                             const isCustom = customTags.includes(tag);
-                            html += `<span class="report-tag px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-100 text-purple-700 border border-purple-300 report-custom-tag' : 'bg-gray-100 text-gray-600 border border-gray-200'}">${tag}${isCustom ? ' ★' : ''}</span>`;
+                            html += `<span class="report-tag px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-100 text-purple-700 border border-purple-300 report-custom-tag' : 'bg-gray-100 text-gray-600 border border-gray-200'}">${escapeHtml(tag)}${isCustom ? ' ★' : ''}</span>`;
                         });
                         html += `</div>`;
                     }
                     if (lastComment) {
                         html += `<div class="report-comment text-[9px] text-slate-600 mt-1">`;
                         html += `<span class="font-bold text-indigo-600">اخر ستاندب:</span> `;
-                        html += `<span>"${lastComment.text}"</span>`;
-                        html += `<span class="text-[8px] text-gray-400 mr-1">(${lastComment.date})</span>`;
+                        html += `<span>"${escapeHtml(lastComment.text)}"</span>`;
+                        html += `<span class="text-[8px] text-gray-400 mr-1">(${escapeHtml(lastComment.date)})</span>`;
                         html += `</div>`;
                     }
                     html += `</div>`;
@@ -2028,8 +2029,8 @@ showWeeklyReportModal(reportData) {
             top5.forEach(s => {
                 html += `<div class="bg-white px-3 py-1 rounded-full border border-purple-100 text-xs flex items-center gap-2 shadow-sm">`;
                 html += `<span class="font-mono text-gray-400">#${s.id}</span>`;
-                html += `<span class="font-medium text-slate-700">${truncateTitle(s.title)}</span>`;
-                html += `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded text-[9px] font-bold">P${s.priority}</span>`;
+                html += `<span class="font-medium text-slate-700">${escapeHtml(truncateTitle(s.title))}</span>`;
+                html += `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded text-[9px] font-bold">P${escapeHtml(s.priority)}</span>`;
                 html += `</div>`;
             });
             if (top5.length < backlog.length) html += `<span class="text-xs text-gray-400">... وغيرها</span>`;
@@ -2076,15 +2077,13 @@ showWeeklyReportModal(reportData) {
         return matchesSearch;
     }).reverse();
 
-    // تعريف دالة إنشاء البطاقة مع عرض التاجز في الأعلى
     const createCardHtml = (s, isLogged) => {
-        // تجميع التاجز (من s.tags و s.customTags)
         const tags = [...new Set([...(s.tags || []), ...(s.customTags || [])])];
         const tagsHtml = tags.length > 0 ? `
             <div class="flex flex-wrap gap-1 mb-2">
                 ${tags.map(tag => `
                     <span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(s.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">
-                        ${tag.trim()}
+                        ${escapeHtml(tag.trim())}
                     </span>
                 `).join('')}
             </div>
@@ -2092,18 +2091,18 @@ showWeeklyReportModal(reportData) {
 
         return `
             <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
-                ${tagsHtml}  <!-- التاجز تظهر في الأعلى -->
+                ${tagsHtml}
                 <div class="flex justify-between items-start mb-2">
                     <span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span>
                 </div>
-                <div class="font-bold text-slate-800 mb-4 leading-snug">${s.title}</div>
+                <div class="font-bold text-slate-800 mb-4 leading-snug">${escapeHtml(s.title)}</div>
                 <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">${isLogged ? '✓ تم التسليم' : '*Tested*'}</span>
-                <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${s.area || "General"}</div>
+                <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${escapeHtml(s.area || "General")}</div>
                 ${isLogged ? `
                     <div class="relative group mt-2" dir="rtl">
                         <div class="text-xs bg-green-50 text-green-700 p-3 pr-12 rounded-lg border border-green-100 min-h-[60px] leading-relaxed">
-                            <b>المستلم:</b> ${s.logData.to}<br>
-                            <b>التاريخ:</b> ${s.logData.date}
+                            <b>المستلم:</b> ${escapeHtml(s.logData.to)}<br>
+                            <b>التاريخ:</b> ${escapeHtml(s.logData.date)}
                         </div>
                         ${currentUser && currentUser.role === 'admin' ? `
                             <button onclick="ui.editDelivery('${s.logData.storyId}')" class="absolute top-2 left-2 bg-white border border-green-200 shadow-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 rounded-md p-1.5 text-[10px] transition-all z-10 flex items-center gap-1">
@@ -2209,7 +2208,7 @@ showWeeklyReportModal(reportData) {
         });
         const renderAvailableTag = (name) => {
             const isBusyGlobally = globalTaskWorkers.has(name);
-            return `<span class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center gap-1.5">${name}${isBusyGlobally ? '<span class="text-[8px] bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded shadow-sm font-black ring-1 ring-amber-200">BUSY</span>' : ''}</span>`;
+            return `<span class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center gap-1.5">${escapeHtml(name)}${isBusyGlobally ? '<span class="text-[8px] bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded shadow-sm font-black ring-1 ring-amber-200">BUSY</span>' : ''}</span>`;
         };
         const areaEntries = Object.entries(areaGroups);
         container.innerHTML = areaEntries.map(([areaName, data], index) => {
@@ -2243,7 +2242,7 @@ showWeeklyReportModal(reportData) {
                 <div class="mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 cursor-move transition-all duration-300 hover:shadow-indigo-100/50" draggable="true" ondragstart="ui.handleAreaDragStart(event, ${index})" ondragover="ui.handleAreaDragOver(event)" ondrop="ui.handleAreaDrop(event, ${index})">
                     <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 px-10 flex justify-between items-center pointer-events-none">
                         <div>
-                            <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3"><span class="w-4 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>${areaName}</h2>
+                            <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3"><span class="w-4 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>${escapeHtml(areaName)}</h2>
                             <p class="text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Resource Allocation & Availability</p>
                         </div>
                         <i class="fas fa-grip-vertical text-slate-600 text-xl"></i>
@@ -2280,7 +2279,7 @@ showWeeklyReportModal(reportData) {
                                 <div class="space-y-3 mt-3">
                                     ${supportWorkersInArea.length > 0 ? supportWorkersInArea.map(worker => `
                                         <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-100">
-                                            <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-amber-600 font-bold text-xs border border-amber-200">${worker.charAt(0)}</div><div><div class="text-xs font-bold text-slate-700">${worker}</div><div class="text-[9px] text-amber-600 uppercase font-bold">Support</div></div></div>
+                                            <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-amber-600 font-bold text-xs border border-amber-200">${escapeHtml(worker.charAt(0))}</div><div><div class="text-xs font-bold text-slate-700">${escapeHtml(worker)}</div><div class="text-[9px] text-amber-600 uppercase font-bold">Support</div></div></div>
                                             <span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-bold">Active</span>
                                         </div>
                                     `).join('') : '<div class="text-slate-400 text-xs italic p-4 text-center">No active support</div>'}
@@ -2291,7 +2290,7 @@ showWeeklyReportModal(reportData) {
                                 <div class="space-y-3 mt-3">
                                     ${bugWorkersInArea.length > 0 ? bugWorkersInArea.map(worker => `
                                         <div class="flex items-center justify-between p-3 bg-rose-50 rounded-xl border border-rose-100">
-                                            <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-rose-600 font-bold text-xs border border-rose-200">${worker.charAt(0)}</div><div><div class="text-xs font-bold text-slate-700">${worker}</div><div class="text-[9px] text-rose-600 uppercase font-bold">Bugs</div></div></div>
+                                            <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-rose-600 font-bold text-xs border border-rose-200">${escapeHtml(worker.charAt(0))}</div><div><div class="text-xs font-bold text-slate-700">${escapeHtml(worker)}</div><div class="text-[9px] text-rose-600 uppercase font-bold">Bugs</div></div></div>
                                             <span class="text-[10px] bg-rose-200 text-rose-800 px-2 py-0.5 rounded-full font-bold">Active</span>
                                         </div>
                                     `).join('') : '<div class="text-slate-400 text-xs italic p-4 text-center">No active bugs</div>'}
@@ -2328,7 +2327,7 @@ showWeeklyReportModal(reportData) {
             return `
                 <div class="relative p-3 bg-slate-50/50 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors">
                     <div class="flex justify-between mb-2 items-start">
-                        <span class="font-bold text-sm text-slate-700">${name} <span class="text-[10px] font-normal text-gray-400">(${storyCount} ${storyCount === 1 ? 'story' : 'stories'})</span></span>
+                        <span class="font-bold text-sm text-slate-700">${escapeHtml(name)} <span class="text-[10px] font-normal text-gray-400">(${storyCount} ${storyCount === 1 ? 'story' : 'stories'})</span></span>
                         <span class="text-xs font-mono ${isOver ? 'text-red-600 font-black' : 'text-slate-500'}">${hours.toFixed(1)} <span class="text-[10px] text-slate-400">/ ${max}h</span></span>
                     </div>
                     <div class="w-full bg-gray-200/70 rounded-full h-2"><div class="${barColor} h-2 rounded-full transition-all duration-1000 shadow-sm" style="width: ${perc}%"></div></div>
@@ -2359,8 +2358,8 @@ showWeeklyReportModal(reportData) {
         } else {
             content.innerHTML = freeDevsByArea.map(item => `
                 <div class="mb-4">
-                    <h4 class="font-bold text-indigo-600 text-sm border-b pb-1 mb-2">${item.area}</h4>
-                    <div class="flex flex-wrap gap-2">${item.devs.map(name => `<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200">${name}</span>`).join('')}</div>
+                    <h4 class="font-bold text-indigo-600 text-sm border-b pb-1 mb-2">${escapeHtml(item.area)}</h4>
+                    <div class="flex flex-wrap gap-2">${item.devs.map(name => `<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200">${escapeHtml(name)}</span>`).join('')}</div>
                 </div>
             `).join('');
         }
@@ -2401,43 +2400,43 @@ showWeeklyReportModal(reportData) {
         if (isBacklogStory(s)) {
             body.innerHTML = `
                 <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Business Area</p><p class="font-semibold text-slate-700">${s.area}</p></div>
-                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Priority</p><p class="font-semibold text-slate-700">P${s.priority}</p></div>
+                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Business Area</p><p class="font-semibold text-slate-700">${escapeHtml(s.area)}</p></div>
+                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Priority</p><p class="font-semibold text-slate-700">P${escapeHtml(s.priority)}</p></div>
                 </div>
                 <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
                     <div class="flex items-center gap-2 text-purple-700"><span class="text-lg">📋</span><span class="font-bold">This story is in the Backlog</span></div>
-                    <p class="text-sm text-slate-600 mt-2">State: ${s.state}</p>
-                    ${s.expectedRelease ? `<p class="text-sm text-slate-600">Expected Release: ${s.expectedRelease.toLocaleDateString('en-GB')}</p>` : ''}
-                    ${s.assignedTo ? `<p class="text-sm text-slate-600">Assigned To: ${s.assignedTo}</p>` : ''}
+                    <p class="text-sm text-slate-600 mt-2">State: ${escapeHtml(s.state)}</p>
+                    ${s.expectedRelease ? `<p class="text-sm text-slate-600">Expected Release: ${escapeHtml(s.expectedRelease.toLocaleDateString('en-GB'))}</p>` : ''}
+                    ${s.assignedTo ? `<p class="text-sm text-slate-600">Assigned To: ${escapeHtml(s.assignedTo)}</p>` : ''}
                 </div>
                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                    <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString() : 'Not Scheduled'}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? escapeHtml(s.expectedRelease.toLocaleDateString()) : 'Not Scheduled'}</span></div>
                 </div>
             `;
         } else {
             const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
             body.innerHTML = `
                 <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Business Area</p><p class="font-semibold text-slate-700">${s.area}</p></div>
-                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Priority</p><p class="font-semibold text-slate-700">P${s.priority}</p></div>
+                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Business Area</p><p class="font-semibold text-slate-700">${escapeHtml(s.area)}</p></div>
+                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Priority</p><p class="font-semibold text-slate-700">P${escapeHtml(s.priority)}</p></div>
                 </div>
                 <div class="space-y-4">
                     <h4 class="font-bold text-blue-700 border-b pb-1">🛠 Development Details</h4>
-                    <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Assigned To:</b> ${s.assignedTo}</p><p><b>Dev End:</b> ${s.calc.devEnd instanceof Date ? s.calc.devEnd.toLocaleString() : 'TBD'}</p></div>
+                    <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Assigned To:</b> ${escapeHtml(s.assignedTo)}</p><p><b>Dev End:</b> ${s.calc.devEnd instanceof Date ? escapeHtml(s.calc.devEnd.toLocaleString()) : 'TBD'}</p></div>
                     <div class="space-y-1">${nonTestTasks.map(t => `
                         <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
-                            <span class="flex items-start gap-2"><span class="font-mono text-blue-600 font-bold bg-blue-50 px-1 rounded">#${t['ID']}</span><span>${t['Title']}</span></span>
-                            <span class="px-2 rounded h-fit ${t['State'] === 'Closed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${t['State']}</span>
+                            <span class="flex items-start gap-2"><span class="font-mono text-blue-600 font-bold bg-blue-50 px-1 rounded">#${escapeHtml(t['ID'])}</span><span>${escapeHtml(t['Title'])}</span></span>
+                            <span class="px-2 rounded h-fit ${t['State'] === 'Closed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${escapeHtml(t['State'])}</span>
                         </div>
                     `).join('')}</div>
                 </div>
                 <div class="space-y-4">
                     <h4 class="font-bold text-purple-700 border-b pb-1">🔍 QA & Testing</h4>
-                    <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Tester:</b> ${s.tester}</p><p><b>Test End:</b> ${s.calc.testEnd instanceof Date ? s.calc.testEnd.toLocaleString() : 'Waiting'}</p></div>
+                    <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Tester:</b> ${escapeHtml(s.tester)}</p><p><b>Test End:</b> ${s.calc.testEnd instanceof Date ? escapeHtml(s.calc.testEnd.toLocaleString()) : 'Waiting'}</p></div>
                     <div class="space-y-1">${s.testCases && s.testCases.length > 0 ? s.testCases.map(tc => `
                         <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
-                            <span>TC #${tc.id}</span>
-                            <span class="font-bold ${tc.state === 'Pass' ? 'text-green-600' : 'text-red-600'}">${tc.state}</span>
+                            <span>TC #${escapeHtml(tc.id)}</span>
+                            <span class="font-bold ${tc.state === 'Pass' ? 'text-green-600' : 'text-red-600'}">${escapeHtml(tc.state)}</span>
                         </div>
                     `).join('') : '<p class="text-xs text-gray-400 italic">No test cases linked yet.</p>'}</div>
                 </div>
@@ -2446,14 +2445,14 @@ showWeeklyReportModal(reportData) {
                     <h4 class="font-bold text-red-600 border-b pb-1">🐞 Bugs (${s.bugs.length})</h4>
                     ${s.bugs.map(b => `
                         <div class="text-[11px] border-l-2 border-red-500 pl-2 py-1">
-                            <p class="font-bold">${b['Title']}</p>
-                            <p class="text-gray-500">State: ${b['State']} | Effort: ${b['Original Estimation']}h</p>
+                            <p class="font-bold">${escapeHtml(b['Title'])}</p>
+                            <p class="text-gray-500">State: ${escapeHtml(b['State'])} | Effort: ${escapeHtml(b['Original Estimation'])}h</p>
                         </div>
                     `).join('')}
                 </div>` : ''}
                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                    <div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-indigo-700 uppercase">Internal Delivery Target</span><span class="text-sm font-bold text-indigo-900">${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleString() : 'Calculating...'}</span></div>
-                    <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? s.expectedRelease.toLocaleDateString() : 'Not Scheduled'}</span></div>
+                    <div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-indigo-700 uppercase">Internal Delivery Target</span><span class="text-sm font-bold text-indigo-900">${s.calc.finalEnd instanceof Date ? escapeHtml(s.calc.finalEnd.toLocaleString()) : 'Calculating...'}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? escapeHtml(s.expectedRelease.toLocaleDateString()) : 'Not Scheduled'}</span></div>
                 </div>
             `;
         }
@@ -2480,8 +2479,8 @@ showWeeklyReportModal(reportData) {
                 <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
                     ${comments.slice().reverse().map(c => `
                         <div class="bg-white p-3 rounded-xl border border-indigo-100 shadow-sm">
-                            <div class="flex justify-between items-center mb-2"><span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">${c.date}</span></div>
-                            <p class="text-sm text-slate-700 leading-relaxed italic">"${c.text}"</p>
+                            <div class="flex justify-between items-center mb-2"><span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">${escapeHtml(c.date)}</span></div>
+                            <p class="text-sm text-slate-700 leading-relaxed italic">"${escapeHtml(c.text)}"</p>
                         </div>
                     `).join('')}
                     ${comments.length === 0 ? '<div class="text-center p-6 text-gray-400 italic text-sm">No updates recorded yet.</div>' : ''}
@@ -2508,12 +2507,12 @@ showWeeklyReportModal(reportData) {
         }, {});
         let html = '<div class="space-y-4">';
         for (const area in grouped) {
-            html += `<div class="border-b pb-2"><h4 class="font-bold text-indigo-600">${area}</h4>`;
+            html += `<div class="border-b pb-2"><h4 class="font-bold text-indigo-600">${escapeHtml(area)}</h4>`;
             grouped[area].forEach(s => {
                 html += `
                     <div class="flex justify-between items-center border-b border-gray-100 py-1 hover:bg-gray-50 cursor-pointer" onclick="ui.openStoryModal('${s.id}')">
-                        <span class="text-sm">#${s.id} - ${s.title}</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs font-bold ${s.state === 'Tested' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${s.state}</span>
+                        <span class="text-sm">#${s.id} - ${escapeHtml(s.title)}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold ${s.state === 'Tested' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${escapeHtml(s.state)}</span>
                     </div>
                 `;
             });
@@ -2527,12 +2526,12 @@ showWeeklyReportModal(reportData) {
     showBranchModal(branch) {
         const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const activeStories = nonBacklog.filter(s => s.branch === branch && s.state !== 'Tested' && s.state !== 'Closed');
-        this.showModalWithTitleAndStories(`Branch: ${branch} (${activeStories.length} active stories)`, activeStories);
+        this.showModalWithTitleAndStories(`Branch: ${escapeHtml(branch)} (${activeStories.length} active stories)`, activeStories);
     },
     showCustomerModal(customer) {
         const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const activeStories = nonBacklog.filter(s => s.customer === customer && s.state !== 'Tested' && s.state !== 'Closed');
-        this.showModalWithTitleAndStories(`Customer: ${customer} (${activeStories.length} active stories)`, activeStories);
+        this.showModalWithTitleAndStories(`Customer: ${escapeHtml(customer)} (${activeStories.length} active stories)`, activeStories);
     },
     renderDailyActivity() {
         const container = document.getElementById('daily-activity-container');
@@ -2556,7 +2555,7 @@ showWeeklyReportModal(reportData) {
             if (hasActivityToday) activities.push(story);
         });
         if (activities.length === 0) {
-            container.innerHTML = `<div class="bg-white p-10 rounded-xl border-2 border-dashed border-gray-200 text-center text-gray-400">No updates recorded for today (${todayStr})</div>`;
+            container.innerHTML = `<div class="bg-white p-10 rounded-xl border-2 border-dashed border-gray-200 text-center text-gray-400">No updates recorded for today (${escapeHtml(todayStr)})</div>`;
             return;
         }
         const grouped = activities.reduce((acc, item) => {
@@ -2576,14 +2575,14 @@ showWeeklyReportModal(reportData) {
             html += `
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
-                    <span class="font-bold text-slate-700 text-sm"><i class="fas fa-code-branch mr-2 text-indigo-500"></i>${branch}</span>
+                    <span class="font-bold text-slate-700 text-sm"><i class="fas fa-code-branch mr-2 text-indigo-500"></i>${escapeHtml(branch)}</span>
                     <span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">${branchItemsCount} Today</span>
                 </div>
                 <div class="p-4 space-y-4">`;
             for (const area in grouped[branch]) {
-                html += `<div><h4 class="text-xs font-black text-indigo-600 mb-2 uppercase tracking-tighter italic underline">${area}</h4>`;
+                html += `<div><h4 class="text-xs font-black text-indigo-600 mb-2 uppercase tracking-tighter italic underline">${escapeHtml(area)}</h4>`;
                 for (const customer in grouped[branch][area]) {
-                    html += `<div class="ml-2 mb-3"><div class="text-[11px] font-bold text-slate-400 mb-2 border-l-2 border-slate-200 pl-2 tracking-widest uppercase">Target: ${customer}</div>`;
+                    html += `<div class="ml-2 mb-3"><div class="text-[11px] font-bold text-slate-400 mb-2 border-l-2 border-slate-200 pl-2 tracking-widest uppercase">Target: ${escapeHtml(customer)}</div>`;
                     grouped[branch][area][customer].forEach(story => {
                         html += this.renderStoryCard(story);
                     });
@@ -2622,7 +2621,7 @@ showWeeklyReportModal(reportData) {
                 <div class="text-[10px] text-gray-400 font-bold uppercase mb-3">Status Breakdown</div>
                 <div class="flex flex-wrap gap-2">${Object.entries(states).map(([state, count]) => `
                     <div class="bg-slate-50 px-3 py-2 rounded-xl border border-slate-100 flex-1 min-w-[100px]">
-                        <div class="text-[9px] font-bold text-slate-500 truncate">${state}</div>
+                        <div class="text-[9px] font-bold text-slate-500 truncate">${escapeHtml(state)}</div>
                         <div class="text-lg font-black text-indigo-600">${count}</div>
                     </div>
                 `).join('')}</div>
@@ -2633,14 +2632,14 @@ showWeeklyReportModal(reportData) {
                 <div class="text-[10px] text-indigo-600 font-bold uppercase mb-2 flex justify-between"><span>📊 Branches Summary</span><span>Sum: ${branchStats.reduce((a, b) => a + b.count, 0)}</span></div>
                 <div class="space-y-3 mt-2">${branchStats.slice(0, 5).map(branch => {
                     const width = (branch.count / total) * 100;
-                    return `<div><div class="flex justify-between text-[10px] mb-1 font-bold text-slate-600"><span class="truncate pr-2">${branch.name}</span><span>${branch.count}</span></div><div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full rounded-full" style="width: ${width}%"></div></div></div>`;
+                    return `<div><div class="flex justify-between text-[10px] mb-1 font-bold text-slate-600"><span class="truncate pr-2">${escapeHtml(branch.name)}</span><span>${branch.count}</span></div><div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full rounded-full" style="width: ${width}%"></div></div></div>`;
                 }).join('')}</div>
             </div>
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
                 <div class="text-[10px] text-purple-600 font-bold uppercase mb-2 flex justify-between"><span>📂 Areas Summary</span><span>Sum: ${areaStats.reduce((a, b) => a + b.count, 0)}</span></div>
                 <div class="space-y-3 mt-2">${areaStats.slice(0, 5).map(area => {
                     const width = (area.count / total) * 100;
-                    return `<div><div class="flex justify-between text-[10px] mb-1 font-bold text-slate-600"><span class="truncate pr-2">${area.name}</span><span>${area.count}</span></div><div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div class="bg-purple-500 h-full rounded-full" style="width: ${width}%"></div></div></div>`;
+                    return `<div><div class="flex justify-between text-[10px] mb-1 font-bold text-slate-600"><span class="truncate pr-2">${escapeHtml(area.name)}</span><span>${area.count}</span></div><div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div class="bg-purple-500 h-full rounded-full" style="width: ${width}%"></div></div></div>`;
                 }).join('')}</div>
             </div>
         </div>
@@ -2652,13 +2651,13 @@ showWeeklyReportModal(reportData) {
         return `
         <div onclick="ui.openStoryModal('${s.id}')" class="group p-3 mb-2 bg-slate-50 border border-slate-100 rounded-xl hover:border-indigo-300 hover:bg-white transition-all cursor-pointer">
             <div class="flex justify-between items-start mb-2">
-                <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${statusColor} uppercase">${s.state}</span>
+                <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${statusColor} uppercase">${escapeHtml(s.state)}</span>
                 <span class="text-[9px] text-slate-400 font-mono">#${s.id}</span>
             </div>
-            <h5 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors line-clamp-1">${s.title}</h5>
+            <h5 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors line-clamp-1">${escapeHtml(s.title)}</h5>
             <div class="flex items-center gap-4 mt-2">
-                <div class="flex items-center gap-1"><span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Dev:</span><span class="text-[10px] font-medium text-slate-600">${s.assignedTo}</span></div>
-                <div class="flex items-center gap-1"><span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Testing:</span><span class="text-[10px] font-medium text-slate-600">${s.tester}</span></div>
+                <div class="flex items-center gap-1"><span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Dev:</span><span class="text-[10px] font-medium text-slate-600">${escapeHtml(s.assignedTo)}</span></div>
+                <div class="flex items-center gap-1"><span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Testing:</span><span class="text-[10px] font-medium text-slate-600">${escapeHtml(s.tester)}</span></div>
             </div>
         </div>`;
     },
@@ -2752,7 +2751,7 @@ showWeeklyReportModal(reportData) {
             html += `
                 <div class="col-span-full mt-8 mb-4">
                     <div class="flex items-center gap-3">
-                        <h3 class="text-xl font-extrabold text-slate-800">${area}</h3>
+                        <h3 class="text-xl font-extrabold text-slate-800">${escapeHtml(area)}</h3>
                         <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold">${groupedByArea[area].length} Stories</span>
                         <div class="flex-grow h-px bg-slate-200"></div>
                     </div>
@@ -2773,15 +2772,15 @@ showWeeklyReportModal(reportData) {
                         <div class="flex-grow min-w-0">
                             <div class="flex items-center gap-2 mb-1">
                                 <span class="text-[10px] font-bold text-slate-400">#${s.id}</span>
-                                <span class="px-2 py-0.5 bg-slate-100 text-[9px] font-bold rounded uppercase text-slate-500">${s.state}</span>
-                                <span class="ml-auto font-bold text-indigo-600 text-[10px]">P${s.priority}</span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-[9px] font-bold rounded uppercase text-slate-500">${escapeHtml(s.state)}</span>
+                                <span class="ml-auto font-bold text-indigo-600 text-[10px]">P${escapeHtml(s.priority)}</span>
                             </div>
-                            <h3 class="font-bold text-slate-800 text-sm mb-1 truncate" title="${s.title}">${s.title}</h3>
-                            <div class="flex flex-wrap gap-1 mb-2">${(s.tags || []).map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[9px] font-semibold">${t}</span>`).join('')}</div>
+                            <h3 class="font-bold text-slate-800 text-sm mb-1 truncate" title="${escapeHtml(s.title)}">${escapeHtml(s.title)}</h3>
+                            <div class="flex flex-wrap gap-1 mb-2">${(s.tags || []).map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[9px] font-semibold">${escapeHtml(t)}</span>`).join('')}</div>
                             <div class="flex flex-wrap gap-y-1 gap-x-4">
-                                <div class="flex items-center gap-1 text-[11px] text-slate-500"><span class="font-semibold text-slate-700">Dev:</span> ${s.assignedTo || '---'}</div>
-                                <div class="flex items-center gap-1 text-[11px] text-slate-500"><span class="font-semibold text-slate-700">QA:</span> ${s.tester || '---'}</div>
-                                <div class="flex items-center gap-1 text-[11px] text-red-400"><span class="font-semibold">Last:</span> ${s.changedDate ? new Date(s.changedDate).toLocaleDateString('en-GB') : 'N/A'}</div>
+                                <div class="flex items-center gap-1 text-[11px] text-slate-500"><span class="font-semibold text-slate-700">Dev:</span> ${escapeHtml(s.assignedTo || '---')}</div>
+                                <div class="flex items-center gap-1 text-[11px] text-slate-500"><span class="font-semibold text-slate-700">QA:</span> ${escapeHtml(s.tester || '---')}</div>
+                                <div class="flex items-center gap-1 text-[11px] text-red-400"><span class="font-semibold">Last:</span> ${s.changedDate ? escapeHtml(new Date(s.changedDate).toLocaleDateString('en-GB')) : 'N/A'}</div>
                             </div>
                         </div>
                     </div>
@@ -2794,18 +2793,18 @@ showWeeklyReportModal(reportData) {
         const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const staff = [...new Set(nonBacklog.map(s => s.assignedTo).concat(nonBacklog.map(s => s.tester)))];
         const staffSelect = document.getElementById('staff-select');
-        if (staffSelect) staffSelect.innerHTML = staff.map(s => `<option value="${s}">${s}</option>`).join('');
+        if (staffSelect) staffSelect.innerHTML = staff.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
         document.getElementById('vacations-list').innerHTML = db.vacations.map((v, i) => `
-            <div class="flex justify-between bg-gray-50 p-1 px-2 rounded mb-1"><span>${v.name} - ${v.date}</span><button onclick="settings.removeVacation(${i})" class="text-red-500">×</button></div>
+            <div class="flex justify-between bg-gray-50 p-1 px-2 rounded mb-1"><span>${escapeHtml(v.name)} - ${escapeHtml(v.date)}</span><button onclick="settings.removeVacation(${i})" class="text-red-500">×</button></div>
         `).join('');
         document.getElementById('holidays-list').innerHTML = db.holidays.map((h, i) => `
-            <span class="bg-gray-200 px-2 py-1 rounded text-xs inline-flex items-center gap-1 m-1">${h} <button onclick="settings.removeHoliday(${i})" class="text-red-500">×</button></span>
+            <span class="bg-gray-200 px-2 py-1 rounded text-xs inline-flex items-center gap-1 m-1">${escapeHtml(h)} <button onclick="settings.removeHoliday(${i})" class="text-red-500">×</button></span>
         `).join('');
         const usersList = document.getElementById('users-list');
         if (usersList) {
             usersList.innerHTML = db.users.map((u, i) => `
                 <div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
-                    <div><span class="font-bold text-slate-700">${u.username}</span><span class="text-[10px] ml-2 px-2 py-0.5 rounded-full ${u.role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">${u.role}</span></div>
+                    <div><span class="font-bold text-slate-700">${escapeHtml(u.username)}</span><span class="text-[10px] ml-2 px-2 py-0.5 rounded-full ${u.role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">${escapeHtml(u.role)}</span></div>
                     <button onclick="settings.removeUser(${i})" class="text-red-500 hover:text-red-700 font-bold text-xl">&times;</button>
                 </div>
             `).join('');
@@ -2817,9 +2816,9 @@ showWeeklyReportModal(reportData) {
             projectsList.innerHTML = db.projects.map(p => `
                 <div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
                     <div>
-                        <span class="font-bold text-slate-700">${p.name}</span>
-                        <span class="text-xs ml-2 px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-600' : p.status === 'hold' ? 'bg-amber-100 text-amber-600' : 'bg-gray-200 text-gray-500'}">${p.status}</span>
-                        <span class="text-xs text-gray-400 ml-2">Team: ${p.team}</span>
+                        <span class="font-bold text-slate-700">${escapeHtml(p.name)}</span>
+                        <span class="text-xs ml-2 px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-600' : p.status === 'hold' ? 'bg-amber-100 text-amber-600' : 'bg-gray-200 text-gray-500'}">${escapeHtml(p.status)}</span>
+                        <span class="text-xs text-gray-400 ml-2">Team: ${escapeHtml(p.team)}</span>
                     </div>
                     <button onclick="projectManager.deleteProject('${p.id}')" class="text-red-500 hover:text-red-700 font-bold text-xl">&times;</button>
                 </div>
@@ -2835,7 +2834,7 @@ showWeeklyReportModal(reportData) {
         const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         if (areaSelect && areaSelect.options.length <= 1) {
             const areas = [...new Set(nonBacklog.map(s => s.area || "General"))];
-            areaSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${a}">${a}</option>`).join('');
+            areaSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
         }
         let filtered = nonBacklog;
         if (areaFilter !== 'all') filtered = filtered.filter(s => (s.area || "General") === areaFilter);
@@ -2853,8 +2852,8 @@ showWeeklyReportModal(reportData) {
             return `
                 <tr class="border-b hover:bg-gray-50 transition">
                     <td class="px-4 py-3 font-mono text-xs">#${story.id}</td>
-                    <td class="px-4 py-3 font-medium text-slate-700 max-w-xs truncate" title="${story.title}">${story.title}</td>
-                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700">${story.state}</span></td>
+                    <td class="px-4 py-3 font-medium text-slate-700 max-w-xs truncate" title="${escapeHtml(story.title)}">${escapeHtml(story.title)}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700">${escapeHtml(story.state)}</span></td>
                     <td class="px-4 py-3 text-center">
                         <div class="flex flex-col items-center gap-1">
                             <span class="text-xs font-bold">${compliancePercent}%</span>
@@ -2929,17 +2928,17 @@ showWeeklyReportModal(reportData) {
             return `
                 <div onclick="ui.openProjectDetails('${p.id}')" class="bg-white rounded-xl shadow-md border-l-4 ${statusClass} p-5 hover:shadow-lg cursor-pointer transition-all">
                     <div class="flex justify-between items-start">
-                        <h3 class="text-xl font-bold text-slate-800">${p.name}</h3>
-                        <span class="text-xs font-bold px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-green-200 text-green-800' : p.status === 'hold' ? 'bg-amber-200 text-amber-800' : 'bg-gray-300 text-gray-700'}">${statusText}</span>
+                        <h3 class="text-xl font-bold text-slate-800">${escapeHtml(p.name)}</h3>
+                        <span class="text-xs font-bold px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-green-200 text-green-800' : p.status === 'hold' ? 'bg-amber-200 text-amber-800' : 'bg-gray-300 text-gray-700'}">${escapeHtml(statusText)}</span>
                     </div>
-                    <div class="mt-2 text-sm text-slate-600"><span class="font-bold">Team:</span> ${p.team}</div>
-                    <div class="text-sm text-slate-600"><span class="font-bold">Due Date:</span> ${p.dueDate}</div>
+                    <div class="mt-2 text-sm text-slate-600"><span class="font-bold">Team:</span> ${escapeHtml(p.team)}</div>
+                    <div class="text-sm text-slate-600"><span class="font-bold">Due Date:</span> ${escapeHtml(p.dueDate)}</div>
                     <div class="mt-3 flex gap-3 text-xs text-gray-500">
                         <span>📚 Stories: ${storyCount}</span>
                         <span>📋 Tasks: ${taskCount}</span>
                     </div>
-                    ${p.status === 'hold' ? `<div class="mt-2 text-xs text-amber-700 bg-amber-100 p-2 rounded">⏸ Hold: ${p.holdReason} (until ${p.holdEndDate})</div>` : ''}
-                    ${p.status === 'closed' ? `<div class="mt-2 text-xs text-gray-500">🗓 Closed on: ${p.closeDate}</div>` : ''}
+                    ${p.status === 'hold' ? `<div class="mt-2 text-xs text-amber-700 bg-amber-100 p-2 rounded">⏸ Hold: ${escapeHtml(p.holdReason)} (until ${escapeHtml(p.holdEndDate)})</div>` : ''}
+                    ${p.status === 'closed' ? `<div class="mt-2 text-xs text-gray-500">🗓 Closed on: ${escapeHtml(p.closeDate)}</div>` : ''}
                 </div>
             `;
         }).join('');
@@ -2990,9 +2989,9 @@ showWeeklyReportModal(reportData) {
             return tasks.map(t => `
                 <div class="text-xs bg-white p-2 rounded border border-gray-100 mb-1 shadow-sm hover:shadow transition cursor-pointer" 
                      onclick="ui.openProjectDetails('${t.projectId}')">
-                    <div class="font-bold text-slate-700 truncate" title="${t.task.title}">${t.task.title}</div>
-                    <div class="text-[10px] text-gray-500">📁 ${t.projectName}</div>
-                    <div class="text-[10px] text-gray-400">📅 ${t.task.dueDate}</div>
+                    <div class="font-bold text-slate-700 truncate" title="${escapeHtml(t.task.title)}">${escapeHtml(t.task.title)}</div>
+                    <div class="text-[10px] text-gray-500">📁 ${escapeHtml(t.projectName)}</div>
+                    <div class="text-[10px] text-gray-400">📅 ${escapeHtml(t.task.dueDate)}</div>
                 </div>
             `).join('');
         };
@@ -3041,8 +3040,8 @@ showWeeklyReportModal(reportData) {
                     <h4 class="font-bold text-indigo-700 text-sm border-b pb-1">📚 Linked Stories (${linkedStories.length})</h4>
                     ${linkedStories.map(s => `
                         <div class="flex justify-between items-center bg-indigo-50 p-2 rounded border border-indigo-100">
-                            <span onclick="ui.openStoryModal('${s.id}')" class="text-sm cursor-pointer hover:underline">#${s.id} - ${s.title}</span>
-                            <span class="text-xs bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded">${isBacklogStory(s) ? 'Backlog' : s.state}</span>
+                            <span onclick="ui.openStoryModal('${s.id}')" class="text-sm cursor-pointer hover:underline">#${s.id} - ${escapeHtml(s.title)}</span>
+                            <span class="text-xs bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded">${isBacklogStory(s) ? 'Backlog' : escapeHtml(s.state)}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -3054,7 +3053,7 @@ showWeeklyReportModal(reportData) {
         const projectDueHtml = `
             <div class="flex items-center gap-2 mt-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
                 <span class="text-sm font-bold text-gray-600">📅 Due Date:</span>
-                <input type="date" id="project-due-edit-${project.id}" value="${project.dueDate || ''}" 
+                <input type="date" id="project-due-edit-${project.id}" value="${escapeHtml(project.dueDate || '')}" 
                        class="border rounded px-2 py-1 text-sm flex-1">
                 <button onclick="projectManager.updateProjectDueDate('${project.id}', document.getElementById('project-due-edit-${project.id}').value)" 
                         class="bg-indigo-600 text-white px-3 py-1 rounded text-sm">تحديث</button>
@@ -3069,11 +3068,11 @@ showWeeklyReportModal(reportData) {
             return `
                 <div class="bg-white border rounded p-3 shadow-sm ${dueClass}">
                     <div class="flex justify-between items-center flex-wrap gap-2">
-                        <span class="font-medium text-slate-700">${t.title}</span>
+                        <span class="font-medium text-slate-700">${escapeHtml(t.title)}</span>
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-xs font-bold px-2 py-0.5 rounded ${t.status === 'done' ? 'bg-green-200 text-green-700' : t.status === 'active' ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'}">${t.status}</span>
+                            <span class="text-xs font-bold px-2 py-0.5 rounded ${t.status === 'done' ? 'bg-green-200 text-green-700' : t.status === 'active' ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'}">${escapeHtml(t.status)}</span>
                             <div class="flex items-center gap-1">
-                                <input type="date" id="task-due-${t.id}" value="${t.dueDate || ''}" class="text-xs border rounded px-1 py-0.5 w-28">
+                                <input type="date" id="task-due-${t.id}" value="${escapeHtml(t.dueDate || '')}" class="text-xs border rounded px-1 py-0.5 w-28">
                                 <button onclick="projectManager.updateTaskDueDate('${project.id}','${t.id}', document.getElementById('task-due-${t.id}').value)" 
                                         class="text-[10px] bg-purple-500 text-white px-2 py-0.5 rounded">تحديث</button>
                             </div>
@@ -3084,13 +3083,13 @@ showWeeklyReportModal(reportData) {
                         </div>
                     </div>
                     ${isDueTodayOrPast ? `<div class="text-xs text-red-600 font-bold mt-1">⚠️ مستحق اليوم أو مضى عليه</div>` : ''}
-                    <div class="text-xs text-gray-400">Due: ${t.dueDate || 'غير محدد'}</div>
+                    <div class="text-xs text-gray-400">Due: ${escapeHtml(t.dueDate || 'غير محدد')}</div>
                     <div class="mt-2 space-y-1">
                         ${(t.comments || []).map((c, idx) => `
                             <div class="flex justify-between items-start bg-gray-50 p-1.5 rounded border border-gray-100">
-                                <span class="text-sm">${c.text}</span>
+                                <span class="text-sm">${escapeHtml(c.text)}</span>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[9px] text-gray-400">${c.timestamp}</span>
+                                    <span class="text-[9px] text-gray-400">${escapeHtml(c.timestamp)}</span>
                                     <button onclick="projectManager.deleteTaskComment('${project.id}','${t.id}',${idx})" class="text-red-400 hover:text-red-600 text-xs">✕</button>
                                 </div>
                             </div>
@@ -3116,20 +3115,20 @@ showWeeklyReportModal(reportData) {
             controlsHtml = `
                 <div class="flex gap-3 mt-4">
                     <button onclick="projectManager.closeProject('${project.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold">🔒 Close</button>
-                    <span class="text-sm text-amber-700 bg-amber-100 p-2 rounded">⏸ On Hold until ${project.holdEndDate}</span>
+                    <span class="text-sm text-amber-700 bg-amber-100 p-2 rounded">⏸ On Hold until ${escapeHtml(project.holdEndDate)}</span>
                 </div>
             `;
         } else {
-            controlsHtml = `<div class="mt-4 text-sm text-gray-500 bg-gray-100 p-2 rounded">This project is closed since ${project.closeDate}</div>`;
+            controlsHtml = `<div class="mt-4 text-sm text-gray-500 bg-gray-100 p-2 rounded">This project is closed since ${escapeHtml(project.closeDate)}</div>`;
         }
 
         body.innerHTML = `
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-2 text-sm bg-slate-50 p-4 rounded-xl">
-                    <div><span class="font-bold">Team:</span> ${project.team}</div>
-                    <div><span class="font-bold">Status:</span> ${project.status}</div>
-                    ${project.status === 'hold' ? `<div><span class="font-bold">Hold Reason:</span> ${project.holdReason}</div>` : ''}
-                    ${project.status === 'closed' ? `<div><span class="font-bold">Closed:</span> ${project.closeDate}</div>` : ''}
+                    <div><span class="font-bold">Team:</span> ${escapeHtml(project.team)}</div>
+                    <div><span class="font-bold">Status:</span> ${escapeHtml(project.status)}</div>
+                    ${project.status === 'hold' ? `<div><span class="font-bold">Hold Reason:</span> ${escapeHtml(project.holdReason)}</div>` : ''}
+                    ${project.status === 'closed' ? `<div><span class="font-bold">Closed:</span> ${escapeHtml(project.closeDate)}</div>` : ''}
                 </div>
                 ${projectDueHtml}
                 ${controlsHtml}
@@ -3220,10 +3219,11 @@ const tagManager = {
         const container = document.getElementById('tags-list');
         if (!container) return;
         container.innerHTML = db.customTags.map(tag => `
-            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">${tag}<button onclick="tagManager.removeTag('${tag}')" class="text-red-500 hover:text-red-700 font-bold">×</button></span>
+            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">${escapeHtml(tag)}<button onclick="tagManager.removeTag('${encodeURIComponent(tag)}')" class="text-red-500 hover:text-red-700 font-bold">×</button></span>
         `).join('');
     },
     toggleTagInStory(storyId, tagName) {
+        tagName = decodeURIComponent(tagName);
         let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
         if (!story) story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
         if (story) {
