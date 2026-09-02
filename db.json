@@ -8158,11 +8158,13 @@
       "tester": "Mohamed Abdelhady",
       "area": "Internal lab",
       "priority": 2,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Nile Lab_1111111",
-      "changedDate": "2026-09-02T12:17:25.947Z",
+      "changedDate": "2026-09-02T12:21:38.303Z",
       "tasks": [
         {
           "ID": 184310,
@@ -8816,13 +8818,13 @@
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.25,
           "Activated Date": "2026-09-02T09:48:14.527Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-09-02T12:17:36.037Z",
-          "State": "Resolved",
-          "Changed Date": "2026-09-02T12:17:36.037Z",
+          "State": "Closed",
+          "Changed Date": "2026-09-02T12:43:50.237Z",
           "Customer": "Alameda_0062"
         }
       ],
@@ -15172,39 +15174,39 @@
       "testCases": [
         {
           "id": 186055,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 186056,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 186057,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 186066,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 186067,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 186068,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 186069,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 186072,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 186074,
-          "state": "Ready"
+          "state": "Inprogress"
         },
         {
           "id": 186075,
@@ -15356,7 +15358,23 @@
       "branch": "Egypt",
       "customer": "Alameda_0062",
       "changedDate": "2026-09-02T11:40:22.040Z",
-      "tasks": [],
+      "tasks": [
+        {
+          "ID": 186103,
+          "Work Item Type": "Task",
+          "Title": "DB: Add “Show Lab Logo at Order List” configuration to Outsource Labs",
+          "Assigned To": "Mohamed Qassem",
+          "Activity": "DB Modification",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-02T12:27:20.46Z",
+          "Customer": "Alameda_0062"
+        }
+      ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
@@ -32661,41 +32679,6 @@
       "linkedProjectId": null
     },
     {
-      "id": 185173,
-      "title": "Trust prod >> We need to publish SL (182635)",
-      "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Mohamed Samy",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 999,
-      "tags": [
-        "Published Pre Production Port  1997",
-        " Published to Live",
-        " V1.0_Trust_19_01_2021_SL#185173"
-      ],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Trust Lab Dr Sanaa Abdel Shafie_178",
-      "changedDate": "2026-09-02T12:17:56.367Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 0.5,
-      "testActualTime": 2,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
       "id": 185258,
       "title": "SOH_error while making undoreview action on pathology module",
       "type": "Support log",
@@ -33063,13 +33046,13 @@
           "Assigned To": "Ibrahim Ahmed",
           "Activity": "",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0.5,
           "Activated Date": "2026-09-02T09:27:02.837Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-09-02T09:51:16.397Z",
+          "Changed Date": "2026-09-02T12:50:47.983Z",
           "Customer": "Ansary Labs_604"
         },
         {
@@ -33106,7 +33089,7 @@
           "ID": 185837,
           "Work Item Type": "Bug",
           "Title": "Results_SearchResults_Hla reports display error while printing",
-          "Assigned To": "Mohamed Fawzy",
+          "Assigned To": "Mostafa Mohamed",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -33114,7 +33097,7 @@
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-09-01T08:48:17.4Z",
+          "Changed Date": "2026-09-02T12:35:38.61Z",
           "Customer": "Ansary Labs_604"
         },
         {
@@ -33682,6 +33665,39 @@
       "linkedProjectId": null
     },
     {
+      "id": 185542,
+      "title": "#Speed Lab: Update LDM to Support Short URL Multi Provider",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Mohamed Samy",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [
+        "V1.0_Speed_25_03_2021_SL#185542"
+      ],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Speed Labs_239",
+      "changedDate": "2026-09-02T12:26:50.560Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 0.33,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
       "id": 185559,
       "title": "AL-Borg UAE >> Need to Deploy the Latest LDM Release to the Stage Server",
       "type": "Support log",
@@ -33803,18 +33819,24 @@
       "id": 185579,
       "title": "ALHAKMA-LDM>>Need to publish latest version from release to stage server.",
       "type": "Support log",
-      "state": "Active",
+      "state": "Resolved",
       "assignedTo": "Ahmed Gamal",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
       "tags": [
-        "Release"
+        "Action center installed",
+        " Cache and Action center service are closed until DB migration",
+        " Cache new version port: 9080",
+        " DB Migration not done yet",
+        " LDM",
+        " Published on port 1004",
+        " Release"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "El Hekma Labs_432",
-      "changedDate": "2026-09-02T09:55:34.707Z",
+      "changedDate": "2026-09-02T12:31:11.990Z",
       "tasks": [
         {
           "ID": 185942,
@@ -33843,7 +33865,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
-      "devActualTime": 0,
+      "devActualTime": 2.25,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null
@@ -34188,7 +34210,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Assuit University Hospitals_412",
-      "changedDate": "2026-09-02T12:12:50.920Z",
+      "changedDate": "2026-09-02T12:34:07.630Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -34201,7 +34223,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
-      "devActualTime": 19.5,
+      "devActualTime": 29.5,
       "testActualTime": 7,
       "isBacklog": false,
       "linkedProjectId": null
@@ -34220,37 +34242,6 @@
       "branch": "Egypt",
       "customer": "SKUH -  Souad Kafafi Hospital_385",
       "changedDate": "2026-09-02T08:57:37.287Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
-      "id": 186083,
-      "title": "Alameda - Export Monthly TAT from database",
-      "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Ahmed Attia",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Alameda_0062",
-      "changedDate": "2026-09-02T12:19:14.173Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
