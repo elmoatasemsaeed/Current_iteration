@@ -39,7 +39,6 @@ let db = {
     areaComments: [],
     projects: [],
     archivedProjects: [],
-    // [NEW] Standup comments stored separately by story ID
     standupCommentsStore: {}
 };
 
@@ -54,12 +53,9 @@ function isRegularStory(story) {
 }
 
 // =================================================================
-// STANDUP COMMENTS HELPERS (New Centralized Logic)
+// STANDUP COMMENTS HELPERS
 // =================================================================
 
-/**
- * Retrieves standup comments for a given story ID from the central store.
- */
 function getStandupComments(storyId) {
     if (db.standupCommentsStore && db.standupCommentsStore[storyId]) {
         return db.standupCommentsStore[storyId];
@@ -67,9 +63,6 @@ function getStandupComments(storyId) {
     return [];
 }
 
-/**
- * Migrates old standup comments from story objects to the central store (run once).
- */
 function migrateStandupComments() {
     if (!db.standupCommentsStore) db.standupCommentsStore = {};
     let migrated = false;
@@ -95,10 +88,6 @@ function migrateStandupComments() {
     }
 }
 
-/**
- * Prunes standup comments for stories that no longer exist in the active dataset.
- * Prevents the database file from growing indefinitely.
- */
 function pruneStandupComments() {
     if (!db.standupCommentsStore) return;
 
@@ -120,12 +109,9 @@ function pruneStandupComments() {
 }
 
 // =================================================================
-// HELPER FUNCTIONS (Updated to use getStandupComments)
+// HELPER FUNCTIONS (UPDATED WITH NEW CLASSES)
 // =================================================================
 
-/**
- * Renders the tag dropdown for a story.
- */
 function renderTagDropdown(storyId, selectedTags = []) {
     const customTagsList = db.customTags || [];
     if (customTagsList.length === 0) return '';
@@ -155,9 +141,6 @@ function renderTagDropdown(storyId, selectedTags = []) {
     `;
 }
 
-/**
- * Renders the project selection dropdown for a story.
- */
 function renderProjectSelect(story) {
     const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => 
         `<option value="${escapeHtml(p.id)}" ${story.linkedProjectId === p.id ? 'selected' : ''}>${escapeHtml(p.name)}</option>`
@@ -166,7 +149,7 @@ function renderProjectSelect(story) {
     return `
         <div class="mt-2 flex items-center gap-2 border-t border-dashed border-gray-200 pt-2">
             <span class="text-[10px] font-bold text-gray-400">📁 Project:</span>
-            <select onchange="projectManager.linkStoryToProject('${story.id}', this.value)" class="text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-blue-400 outline-none flex-1">
+            <select onchange="projectManager.linkStoryToProject('${story.id}', this.value)" class="form-input form-input-sm flex-1">
                 <option value="">None</option>
                 ${projectOptions}
             </select>
@@ -175,9 +158,6 @@ function renderProjectSelect(story) {
     `;
 }
 
-/**
- * Renders standup comments for a story using the central store.
- */
 function renderComments(story) {
     const comments = getStandupComments(story.id);
     if (!comments.length) return '';
@@ -196,11 +176,11 @@ function renderComments(story) {
 }
 
 /**
- * Unified story card generator (Updated to use centralized comments).
+ * Unified story card generator (Updated with new classes)
  */
 function createStoryCard(story, options = {}) {
     const {
-        mode = 'regular',        // 'regular', 'backlog', 'support'
+        mode = 'regular',
         showProjectSelect = true,
         showTagDropdown = true,
         showCommentsButton = true,
@@ -218,13 +198,18 @@ function createStoryCard(story, options = {}) {
     let statusHtml = '';
     if (showStatus && !isBacklog) {
         const state = story.state || '';
-        statusHtml = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${state === 'Tested' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${escapeHtml(state)}</span>`;
+        let statusClass = 'status-active';
+        if (state === 'Tested') statusClass = 'status-tested';
+        else if (state === 'Delayed') statusClass = 'status-delayed';
+        else if (state === 'On-Hold') statusClass = 'status-onhold';
+        else if (state === 'Closed') statusClass = 'status-closed';
+        statusHtml = `<span class="status-badge ${statusClass}">${escapeHtml(state)}</span>`;
     }
 
     let projectSelectHtml = showProjectSelect && !isBacklog ? renderProjectSelect(story) : '';
     let tagDropdownHtml = showTagDropdown ? renderTagDropdown(story.id, story.customTags || []) : '';
     let commentsHtml = showCommentsButton && !isBacklog ? 
-        `<button onclick="ui.openCommentsModal('${story.id}')" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1 border border-indigo-100">💬 <span class="font-bold">${commentsCount}</span></button>` : '';
+        `<button onclick="ui.openCommentsModal('${story.id}')" class="btn btn-outline text-indigo-600 border-indigo-300 hover:bg-indigo-50 text-xs py-1 px-2">💬 <span class="font-bold">${commentsCount}</span></button>` : '';
 
     let extraFields = '';
     if (isBacklog) {
@@ -275,38 +260,19 @@ function createStoryCard(story, options = {}) {
 
     const borderClass = isBacklog ? 'border-purple-200' : (isSupport ? 'border-gray-200' : 'border-gray-100');
     return `
-        <div class="relative bg-white p-3 rounded-lg shadow-sm border ${borderClass} hover:shadow-md transition ${customClass}">
+        <div class="card relative p-3 ${borderClass} hover:border-google-blue ${customClass}">
             ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">📅 ${escapeHtml(releaseDate)}</div>` : ''}
             ${tags.length > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${tags.map(tag => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(story.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${escapeHtml(tag.trim())}</span>`).join('')}</div>` : ''}
             ${tagDropdownHtml}
             <div class="flex justify-between items-center mb-2">
-                <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-blue-600 cursor-pointer hover:underline flex items-center gap-0.5">#${story.id} 🔍</div>
+                <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-google-blue cursor-pointer hover:underline flex items-center gap-0.5">#${story.id} 🔍</div>
                 ${commentsHtml}
             </div>
-            <div onclick="ui.openStoryModal('${story.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-indigo-600 transition">${escapeHtml(story.title)}</div>
+            <div onclick="ui.openStoryModal('${story.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-google-blue transition">${escapeHtml(story.title)}</div>
             ${projectSelectHtml}
             ${extraFields}
         </div>
     `;
-}
-
-/**
- * Unified save operation with loader, toast, and error handling.
- */
-function executeWithSave(action, successMsg = 'تم الحفظ بنجاح', errorMsg = 'فشل الحفظ', callback = null) {
-    ui.showLoader();
-    Promise.resolve(action())
-        .then(() => dataProcessor.saveToGitHub())
-        .then(() => {
-            ui.showToast(successMsg, 'success');
-            if (callback) callback();
-            else ui.renderAll();
-        })
-        .catch(err => {
-            console.error(err);
-            ui.showToast(`${errorMsg}: ${err.message}`, 'error');
-        })
-        .finally(() => ui.hideLoader());
 }
 
 // =================================================================
@@ -415,7 +381,6 @@ const auth = {
                     if (!db.archivedProjects) db.archivedProjects = [];
                     if (!db.standupCommentsStore) db.standupCommentsStore = {};
                     
-                    // Migrate old comments if necessary
                     migrateStandupComments();
                     
                     sessionStorage.setItem('gh_token', t);
@@ -457,7 +422,7 @@ const auth = {
 };
 
 // =================================================================
-// DATA PROCESSOR (Updated with prune logic)
+// DATA PROCESSOR
 // =================================================================
 const dataProcessor = {
     _savePromise: null,
@@ -539,9 +504,7 @@ const dataProcessor = {
                     db.backlogStories = db.backlogStories.map(convertDates);
                 }
                 
-                // Migrate old comments (just in case)
                 migrateStandupComments();
-                // Prune comments for stories that no longer exist
                 pruneStandupComments();
                 
                 ui.renderAll();
@@ -640,7 +603,6 @@ const dataProcessor = {
         this.calculateTimelines(newStories);
         db.currentStories = newStories;
         
-        // Prune orphaned comments after updating active stories
         pruneStandupComments();
         await this.saveToGitHub();
     },
@@ -679,7 +641,6 @@ const dataProcessor = {
         }).filter(s => s !== null);
         db.backlogStories = backlogStories;
         
-        // Prune orphaned comments after updating backlog
         pruneStandupComments();
         await this.saveToGitHub();
         console.log(`Saved ${backlogStories.length} backlog stories`);
@@ -885,11 +846,11 @@ const areaCommentManager = {
                     <div class="mt-3 flex gap-2">
                         <textarea id="area-comment-${area.replace(/\s/g, '')}" 
                                   placeholder="اكتب تعليق عام عن المنطقة..." 
-                                  class="flex-1 border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                                  class="form-input flex-1 resize-none"
                                   rows="1"
                                   style="direction: rtl; text-align: right;"></textarea>
                         <button onclick="areaCommentManager.addCommentFromPopup('${encodeURIComponent(area)}')" 
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition whitespace-nowrap">
+                                class="btn btn-primary whitespace-nowrap">
                             إضافة
                         </button>
                     </div>
@@ -1141,7 +1102,7 @@ const projectManager = {
 };
 
 // =================================================================
-// UI RENDERING (Updated to use centralized comments)
+// UI RENDERING (UPDATED WITH NEW CLASSES)
 // =================================================================
 const ui = {
     showLoader() {
@@ -1168,7 +1129,7 @@ const ui = {
         const existing = document.querySelector('.toast-message');
         if (existing) existing.remove();
         const toast = document.createElement('div');
-        toast.className = `toast-message fixed top-4 right-4 z-[5000] px-6 py-3 rounded-xl shadow-2xl text-white font-bold text-sm transition-all duration-500 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+        toast.className = `toast-message fixed top-4 right-4 z-[5000] px-6 py-3 rounded-xl shadow-2xl text-white font-bold text-sm transition-all duration-500 ${type === 'success' ? 'bg-google-green' : 'bg-google-red'}`;
         toast.innerText = message;
         document.body.appendChild(toast);
         setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
@@ -1217,12 +1178,12 @@ const ui = {
         const freeTesters = this.getFreeStaff('tester');
         const staffStatsHtml = `
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div onclick="ui.showStaffDetails('dev', 'active')" class="bg-gradient-to-br from-blue-500 to-blue-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
+                <div onclick="ui.showStaffDetails('dev', 'active')" class="bg-gradient-to-br from-google-blue to-blue-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
                     <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Active Developers</div>
                     <div class="text-4xl font-black mt-1">${activeDevsSet.size}</div>
                     <div class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-0.5 rounded">Click for details</div>
                 </div>
-                <div onclick="ui.showStaffDetails('tester', 'active')" class="bg-gradient-to-br from-emerald-500 to-emerald-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
+                <div onclick="ui.showStaffDetails('tester', 'active')" class="bg-gradient-to-br from-google-green to-green-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
                     <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Active Testers</div>
                     <div class="text-4xl font-black mt-1">${activeTestersSet.size}</div>
                     <div class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-0.5 rounded">Click for details</div>
@@ -1252,14 +1213,14 @@ const ui = {
         });
         const sortedStates = Array.from(allStates).sort();
         let areaStatsHtml = `
-            <div class="bg-white p-6 rounded-xl shadow-sm border">
+            <div class="card p-6">
                 <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">📊 Business Area Stats (By State)</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead><tr class="bg-gray-50 border-b">
                             <th class="text-left p-2 font-bold text-gray-600">Business Area</th>
                             ${sortedStates.map(state => `<th class="text-center p-2 font-bold text-gray-600">${escapeHtml(state)}</th>`).join('')}
-                            <th class="text-center p-2 font-bold text-indigo-600">Total</th>
+                            <th class="text-center p-2 font-bold text-google-blue">Total</th>
                         </tr></thead>
                         <tbody>
         `;
@@ -1277,7 +1238,7 @@ const ui = {
             areaStatsHtml += `<tr class="border-b hover:bg-gray-50">
                 <td class="p-2 font-medium text-slate-700">${escapeHtml(area)}</td>
                 ${rowCells}
-                <td class="text-center p-2 border-t font-bold text-indigo-600">${rowTotal}</td>
+                <td class="text-center p-2 border-t font-bold text-google-blue">${rowTotal}</td>
             </tr>`;
         });
         areaStatsHtml += `
@@ -1288,7 +1249,7 @@ const ui = {
                             Object.values(areaStateMap).forEach(areaData => { total += areaData[state] || 0; });
                             return `<td class="text-center p-2">${total}</td>`;
                         }).join('')}
-                        <td class="text-center p-2 text-indigo-700">${grandTotal}</td>
+                        <td class="text-center p-2 text-google-blue">${grandTotal}</td>
                     </tr>
                 </tbody></table></div>`;
         const activeNonBacklog = nonBacklogData.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
@@ -1299,15 +1260,15 @@ const ui = {
         });
         const sortedBranches = Object.entries(branchMap).sort((a, b) => b[1] - a[1]);
         let branchStatsHtml = `
-            <div class="bg-white p-6 rounded-xl shadow-sm border">
+            <div class="card p-6">
                 <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">🌿 Active Stories by Branch</h3>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
         `;
         sortedBranches.forEach(([branch, count]) => {
             branchStatsHtml += `
-                <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 text-center cursor-pointer hover:bg-indigo-100 transition" onclick="ui.showBranchModal('${encodeURIComponent(branch)}')">
-                    <div class="text-xs font-bold text-indigo-600 truncate" title="${escapeHtml(branch)}">${escapeHtml(branch)}</div>
-                    <div class="text-2xl font-black text-indigo-800">${count}</div>
+                <div class="bg-google-blue-light p-3 rounded-lg border border-google-blue/20 text-center cursor-pointer hover:bg-google-blue/20 transition" onclick="ui.showBranchModal('${encodeURIComponent(branch)}')">
+                    <div class="text-xs font-bold text-google-blue truncate" title="${escapeHtml(branch)}">${escapeHtml(branch)}</div>
+                    <div class="text-2xl font-black text-google-blue">${count}</div>
                 </div>
             `;
         });
@@ -1320,15 +1281,15 @@ const ui = {
         });
         const sortedCustomers = Object.entries(customerMap).sort((a, b) => b[1] - a[1]);
         let customerStatsHtml = `
-            <div class="bg-white p-6 rounded-xl shadow-sm border">
+            <div class="card p-6">
                 <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">👥 Active Stories by Customer</h3>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
         `;
         sortedCustomers.forEach(([customer, count]) => {
             customerStatsHtml += `
-                <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 text-center cursor-pointer hover:bg-emerald-100 transition" onclick="ui.showCustomerModal('${encodeURIComponent(customer)}')">
-                    <div class="text-xs font-bold text-emerald-600 truncate" title="${escapeHtml(customer)}">${escapeHtml(customer)}</div>
-                    <div class="text-2xl font-black text-emerald-800">${count}</div>
+                <div class="bg-google-green-light p-3 rounded-lg border border-google-green/20 text-center cursor-pointer hover:bg-google-green/20 transition" onclick="ui.showCustomerModal('${encodeURIComponent(customer)}')">
+                    <div class="text-xs font-bold text-google-green truncate" title="${escapeHtml(customer)}">${escapeHtml(customer)}</div>
+                    <div class="text-2xl font-black text-google-green">${count}</div>
                 </div>
             `;
         });
@@ -1366,8 +1327,8 @@ const ui = {
         });
         upcomingDeliveries.sort((a, b) => a.expectedRelease - b.expectedRelease);
         let html = `
-            <div class="bg-white p-6 rounded-xl shadow-sm border">
-                <h3 class="font-bold text-indigo-700 mb-4 flex items-center gap-2">
+            <div class="card p-6">
+                <h3 class="font-bold text-google-blue mb-4 flex items-center gap-2">
                     🚀 Client Delivery Roadmap (Next ${CONFIG.BACKLOG_MONTHS} Months)
                     <span class="text-xs font-normal text-gray-400 ml-2">(${upcomingDeliveries.length} items)</span>
                 </h3>
@@ -1379,14 +1340,14 @@ const ui = {
             html += upcomingDeliveries.map(s => {
                 const diffTime = Math.abs(s.expectedRelease - today);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                let urgencyClass = "border-blue-200 bg-white";
-                if (diffDays <= 7) urgencyClass = "border-amber-400 bg-amber-50";
-                if (diffDays <= 3) urgencyClass = "border-red-400 bg-red-50";
+                let urgencyClass = "border-google-blue/30 bg-white";
+                if (diffDays <= 7) urgencyClass = "border-google-yellow bg-google-yellow-light";
+                if (diffDays <= 3) urgencyClass = "border-google-red bg-google-red-light";
                 const isBacklog = isBacklogStory(s) ? '📋 ' : '';
                 return `
-                    <div class="p-4 rounded-xl border-2 ${urgencyClass} shadow-sm ${isBacklogStory(s) ? 'border-dashed' : ''}">
+                    <div class="card p-4 border-2 ${urgencyClass} ${isBacklogStory(s) ? 'border-dashed' : ''}">
                         <div class="flex justify-between items-start mb-2">
-                            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">In ${diffDays} Days</span>
+                            <span class="text-[10px] font-bold text-google-blue bg-google-blue-light px-2 py-0.5 rounded">In ${diffDays} Days</span>
                             <div class="flex items-center gap-2">
                                 <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">P${escapeHtml(s.priority || '?')}</span>
                                 <span class="text-[10px] text-gray-400">#${s.id}</span>
@@ -1400,7 +1361,7 @@ const ui = {
                             <div class="text-xs font-bold text-slate-700">${s.expectedRelease.toLocaleDateString('en-GB')}</div>
                         </div>
                         <div class="mt-2 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full ${isBacklogStory(s) ? 'bg-purple-400' : 'bg-indigo-500'}" style="width: ${s.state === 'Resolved' ? '80%' : '40%'}"></div>
+                            <div class="h-full ${isBacklogStory(s) ? 'bg-purple-400' : 'bg-google-blue'}" style="width: ${s.state === 'Resolved' ? '80%' : '40%'}"></div>
                         </div>
                     </div>
                 `;
@@ -1466,14 +1427,14 @@ const ui = {
                     html += `
                         <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
                             <span class="font-bold text-slate-700">${escapeHtml(name)}</span>
-                            <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold">${count} Stories</span>
+                            <span class="bg-google-blue-light text-google-blue px-3 py-1 rounded-full text-xs font-bold">${count} Stories</span>
                         </div>
                     `;
                 } else {
                     html += `
                         <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
                             <span class="font-bold text-slate-700">${escapeHtml(name)}</span>
-                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">Free</span>
+                            <span class="bg-google-green-light text-google-green px-3 py-1 rounded-full text-xs font-bold">Free</span>
                         </div>
                     `;
                 }
@@ -1503,235 +1464,235 @@ const ui = {
         }
     },
     renderActiveCards() {
-    const container = document.getElementById('active-cards-container');
-    const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || "";
-    const tagSearchTerm = document.getElementById('tag-search-input')?.value.toLowerCase() || "";
-    const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
-    const activeStories = nonBacklog.filter(s => {
-        const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
-        const matchesSearch =
-            s.title.toLowerCase().includes(searchTerm) ||
-            s.id.toString().includes(searchTerm) ||
-            s.tester.toLowerCase().includes(searchTerm) ||
-            s.assignedTo.toLowerCase().includes(searchTerm) ||
-            (s.area && s.area.toLowerCase().includes(searchTerm));
-        const matchesTags = tagSearchTerm === "" || (s.customTags && s.customTags.some(tag => tag.toLowerCase().includes(tagSearchTerm)));
-        return isNotFinished && matchesSearch && matchesTags;
-    });
-
-    if (activeStories.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">${searchTerm ? 'لا توجد نتائج تطابق بحثك.' : 'No active stories found.'}</div>`;
-        return;
-    }
-
-    const groupedStories = activeStories.reduce((groups, story) => {
-        const area = story.area || "General";
-        if (!groups[area]) groups[area] = [];
-        groups[area].push(story);
-        return groups;
-    }, {});
-
-    container.innerHTML = Object.keys(groupedStories).map(area => {
-        const storiesInArea = groupedStories[area].sort((a, b) => {
-            if (a.priority !== b.priority) return a.priority - b.priority;
-            const isALate = a.calc.finalEnd instanceof Date && new Date() > a.calc.finalEnd;
-            const isBLate = b.calc.finalEnd instanceof Date && new Date() > b.calc.finalEnd;
-            return isBLate - isALate;
+        const container = document.getElementById('active-cards-container');
+        const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || "";
+        const tagSearchTerm = document.getElementById('tag-search-input')?.value.toLowerCase() || "";
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+        const activeStories = nonBacklog.filter(s => {
+            const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
+            const matchesSearch =
+                s.title.toLowerCase().includes(searchTerm) ||
+                s.id.toString().includes(searchTerm) ||
+                s.tester.toLowerCase().includes(searchTerm) ||
+                s.assignedTo.toLowerCase().includes(searchTerm) ||
+                (s.area && s.area.toLowerCase().includes(searchTerm));
+            const matchesTags = tagSearchTerm === "" || (s.customTags && s.customTags.some(tag => tag.toLowerCase().includes(tagSearchTerm)));
+            return isNotFinished && matchesSearch && matchesTags;
         });
 
-        return `
-            <div class="col-span-full mt-8 mb-4">
-                <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-indigo-600 rounded-full"></span>
-                    ${escapeHtml(area)} 
-                    <span class="text-sm font-normal text-gray-400">(${storiesInArea.length})</span>
-                </h2>
-            </div>
-            ${storiesInArea.map(s => {
-                const now = new Date();
-                const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
-                const hasError = s.calc.error;
-                const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-                const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                let activeDaysCount = 0;
-                const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
-                if (devActivatedDates.length > 0) {
-                    const startDate = new Date(devActivatedDates[0]);
-                    const today = new Date();
-                    let current = new Date(startDate);
-                    while (current <= today) {
-                        if (dateEngine.isWorkDay(current, s.assignedTo)) activeDaysCount++;
-                        current.setDate(current.getDate() + 1);
+        if (activeStories.length === 0) {
+            container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">${searchTerm ? 'لا توجد نتائج تطابق بحثك.' : 'No active stories found.'}</div>`;
+            return;
+        }
+
+        const groupedStories = activeStories.reduce((groups, story) => {
+            const area = story.area || "General";
+            if (!groups[area]) groups[area] = [];
+            groups[area].push(story);
+            return groups;
+        }, {});
+
+        container.innerHTML = Object.keys(groupedStories).map(area => {
+            const storiesInArea = groupedStories[area].sort((a, b) => {
+                if (a.priority !== b.priority) return a.priority - b.priority;
+                const isALate = a.calc.finalEnd instanceof Date && new Date() > a.calc.finalEnd;
+                const isBLate = b.calc.finalEnd instanceof Date && new Date() > b.calc.finalEnd;
+                return isBLate - isALate;
+            });
+
+            return `
+                <div class="col-span-full mt-8 mb-4">
+                    <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
+                        <span class="w-2 h-6 bg-google-blue rounded-full"></span>
+                        ${escapeHtml(area)} 
+                        <span class="text-sm font-normal text-gray-400">(${storiesInArea.length})</span>
+                    </h2>
+                </div>
+                ${storiesInArea.map(s => {
+                    const now = new Date();
+                    const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
+                    const hasError = s.calc.error;
+                    const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
+                    const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                    let activeDaysCount = 0;
+                    const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
+                    if (devActivatedDates.length > 0) {
+                        const startDate = new Date(devActivatedDates[0]);
+                        const today = new Date();
+                        let current = new Date(startDate);
+                        while (current <= today) {
+                            if (dateEngine.isWorkDay(current, s.assignedTo)) activeDaysCount++;
+                            current.setDate(current.getDate() + 1);
+                        }
                     }
-                }
-                let activeDaysColor = "bg-emerald-500";
-                if (activeDaysCount >= 7 && activeDaysCount <= 12) activeDaysColor = "bg-amber-500";
-                else if (activeDaysCount > 12) activeDaysColor = "bg-rose-600 shadow-rose-200 animate-pulse";
+                    let activeDaysColor = "bg-google-green";
+                    if (activeDaysCount >= 7 && activeDaysCount <= 12) activeDaysColor = "bg-google-yellow";
+                    else if (activeDaysCount > 12) activeDaysColor = "bg-google-red shadow-google-red/20 animate-pulse";
 
-                const devVacDaysNow = devActivatedDates.length > 0 ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) : 0;
-                let devStartDisplay = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]).toLocaleDateString('en-GB') : "TBD";
-                let devResolveDate = "N/A";
-                const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
-                if (resolvedDevTasks.length > 0) {
-                    const latestTask = resolvedDevTasks.sort((a, b) => new Date(b['Changed Date']) - new Date(a['Changed Date']))[0];
-                    devResolveDate = new Date(latestTask['Changed Date']).toLocaleDateString('en-GB');
-                }
+                    const devVacDaysNow = devActivatedDates.length > 0 ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) : 0;
+                    let devStartDisplay = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]).toLocaleDateString('en-GB') : "TBD";
+                    let devResolveDate = "N/A";
+                    const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
+                    if (resolvedDevTasks.length > 0) {
+                        const latestTask = resolvedDevTasks.sort((a, b) => new Date(b['Changed Date']) - new Date(a['Changed Date']))[0];
+                        devResolveDate = new Date(latestTask['Changed Date']).toLocaleDateString('en-GB');
+                    }
 
-                const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
-                const totalTestEffort = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                let testStartDisplay = "Waiting";
-                const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
-                const testVacDaysNow = (execTask && execTask['Activated Date']) ? dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) : 0;
-                if (execTask && execTask['Activated Date']) testStartDisplay = new Date(execTask['Activated Date']).toLocaleDateString('en-GB');
+                    const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
+                    const totalTestEffort = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
+                    let testStartDisplay = "Waiting";
+                    const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
+                    const testVacDaysNow = (execTask && execTask['Activated Date']) ? dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) : 0;
+                    if (execTask && execTask['Activated Date']) testStartDisplay = new Date(execTask['Activated Date']).toLocaleDateString('en-GB');
 
-                const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && (s.state !== 'Resolved' && s.state !== 'Tested' && s.state !== 'Closed');
-                const devLightColor = (s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
-                const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && (s.state !== 'Tested' && s.state !== 'Closed');
-                const testLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+                    const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && (s.state !== 'Resolved' && s.state !== 'Tested' && s.state !== 'Closed');
+                    const devLightColor = (s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed') ? 'bg-google-green shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-google-red animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
+                    const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && (s.state !== 'Tested' && s.state !== 'Closed');
+                    const testLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-google-green shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-google-red animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
 
-                const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
-                const totalDevTasks = nonTestTasks.length;
-                const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed', 'Resolved'].includes(t['State'])).length;
-                const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
+                    const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
+                    const totalDevTasks = nonTestTasks.length;
+                    const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed', 'Resolved'].includes(t['State'])).length;
+                    const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
 
-                const totalBugs = s.bugs ? s.bugs.length : 0;
-                const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
-                const totalBugEffort = s.bugs ? s.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-                const completedBugEffort = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-                const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
-                const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
+                    const totalBugs = s.bugs ? s.bugs.length : 0;
+                    const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
+                    const totalBugEffort = s.bugs ? s.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
+                    const completedBugEffort = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
+                    const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
+                    const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
 
-                const testCases = s.testCases || [];
-                const totalTC = testCases.length;
-                const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
-                const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
+                    const testCases = s.testCases || [];
+                    const totalTC = testCases.length;
+                    const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
+                    const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
 
-                let statusColor = isLate ? "bg-red-100 text-red-700" : (hasError ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700");
-                const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
+                    let statusColor = isLate ? "status-delayed" : (hasError ? "bg-amber-100 text-amber-700" : "status-active");
+                    const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
 
-                const tagDropdownHtml = renderTagDropdown(s.id, s.customTags || []);
-                const projectSelectHtml = renderProjectSelect(s);
-                const commentsHtml = renderComments(s);
-                const commentsCount = getStandupComments(s.id).length;
+                    const tagDropdownHtml = renderTagDropdown(s.id, s.customTags || []);
+                    const projectSelectHtml = renderProjectSelect(s);
+                    const commentsHtml = renderComments(s);
+                    const commentsCount = getStandupComments(s.id).length;
 
-                return `
-                <div class="relative bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all overflow-visible flex flex-col mb-4">
-                    ${activeDaysCount > 0 ? `
-                    <div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center ${activeDaysColor} text-white w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10 transition-colors duration-500">
-                        <span class="text-xl font-black leading-none">${activeDaysCount}</span>
-                        <span class="text-[8px] uppercase font-bold">Days</span>
-                    </div>
-                    ` : ''}
-                    <div class="p-5 flex-1">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex gap-2">
-                                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${escapeHtml(statusText)}</span>
-                                <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${escapeHtml(s.priority || 999)}</span>
-                            </div>
-                            <span onclick="ui.openStoryModal('${s.id}')" class="text-xs font-mono text-gray-400 cursor-pointer hover:text-indigo-600">#${s.id} 🔍</span>
+                    return `
+                    <div class="card relative p-5 border-gray-100 hover:border-google-blue transition-all overflow-visible mb-4">
+                        ${activeDaysCount > 0 ? `
+                        <div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center ${activeDaysColor} text-white w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10 transition-colors duration-500">
+                            <span class="text-xl font-black leading-none">${activeDaysCount}</span>
+                            <span class="text-[8px] uppercase font-bold">Days</span>
                         </div>
-                        <div class="flex flex-wrap gap-1 mt-2 mb-3">
-                            ${s.tags.map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[10px] font-semibold">${escapeHtml(t)}</span>`).join('')}
-                        </div>
-                        <div class="flex flex-wrap items-center gap-1.5 mb-4 border-b border-dashed border-gray-100 pb-3 overflow-visible">
-                            ${(s.customTags || []).map(tag => `
-                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
-                                    ${escapeHtml(tag)}
-                                    <button onclick="tagManager.toggleTagInStory('${s.id}', '${encodeURIComponent(tag)}')" class="hover:text-purple-900 font-black ml-1">×</button>
-                                </span>
-                            `).join('')}
-                            ${tagDropdownHtml}
-                        </div>
-                        <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${escapeHtml(s.title)}</h3>
-                        ${projectSelectHtml}
-                        <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
-                            <div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <div class="w-2.5 h-2.5 rounded-full ${devLightColor}"></div>
-                                    <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
+                        ` : ''}
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex gap-2">
+                                    <span class="status-badge ${statusColor}">${escapeHtml(statusText)}</span>
+                                    <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${escapeHtml(s.priority || 999)}</span>
                                 </div>
-                                <div class="flex flex-col gap-0.5">
-                                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span> ${escapeHtml(s.assignedTo)}
-                                    </p>
-                                    <div class="ml-8 mt-1">
-                                        <div class="flex justify-between items-center mb-0.5">
-                                            <span class="text-[9px] text-gray-400 font-bold">Tasks: ${completedDevTasks}/${totalDevTasks}</span>
-                                            <span class="text-[9px] text-blue-600 font-bold">${devProgressPercent}%</span>
-                                        </div>
-                                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
-                                            <div class="bg-blue-500 h-full" style="width: ${devProgressPercent}%"></div>
-                                        </div>
-                                        ${totalBugs > 0 ? `
-                                        <div class="mb-1">
+                                <span onclick="ui.openStoryModal('${s.id}')" class="text-xs font-mono text-gray-400 cursor-pointer hover:text-google-blue">#${s.id} 🔍</span>
+                            </div>
+                            <div class="flex flex-wrap gap-1 mt-2 mb-3">
+                                ${s.tags.map(t => `<span class="px-2 py-0.5 bg-google-red-light text-google-red border border-google-red/30 rounded text-[10px] font-semibold">${escapeHtml(t)}</span>`).join('')}
+                            </div>
+                            <div class="flex flex-wrap items-center gap-1.5 mb-4 border-b border-dashed border-gray-100 pb-3 overflow-visible">
+                                ${(s.customTags || []).map(tag => `
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
+                                        ${escapeHtml(tag)}
+                                        <button onclick="tagManager.toggleTagInStory('${s.id}', '${encodeURIComponent(tag)}')" class="hover:text-purple-900 font-black ml-1">×</button>
+                                    </span>
+                                `).join('')}
+                                ${tagDropdownHtml}
+                            </div>
+                            <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${escapeHtml(s.title)}</h3>
+                            ${projectSelectHtml}
+                            <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <div class="w-2.5 h-2.5 rounded-full ${devLightColor}"></div>
+                                        <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
+                                    </div>
+                                    <div class="flex flex-col gap-0.5">
+                                        <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                            <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span> ${escapeHtml(s.assignedTo)}
+                                        </p>
+                                        <div class="ml-8 mt-1">
                                             <div class="flex justify-between items-center mb-0.5">
-                                                <span class="text-[9px] text-gray-400 font-bold">Bugs: ${completedBugs}/${totalBugs}</span>
-                                                <span class="text-[9px] text-red-600 font-bold">${bugProgressPercent}%</span>
+                                                <span class="text-[9px] text-gray-400 font-bold">Tasks: ${completedDevTasks}/${totalDevTasks}</span>
+                                                <span class="text-[9px] text-google-blue font-bold">${devProgressPercent}%</span>
                                             </div>
-                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                                                <div class="bg-red-500 h-full" style="width: ${bugProgressPercent}%"></div>
+                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
+                                                <div class="bg-google-blue h-full" style="width: ${devProgressPercent}%"></div>
                                             </div>
-                                            ${totalBugEffort > 0 ? `
-                                            <div class="flex justify-between items-center mt-1 text-[10px] text-gray-500">
-                                                <span class="font-bold">Bug Effort:</span>
-                                                <span class="font-mono">${remainingBugEffort.toFixed(1)}/${totalBugEffort.toFixed(1)}h</span>
-                                                <span class="text-xs font-bold ${remainingBugEffort === 0 ? 'text-green-600' : 'text-amber-600'}">${bugProgressPercent}%</span>
+                                            ${totalBugs > 0 ? `
+                                            <div class="mb-1">
+                                                <div class="flex justify-between items-center mb-0.5">
+                                                    <span class="text-[9px] text-gray-400 font-bold">Bugs: ${completedBugs}/${totalBugs}</span>
+                                                    <span class="text-[9px] text-google-red font-bold">${bugProgressPercent}%</span>
+                                                </div>
+                                                <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                                                    <div class="bg-google-red h-full" style="width: ${bugProgressPercent}%"></div>
+                                                </div>
+                                                ${totalBugEffort > 0 ? `
+                                                <div class="flex justify-between items-center mt-1 text-[10px] text-gray-500">
+                                                    <span class="font-bold">Bug Effort:</span>
+                                                    <span class="font-mono">${remainingBugEffort.toFixed(1)}/${totalBugEffort.toFixed(1)}h</span>
+                                                    <span class="text-xs font-bold ${remainingBugEffort === 0 ? 'text-google-green' : 'text-amber-600'}">${bugProgressPercent}%</span>
+                                                </div>
+                                                ` : ''}
                                             </div>
                                             ` : ''}
+                                            <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${escapeHtml(devStartDisplay)}</p>
+                                            ${devVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${devVacDaysNow} Days</p>` : ''}
+                                            <p class="text-[10px] text-google-green font-bold">Resolved: ${escapeHtml(devResolveDate)}</p>
+                                            <p class="text-[10px] text-google-blue font-bold">Est: ${totalDevEffort}h</p>
                                         </div>
-                                        ` : ''}
-                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${escapeHtml(devStartDisplay)}</p>
-                                        ${devVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${devVacDaysNow} Days</p>` : ''}
-                                        <p class="text-[10px] text-green-600 font-bold">Resolved: ${escapeHtml(devResolveDate)}</p>
-                                        <p class="text-[10px] text-indigo-600 font-bold">Est: ${totalDevEffort}h</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
+                                        <p class="text-[10px] uppercase text-gray-400 font-bold">Testing</p>
+                                    </div>
+                                    <div class="flex flex-col gap-0.5">
+                                        <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                            <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span> ${escapeHtml(s.tester)}
+                                        </p>
+                                        <div class="ml-8 mt-1">
+                                            <div class="flex justify-between items-center mb-0.5">
+                                                <span class="text-[9px] text-gray-400 font-bold">TCs: ${completedTC}/${totalTC}</span>
+                                                <span class="text-[9px] text-google-blue font-bold">${progressPercent}%</span>
+                                            </div>
+                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
+                                                <div class="bg-google-blue h-full" style="width: ${progressPercent}%"></div>
+                                            </div>
+                                            <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${escapeHtml(testStartDisplay)}</p>
+                                            ${testVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${testVacDaysNow} Days</p>` : ''}
+                                            <p class="text-[10px] text-google-blue font-bold">Est QA: ${totalTestEffort}h</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
-                                    <p class="text-[10px] uppercase text-gray-400 font-bold">Testing</p>
+                            <div class="mt-2 pt-4 border-t border-gray-50 bg-slate-50/30 -mx-5 px-5">
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2 block">Standup Updates</label>
+                                <div class="flex gap-2 mb-3">
+                                    <input type="text" placeholder="Add comment and press Enter..." class="form-input form-input-sm flex-1" onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; }">
                                 </div>
-                                <div class="flex flex-col gap-0.5">
-                                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span> ${escapeHtml(s.tester)}
-                                    </p>
-                                    <div class="ml-8 mt-1">
-                                        <div class="flex justify-between items-center mb-0.5">
-                                            <span class="text-[9px] text-gray-400 font-bold">TCs: ${completedTC}/${totalTC}</span>
-                                            <span class="text-[9px] text-indigo-600 font-bold">${progressPercent}%</span>
-                                        </div>
-                                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
-                                            <div class="bg-indigo-500 h-full" style="width: ${progressPercent}%"></div>
-                                        </div>
-                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${escapeHtml(testStartDisplay)}</p>
-                                        ${testVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${testVacDaysNow} Days</p>` : ''}
-                                        <p class="text-[10px] text-indigo-600 font-bold">Est QA: ${totalTestEffort}h</p>
-                                    </div>
-                                </div>
+                                ${commentsHtml || '<p class="text-[10px] text-gray-400 italic py-1">No updates recorded yet.</p>'}
                             </div>
                         </div>
-                        <div class="mt-2 pt-4 border-t border-gray-50 bg-slate-50/30 -mx-5 px-5">
-                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2 block">Standup Updates</label>
-                            <div class="flex gap-2 mb-3">
-                                <input type="text" placeholder="Add comment and press Enter..." class="flex-1 text-[11px] p-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none" onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; }">
+                        <div class="${isLate ? 'bg-google-red-light' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100 -mx-5 -mb-5 rounded-b-xl">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
+                                <span class="text-sm font-bold ${isLate ? 'text-google-red' : 'text-slate-700'}">${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleDateString('en-GB') : 'Waiting'}</span>
                             </div>
-                            ${commentsHtml || '<p class="text-[10px] text-gray-400 italic py-1">No updates recorded yet.</p>'}
+                            <span class="text-xl">${isLate ? '⚠️' : '🗓️'}</span>
                         </div>
                     </div>
-                    <div class="${isLate ? 'bg-red-50' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
-                            <span class="text-sm font-bold ${isLate ? 'text-red-600' : 'text-slate-700'}">${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleDateString('en-GB') : 'Waiting'}</span>
-                        </div>
-                        <span class="text-xl">${isLate ? '⚠️' : '🗓️'}</span>
-                    </div>
-                </div>
-                `;
-            }).join('')}
-        `;
-    }).join('');
-},
+                    `;
+                }).join('')}
+            `;
+        }).join('');
+    },
     renderKanban() {
         const container = document.getElementById('kanban-container');
         const filterSelect = document.getElementById('kanban-ba-filter');
@@ -1789,12 +1750,12 @@ const ui = {
         let html = '';
         html += `
             <div class="flex flex-nowrap gap-4 overflow-x-auto pb-4">
-                <div class="flex-shrink-0 w-80 bg-purple-50 rounded-xl border border-purple-200 flex flex-col max-h-screen">
-                    <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                        <h3 class="font-bold text-purple-700">Backlog</h3>
+                <div class="kanban-column bg-purple-50 border-purple-200">
+                    <div class="kanban-column-header">
+                        <span>Backlog</span>
                         <span class="bg-purple-200 text-purple-800 text-xs px-2 py-0.5 rounded-full">${filteredBacklog.length}</span>
                     </div>
-                    <div class="p-2 space-y-3 overflow-y-auto">
+                    <div class="space-y-3 overflow-y-auto">
                         ${filteredBacklog.map(s => createStoryCard(s, { mode: 'backlog', showProjectSelect: true, showTagDropdown: true, showCommentsButton: false })).join('')}
                         ${filteredBacklog.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">No backlog items</div>' : ''}
                     </div>
@@ -1803,12 +1764,12 @@ const ui = {
         html += states.map(state => {
             const storiesInState = filteredRegular.filter(s => s.state === state);
             return `
-                <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
-                    <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                        <h3 class="font-bold text-slate-700">${escapeHtml(state)}</h3>
+                <div class="kanban-column">
+                    <div class="kanban-column-header">
+                        <span>${escapeHtml(state)}</span>
                         <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
                     </div>
-                    <div class="p-2 space-y-3 overflow-y-auto">
+                    <div class="space-y-3 overflow-y-auto">
                         ${storiesInState.map(s => createStoryCard(s, { mode: 'regular', showProjectSelect: true, showTagDropdown: true })).join('')}
                         ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
                     </div>
@@ -1842,12 +1803,12 @@ const ui = {
         finalStates.forEach(state => {
             const logsInState = filteredLogs.filter(s => s.state === state);
             html += `
-                <div class="flex-shrink-0 w-80 bg-gray-50 rounded-xl border border-gray-200 flex flex-col max-h-screen">
-                    <div class="p-3 border-b flex justify-between items-center bg-white rounded-t-xl">
-                        <h3 class="font-bold text-slate-700">${escapeHtml(state)}</h3>
+                <div class="kanban-column">
+                    <div class="kanban-column-header">
+                        <span>${escapeHtml(state)}</span>
                         <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${logsInState.length}</span>
                     </div>
-                    <div class="p-2 space-y-3 overflow-y-auto">
+                    <div class="space-y-3 overflow-y-auto">
                         ${logsInState.map(s => createStoryCard(s, { mode: 'support', showProjectSelect: false, showTagDropdown: true, showCommentsButton: true })).join('')}
                         ${logsInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
                     </div>
@@ -1857,284 +1818,283 @@ const ui = {
         container.innerHTML = html;
     },
     generateWeeklyReport() {
-    const filterSelect = document.getElementById('kanban-ba-filter');
-    if (!filterSelect) return;
-    const selectedOptions = Array.from(filterSelect.selectedOptions);
-    let selectedAreas = selectedOptions.map(opt => opt.value);
-    const allAreas = [...new Set([
-        ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
-        ...db.backlogStories.map(s => s.area || "General")
-    ])];
-    if (selectedAreas.length === 0) selectedAreas = allAreas;
-    const reportData = {};
-    const targetStates = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
-    const fifteenDaysAgo = new Date();
-    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-    selectedAreas.forEach(area => {
-        const areaData = { states: {}, backlog: [], tested: [], comments: [] };
-        targetStates.forEach(state => {
-            areaData.states[state] = currentData.filter(s =>
-                !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area && s.state === state
-            );
-        });
-        areaData.backlog = db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s));
-        areaData.tested = currentData.filter(s =>
-            !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area &&
-            s.state === 'Tested' && s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
-        );
-        areaData.comments = db.areaComments.filter(c => c.area === area);
-        reportData[area] = areaData;
-    });
-    this.showWeeklyReportModal(reportData);
-},
-
-showWeeklyReportModal(reportData) {
-    let modal = document.getElementById('weekly-report-modal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'weekly-report-modal';
-        modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[2000] p-4';
-        modal.innerHTML = `
-            <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col relative" style="direction: rtl;">
-                <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-2xl">
-                    <h3 class="text-xl font-bold text-slate-800">📋 التقرير الأسبوعي</h3>
-                    <div class="flex gap-2">
-                        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition">🖨️ طباعة</button>
-                        <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
-                    </div>
-                </div>
-                <div class="p-6 overflow-y-auto" id="weekly-report-content"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        const style = document.createElement('style');
-        style.textContent = `
-            @media print {
-                body * { visibility: hidden; }
-                #weekly-report-modal, #weekly-report-modal * { visibility: visible; }
-                #weekly-report-modal {
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                    background: white;
-                    margin: 0;
-                    padding: 15px;
-                    box-shadow: none;
-                    border-radius: 0;
-                    max-height: none;
-                    overflow: visible;
-                    direction: rtl;
-                }
-                #weekly-report-modal .sticky, #weekly-report-modal .border-b { position: relative; top: auto; }
-                #weekly-report-modal .p-6 { padding: 10px; }
-                #weekly-report-modal button { display: none !important; }
-                .page-break-after { page-break-after: always; }
-                .report-story-card { border: 1px solid #e2e8f0; padding: 4px 8px; margin-bottom: 4px; border-radius: 4px; font-size: 10px !important; }
-                .report-story-card .title { font-size: 10px !important; font-weight: bold; }
-                .report-tag { display: inline-block; padding: 0 4px; margin: 1px; font-size: 8px; border-radius: 2px; background: #f1f5f9; border: 1px solid #cbd5e1; }
-                .report-custom-tag { background: #f3e8ff; border-color: #a78bfa; }
-                .report-comment { background: #f0f4ff; padding: 2px 6px; border-radius: 3px; border-right: 2px solid #6366f1; margin-top: 2px; font-size: 9px; }
-                .state-column { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc; }
-                .state-column h4 { font-size: 11px; font-weight: bold; margin-bottom: 4px; }
-            }
-        `;
-        modal.querySelector('.bg-white').appendChild(style);
-    }
-    const content = document.getElementById('weekly-report-content');
-    let html = '';
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
-    html += `<div class="text-center mb-6 border-b pb-4">
-        <h1 class="text-2xl font-bold text-slate-800">تقرير الحالة الأسبوعي</h1>
-        <p class="text-sm text-gray-500">تاريخ التقرير: ${escapeHtml(dateStr)}</p>
-    </div>`;
-    const truncateTitle = (title) => {
-        if (!title) return '';
-        const words = title.split(' ');
-        if (words.length <= 6) return title;
-        return words.slice(0, 6).join(' ') + ' ...';
-    };
-    for (const area in reportData) {
-        const data = reportData[area];
-        const { states, backlog, tested, comments } = data;
-        html += `<div class="mb-12 page-break-after">`;
-        html += `<h2 class="text-xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-4">📍 ${escapeHtml(area)}</h2>`;
-
-        if (comments && comments.length > 0) {
-            html += `<div class="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">`;
-            html += `<h3 class="font-bold text-amber-700 text-sm flex items-center gap-2 mb-3">💬 تعليقات عامة على المنطقة</h3>`;
-            html += `<div class="space-y-2">`;
-            comments.forEach(c => {
-                html += `
-                    <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2">
-                        <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${escapeHtml(c.text)}</span>
-                        <span class="text-[10px] text-gray-400 whitespace-nowrap">${escapeHtml(c.timestamp)}</span>
-                    </div>
-                `;
+        const filterSelect = document.getElementById('kanban-ba-filter');
+        if (!filterSelect) return;
+        const selectedOptions = Array.from(filterSelect.selectedOptions);
+        let selectedAreas = selectedOptions.map(opt => opt.value);
+        const allAreas = [...new Set([
+            ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
+            ...db.backlogStories.map(s => s.area || "General")
+        ])];
+        if (selectedAreas.length === 0) selectedAreas = allAreas;
+        const reportData = {};
+        const targetStates = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
+        const fifteenDaysAgo = new Date();
+        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+        selectedAreas.forEach(area => {
+            const areaData = { states: {}, backlog: [], tested: [], comments: [] };
+            targetStates.forEach(state => {
+                areaData.states[state] = currentData.filter(s =>
+                    !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area && s.state === state
+                );
             });
-            html += `</div></div>`;
-        } else {
-            html += `<div class="text-gray-400 text-sm italic mb-4">لا توجد تعليقات عامة على هذه المنطقة.</div>`;
-        }
-
-        html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">`;
-        const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
-        stateOrder.forEach(state => {
-            const stories = states[state] || [];
-            html += `<div class="state-column bg-gray-50 rounded-lg border border-gray-200 p-3">`;
-            html += `<h4 class="font-bold text-sm text-slate-700 border-b pb-1 mb-2">${escapeHtml(state)} (${stories.length})</h4>`;
-            if (stories.length === 0) {
-                html += `<div class="text-gray-400 text-[10px] italic">لا توجد</div>`;
-            } else {
-                stories.forEach(s => {
-                    const lastComment = getStandupComments(s.id).length > 0 ? getStandupComments(s.id)[getStandupComments(s.id).length - 1] : null;
-                    const azureTags = s.tags || [];
-                    const customTags = s.customTags || [];
-                    const allTags = [...new Set([...azureTags, ...customTags])];
-                    html += `<div class="report-story-card bg-white rounded border border-gray-100 p-2 mb-2 shadow-sm">`;
-                    html += `<div class="flex justify-between items-start gap-2">`;
-                    html += `<span class="font-mono text-[9px] text-gray-400">#${s.id}</span>`;
-                    html += `<span class="title text-xs font-bold text-slate-800 flex-1">${escapeHtml(truncateTitle(s.title))}</span>`;
-                    html += `</div>`;
-                    if (allTags.length > 0) {
-                        html += `<div class="flex flex-wrap gap-1 mt-1">`;
-                        allTags.forEach(tag => {
-                            const isCustom = customTags.includes(tag);
-                            html += `<span class="report-tag px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-100 text-purple-700 border border-purple-300 report-custom-tag' : 'bg-gray-100 text-gray-600 border border-gray-200'}">${escapeHtml(tag)}${isCustom ? ' ★' : ''}</span>`;
-                        });
-                        html += `</div>`;
-                    }
-                    if (lastComment) {
-                        html += `<div class="report-comment text-[9px] text-slate-600 mt-1">`;
-                        html += `<span class="font-bold text-indigo-600">اخر ستاندب:</span> `;
-                        html += `<span>"${escapeHtml(lastComment.text)}"</span>`;
-                        html += `<span class="text-[8px] text-gray-400 mr-1">(${escapeHtml(lastComment.date)})</span>`;
-                        html += `</div>`;
-                    }
-                    html += `</div>`;
-                });
-            }
-            html += `</div>`;
+            areaData.backlog = db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s));
+            areaData.tested = currentData.filter(s =>
+                !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area &&
+                s.state === 'Tested' && s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
+            );
+            areaData.comments = db.areaComments.filter(c => c.area === area);
+            reportData[area] = areaData;
         });
-        html += `</div>`;
+        this.showWeeklyReportModal(reportData);
+    },
+    showWeeklyReportModal(reportData) {
+        let modal = document.getElementById('weekly-report-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'weekly-report-modal';
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[2000] p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col relative" style="direction: rtl;">
+                    <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10 rounded-t-2xl">
+                        <h3 class="text-xl font-bold text-slate-800">📋 التقرير الأسبوعي</h3>
+                        <div class="flex gap-2">
+                            <button onclick="window.print()" class="btn btn-primary">🖨️ طباعة</button>
+                            <button onclick="document.getElementById('weekly-report-modal').style.display='none'" class="text-slate-500 hover:text-google-red text-2xl font-bold leading-none">&times;</button>
+                        </div>
+                    </div>
+                    <div class="p-6 overflow-y-auto" id="weekly-report-content"></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            const style = document.createElement('style');
+            style.textContent = `
+                @media print {
+                    body * { visibility: hidden; }
+                    #weekly-report-modal, #weekly-report-modal * { visibility: visible; }
+                    #weekly-report-modal {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        background: white;
+                        margin: 0;
+                        padding: 15px;
+                        box-shadow: none;
+                        border-radius: 0;
+                        max-height: none;
+                        overflow: visible;
+                        direction: rtl;
+                    }
+                    #weekly-report-modal .sticky, #weekly-report-modal .border-b { position: relative; top: auto; }
+                    #weekly-report-modal .p-6 { padding: 10px; }
+                    #weekly-report-modal button { display: none !important; }
+                    .page-break-after { page-break-after: always; }
+                    .report-story-card { border: 1px solid #e2e8f0; padding: 4px 8px; margin-bottom: 4px; border-radius: 4px; font-size: 10px !important; }
+                    .report-story-card .title { font-size: 10px !important; font-weight: bold; }
+                    .report-tag { display: inline-block; padding: 0 4px; margin: 1px; font-size: 8px; border-radius: 2px; background: #f1f5f9; border: 1px solid #cbd5e1; }
+                    .report-custom-tag { background: #f3e8ff; border-color: #a78bfa; }
+                    .report-comment { background: #f0f4ff; padding: 2px 6px; border-radius: 3px; border-right: 2px solid #6366f1; margin-top: 2px; font-size: 9px; }
+                    .state-column { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc; }
+                    .state-column h4 { font-size: 11px; font-weight: bold; margin-bottom: 4px; }
+                }
+            `;
+            modal.querySelector('.bg-white').appendChild(style);
+        }
+        const content = document.getElementById('weekly-report-content');
+        let html = '';
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+        html += `<div class="text-center mb-6 border-b pb-4">
+            <h1 class="text-2xl font-bold text-slate-800">تقرير الحالة الأسبوعي</h1>
+            <p class="text-sm text-gray-500">تاريخ التقرير: ${escapeHtml(dateStr)}</p>
+        </div>`;
+        const truncateTitle = (title) => {
+            if (!title) return '';
+            const words = title.split(' ');
+            if (words.length <= 6) return title;
+            return words.slice(0, 6).join(' ') + ' ...';
+        };
+        for (const area in reportData) {
+            const data = reportData[area];
+            const { states, backlog, tested, comments } = data;
+            html += `<div class="mb-12 page-break-after">`;
+            html += `<h2 class="text-xl font-bold text-google-blue border-b-2 border-google-blue/30 pb-2 mb-4">📍 ${escapeHtml(area)}</h2>`;
 
-        if (backlog.length > 0) {
-            const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
-            const top5 = sortedBacklog.slice(0, 5);
-            const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
-            html += `<div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">`;
-            html += `<h3 class="font-bold text-purple-700 text-sm">📋 الباك لوج (${backlog.length})</h3>`;
-            html += `<div class="flex flex-wrap gap-3 mt-2">`;
-            top5.forEach(s => {
-                html += `<div class="bg-white px-3 py-1 rounded-full border border-purple-100 text-xs flex items-center gap-2 shadow-sm">`;
-                html += `<span class="font-mono text-gray-400">#${s.id}</span>`;
-                html += `<span class="font-medium text-slate-700">${escapeHtml(truncateTitle(s.title))}</span>`;
-                html += `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded text-[9px] font-bold">P${escapeHtml(s.priority)}</span>`;
+            if (comments && comments.length > 0) {
+                html += `<div class="mb-6 p-4 bg-google-yellow-light rounded-lg border border-google-yellow/30">`;
+                html += `<h3 class="font-bold text-amber-700 text-sm flex items-center gap-2 mb-3">💬 تعليقات عامة على المنطقة</h3>`;
+                html += `<div class="space-y-2">`;
+                comments.forEach(c => {
+                    html += `
+                        <div class="bg-white p-2 rounded border border-amber-100 flex justify-between items-start gap-2">
+                            <span class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${escapeHtml(c.text)}</span>
+                            <span class="text-[10px] text-gray-400 whitespace-nowrap">${escapeHtml(c.timestamp)}</span>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            } else {
+                html += `<div class="text-gray-400 text-sm italic mb-4">لا توجد تعليقات عامة على هذه المنطقة.</div>`;
+            }
+
+            html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">`;
+            const stateOrder = ['Active', 'Active - With Bugs', 'Resolved', 'On-Hold'];
+            stateOrder.forEach(state => {
+                const stories = states[state] || [];
+                html += `<div class="state-column bg-gray-50 rounded-lg border border-gray-200 p-3">`;
+                html += `<h4 class="font-bold text-sm text-slate-700 border-b pb-1 mb-2">${escapeHtml(state)} (${stories.length})</h4>`;
+                if (stories.length === 0) {
+                    html += `<div class="text-gray-400 text-[10px] italic">لا توجد</div>`;
+                } else {
+                    stories.forEach(s => {
+                        const lastComment = getStandupComments(s.id).length > 0 ? getStandupComments(s.id)[getStandupComments(s.id).length - 1] : null;
+                        const azureTags = s.tags || [];
+                        const customTags = s.customTags || [];
+                        const allTags = [...new Set([...azureTags, ...customTags])];
+                        html += `<div class="report-story-card bg-white rounded border border-gray-100 p-2 mb-2 shadow-sm">`;
+                        html += `<div class="flex justify-between items-start gap-2">`;
+                        html += `<span class="font-mono text-[9px] text-gray-400">#${s.id}</span>`;
+                        html += `<span class="title text-xs font-bold text-slate-800 flex-1">${escapeHtml(truncateTitle(s.title))}</span>`;
+                        html += `</div>`;
+                        if (allTags.length > 0) {
+                            html += `<div class="flex flex-wrap gap-1 mt-1">`;
+                            allTags.forEach(tag => {
+                                const isCustom = customTags.includes(tag);
+                                html += `<span class="report-tag px-1.5 py-0.5 text-[8px] font-bold rounded ${isCustom ? 'bg-purple-100 text-purple-700 border border-purple-300 report-custom-tag' : 'bg-gray-100 text-gray-600 border border-gray-200'}">${escapeHtml(tag)}${isCustom ? ' ★' : ''}</span>`;
+                            });
+                            html += `</div>`;
+                        }
+                        if (lastComment) {
+                            html += `<div class="report-comment text-[9px] text-slate-600 mt-1">`;
+                            html += `<span class="font-bold text-google-blue">اخر ستاندب:</span> `;
+                            html += `<span>"${escapeHtml(lastComment.text)}"</span>`;
+                            html += `<span class="text-[8px] text-gray-400 mr-1">(${escapeHtml(lastComment.date)})</span>`;
+                            html += `</div>`;
+                        }
+                        html += `</div>`;
+                    });
+                }
                 html += `</div>`;
             });
-            if (top5.length < backlog.length) html += `<span class="text-xs text-gray-400">... وغيرها</span>`;
-            if (withoutPriority.length > 0) html += `<div class="w-full text-xs text-red-600 mt-1">⚠️ يوجد ${withoutPriority.length} قصة بدون أولوية (Priority = 999)</div>`;
-            html += `</div></div>`;
-        } else {
-            html += `<div class="text-gray-400 text-sm italic mt-2">لا يوجد باك لوج في هذه المنطقة.</div>`;
-        }
+            html += `</div>`;
 
-        if (tested.length > 0) {
-            html += `<div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">`;
-            html += `<h3 class="font-bold text-green-700 text-sm">✅ تم تسليمها (آخر 15 يوم) (${tested.length})</h3>`;
-            html += `<div class="flex flex-wrap gap-2 mt-2">`;
-            tested.forEach(s => {
-                html += `<span class="bg-white text-green-800 px-2 py-0.5 rounded-full border border-green-100 text-xs font-mono">#${s.id}</span>`;
-            });
-            html += `</div></div>`;
-        } else {
-            html += `<div class="text-gray-400 text-sm italic mt-2">لا توجد قصص مسلمة في آخر 15 يوم.</div>`;
-        }
+            if (backlog.length > 0) {
+                const sortedBacklog = [...backlog].sort((a, b) => (a.priority || 999) - (b.priority || 999));
+                const top5 = sortedBacklog.slice(0, 5);
+                const withoutPriority = sortedBacklog.filter(s => s.priority === 999 || s.priority === undefined || s.priority === null);
+                html += `<div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">`;
+                html += `<h3 class="font-bold text-purple-700 text-sm">📋 الباك لوج (${backlog.length})</h3>`;
+                html += `<div class="flex flex-wrap gap-3 mt-2">`;
+                top5.forEach(s => {
+                    html += `<div class="bg-white px-3 py-1 rounded-full border border-purple-100 text-xs flex items-center gap-2 shadow-sm">`;
+                    html += `<span class="font-mono text-gray-400">#${s.id}</span>`;
+                    html += `<span class="font-medium text-slate-700">${escapeHtml(truncateTitle(s.title))}</span>`;
+                    html += `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded text-[9px] font-bold">P${escapeHtml(s.priority)}</span>`;
+                    html += `</div>`;
+                });
+                if (top5.length < backlog.length) html += `<span class="text-xs text-gray-400">... وغيرها</span>`;
+                if (withoutPriority.length > 0) html += `<div class="w-full text-xs text-google-red mt-1">⚠️ يوجد ${withoutPriority.length} قصة بدون أولوية (Priority = 999)</div>`;
+                html += `</div></div>`;
+            } else {
+                html += `<div class="text-gray-400 text-sm italic mt-2">لا يوجد باك لوج في هذه المنطقة.</div>`;
+            }
 
-        html += `</div>`;
-    }
-    content.innerHTML = html;
-    modal.style.display = 'flex';
-},
+            if (tested.length > 0) {
+                html += `<div class="mt-4 p-3 bg-google-green-light rounded-lg border border-google-green/30">`;
+                html += `<h3 class="font-bold text-google-green text-sm">✅ تم تسليمها (آخر 15 يوم) (${tested.length})</h3>`;
+                html += `<div class="flex flex-wrap gap-2 mt-2">`;
+                tested.forEach(s => {
+                    html += `<span class="bg-white text-google-green px-2 py-0.5 rounded-full border border-google-green/20 text-xs font-mono">#${s.id}</span>`;
+                });
+                html += `</div></div>`;
+            } else {
+                html += `<div class="text-gray-400 text-sm italic mt-2">لا توجد قصص مسلمة في آخر 15 يوم.</div>`;
+            }
+
+            html += `</div>`;
+        }
+        content.innerHTML = html;
+        modal.style.display = 'flex';
+    },
     renderDelivery() {
-    const container = document.getElementById('delivery-grid');
-    const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || "";
-    const nonBacklog = currentData.filter(s => !isBacklogStory(s));
-    const regularStories = nonBacklog.filter(s => isRegularStory(s));
-    const allTested = regularStories.filter(s => s.state === 'Tested' || s.state === 'Closed');
-    const pendingStories = allTested.filter(s => {
-        const isPending = !db.deliveryLogs.some(l => l.storyId === s.id.toString());
-        const matchesSearch = s.title.toLowerCase().includes(searchTerm) || s.id.toString().includes(searchTerm) || (s.area && s.area.toLowerCase().includes(searchTerm));
-        return isPending && matchesSearch;
-    });
-    const completedStories = db.deliveryLogs.map(log => {
-        const story = regularStories.find(s => s.id.toString() === log.storyId.toString());
-        return { ...story, logData: log, title: story ? story.title : "Story not in current CSV", area: story ? story.area : "N/A" };
-    }).filter(s => {
-        if (!s.id) return false;
-        const matchesSearch = s.title.toLowerCase().includes(searchTerm) || s.logData.storyId.toString().includes(searchTerm) || s.logData.to.toLowerCase().includes(searchTerm) || (s.area && s.area.toLowerCase().includes(searchTerm));
-        return matchesSearch;
-    }).reverse();
+        const container = document.getElementById('delivery-grid');
+        const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || "";
+        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        const regularStories = nonBacklog.filter(s => isRegularStory(s));
+        const allTested = regularStories.filter(s => s.state === 'Tested' || s.state === 'Closed');
+        const pendingStories = allTested.filter(s => {
+            const isPending = !db.deliveryLogs.some(l => l.storyId === s.id.toString());
+            const matchesSearch = s.title.toLowerCase().includes(searchTerm) || s.id.toString().includes(searchTerm) || (s.area && s.area.toLowerCase().includes(searchTerm));
+            return isPending && matchesSearch;
+        });
+        const completedStories = db.deliveryLogs.map(log => {
+            const story = regularStories.find(s => s.id.toString() === log.storyId.toString());
+            return { ...story, logData: log, title: story ? story.title : "Story not in current CSV", area: story ? story.area : "N/A" };
+        }).filter(s => {
+            if (!s.id) return false;
+            const matchesSearch = s.title.toLowerCase().includes(searchTerm) || s.logData.storyId.toString().includes(searchTerm) || s.logData.to.toLowerCase().includes(searchTerm) || (s.area && s.area.toLowerCase().includes(searchTerm));
+            return matchesSearch;
+        }).reverse();
 
-    const createCardHtml = (s, isLogged) => {
-        const tags = [...new Set([...(s.tags || []), ...(s.customTags || [])])];
-        const tagsHtml = tags.length > 0 ? `
-            <div class="flex flex-wrap gap-1 mb-2">
-                ${tags.map(tag => `
-                    <span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(s.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">
-                        ${escapeHtml(tag.trim())}
-                    </span>
-                `).join('')}
-            </div>
-        ` : '';
-
-        return `
-            <div class="bg-white p-4 rounded-xl border-2 transition-all ${isLogged ? 'border-gray-100 shadow-none' : 'border-blue-200 shadow-sm hover:border-blue-400'}">
-                ${tagsHtml}
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span>
+        const createCardHtml = (s, isLogged) => {
+            const tags = [...new Set([...(s.tags || []), ...(s.customTags || [])])];
+            const tagsHtml = tags.length > 0 ? `
+                <div class="flex flex-wrap gap-1 mb-2">
+                    ${tags.map(tag => `
+                        <span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(s.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">
+                            ${escapeHtml(tag.trim())}
+                        </span>
+                    `).join('')}
                 </div>
-                <div class="font-bold text-slate-800 mb-4 leading-snug">${escapeHtml(s.title)}</div>
-                <span class="text-xs font-bold ${isLogged ? 'text-green-500' : 'text-blue-500 italic'}">${isLogged ? '✓ تم التسليم' : '*Tested*'}</span>
-                <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${escapeHtml(s.area || "General")}</div>
-                ${isLogged ? `
-                    <div class="relative group mt-2" dir="rtl">
-                        <div class="text-xs bg-green-50 text-green-700 p-3 pr-12 rounded-lg border border-green-100 min-h-[60px] leading-relaxed">
-                            <b>المستلم:</b> ${escapeHtml(s.logData.to)}<br>
-                            <b>التاريخ:</b> ${escapeHtml(s.logData.date)}
+            ` : '';
+
+            return `
+                <div class="card p-4 border-2 transition-all ${isLogged ? 'border-gray-200 shadow-none' : 'border-google-blue/30 shadow-sm hover:border-google-blue'}">
+                    ${tagsHtml}
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] font-mono text-gray-400">#${isLogged ? s.logData.storyId : s.id}</span>
+                    </div>
+                    <div class="font-bold text-slate-800 mb-4 leading-snug">${escapeHtml(s.title)}</div>
+                    <span class="text-xs font-bold ${isLogged ? 'text-google-green' : 'text-google-blue italic'}">${isLogged ? '✓ تم التسليم' : '*Tested*'}</span>
+                    <div class="text-[10px] text-gray-500 mb-2 italic">Area: ${escapeHtml(s.area || "General")}</div>
+                    ${isLogged ? `
+                        <div class="relative group mt-2" dir="rtl">
+                            <div class="text-xs bg-google-green-light text-google-green p-3 pr-12 rounded-lg border border-google-green/30 min-h-[60px] leading-relaxed">
+                                <b>المستلم:</b> ${escapeHtml(s.logData.to)}<br>
+                                <b>التاريخ:</b> ${escapeHtml(s.logData.date)}
+                            </div>
+                            ${currentUser && currentUser.role === 'admin' ? `
+                                <button onclick="ui.editDelivery('${s.logData.storyId}')" class="absolute top-2 left-2 bg-white border border-google-green/30 shadow-sm text-gray-500 hover:text-google-blue hover:border-google-blue rounded-md p-1.5 text-[10px] transition-all z-10 flex items-center gap-1">
+                                    <span>✏️</span>
+                                    <span class="text-[9px] font-bold">تعديل</span>
+                                </button>
+                            ` : ''}
                         </div>
-                        ${currentUser && currentUser.role === 'admin' ? `
-                            <button onclick="ui.editDelivery('${s.logData.storyId}')" class="absolute top-2 left-2 bg-white border border-green-200 shadow-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 rounded-md p-1.5 text-[10px] transition-all z-10 flex items-center gap-1">
-                                <span>✏️</span>
-                                <span class="text-[9px] font-bold">تعديل</span>
-                            </button>
-                        ` : ''}
-                    </div>
-                ` : (currentUser && currentUser.role === 'admin' ? `
-                    <div class="flex gap-2 mt-auto">
-                        <input id="to-${s.id}" placeholder="اسم المستلم..." class="text-xs border border-gray-200 p-2 rounded-lg flex-1 focus:ring-1 focus:ring-blue-500 outline-none">
-                        <button onclick="ui.markDelivered('${s.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">تأكيد</button>
-                    </div>
-                ` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
-            </div>
+                    ` : (currentUser && currentUser.role === 'admin' ? `
+                        <div class="flex gap-2 mt-auto">
+                            <input id="to-${s.id}" placeholder="اسم المستلم..." class="form-input form-input-sm flex-1">
+                            <button onclick="ui.markDelivered('${s.id}')" class="btn btn-primary text-xs">تأكيد</button>
+                        </div>
+                    ` : `<div class="text-xs text-gray-400 italic mt-auto">بانتظار تأكيد التسليم من الأدمن</div>`)}
+                </div>
+            `;
+        };
+
+        if (pendingStories.length === 0 && completedStories.length === 0) {
+            container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">${searchTerm ? 'لا توجد نتائج تطابق بحثك في قسم التسليم.' : 'لا توجد عناصر حالياً.'}</div>`;
+            return;
+        }
+
+        let html = `
+            <div class="col-span-full mb-4"><h3 class="text-lg font-bold text-google-blue flex items-center gap-2">📦 بانتظار التسليم (${pendingStories.length})</h3></div>
+            ${pendingStories.map(s => createCardHtml(s, false)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
+            <div class="col-span-full my-8 border-t-2 border-dashed border-gray-200"></div>
+            <div class="col-span-full mb-4"><h3 class="text-lg font-bold text-gray-500 flex items-center gap-2">✅ تم التسليم مؤخراً (${completedStories.length})</h3></div>
+            ${completedStories.map(s => createCardHtml(s, true)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
         `;
-    };
-
-    if (pendingStories.length === 0 && completedStories.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">${searchTerm ? 'لا توجد نتائج تطابق بحثك في قسم التسليم.' : 'لا توجد عناصر حالياً.'}</div>`;
-        return;
-    }
-
-    let html = `
-        <div class="col-span-full mb-4"><h3 class="text-lg font-bold text-blue-700 flex items-center gap-2">📦 بانتظار التسليم (${pendingStories.length})</h3></div>
-        ${pendingStories.map(s => createCardHtml(s, false)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
-        <div class="col-span-full my-8 border-t-2 border-dashed border-gray-200"></div>
-        <div class="col-span-full mb-4"><h3 class="text-lg font-bold text-gray-500 flex items-center gap-2">✅ تم التسليم مؤخراً (${completedStories.length})</h3></div>
-        ${completedStories.map(s => createCardHtml(s, true)).join('') || '<div class="col-span-full text-center text-gray-400 py-4">لا توجد نتائج</div>'}
-    `;
-    container.innerHTML = html;
-},
+        container.innerHTML = html;
+    },
     markDelivered(id) {
         if (currentUser.role !== 'admin') return ui.showToast("عذراً، لا تملك صلاحية تنفيذ هذا الإجراء.", "error");
         const to = document.getElementById(`to-${id}`).value;
@@ -2208,7 +2168,7 @@ showWeeklyReportModal(reportData) {
         });
         const renderAvailableTag = (name) => {
             const isBusyGlobally = globalTaskWorkers.has(name);
-            return `<span class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center gap-1.5">${escapeHtml(name)}${isBusyGlobally ? '<span class="text-[8px] bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded shadow-sm font-black ring-1 ring-amber-200">BUSY</span>' : ''}</span>`;
+            return `<span class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-full shadow-sm hover:border-google-green hover:text-google-green transition-colors flex items-center gap-1.5">${escapeHtml(name)}${isBusyGlobally ? '<span class="text-[8px] bg-google-yellow-light text-amber-600 px-1.5 py-0.5 rounded shadow-sm font-black ring-1 ring-amber-200">BUSY</span>' : ''}</span>`;
         };
         const areaEntries = Object.entries(areaGroups);
         container.innerHTML = areaEntries.map(([areaName, data], index) => {
@@ -2239,10 +2199,10 @@ showWeeklyReportModal(reportData) {
             const availableTesters = [...data.allTestersInArea].filter(name => !data.testers[name]).filter(name => !supportWorkersGlobal.has(name) && !bugWorkersGlobal.has(name));
             const finalAvailableDevs = availableDevs.filter(name => !availableTesters.includes(name));
             return `
-                <div class="mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 cursor-move transition-all duration-300 hover:shadow-indigo-100/50" draggable="true" ondragstart="ui.handleAreaDragStart(event, ${index})" ondragover="ui.handleAreaDragOver(event)" ondrop="ui.handleAreaDrop(event, ${index})">
+                <div class="mb-16 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 cursor-move transition-all duration-300 hover:shadow-google-blue/10" draggable="true" ondragstart="ui.handleAreaDragStart(event, ${index})" ondragover="ui.handleAreaDragOver(event)" ondrop="ui.handleAreaDrop(event, ${index})">
                     <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 px-10 flex justify-between items-center pointer-events-none">
                         <div>
-                            <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3"><span class="w-4 h-4 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>${escapeHtml(areaName)}</h2>
+                            <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-3"><span class="w-4 h-4 bg-google-blue rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>${escapeHtml(areaName)}</h2>
                             <p class="text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Resource Allocation & Availability</p>
                         </div>
                         <i class="fas fa-grip-vertical text-slate-600 text-xl"></i>
@@ -2250,35 +2210,35 @@ showWeeklyReportModal(reportData) {
                     <div class="px-10 py-3 bg-slate-50/80 border-b border-slate-200 space-y-1.5">
                         <div class="flex items-center gap-2 text-xs">
                             <span class="font-bold text-slate-600 w-24">Dev WIP (Active):</span>
-                            <span class="font-mono font-black text-indigo-700 w-10">${devWipLimit}</span>
-                            <span class="font-mono font-black ${devActiveCount > devWipLimit ? 'text-red-600' : 'text-slate-700'} w-10">${devActiveCount}</span>
-                            <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden"><div class="${devWipUsage > 80 ? 'bg-amber-500' : 'bg-emerald-500'} h-full rounded-full transition-all duration-1000" style="width: ${devWipUsage}%"></div></div>
+                            <span class="font-mono font-black text-google-blue w-10">${devWipLimit}</span>
+                            <span class="font-mono font-black ${devActiveCount > devWipLimit ? 'text-google-red' : 'text-slate-700'} w-10">${devActiveCount}</span>
+                            <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden"><div class="${devWipUsage > 80 ? 'bg-google-yellow' : 'bg-google-green'} h-full rounded-full transition-all duration-1000" style="width: ${devWipUsage}%"></div></div>
                             <span class="text-[10px] text-slate-400 font-mono w-10">${Math.round(devWipUsage)}%</span>
                         </div>
                         <div class="flex items-center gap-2 text-xs">
                             <span class="font-bold text-slate-600 w-24">QA WIP (Resolved):</span>
                             <span class="font-mono font-black text-purple-700 w-10">${testerWipLimit}</span>
-                            <span class="font-mono font-black ${resolvedStoriesCount > testerWipLimit ? 'text-red-600' : 'text-slate-700'} w-10">${resolvedStoriesCount}</span>
-                            <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden"><div class="${testerWipUsage > 80 ? 'bg-amber-500' : 'bg-purple-500'} h-full rounded-full transition-all duration-1000" style="width: ${testerWipUsage}%"></div></div>
+                            <span class="font-mono font-black ${resolvedStoriesCount > testerWipLimit ? 'text-google-red' : 'text-slate-700'} w-10">${resolvedStoriesCount}</span>
+                            <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden"><div class="${testerWipUsage > 80 ? 'bg-google-yellow' : 'bg-purple-500'} h-full rounded-full transition-all duration-1000" style="width: ${testerWipUsage}%"></div></div>
                             <span class="text-[10px] text-slate-400 font-mono w-10">${Math.round(testerWipUsage)}%</span>
                         </div>
                         <div class="text-[10px] text-slate-400 pt-0.5"><span class="font-bold">${activeDevsCount}</span> Devs · <span class="font-bold">${activeTestersCount}</span> Testers</div>
                     </div>
                     <div class="p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 pointer-events-none">
                         <div class="space-y-6">
-                            <div class="flex items-center gap-2 pb-2 border-b-2 border-indigo-100"><i class="fas fa-code text-indigo-600"></i><h3 class="text-slate-800 font-black text-sm uppercase">Active Developers</h3></div>
-                            ${this.generateStaffBarsWithCount(data.developers, 'indigo', MAX_HOURS, data.activeDevStories)}
+                            <div class="flex items-center gap-2 pb-2 border-b-2 border-google-blue/30"><i class="fas fa-code text-google-blue"></i><h3 class="text-slate-800 font-black text-sm uppercase">Active Developers</h3></div>
+                            ${this.generateStaffBarsWithCount(data.developers, 'google-blue', MAX_HOURS, data.activeDevStories)}
                         </div>
                         <div class="space-y-6">
-                            <div class="flex items-center gap-2 pb-2 border-b-2 border-emerald-100"><i class="fas fa-vial text-emerald-600"></i><h3 class="text-slate-800 font-black text-sm uppercase">Active Testers</h3></div>
-                            ${this.generateStaffBarsWithCount(data.testers, 'emerald', MAX_HOURS, data.activeTesterStories)}
+                            <div class="flex items-center gap-2 pb-2 border-b-2 border-google-green/30"><i class="fas fa-vial text-google-green"></i><h3 class="text-slate-800 font-black text-sm uppercase">Active Testers</h3></div>
+                            ${this.generateStaffBarsWithCount(data.testers, 'google-green', MAX_HOURS, data.activeTesterStories)}
                         </div>
                         <div class="space-y-6">
                             <div>
-                                <div class="flex items-center gap-2 pb-2 border-b-2 border-amber-100"><i class="fas fa-headset text-amber-600"></i><h3 class="text-slate-800 font-black text-sm uppercase">Working On Support</h3></div>
+                                <div class="flex items-center gap-2 pb-2 border-b-2 border-amber-200"><i class="fas fa-headset text-amber-600"></i><h3 class="text-slate-800 font-black text-sm uppercase">Working On Support</h3></div>
                                 <div class="space-y-3 mt-3">
                                     ${supportWorkersInArea.length > 0 ? supportWorkersInArea.map(worker => `
-                                        <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-100">
+                                        <div class="flex items-center justify-between p-3 bg-google-yellow-light rounded-xl border border-amber-200">
                                             <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-amber-600 font-bold text-xs border border-amber-200">${escapeHtml(worker.charAt(0))}</div><div><div class="text-xs font-bold text-slate-700">${escapeHtml(worker)}</div><div class="text-[9px] text-amber-600 uppercase font-bold">Support</div></div></div>
                                             <span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-bold">Active</span>
                                         </div>
@@ -2286,10 +2246,10 @@ showWeeklyReportModal(reportData) {
                                 </div>
                             </div>
                             <div>
-                                <div class="flex items-center gap-2 pb-2 border-b-2 border-rose-100"><i class="fas fa-bug text-rose-600"></i><h3 class="text-slate-800 font-black text-sm uppercase">Working On Bugs</h3></div>
+                                <div class="flex items-center gap-2 pb-2 border-b-2 border-rose-200"><i class="fas fa-bug text-rose-600"></i><h3 class="text-slate-800 font-black text-sm uppercase">Working On Bugs</h3></div>
                                 <div class="space-y-3 mt-3">
                                     ${bugWorkersInArea.length > 0 ? bugWorkersInArea.map(worker => `
-                                        <div class="flex items-center justify-between p-3 bg-rose-50 rounded-xl border border-rose-100">
+                                        <div class="flex items-center justify-between p-3 bg-google-red-light rounded-xl border border-rose-200">
                                             <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-rose-600 font-bold text-xs border border-rose-200">${escapeHtml(worker.charAt(0))}</div><div><div class="text-xs font-bold text-slate-700">${escapeHtml(worker)}</div><div class="text-[9px] text-rose-600 uppercase font-bold">Bugs</div></div></div>
                                             <span class="text-[10px] bg-rose-200 text-rose-800 px-2 py-0.5 rounded-full font-bold">Active</span>
                                         </div>
@@ -2298,8 +2258,8 @@ showWeeklyReportModal(reportData) {
                             </div>
                         </div>
                         <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200">
-                            <div class="flex items-center gap-2 mb-4"><div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600"><i class="fas fa-user-check text-xs"></i></div><h3 class="text-slate-800 font-black text-sm uppercase">Available For Tasks</h3></div>
-                            <div class="mb-5"><p class="text-[9px] font-bold text-indigo-600 uppercase mb-2 tracking-widest flex items-center gap-2"><i class="fas fa-code text-[10px]"></i> Developers</p><div class="flex flex-wrap gap-2">${finalAvailableDevs.length > 0 ? finalAvailableDevs.map(name => renderAvailableTag(name)).join('') : '<span class="text-[10px] text-slate-300 italic">No available developers</span>'}</div></div>
+                            <div class="flex items-center gap-2 mb-4"><div class="w-8 h-8 rounded-full bg-google-green-light flex items-center justify-center text-google-green"><i class="fas fa-user-check text-xs"></i></div><h3 class="text-slate-800 font-black text-sm uppercase">Available For Tasks</h3></div>
+                            <div class="mb-5"><p class="text-[9px] font-bold text-google-blue uppercase mb-2 tracking-widest flex items-center gap-2"><i class="fas fa-code text-[10px]"></i> Developers</p><div class="flex flex-wrap gap-2">${finalAvailableDevs.length > 0 ? finalAvailableDevs.map(name => renderAvailableTag(name)).join('') : '<span class="text-[10px] text-slate-300 italic">No available developers</span>'}</div></div>
                             <div><p class="text-[9px] font-bold text-purple-600 uppercase mb-2 tracking-widest flex items-center gap-2"><i class="fas fa-vial text-[10px]"></i> Testers</p><div class="flex flex-wrap gap-2">${availableTesters.length > 0 ? availableTesters.map(name => renderAvailableTag(name)).join('') : '<span class="text-[10px] text-slate-300 italic">No available testers</span>'}</div></div>
                         </div>
                     </div>
@@ -2322,13 +2282,13 @@ showWeeklyReportModal(reportData) {
         return entries.sort((a, b) => b[1] - a[1]).map(([name, hours]) => {
             const perc = Math.min((hours / max) * 100, 100);
             const isOver = hours > max;
-            const barColor = isOver ? 'bg-red-500' : (perc > 80 ? 'bg-orange-500' : `bg-${color}-500`);
+            const barColor = isOver ? 'bg-google-red' : (perc > 80 ? 'bg-google-yellow' : `bg-${color}`);
             const storyCount = storyCounts[name] || 0;
             return `
                 <div class="relative p-3 bg-slate-50/50 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors">
                     <div class="flex justify-between mb-2 items-start">
                         <span class="font-bold text-sm text-slate-700">${escapeHtml(name)} <span class="text-[10px] font-normal text-gray-400">(${storyCount} ${storyCount === 1 ? 'story' : 'stories'})</span></span>
-                        <span class="text-xs font-mono ${isOver ? 'text-red-600 font-black' : 'text-slate-500'}">${hours.toFixed(1)} <span class="text-[10px] text-slate-400">/ ${max}h</span></span>
+                        <span class="text-xs font-mono ${isOver ? 'text-google-red font-black' : 'text-slate-500'}">${hours.toFixed(1)} <span class="text-[10px] text-slate-400">/ ${max}h</span></span>
                     </div>
                     <div class="w-full bg-gray-200/70 rounded-full h-2"><div class="${barColor} h-2 rounded-full transition-all duration-1000 shadow-sm" style="width: ${perc}%"></div></div>
                 </div>
@@ -2345,7 +2305,7 @@ showWeeklyReportModal(reportData) {
                 <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
                     <div class="flex justify-between items-center p-4 border-b">
                         <h3 class="text-lg font-bold text-slate-800">🟢 Available Developers (Completely Free)</h3>
-                        <button onclick="document.getElementById('free-devs-modal').style.display='none'" class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
+                        <button onclick="document.getElementById('free-devs-modal').style.display='none'" class="text-slate-500 hover:text-google-red text-2xl font-bold leading-none">&times;</button>
                     </div>
                     <div class="p-4 overflow-y-auto" id="free-devs-content"></div>
                 </div>
@@ -2358,8 +2318,8 @@ showWeeklyReportModal(reportData) {
         } else {
             content.innerHTML = freeDevsByArea.map(item => `
                 <div class="mb-4">
-                    <h4 class="font-bold text-indigo-600 text-sm border-b pb-1 mb-2">${escapeHtml(item.area)}</h4>
-                    <div class="flex flex-wrap gap-2">${item.devs.map(name => `<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200">${escapeHtml(name)}</span>`).join('')}</div>
+                    <h4 class="font-bold text-google-blue text-sm border-b pb-1 mb-2">${escapeHtml(item.area)}</h4>
+                    <div class="flex flex-wrap gap-2">${item.devs.map(name => `<span class="px-3 py-1 bg-google-green-light text-google-green rounded-full text-xs font-bold border border-google-green/30">${escapeHtml(name)}</span>`).join('')}</div>
                 </div>
             `).join('');
         }
@@ -2409,7 +2369,7 @@ showWeeklyReportModal(reportData) {
                     ${s.expectedRelease ? `<p class="text-sm text-slate-600">Expected Release: ${escapeHtml(s.expectedRelease.toLocaleDateString('en-GB'))}</p>` : ''}
                     ${s.assignedTo ? `<p class="text-sm text-slate-600">Assigned To: ${escapeHtml(s.assignedTo)}</p>` : ''}
                 </div>
-                <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                <div class="mt-6 p-4 bg-google-blue-light rounded-xl border border-google-blue/30">
                     <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? escapeHtml(s.expectedRelease.toLocaleDateString()) : 'Not Scheduled'}</span></div>
                 </div>
             `;
@@ -2421,12 +2381,12 @@ showWeeklyReportModal(reportData) {
                     <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Priority</p><p class="font-semibold text-slate-700">P${escapeHtml(s.priority)}</p></div>
                 </div>
                 <div class="space-y-4">
-                    <h4 class="font-bold text-blue-700 border-b pb-1">🛠 Development Details</h4>
+                    <h4 class="font-bold text-google-blue border-b pb-1">🛠 Development Details</h4>
                     <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Assigned To:</b> ${escapeHtml(s.assignedTo)}</p><p><b>Dev End:</b> ${s.calc.devEnd instanceof Date ? escapeHtml(s.calc.devEnd.toLocaleString()) : 'TBD'}</p></div>
                     <div class="space-y-1">${nonTestTasks.map(t => `
                         <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
-                            <span class="flex items-start gap-2"><span class="font-mono text-blue-600 font-bold bg-blue-50 px-1 rounded">#${escapeHtml(t['ID'])}</span><span>${escapeHtml(t['Title'])}</span></span>
-                            <span class="px-2 rounded h-fit ${t['State'] === 'Closed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${escapeHtml(t['State'])}</span>
+                            <span class="flex items-start gap-2"><span class="font-mono text-google-blue font-bold bg-google-blue-light px-1 rounded">#${escapeHtml(t['ID'])}</span><span>${escapeHtml(t['Title'])}</span></span>
+                            <span class="px-2 rounded h-fit ${t['State'] === 'Closed' ? 'bg-google-green-light text-google-green' : 'bg-google-yellow-light text-amber-700'}">${escapeHtml(t['State'])}</span>
                         </div>
                     `).join('')}</div>
                 </div>
@@ -2436,22 +2396,22 @@ showWeeklyReportModal(reportData) {
                     <div class="space-y-1">${s.testCases && s.testCases.length > 0 ? s.testCases.map(tc => `
                         <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
                             <span>TC #${escapeHtml(tc.id)}</span>
-                            <span class="font-bold ${tc.state === 'Pass' ? 'text-green-600' : 'text-red-600'}">${escapeHtml(tc.state)}</span>
+                            <span class="font-bold ${tc.state === 'Pass' ? 'text-google-green' : 'text-google-red'}">${escapeHtml(tc.state)}</span>
                         </div>
                     `).join('') : '<p class="text-xs text-gray-400 italic">No test cases linked yet.</p>'}</div>
                 </div>
                 ${s.bugs && s.bugs.length > 0 ? `
                 <div class="space-y-2">
-                    <h4 class="font-bold text-red-600 border-b pb-1">🐞 Bugs (${s.bugs.length})</h4>
+                    <h4 class="font-bold text-google-red border-b pb-1">🐞 Bugs (${s.bugs.length})</h4>
                     ${s.bugs.map(b => `
-                        <div class="text-[11px] border-l-2 border-red-500 pl-2 py-1">
+                        <div class="text-[11px] border-l-2 border-google-red pl-2 py-1">
                             <p class="font-bold">${escapeHtml(b['Title'])}</p>
                             <p class="text-gray-500">State: ${escapeHtml(b['State'])} | Effort: ${escapeHtml(b['Original Estimation'])}h</p>
                         </div>
                     `).join('')}
                 </div>` : ''}
-                <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                    <div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-indigo-700 uppercase">Internal Delivery Target</span><span class="text-sm font-bold text-indigo-900">${s.calc.finalEnd instanceof Date ? escapeHtml(s.calc.finalEnd.toLocaleString()) : 'Calculating...'}</span></div>
+                <div class="mt-6 p-4 bg-google-blue-light rounded-xl border border-google-blue/30">
+                    <div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-google-blue uppercase">Internal Delivery Target</span><span class="text-sm font-bold text-google-blue">${s.calc.finalEnd instanceof Date ? escapeHtml(s.calc.finalEnd.toLocaleString()) : 'Calculating...'}</span></div>
                     <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? escapeHtml(s.expectedRelease.toLocaleDateString()) : 'Not Scheduled'}</span></div>
                 </div>
             `;
@@ -2474,12 +2434,12 @@ showWeeklyReportModal(reportData) {
         body.innerHTML = `
             <div class="bg-slate-50/30 px-2">
                 <div class="flex gap-2 mb-4">
-                    <input type="text" id="kanban-comment-input" placeholder="Add new update and press Enter..." class="flex-1 text-sm p-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm" onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; ui.openCommentsModal('${s.id}'); ui.renderKanban(); }">
+                    <input type="text" id="kanban-comment-input" placeholder="Add new update and press Enter..." class="form-input flex-1" onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; ui.openCommentsModal('${s.id}'); ui.renderKanban(); }">
                 </div>
                 <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
                     ${comments.slice().reverse().map(c => `
-                        <div class="bg-white p-3 rounded-xl border border-indigo-100 shadow-sm">
-                            <div class="flex justify-between items-center mb-2"><span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">${escapeHtml(c.date)}</span></div>
+                        <div class="bg-white p-3 rounded-xl border border-google-blue/20 shadow-sm">
+                            <div class="flex justify-between items-center mb-2"><span class="text-[10px] font-bold text-google-blue bg-google-blue-light px-2 py-1 rounded">${escapeHtml(c.date)}</span></div>
                             <p class="text-sm text-slate-700 leading-relaxed italic">"${escapeHtml(c.text)}"</p>
                         </div>
                     `).join('')}
@@ -2507,12 +2467,12 @@ showWeeklyReportModal(reportData) {
         }, {});
         let html = '<div class="space-y-4">';
         for (const area in grouped) {
-            html += `<div class="border-b pb-2"><h4 class="font-bold text-indigo-600">${escapeHtml(area)}</h4>`;
+            html += `<div class="border-b pb-2"><h4 class="font-bold text-google-blue">${escapeHtml(area)}</h4>`;
             grouped[area].forEach(s => {
                 html += `
                     <div class="flex justify-between items-center border-b border-gray-100 py-1 hover:bg-gray-50 cursor-pointer" onclick="ui.openStoryModal('${s.id}')">
                         <span class="text-sm">#${s.id} - ${escapeHtml(s.title)}</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs font-bold ${s.state === 'Tested' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${escapeHtml(s.state)}</span>
+                        <span class="status-badge ${s.state === 'Tested' ? 'status-tested' : 'status-active'}">${escapeHtml(s.state)}</span>
                     </div>
                 `;
             });
@@ -2573,14 +2533,14 @@ showWeeklyReportModal(reportData) {
         for (const branch in grouped) {
             const branchItemsCount = Object.values(grouped[branch]).reduce((sum, area) => sum + Object.values(area).reduce((s, cust) => s + cust.length, 0), 0);
             html += `
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="card overflow-hidden">
                 <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
-                    <span class="font-bold text-slate-700 text-sm"><i class="fas fa-code-branch mr-2 text-indigo-500"></i>${escapeHtml(branch)}</span>
-                    <span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">${branchItemsCount} Today</span>
+                    <span class="font-bold text-slate-700 text-sm"><i class="fas fa-code-branch mr-2 text-google-blue"></i>${escapeHtml(branch)}</span>
+                    <span class="bg-google-blue text-white text-[10px] px-2 py-0.5 rounded-full font-bold">${branchItemsCount} Today</span>
                 </div>
                 <div class="p-4 space-y-4">`;
             for (const area in grouped[branch]) {
-                html += `<div><h4 class="text-xs font-black text-indigo-600 mb-2 uppercase tracking-tighter italic underline">${escapeHtml(area)}</h4>`;
+                html += `<div><h4 class="text-xs font-black text-google-blue mb-2 uppercase tracking-tighter italic underline">${escapeHtml(area)}</h4>`;
                 for (const customer in grouped[branch][area]) {
                     html += `<div class="ml-2 mb-3"><div class="text-[11px] font-bold text-slate-400 mb-2 border-l-2 border-slate-200 pl-2 tracking-widest uppercase">Target: ${escapeHtml(customer)}</div>`;
                     grouped[branch][area][customer].forEach(story => {
@@ -2612,7 +2572,7 @@ showWeeklyReportModal(reportData) {
         const areaStats = Object.entries(areaStatsMap).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
         return `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div class="bg-gradient-to-br from-indigo-600 to-blue-700 p-5 rounded-2xl shadow-lg text-white">
+            <div class="bg-gradient-to-br from-google-blue to-blue-700 p-5 rounded-2xl shadow-lg text-white">
                 <div class="text-[10px] opacity-80 font-bold uppercase tracking-widest text-center">Total Daily Activities</div>
                 <div class="text-5xl font-black mt-2 text-center">${total}</div>
                 <div class="text-[10px] mt-3 bg-white/20 text-center px-2 py-1 rounded-md backdrop-blur-sm">Matching all charts below</div>
@@ -2622,17 +2582,17 @@ showWeeklyReportModal(reportData) {
                 <div class="flex flex-wrap gap-2">${Object.entries(states).map(([state, count]) => `
                     <div class="bg-slate-50 px-3 py-2 rounded-xl border border-slate-100 flex-1 min-w-[100px]">
                         <div class="text-[9px] font-bold text-slate-500 truncate">${escapeHtml(state)}</div>
-                        <div class="text-lg font-black text-indigo-600">${count}</div>
+                        <div class="text-lg font-black text-google-blue">${count}</div>
                     </div>
                 `).join('')}</div>
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                <div class="text-[10px] text-indigo-600 font-bold uppercase mb-2 flex justify-between"><span>📊 Branches Summary</span><span>Sum: ${branchStats.reduce((a, b) => a + b.count, 0)}</span></div>
+                <div class="text-[10px] text-google-blue font-bold uppercase mb-2 flex justify-between"><span>📊 Branches Summary</span><span>Sum: ${branchStats.reduce((a, b) => a + b.count, 0)}</span></div>
                 <div class="space-y-3 mt-2">${branchStats.slice(0, 5).map(branch => {
                     const width = (branch.count / total) * 100;
-                    return `<div><div class="flex justify-between text-[10px] mb-1 font-bold text-slate-600"><span class="truncate pr-2">${escapeHtml(branch.name)}</span><span>${branch.count}</span></div><div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div class="bg-indigo-500 h-full rounded-full" style="width: ${width}%"></div></div></div>`;
+                    return `<div><div class="flex justify-between text-[10px] mb-1 font-bold text-slate-600"><span class="truncate pr-2">${escapeHtml(branch.name)}</span><span>${branch.count}</span></div><div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div class="bg-google-blue h-full rounded-full" style="width: ${width}%"></div></div></div>`;
                 }).join('')}</div>
             </div>
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
@@ -2647,14 +2607,14 @@ showWeeklyReportModal(reportData) {
     },
     renderStoryCard(s) {
         const isLate = s.calc.finalEnd instanceof Date && new Date() > s.calc.finalEnd;
-        let statusColor = isLate ? "bg-red-100 text-red-700" : "bg-indigo-100 text-indigo-700";
+        let statusColor = isLate ? "status-delayed" : "status-active";
         return `
-        <div onclick="ui.openStoryModal('${s.id}')" class="group p-3 mb-2 bg-slate-50 border border-slate-100 rounded-xl hover:border-indigo-300 hover:bg-white transition-all cursor-pointer">
+        <div onclick="ui.openStoryModal('${s.id}')" class="group p-3 mb-2 bg-slate-50 border border-slate-100 rounded-xl hover:border-google-blue hover:bg-white transition-all cursor-pointer">
             <div class="flex justify-between items-start mb-2">
-                <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${statusColor} uppercase">${escapeHtml(s.state)}</span>
+                <span class="status-badge ${statusColor}">${escapeHtml(s.state)}</span>
                 <span class="text-[9px] text-slate-400 font-mono">#${s.id}</span>
             </div>
-            <h5 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors line-clamp-1">${escapeHtml(s.title)}</h5>
+            <h5 class="text-xs font-bold text-slate-800 group-hover:text-google-blue transition-colors line-clamp-1">${escapeHtml(s.title)}</h5>
             <div class="flex items-center gap-4 mt-2">
                 <div class="flex items-center gap-1"><span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Dev:</span><span class="text-[10px] font-medium text-slate-600">${escapeHtml(s.assignedTo)}</span></div>
                 <div class="flex items-center gap-1"><span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Testing:</span><span class="text-[10px] font-medium text-slate-600">${escapeHtml(s.tester)}</span></div>
@@ -2752,7 +2712,7 @@ showWeeklyReportModal(reportData) {
                 <div class="col-span-full mt-8 mb-4">
                     <div class="flex items-center gap-3">
                         <h3 class="text-xl font-extrabold text-slate-800">${escapeHtml(area)}</h3>
-                        <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold">${groupedByArea[area].length} Stories</span>
+                        <span class="px-3 py-1 bg-google-blue-light text-google-blue rounded-full text-xs font-bold">${groupedByArea[area].length} Stories</span>
                         <div class="flex-grow h-px bg-slate-200"></div>
                     </div>
                 </div>
@@ -2760,9 +2720,9 @@ showWeeklyReportModal(reportData) {
             groupedByArea[area].forEach(s => {
                 const lastAction = s.changedDate ? new Date(s.changedDate) : now;
                 const diffDays = Math.floor(Math.abs(now - lastAction) / (1000 * 60 * 60 * 24));
-                let dayColorClass = "text-green-500 border-green-200 bg-green-50";
-                if (diffDays > 1 && diffDays <= 3) dayColorClass = "text-amber-500 border-amber-200 bg-amber-50";
-                else if (diffDays > 3) dayColorClass = "text-red-500 border-red-200 bg-red-50";
+                let dayColorClass = "text-google-green border-google-green/30 bg-google-green-light";
+                if (diffDays > 1 && diffDays <= 3) dayColorClass = "text-amber-500 border-amber-200 bg-google-yellow-light";
+                else if (diffDays > 3) dayColorClass = "text-google-red border-google-red/30 bg-google-red-light";
                 html += `
                     <div class="col-span-full lg:col-span-1 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-5" onclick="ui.openStoryModal('${s.id}')">
                         <div class="flex flex-col items-center justify-center min-w-[80px] h-[80px] rounded-2xl border-2 ${dayColorClass}">
@@ -2773,14 +2733,14 @@ showWeeklyReportModal(reportData) {
                             <div class="flex items-center gap-2 mb-1">
                                 <span class="text-[10px] font-bold text-slate-400">#${s.id}</span>
                                 <span class="px-2 py-0.5 bg-slate-100 text-[9px] font-bold rounded uppercase text-slate-500">${escapeHtml(s.state)}</span>
-                                <span class="ml-auto font-bold text-indigo-600 text-[10px]">P${escapeHtml(s.priority)}</span>
+                                <span class="ml-auto font-bold text-google-blue text-[10px]">P${escapeHtml(s.priority)}</span>
                             </div>
                             <h3 class="font-bold text-slate-800 text-sm mb-1 truncate" title="${escapeHtml(s.title)}">${escapeHtml(s.title)}</h3>
-                            <div class="flex flex-wrap gap-1 mb-2">${(s.tags || []).map(t => `<span class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded text-[9px] font-semibold">${escapeHtml(t)}</span>`).join('')}</div>
+                            <div class="flex flex-wrap gap-1 mb-2">${(s.tags || []).map(t => `<span class="px-2 py-0.5 bg-google-red-light text-google-red border border-google-red/30 rounded text-[9px] font-semibold">${escapeHtml(t)}</span>`).join('')}</div>
                             <div class="flex flex-wrap gap-y-1 gap-x-4">
                                 <div class="flex items-center gap-1 text-[11px] text-slate-500"><span class="font-semibold text-slate-700">Dev:</span> ${escapeHtml(s.assignedTo || '---')}</div>
                                 <div class="flex items-center gap-1 text-[11px] text-slate-500"><span class="font-semibold text-slate-700">QA:</span> ${escapeHtml(s.tester || '---')}</div>
-                                <div class="flex items-center gap-1 text-[11px] text-red-400"><span class="font-semibold">Last:</span> ${s.changedDate ? escapeHtml(new Date(s.changedDate).toLocaleDateString('en-GB')) : 'N/A'}</div>
+                                <div class="flex items-center gap-1 text-[11px] text-google-red"><span class="font-semibold">Last:</span> ${s.changedDate ? escapeHtml(new Date(s.changedDate).toLocaleDateString('en-GB')) : 'N/A'}</div>
                             </div>
                         </div>
                     </div>
@@ -2795,17 +2755,17 @@ showWeeklyReportModal(reportData) {
         const staffSelect = document.getElementById('staff-select');
         if (staffSelect) staffSelect.innerHTML = staff.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
         document.getElementById('vacations-list').innerHTML = db.vacations.map((v, i) => `
-            <div class="flex justify-between bg-gray-50 p-1 px-2 rounded mb-1"><span>${escapeHtml(v.name)} - ${escapeHtml(v.date)}</span><button onclick="settings.removeVacation(${i})" class="text-red-500">×</button></div>
+            <div class="flex justify-between bg-gray-50 p-1 px-2 rounded mb-1"><span>${escapeHtml(v.name)} - ${escapeHtml(v.date)}</span><button onclick="settings.removeVacation(${i})" class="text-google-red">×</button></div>
         `).join('');
         document.getElementById('holidays-list').innerHTML = db.holidays.map((h, i) => `
-            <span class="bg-gray-200 px-2 py-1 rounded text-xs inline-flex items-center gap-1 m-1">${escapeHtml(h)} <button onclick="settings.removeHoliday(${i})" class="text-red-500">×</button></span>
+            <span class="bg-gray-200 px-2 py-1 rounded text-xs inline-flex items-center gap-1 m-1">${escapeHtml(h)} <button onclick="settings.removeHoliday(${i})" class="text-google-red">×</button></span>
         `).join('');
         const usersList = document.getElementById('users-list');
         if (usersList) {
             usersList.innerHTML = db.users.map((u, i) => `
                 <div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
-                    <div><span class="font-bold text-slate-700">${escapeHtml(u.username)}</span><span class="text-[10px] ml-2 px-2 py-0.5 rounded-full ${u.role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">${escapeHtml(u.role)}</span></div>
-                    <button onclick="settings.removeUser(${i})" class="text-red-500 hover:text-red-700 font-bold text-xl">&times;</button>
+                    <div><span class="font-bold text-slate-700">${escapeHtml(u.username)}</span><span class="text-[10px] ml-2 px-2 py-0.5 rounded-full ${u.role === 'admin' ? 'bg-google-red-light text-google-red' : 'bg-google-blue-light text-google-blue'}">${escapeHtml(u.role)}</span></div>
+                    <button onclick="settings.removeUser(${i})" class="text-google-red hover:text-red-700 font-bold text-xl">&times;</button>
                 </div>
             `).join('');
         }
@@ -2817,10 +2777,10 @@ showWeeklyReportModal(reportData) {
                 <div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
                     <div>
                         <span class="font-bold text-slate-700">${escapeHtml(p.name)}</span>
-                        <span class="text-xs ml-2 px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-600' : p.status === 'hold' ? 'bg-amber-100 text-amber-600' : 'bg-gray-200 text-gray-500'}">${escapeHtml(p.status)}</span>
+                        <span class="text-xs ml-2 px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-google-green-light text-google-green' : p.status === 'hold' ? 'bg-google-yellow-light text-amber-600' : 'bg-gray-200 text-gray-500'}">${escapeHtml(p.status)}</span>
                         <span class="text-xs text-gray-400 ml-2">Team: ${escapeHtml(p.team)}</span>
                     </div>
-                    <button onclick="projectManager.deleteProject('${p.id}')" class="text-red-500 hover:text-red-700 font-bold text-xl">&times;</button>
+                    <button onclick="projectManager.deleteProject('${p.id}')" class="text-google-red hover:text-red-700 font-bold text-xl">&times;</button>
                 </div>
             `).join('');
         }
@@ -2846,14 +2806,14 @@ showWeeklyReportModal(reportData) {
         const rowsHtml = filtered.map(story => {
             const criteria = this.evaluateStoryCompliance(story);
             const compliancePercent = Math.round((criteria.passedCount / criteria.totalCount) * 100);
-            let barColor = 'bg-red-500';
-            if (compliancePercent >= 80) barColor = 'bg-green-500';
-            else if (compliancePercent >= 50) barColor = 'bg-yellow-500';
+            let barColor = 'bg-google-red';
+            if (compliancePercent >= 80) barColor = 'bg-google-green';
+            else if (compliancePercent >= 50) barColor = 'bg-google-yellow';
             return `
                 <tr class="border-b hover:bg-gray-50 transition">
                     <td class="px-4 py-3 font-mono text-xs">#${story.id}</td>
                     <td class="px-4 py-3 font-medium text-slate-700 max-w-xs truncate" title="${escapeHtml(story.title)}">${escapeHtml(story.title)}</td>
-                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700">${escapeHtml(story.state)}</span></td>
+                    <td class="px-4 py-3"><span class="status-badge status-active">${escapeHtml(story.state)}</span></td>
                     <td class="px-4 py-3 text-center">
                         <div class="flex flex-col items-center gap-1">
                             <span class="text-xs font-bold">${compliancePercent}%</span>
@@ -2919,17 +2879,17 @@ showWeeklyReportModal(reportData) {
         }
 
         const projectsHtml = allProjects.map(p => {
-            const statusClass = p.status === 'active' ? 'border-green-500 bg-green-50' :
-                                p.status === 'hold' ? 'border-amber-500 bg-amber-50' : 'border-gray-400 bg-gray-100';
+            const statusClass = p.status === 'active' ? 'border-google-green bg-google-green-light' :
+                                p.status === 'hold' ? 'border-google-yellow bg-google-yellow-light' : 'border-gray-400 bg-gray-100';
             const statusText = p.status === 'active' ? '🟢 Active' :
                                p.status === 'hold' ? '🟡 On Hold' : '🔴 Closed';
             const storyCount = p.linkedStoryIds ? p.linkedStoryIds.length : 0;
             const taskCount = p.tasks ? p.tasks.length : 0;
             return `
-                <div onclick="ui.openProjectDetails('${p.id}')" class="bg-white rounded-xl shadow-md border-l-4 ${statusClass} p-5 hover:shadow-lg cursor-pointer transition-all">
+                <div onclick="ui.openProjectDetails('${p.id}')" class="card p-5 border-l-4 ${statusClass} hover:border-google-blue cursor-pointer">
                     <div class="flex justify-between items-start">
                         <h3 class="text-xl font-bold text-slate-800">${escapeHtml(p.name)}</h3>
-                        <span class="text-xs font-bold px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-green-200 text-green-800' : p.status === 'hold' ? 'bg-amber-200 text-amber-800' : 'bg-gray-300 text-gray-700'}">${escapeHtml(statusText)}</span>
+                        <span class="text-xs font-bold px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-google-green text-white' : p.status === 'hold' ? 'bg-google-yellow text-slate-800' : 'bg-gray-300 text-gray-700'}">${escapeHtml(statusText)}</span>
                     </div>
                     <div class="mt-2 text-sm text-slate-600"><span class="font-bold">Team:</span> ${escapeHtml(p.team)}</div>
                     <div class="text-sm text-slate-600"><span class="font-bold">Due Date:</span> ${escapeHtml(p.dueDate)}</div>
@@ -2937,7 +2897,7 @@ showWeeklyReportModal(reportData) {
                         <span>📚 Stories: ${storyCount}</span>
                         <span>📋 Tasks: ${taskCount}</span>
                     </div>
-                    ${p.status === 'hold' ? `<div class="mt-2 text-xs text-amber-700 bg-amber-100 p-2 rounded">⏸ Hold: ${escapeHtml(p.holdReason)} (until ${escapeHtml(p.holdEndDate)})</div>` : ''}
+                    ${p.status === 'hold' ? `<div class="mt-2 text-xs text-amber-700 bg-google-yellow-light p-2 rounded">⏸ Hold: ${escapeHtml(p.holdReason)} (until ${escapeHtml(p.holdEndDate)})</div>` : ''}
                     ${p.status === 'closed' ? `<div class="mt-2 text-xs text-gray-500">🗓 Closed on: ${escapeHtml(p.closeDate)}</div>` : ''}
                 </div>
             `;
@@ -2997,23 +2957,23 @@ showWeeklyReportModal(reportData) {
         };
 
         return `
-            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 sticky top-4">
+            <div class="card p-4 sticky top-4">
                 <h3 class="font-bold text-slate-700 text-lg mb-3 flex items-center gap-2">⏰ Tasks by Due Date</h3>
                 <div class="space-y-4">
                     <div>
-                        <div class="flex items-center gap-2 text-red-600 font-bold text-sm border-b border-red-100 pb-1">
+                        <div class="flex items-center gap-2 text-google-red font-bold text-sm border-b border-google-red/30 pb-1">
                             <span>🔴</span> Overdue (${overdue.length})
                         </div>
                         <div class="mt-2 space-y-1">${renderTaskList(overdue)}</div>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2 text-amber-600 font-bold text-sm border-b border-amber-100 pb-1">
+                        <div class="flex items-center gap-2 text-amber-600 font-bold text-sm border-b border-amber-200 pb-1">
                             <span>🟡</span> Today (${todayTasks.length})
                         </div>
                         <div class="mt-2 space-y-1">${renderTaskList(todayTasks)}</div>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2 text-blue-600 font-bold text-sm border-b border-blue-100 pb-1">
+                        <div class="flex items-center gap-2 text-google-blue font-bold text-sm border-b border-google-blue/30 pb-1">
                             <span>🔵</span> Tomorrow (${tomorrowTasks.length})
                         </div>
                         <div class="mt-2 space-y-1">${renderTaskList(tomorrowTasks)}</div>
@@ -3037,11 +2997,11 @@ showWeeklyReportModal(reportData) {
         if (linkedStories.length > 0) {
             linkedStoriesHtml = `
                 <div class="space-y-2">
-                    <h4 class="font-bold text-indigo-700 text-sm border-b pb-1">📚 Linked Stories (${linkedStories.length})</h4>
+                    <h4 class="font-bold text-google-blue text-sm border-b pb-1">📚 Linked Stories (${linkedStories.length})</h4>
                     ${linkedStories.map(s => `
-                        <div class="flex justify-between items-center bg-indigo-50 p-2 rounded border border-indigo-100">
+                        <div class="flex justify-between items-center bg-google-blue-light p-2 rounded border border-google-blue/30">
                             <span onclick="ui.openStoryModal('${s.id}')" class="text-sm cursor-pointer hover:underline">#${s.id} - ${escapeHtml(s.title)}</span>
-                            <span class="text-xs bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded">${isBacklogStory(s) ? 'Backlog' : escapeHtml(s.state)}</span>
+                            <span class="text-xs bg-google-blue text-white px-2 py-0.5 rounded">${isBacklogStory(s) ? 'Backlog' : escapeHtml(s.state)}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -3054,9 +3014,9 @@ showWeeklyReportModal(reportData) {
             <div class="flex items-center gap-2 mt-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
                 <span class="text-sm font-bold text-gray-600">📅 Due Date:</span>
                 <input type="date" id="project-due-edit-${project.id}" value="${escapeHtml(project.dueDate || '')}" 
-                       class="border rounded px-2 py-1 text-sm flex-1">
+                       class="form-input form-input-sm flex-1">
                 <button onclick="projectManager.updateProjectDueDate('${project.id}', document.getElementById('project-due-edit-${project.id}').value)" 
-                        class="bg-indigo-600 text-white px-3 py-1 rounded text-sm">تحديث</button>
+                        class="btn btn-primary text-sm">تحديث</button>
             </div>
         `;
 
@@ -3064,25 +3024,25 @@ showWeeklyReportModal(reportData) {
         today.setHours(0, 0, 0, 0);
         const tasksHtmlWithEdit = (project.tasks || []).map(t => {
             const isDueTodayOrPast = t.dueDate ? new Date(t.dueDate) <= today : false;
-            const dueClass = isDueTodayOrPast ? 'bg-red-50 border-red-300 text-red-800' : '';
+            const dueClass = isDueTodayOrPast ? 'bg-google-red-light border-google-red/30 text-google-red' : '';
             return `
                 <div class="bg-white border rounded p-3 shadow-sm ${dueClass}">
                     <div class="flex justify-between items-center flex-wrap gap-2">
                         <span class="font-medium text-slate-700">${escapeHtml(t.title)}</span>
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-xs font-bold px-2 py-0.5 rounded ${t.status === 'done' ? 'bg-green-200 text-green-700' : t.status === 'active' ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'}">${escapeHtml(t.status)}</span>
+                            <span class="text-xs font-bold px-2 py-0.5 rounded ${t.status === 'done' ? 'bg-google-green-light text-google-green' : t.status === 'active' ? 'bg-google-blue-light text-google-blue' : 'bg-gray-200 text-gray-600'}">${escapeHtml(t.status)}</span>
                             <div class="flex items-center gap-1">
-                                <input type="date" id="task-due-${t.id}" value="${escapeHtml(t.dueDate || '')}" class="text-xs border rounded px-1 py-0.5 w-28">
+                                <input type="date" id="task-due-${t.id}" value="${escapeHtml(t.dueDate || '')}" class="form-input form-input-sm w-28">
                                 <button onclick="projectManager.updateTaskDueDate('${project.id}','${t.id}', document.getElementById('task-due-${t.id}').value)" 
                                         class="text-[10px] bg-purple-500 text-white px-2 py-0.5 rounded">تحديث</button>
                             </div>
                             <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','todo')" class="text-[10px] bg-gray-100 hover:bg-gray-200 px-1.5 py-0.5 rounded">To Do</button>
-                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','active')" class="text-[10px] bg-blue-100 hover:bg-blue-200 px-1.5 py-0.5 rounded">Active</button>
-                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','done')" class="text-[10px] bg-green-100 hover:bg-green-200 px-1.5 py-0.5 rounded">Done</button>
-                            <button onclick="projectManager.deleteTask('${project.id}','${t.id}')" class="text-red-500 hover:text-red-700 text-sm font-bold">×</button>
+                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','active')" class="text-[10px] bg-google-blue-light hover:bg-google-blue/20 px-1.5 py-0.5 rounded">Active</button>
+                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','done')" class="text-[10px] bg-google-green-light hover:bg-google-green/20 px-1.5 py-0.5 rounded">Done</button>
+                            <button onclick="projectManager.deleteTask('${project.id}','${t.id}')" class="text-google-red hover:text-red-700 text-sm font-bold">×</button>
                         </div>
                     </div>
-                    ${isDueTodayOrPast ? `<div class="text-xs text-red-600 font-bold mt-1">⚠️ مستحق اليوم أو مضى عليه</div>` : ''}
+                    ${isDueTodayOrPast ? `<div class="text-xs text-google-red font-bold mt-1">⚠️ مستحق اليوم أو مضى عليه</div>` : ''}
                     <div class="text-xs text-gray-400">Due: ${escapeHtml(t.dueDate || 'غير محدد')}</div>
                     <div class="mt-2 space-y-1">
                         ${(t.comments || []).map((c, idx) => `
@@ -3090,12 +3050,12 @@ showWeeklyReportModal(reportData) {
                                 <span class="text-sm">${escapeHtml(c.text)}</span>
                                 <div class="flex items-center gap-2">
                                     <span class="text-[9px] text-gray-400">${escapeHtml(c.timestamp)}</span>
-                                    <button onclick="projectManager.deleteTaskComment('${project.id}','${t.id}',${idx})" class="text-red-400 hover:text-red-600 text-xs">✕</button>
+                                    <button onclick="projectManager.deleteTaskComment('${project.id}','${t.id}',${idx})" class="text-google-red hover:text-red-600 text-xs">✕</button>
                                 </div>
                             </div>
                         `).join('')}
                         <div class="flex gap-1 mt-1">
-                            <input type="text" id="comment-input-${t.id}" placeholder="Add comment..." class="flex-1 text-xs border rounded px-2 py-1 focus:ring-1 focus:ring-purple-400 outline-none">
+                            <input type="text" id="comment-input-${t.id}" placeholder="Add comment..." class="form-input form-input-sm flex-1">
                             <button onclick="projectManager.addTaskComment('${project.id}','${t.id}', document.getElementById('comment-input-${t.id}').value); document.getElementById('comment-input-${t.id}').value='';" class="bg-purple-600 text-white px-2 py-1 rounded text-xs">Add</button>
                         </div>
                     </div>
@@ -3107,15 +3067,15 @@ showWeeklyReportModal(reportData) {
         if (project.status === 'active') {
             controlsHtml = `
                 <div class="flex gap-3 mt-4">
-                    <button onclick="projectManager.holdProject('${project.id}')" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold">⏸ Hold</button>
-                    <button onclick="projectManager.closeProject('${project.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold">🔒 Close</button>
+                    <button onclick="projectManager.holdProject('${project.id}')" class="btn btn-warning">⏸ Hold</button>
+                    <button onclick="projectManager.closeProject('${project.id}')" class="btn btn-danger">🔒 Close</button>
                 </div>
             `;
         } else if (project.status === 'hold') {
             controlsHtml = `
                 <div class="flex gap-3 mt-4">
-                    <button onclick="projectManager.closeProject('${project.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold">🔒 Close</button>
-                    <span class="text-sm text-amber-700 bg-amber-100 p-2 rounded">⏸ On Hold until ${escapeHtml(project.holdEndDate)}</span>
+                    <button onclick="projectManager.closeProject('${project.id}')" class="btn btn-danger">🔒 Close</button>
+                    <span class="text-sm text-amber-700 bg-google-yellow-light p-2 rounded">⏸ On Hold until ${escapeHtml(project.holdEndDate)}</span>
                 </div>
             `;
         } else {
@@ -3137,9 +3097,9 @@ showWeeklyReportModal(reportData) {
                     <h4 class="font-bold text-purple-700 text-sm border-b pb-1">📋 Project Tasks</h4>
                     <div class="space-y-2 mt-2">${tasksHtmlWithEdit || '<div class="text-gray-400 text-sm italic">No tasks added yet.</div>'}</div>
                     <div class="mt-3 flex gap-2">
-                        <input type="text" id="new-task-title-${project.id}" placeholder="Task title..." class="flex-1 border rounded px-3 py-1.5 text-sm">
-                        <input type="date" id="new-task-due-${project.id}" class="border rounded px-3 py-1.5 text-sm">
-                        <button onclick="projectManager.addTask('${project.id}', document.getElementById('new-task-title-${project.id}').value, document.getElementById('new-task-due-${project.id}').value); document.getElementById('new-task-title-${project.id}').value=''; document.getElementById('new-task-due-${project.id}').value='';" class="bg-purple-600 text-white px-4 py-1.5 rounded text-sm">Add Task</button>
+                        <input type="text" id="new-task-title-${project.id}" placeholder="Task title..." class="form-input flex-1">
+                        <input type="date" id="new-task-due-${project.id}" class="form-input">
+                        <button onclick="projectManager.addTask('${project.id}', document.getElementById('new-task-title-${project.id}').value, document.getElementById('new-task-due-${project.id}').value); document.getElementById('new-task-title-${project.id}').value=''; document.getElementById('new-task-due-${project.id}').value='';" class="btn btn-primary">Add Task</button>
                     </div>
                 </div>
             </div>
@@ -3219,7 +3179,7 @@ const tagManager = {
         const container = document.getElementById('tags-list');
         if (!container) return;
         container.innerHTML = db.customTags.map(tag => `
-            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">${escapeHtml(tag)}<button onclick="tagManager.removeTag('${encodeURIComponent(tag)}')" class="text-red-500 hover:text-red-700 font-bold">×</button></span>
+            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">${escapeHtml(tag)}<button onclick="tagManager.removeTag('${encodeURIComponent(tag)}')" class="text-google-red hover:text-red-700 font-bold">×</button></span>
         `).join('');
     },
     toggleTagInStory(storyId, tagName) {
@@ -3399,6 +3359,22 @@ const azureDevOps = {
         ui.showToast("تم حفظ إعدادات Azure بنجاح", "success");
     }
 };
+
+function executeWithSave(action, successMsg = 'تم الحفظ بنجاح', errorMsg = 'فشل الحفظ', callback = null) {
+    ui.showLoader();
+    Promise.resolve(action())
+        .then(() => dataProcessor.saveToGitHub())
+        .then(() => {
+            ui.showToast(successMsg, 'success');
+            if (callback) callback();
+            else ui.renderAll();
+        })
+        .catch(err => {
+            console.error(err);
+            ui.showToast(`${errorMsg}: ${err.message}`, 'error');
+        })
+        .finally(() => ui.hideLoader());
+}
 
 window.onload = () => {
     if (!db.areaComments) db.areaComments = [];
