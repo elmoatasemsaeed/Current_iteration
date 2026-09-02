@@ -1102,7 +1102,7 @@ const projectManager = {
 };
 
 // =================================================================
-// UI RENDERING (UPDATED WITH NEW CLASSES)
+// UI RENDERING (UPDATED WITH NEW CLASSES & LIGHT BACKGROUNDS)
 // =================================================================
 const ui = {
     showLoader() {
@@ -1176,27 +1176,28 @@ const ui = {
         });
         const freeDevs = this.getFreeStaff('dev');
         const freeTesters = this.getFreeStaff('tester');
+        // UPDATED: Light backgrounds with dark text
         const staffStatsHtml = `
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div onclick="ui.showStaffDetails('dev', 'active')" class="bg-gradient-to-br from-google-blue to-blue-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
+                <div onclick="ui.showStaffDetails('dev', 'active')" class="bg-gradient-to-br from-blue-100 to-blue-200 p-4 rounded-2xl shadow-lg text-slate-800 cursor-pointer hover:scale-105 transition-transform">
                     <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Active Developers</div>
                     <div class="text-4xl font-black mt-1">${activeDevsSet.size}</div>
-                    <div class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-0.5 rounded">Click for details</div>
+                    <div class="text-[10px] mt-2 bg-white/50 inline-block px-2 py-0.5 rounded">Click for details</div>
                 </div>
-                <div onclick="ui.showStaffDetails('tester', 'active')" class="bg-gradient-to-br from-google-green to-green-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
+                <div onclick="ui.showStaffDetails('tester', 'active')" class="bg-gradient-to-br from-green-100 to-green-200 p-4 rounded-2xl shadow-lg text-slate-800 cursor-pointer hover:scale-105 transition-transform">
                     <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Active Testers</div>
                     <div class="text-4xl font-black mt-1">${activeTestersSet.size}</div>
-                    <div class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-0.5 rounded">Click for details</div>
+                    <div class="text-[10px] mt-2 bg-white/50 inline-block px-2 py-0.5 rounded">Click for details</div>
                 </div>
-                <div onclick="ui.showStaffDetails('dev', 'free')" class="bg-gradient-to-br from-slate-500 to-slate-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
+                <div onclick="ui.showStaffDetails('dev', 'free')" class="bg-gradient-to-br from-slate-100 to-slate-200 p-4 rounded-2xl shadow-lg text-slate-800 cursor-pointer hover:scale-105 transition-transform">
                     <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Free Developers</div>
                     <div class="text-4xl font-black mt-1">${freeDevs.length}</div>
-                    <div class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-0.5 rounded">Click for details</div>
+                    <div class="text-[10px] mt-2 bg-white/50 inline-block px-2 py-0.5 rounded">Click for details</div>
                 </div>
-                <div onclick="ui.showStaffDetails('tester', 'free')" class="bg-gradient-to-br from-purple-500 to-purple-700 p-4 rounded-2xl shadow-lg text-white cursor-pointer hover:scale-105 transition-transform">
+                <div onclick="ui.showStaffDetails('tester', 'free')" class="bg-gradient-to-br from-purple-100 to-purple-200 p-4 rounded-2xl shadow-lg text-slate-800 cursor-pointer hover:scale-105 transition-transform">
                     <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Free Testers</div>
                     <div class="text-4xl font-black mt-1">${freeTesters.length}</div>
-                    <div class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-0.5 rounded">Click for details</div>
+                    <div class="text-[10px] mt-2 bg-white/50 inline-block px-2 py-0.5 rounded">Click for details</div>
                 </div>
             </div>
         `;
@@ -2570,12 +2571,13 @@ const ui = {
             areaStatsMap[areaName] = (areaStatsMap[areaName] || 0) + 1;
         });
         const areaStats = Object.entries(areaStatsMap).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+        // UPDATED: Light background for Total Daily Activities
         return `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div class="bg-gradient-to-br from-google-blue to-blue-700 p-5 rounded-2xl shadow-lg text-white">
+            <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-5 rounded-2xl shadow-lg text-slate-800">
                 <div class="text-[10px] opacity-80 font-bold uppercase tracking-widest text-center">Total Daily Activities</div>
                 <div class="text-5xl font-black mt-2 text-center">${total}</div>
-                <div class="text-[10px] mt-3 bg-white/20 text-center px-2 py-1 rounded-md backdrop-blur-sm">Matching all charts below</div>
+                <div class="text-[10px] mt-3 bg-white/50 text-center px-2 py-1 rounded-md">Matching all charts below</div>
             </div>
             <div class="col-span-1 md:col-span-2 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
                 <div class="text-[10px] text-gray-400 font-bold uppercase mb-3">Status Breakdown</div>
