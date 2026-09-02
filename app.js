@@ -1579,11 +1579,11 @@ const ui = {
                     return `
                     <div class="card relative p-5 border-gray-100 hover:border-google-blue transition-all overflow-visible mb-4">
                         ${activeDaysCount > 0 ? `
-                        <div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center ${activeDaysColor} text-white w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10 transition-colors duration-500">
-                            <span class="text-xl font-black leading-none">${activeDaysCount}</span>
-                            <span class="text-[8px] uppercase font-bold">Days</span>
-                        </div>
-                        ` : ''}
+<div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center ${activeDaysColor} text-slate-800 w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10 transition-colors duration-500">
+    <span class="text-xl font-black leading-none">${activeDaysCount}</span>
+    <span class="text-[8px] uppercase font-bold">Days</span>
+</div>
+` : ''}
                         <div class="flex-1">
                             <div class="flex justify-between items-start mb-4">
                                 <div class="flex gap-2">
