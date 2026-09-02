@@ -9,26 +9,320 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js">
     </script>
     <link rel="icon" href="data:,">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
+        * {
+            box-sizing: border-box;
         }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #202124;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ===== Google-inspired color palette ===== */
+        :root {
+            --google-blue: #1a73e8;
+            --google-blue-dark: #1557b0;
+            --google-blue-light: #e8f0fe;
+            --google-red: #ea4335;
+            --google-red-light: #fce8e6;
+            --google-green: #34a853;
+            --google-green-light: #e6f4ea;
+            --google-yellow: #fbbc04;
+            --google-yellow-light: #fef7e0;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f4;
+            --gray-200: #e8eaed;
+            --gray-300: #dadce0;
+            --gray-600: #5f6368;
+            --gray-800: #3c4043;
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        /* ===== Scrollbar ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dadce0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #bdc1c6;
+        }
+
+        /* ===== Header ===== */
+        header {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+        .header-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--google-blue);
+            letter-spacing: -0.01em;
+        }
+        .header-brand span {
+            background: var(--google-blue);
+            color: white;
+            padding: 0.1rem 0.5rem;
+            border-radius: 6px;
+            margin-right: 0.25rem;
+        }
+
+        /* ===== Navigation Tabs ===== */
+        nav .nav-btn {
+            position: relative;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            white-space: nowrap;
+        }
+        nav .nav-btn:hover {
+            background-color: var(--gray-100);
+            color: var(--google-blue);
+        }
+        nav .nav-btn.active {
+            color: var(--google-blue);
+            font-weight: 600;
+        }
+        nav .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 1rem;
+            right: 1rem;
+            height: 3px;
+            background: var(--google-blue);
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* ===== Tabs content ===== */
         .tab-content {
             display: none;
+            animation: fadeIn 0.25s ease;
         }
         .tab-content.active {
             display: block;
         }
-        .status-delayed {
-            background-color: #fee2e2;
-            border-left: 4px solid #ef4444;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* RTL comment styling */
+        /* ===== Cards ===== */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: box-shadow 0.2s ease, transform 0.15s ease;
+        }
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ===== Buttons ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+        .btn-primary {
+            background: var(--google-blue);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--google-blue-dark);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-success {
+            background: var(--google-green);
+            color: white;
+        }
+        .btn-success:hover {
+            background: #2d9249;
+        }
+        .btn-danger {
+            background: var(--google-red);
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #d33426;
+        }
+        .btn-warning {
+            background: var(--google-yellow);
+            color: #202124;
+        }
+        .btn-warning:hover {
+            background: #e5b003;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-800);
+        }
+        .btn-outline:hover {
+            background: var(--gray-100);
+        }
+
+        /* ===== Inputs ===== */
+        input, select, textarea {
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.6rem 0.9rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            background: white;
+            transition: border 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+        .form-input:focus {
+            border-color: var(--google-blue);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+        }
+        .form-input-sm {
+            padding: 0.4rem 0.7rem;
+            font-size: 0.8rem;
+        }
+
+        /* ===== Status labels ===== */
+        .status-badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .status-active {
+            background: var(--google-blue-light);
+            color: var(--google-blue);
+        }
+        .status-tested {
+            background: var(--google-green-light);
+            color: var(--google-green);
+        }
+        .status-delayed {
+            background: var(--google-red-light);
+            color: var(--google-red);
+            border-left: 4px solid var(--google-red);
+        }
+        .status-onhold {
+            background: var(--google-yellow-light);
+            color: #b45f06;
+        }
+        .status-closed {
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+
+        /* ===== Kanban columns ===== */
+        .kanban-column {
+            min-width: 280px;
+            max-width: 320px;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 0.75rem;
+            border: 1px solid var(--gray-200);
+            flex-shrink: 0;
+        }
+        .kanban-column-header {
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--gray-600);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-200);
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .kanban-card {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.15s ease;
+            cursor: default;
+        }
+        .kanban-card:hover {
+            border-color: var(--google-blue);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        /* ===== Table ===== */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+            background: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+        th {
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-600);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+        }
+        tr:hover td {
+            background: var(--gray-50);
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ===== Comments section ===== */
         .area-comment-box {
             direction: rtl;
-            font-family: 'Inter', sans-serif;
         }
         .area-comment-box textarea,
         .area-comment-box input {
@@ -39,123 +333,135 @@
             direction: rtl;
             text-align: right;
         }
-        .area-comment-box .comment-meta {
-            direction: ltr;
-            text-align: left;
-        }
         .area-comment-card {
             transition: all 0.2s ease;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
+            background: white;
         }
         .area-comment-card:hover {
-            background-color: #f8faff;
-            border-color: #818cf8;
+            background: var(--gray-50);
+            border-color: var(--google-blue);
         }
 
-        /* scrollable kanban columns */
-        #kanban-container .overflow-y-auto {
-            scrollbar-width: thin;
-            scrollbar-color: #cbd5e1 transparent;
+        /* ===== Modal ===== */
+        .modal-overlay {
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(2px);
         }
-        #kanban-container .overflow-y-auto::-webkit-scrollbar {
-            width: 4px;
-        }
-        #kanban-container .overflow-y-auto::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        #kanban-container .overflow-y-auto::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 8px;
-        }
-
-        .area-comment-section {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid #e2e8f0;
-            border-radius: 1rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .area-comment-section .comment-list {
-            max-height: 180px;
+        .modal-box {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            max-height: 90vh;
             overflow-y: auto;
         }
-        .area-comment-section .comment-list::-webkit-scrollbar {
-            width: 3px;
-        }
-        .area-comment-section .comment-list::-webkit-scrollbar-thumb {
-            background: #a5b4fc;
-            border-radius: 8px;
-        }
-        /* إضافات للنافذة المنبثقة */
+
+        /* ===== Popup comments ===== */
         #comments-popup .comment-item {
             transition: background 0.15s;
+            border-radius: var(--radius-sm);
+            padding: 0.5rem 0.75rem;
         }
         #comments-popup .comment-item:hover {
-            background-color: #f1f5f9;
+            background: var(--gray-50);
         }
+
+        /* ===== Responsive tweaks ===== */
+        @media (max-width: 640px) {
+            .kanban-column {
+                min-width: 240px;
+                max-width: 280px;
+            }
+            nav .nav-btn {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.75rem;
+            }
+            .header-brand {
+                font-size: 1rem;
+            }
+        }
+
+        /* ===== Utilities ===== */
+        .text-google-blue { color: var(--google-blue); }
+        .text-google-green { color: var(--google-green); }
+        .text-google-red { color: var(--google-red); }
+        .text-google-yellow { color: var(--google-yellow); }
+        .bg-google-blue-light { background: var(--google-blue-light); }
+        .bg-google-green-light { background: var(--google-green-light); }
+        .bg-google-red-light { background: var(--google-red-light); }
+        .bg-google-yellow-light { background: var(--google-yellow-light); }
+        .border-google-blue { border-color: var(--google-blue); }
+        .border-google-green { border-color: var(--google-green); }
+        .border-google-red { border-color: var(--google-red); }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body>
 
+    <!-- Login Screen -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900">
         <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
-            <h1 class="text-3xl font-bold text-center mb-8 text-blue-900">Login</h1>
+            <h1 class="text-3xl font-bold text-center mb-8 text-google-blue">Login</h1>
             <div class="space-y-4">
-                <input type="text" id="username" placeholder="Username" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="password" id="password" placeholder="Password" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="password" id="gh-token" placeholder="GitHub Personal Access Token" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="password" id="az-pat" placeholder="Azure Personal Access Token (PAT)" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="username" placeholder="Username" class="form-input">
+                <input type="password" id="password" placeholder="Password" class="form-input">
+                <input type="password" id="gh-token" placeholder="GitHub Personal Access Token" class="form-input">
+                <input type="password" id="az-pat" placeholder="Azure Personal Access Token (PAT)" class="form-input">
                 <div class="flex items-center gap-2">
-                    <input type="checkbox" id="remember-me" class="w-4 h-4">
+                    <input type="checkbox" id="remember-me" class="w-4 h-4 accent-google-blue">
                     <label for="remember-me" class="text-sm text-gray-600">Remember Me</label>
                 </div>
-                <button onclick="auth.handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">Sign In</button>
+                <button onclick="auth.handleLogin()" class="btn btn-primary w-full justify-center">Sign In</button>
             </div>
             <p class="text-[10px] text-gray-400 mt-4 text-center italic">Ensure token has correct permissions (repo scope)</p>
         </div>
     </div>
 
+    <!-- Main App -->
     <div id="app-container" class="hidden">
-        <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+        <header>
             <div class="max-w-full mx-auto px-4">
                 <div class="h-16 flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <span class="text-xl font-bold text-blue-700 italic underline">Iteration Follow-Up</span>
+                        <span class="header-brand"><span>Iteration</span> Follow-Up</span>
                     </div>
-
                     <div class="flex items-center gap-2">
                         <input type="file" id="csv-input" class="hidden" accept=".csv" onchange="dataProcessor.handleCSV(event)">
-                        <button onclick="document.getElementById('csv-input').click()" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-green-700 transition">
+                        <button onclick="document.getElementById('csv-input').click()" class="btn btn-success">
                             📤 <span class="hidden md:inline">Upload CSV</span>
                         </button>
-                        <button onclick="azureDevOps.sync()" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-sm hover:bg-blue-700 transition flex items-center gap-1">
+                        <button onclick="azureDevOps.sync()" class="btn btn-primary">
                             🔄 <span class="hidden md:inline">Refresh</span>
                         </button>
-                        <button onclick="auth.logout()" class="text-red-500 text-xs md:text-sm font-bold p-2 hover:bg-red-50 rounded">Logout</button>
+                        <button onclick="auth.logout()" class="btn btn-outline text-google-red">Logout</button>
                     </div>
                 </div>
 
-                <nav class="flex overflow-x-auto pb-2 gap-1 no-scrollbar lg:justify-start border-t pt-2 lg:border-none lg:pt-0">
-                    <button onclick="ui.switchTab('dashboard')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Dashboard</button>
-                    <button onclick="ui.switchTab('active')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Current Status</button>
-                    <button onclick="ui.switchTab('delivery')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Delivery</button>
-                    <button onclick="ui.switchTab('workload')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Workload</button>
-                    <button onclick="ui.switchTab('daily-activity')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Daily Activity</button>
-                    <button onclick="ui.switchTab('inactive-stories')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Inactive</button>
-                    <button onclick="ui.switchTab('kanban')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap font-medium">Kanban Board</button>
-                    <button onclick="ui.switchTab('support-kanban')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap font-medium">Support Kanban</button>
-                    <button onclick="ui.switchTab('auditor')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Auditor Checklist</button>
-                    <button onclick="ui.switchTab('projects')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Projects</button>
-                    <button onclick="ui.switchTab('settings')" class="nav-btn px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 text-sm whitespace-nowrap">Settings</button>
+                <nav class="flex overflow-x-auto pb-1 gap-0.5 no-scrollbar border-t pt-2 lg:border-none lg:pt-0">
+                    <button onclick="ui.switchTab('dashboard')" class="nav-btn active">Dashboard</button>
+                    <button onclick="ui.switchTab('active')" class="nav-btn">Current Status</button>
+                    <button onclick="ui.switchTab('delivery')" class="nav-btn">Delivery</button>
+                    <button onclick="ui.switchTab('workload')" class="nav-btn">Workload</button>
+                    <button onclick="ui.switchTab('daily-activity')" class="nav-btn">Daily Activity</button>
+                    <button onclick="ui.switchTab('inactive-stories')" class="nav-btn">Inactive</button>
+                    <button onclick="ui.switchTab('kanban')" class="nav-btn">Kanban Board</button>
+                    <button onclick="ui.switchTab('support-kanban')" class="nav-btn">Support Kanban</button>
+                    <button onclick="ui.switchTab('auditor')" class="nav-btn">Auditor Checklist</button>
+                    <button onclick="ui.switchTab('projects')" class="nav-btn">Projects</button>
+                    <button onclick="ui.switchTab('settings')" class="nav-btn">Settings</button>
                 </nav>
             </div>
         </header>
 
-        <main class="p-6">
-            <!-- تبويب Dashboard -->
-            <section id="tab-dashboard" class="tab-content space-y-6">
+        <main class="p-6 max-w-full mx-auto">
+
+            <!-- Dashboard -->
+            <section id="tab-dashboard" class="tab-content active space-y-6">
                 <div id="dashboard-container"></div>
             </section>
 
+            <!-- Active -->
             <section id="tab-active" class="tab-content">
                 <div class="flex flex-col gap-6">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -163,127 +469,125 @@
                         <div id="active-filters" class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                             <div class="relative flex-grow min-w-[250px]">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
-                                <input type="text" id="search-input" onkeyup="ui.renderActiveCards()" placeholder="Search by ID, Title, or Employee..." class="w-full pl-10 pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm">
+                                <input type="text" id="search-input" onkeyup="ui.renderActiveCards()" placeholder="Search by ID, Title, or Employee..." class="form-input pl-10">
                             </div>
                             <div class="relative">
-                                <input type="text" id="tag-search-input" oninput="ui.renderActiveCards()" placeholder="Filter by tags..." class="w-full sm:w-48 px-4 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none shadow-sm">
+                                <input type="text" id="tag-search-input" oninput="ui.renderActiveCards()" placeholder="Filter by tags..." class="form-input w-full sm:w-48">
                             </div>
                         </div>
                     </div>
-
-                    <div id="active-cards-container" class="grid grid-cols-1 xl:grid-cols-4 gap-6">
-                    </div>
+                    <div id="active-cards-container" class="grid grid-cols-1 xl:grid-cols-4 gap-6"></div>
                 </div>
             </section>
 
+            <!-- Delivery -->
             <section id="tab-delivery" class="tab-content space-y-4">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-green-50 p-4 rounded-lg border border-green-200">
-                    <h2 class="font-bold text-green-800 text-2xl">Ready To Deliver (Tested)</h2>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-google-green-light p-4 rounded-lg border border-google-green">
+                    <h2 class="font-bold text-google-green text-2xl">Ready To Deliver (Tested)</h2>
                     <div class="relative w-full md:w-80">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
-                        <input type="text" id="search-delivery-input" onkeyup="ui.renderDelivery()" placeholder="Search by ID, Title, or Recipient..." class="w-full pl-10 pr-4 py-2 border border-green-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm">
+                        <input type="text" id="search-delivery-input" onkeyup="ui.renderDelivery()" placeholder="Search by ID, Title, or Recipient..." class="form-input pl-10 border-google-green">
                     </div>
                 </div>
                 <div id="delivery-grid" class="grid grid-cols-1 md:grid-cols-4 gap-4"></div>
             </section>
 
+            <!-- Availability (not shown in nav but kept for compatibility) -->
             <section id="tab-availability" class="tab-content">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="availability-container"></div>
             </section>
 
+            <!-- Inactive Stories -->
             <section id="tab-inactive-stories" class="tab-content space-y-4">
-                <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-                    <h2 class="font-bold text-red-800 text-2xl">Inactive Stories Today</h2>
-                    <p class="text-sm text-red-600">Active items with no updates since the start of today</p>
+                <div class="bg-google-red-light p-4 rounded-lg border border-google-red">
+                    <h2 class="font-bold text-google-red text-2xl">Inactive Stories Today</h2>
+                    <p class="text-sm text-google-red">Active items with no updates since the start of today</p>
                 </div>
                 <div id="inactive-stories-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </section>
 
+            <!-- Settings -->
             <section id="tab-settings" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-white p-6 rounded-xl border">
+                    <div class="card p-6">
                         <h3 class="font-bold mb-4 flex items-center gap-2">👥 User Management</h3>
                         <div class="space-y-3 mb-6">
-                            <input type="text" id="new-user-name" placeholder="Username" class="w-full border p-2 rounded">
-                            <input type="password" id="new-user-pass" placeholder="Password" class="w-full border p-2 rounded">
-                            <select id="new-user-role" class="w-full border p-2 rounded">
+                            <input type="text" id="new-user-name" placeholder="Username" class="form-input">
+                            <input type="password" id="new-user-pass" placeholder="Password" class="form-input">
+                            <select id="new-user-role" class="form-input">
                                 <option value="viewer">Viewer (Read Only)</option>
                                 <option value="admin">Admin (Full Access)</option>
                             </select>
-                            <button onclick="settings.addUser()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700">Create User</button>
+                            <button onclick="settings.addUser()" class="btn btn-primary w-full justify-center">Create User</button>
                         </div>
                         <div class="border-t pt-4">
                             <h4 class="text-sm font-bold text-gray-500 mb-2">Existing Users:</h4>
                             <div id="users-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
                         </div>
                     </div>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
-                    <div class="bg-white p-6 rounded-xl border">
+
+                    <div class="card p-6">
                         <h3 class="font-bold mb-4">Add Vacation For Employee</h3>
                         <div class="space-y-3">
-                            <select id="staff-select" class="w-full border p-2 rounded"></select>
-                            <input type="date" id="vacation-date" class="w-full border p-2 rounded">
-                            <button onclick="settings.addVacation()" class="bg-blue-600 text-white px-4 py-2 rounded shadow">Add</button>
+                            <select id="staff-select" class="form-input"></select>
+                            <input type="date" id="vacation-date" class="form-input">
+                            <button onclick="settings.addVacation()" class="btn btn-primary">Add</button>
                         </div>
                         <div class="mt-6 border-t pt-4">
                             <h4 class="text-sm font-bold text-gray-500 mb-2">Current Vacations:</h4>
                             <div id="vacations-list" class="space-y-1 text-xs max-h-40 overflow-y-auto"></div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-xl border">
+
+                    <div class="card p-6">
                         <h3 class="font-bold mb-4">Public Holidays</h3>
                         <div class="flex gap-2">
-                            <input type="date" id="holiday-date" class="border p-2 rounded flex-1">
-                            <button onclick="settings.addHoliday()" class="bg-gray-800 text-white px-4 py-2 rounded">Add</button>
+                            <input type="date" id="holiday-date" class="form-input flex-1">
+                            <button onclick="settings.addHoliday()" class="btn btn-primary">Add</button>
                         </div>
                         <div id="holidays-list" class="mt-6 flex flex-wrap gap-2"></div>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 mt-6">
-                        <h3 class="text-xl font-bold mb-4 text-purple-800 flex items-center gap-2">
-                            🏷️ إعدادات التصنيفات (Tags)
-                        </h3>
+
+                    <div class="card p-6">
+                        <h3 class="text-xl font-bold mb-4 text-purple-800 flex items-center gap-2">🏷️ إعدادات التصنيفات (Tags)</h3>
                         <div class="flex gap-2 mb-4">
-                            <input type="text" id="new-tag-input" placeholder="اسم التصنيف الجديد..." class="flex-1 border rounded-lg px-4 py-2">
-                            <button onclick="tagManager.addTag()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">إضافة</button>
+                            <input type="text" id="new-tag-input" placeholder="اسم التصنيف الجديد..." class="form-input flex-1">
+                            <button onclick="tagManager.addTag()" class="btn btn-primary">إضافة</button>
                         </div>
-                        <div id="tags-list" class="flex flex-wrap gap-2">
-                        </div>
+                        <div id="tags-list" class="flex flex-wrap gap-2"></div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
-                        <h3 class="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
-                            ⚙️ Azure DevOps Setup
-                        </h3>
+
+                    <div class="card p-6 lg:col-span-2">
+                        <h3 class="text-lg font-bold text-google-blue mb-4 flex items-center gap-2">⚙️ Azure DevOps Setup</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Organization</label>
-                                <input type="text" id="az-org" value="NTDotNet" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
+                                <input type="text" id="az-org" value="NTDotNet" class="form-input">
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Project</label>
-                                <input type="text" id="az-project" value="LDM" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
+                                <input type="text" id="az-project" value="LDM" class="form-input">
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Main Query ID</label>
-                                <input type="text" id="az-query-id" value="8a732680-07a6-4dff-bdbd-7800644f61b9" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
+                                <input type="text" id="az-query-id" value="8a732680-07a6-4dff-bdbd-7800644f61b9" class="form-input">
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Backlog Query ID</label>
-                                <input type="text" id="az-backlog-query-id" value="" placeholder="e.g., 12345678-..." class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
+                                <input type="text" id="az-backlog-query-id" value="" placeholder="e.g., 12345678-..." class="form-input">
                             </div>
                         </div>
-                        <button onclick="azureDevOps.saveSettings()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Save Azure Settings</button>
+                        <button onclick="azureDevOps.saveSettings()" class="btn btn-primary mt-4">Save Azure Settings</button>
                     </div>
-                    <div class="bg-white p-6 rounded-xl border mt-6">
-                        <h3 class="text-xl font-bold mb-4 text-blue-800 flex items-center gap-2">
-                            🏗️ Project Management
-                        </h3>
+
+                    <div class="card p-6 lg:col-span-2">
+                        <h3 class="text-xl font-bold mb-4 text-google-blue flex items-center gap-2">🏗️ Project Management</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                            <input type="text" id="project-name" placeholder="Project Name" class="border p-2 rounded">
-                            <input type="text" id="project-team" placeholder="Implementation Team" class="border p-2 rounded">
-                            <input type="date" id="project-due-date" class="border p-2 rounded">
+                            <input type="text" id="project-name" placeholder="Project Name" class="form-input">
+                            <input type="text" id="project-team" placeholder="Implementation Team" class="form-input">
+                            <input type="date" id="project-due-date" class="form-input">
                         </div>
-                        <button onclick="projectManager.addProject()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Add Project</button>
+                        <button onclick="projectManager.addProject()" class="btn btn-primary">Add Project</button>
                         <div class="mt-6 border-t pt-4">
                             <h4 class="text-sm font-bold text-gray-500 mb-2">Existing Projects:</h4>
                             <div id="projects-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
@@ -292,51 +596,44 @@
                 </div>
             </section>
 
+            <!-- Workload -->
             <section id="tab-workload" class="tab-content">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="workload-container">
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="workload-container"></div>
             </section>
 
+            <!-- Daily Activity -->
             <section id="tab-daily-activity" class="tab-content space-y-4">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-amber-50 p-4 rounded-lg border border-amber-200">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-google-yellow-light p-4 rounded-lg border border-google-yellow">
                     <div>
                         <h2 class="font-bold text-amber-800 text-2xl">Daily Activity Log</h2>
-                        <p class="text-sm text-amber-600">All work items activated or updated today</p>
+                        <p class="text-sm text-amber-700">All work items activated or updated today</p>
                     </div>
-                    <button onclick="ui.exportDailyActivityToExcel()" class="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition flex items-center gap-2">
-                        📊 Export to Excel
-                    </button>
+                    <button onclick="ui.exportDailyActivityToExcel()" class="btn btn-success">📊 Export to Excel</button>
                 </div>
                 <div id="daily-activity-container" class="space-y-8"></div>
             </section>
 
-            <!-- ======================== TAB KANBAN with Area Comments ======================== -->
+            <!-- Kanban Board -->
             <section id="tab-kanban" class="tab-content space-y-4">
                 <div class="flex flex-wrap items-center gap-3 bg-white p-4 rounded-xl border shadow-sm">
                     <div class="flex items-center gap-2">
                         <label class="text-sm font-bold text-gray-600">Area:</label>
-                        <select id="kanban-ba-filter" onchange="ui.renderKanban()" class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                        </select>
+                        <select id="kanban-ba-filter" onchange="ui.renderKanban()" class="form-input form-input-sm w-auto"></select>
                     </div>
-                    <button onclick="ui.generateWeeklyReport()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow transition flex items-center gap-2">
+                    <button onclick="ui.generateWeeklyReport()" class="btn btn-primary">
                         <span>📊</span> Weekly Report
                     </button>
-                    <!-- زر التعليقات الجديد -->
-                    <button onclick="areaCommentManager.openCommentsPopup()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2">
+                    <button onclick="areaCommentManager.openCommentsPopup()" class="btn btn-outline text-indigo-600 border-indigo-300 hover:bg-indigo-50">
                         <span>💬</span> تعليقات المنطقة
                     </button>
-                    <input type="text" id="kanban-search-input" oninput="ui.renderKanban()" placeholder="Search ID, Title, Employee..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48">
-                    <input type="text" id="kanban-tag-search-input" oninput="ui.renderKanban()" placeholder="Search Tags..." class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-40">
+                    <input type="text" id="kanban-search-input" oninput="ui.renderKanban()" placeholder="Search ID, Title, Employee..." class="form-input form-input-sm w-full sm:w-48">
+                    <input type="text" id="kanban-tag-search-input" oninput="ui.renderKanban()" placeholder="Search Tags..." class="form-input form-input-sm w-full sm:w-40">
                 </div>
 
-                <!-- <div id="area-comments-container" class="space-y-4"> --> <!-- تم إزالة هذا القسم -->
-                <!-- سيتم عرض التعليقات في الـ popup -->
-
-                <div id="kanban-container" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 min-h-[600px]">
-                </div>
+                <div id="kanban-container" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 min-h-[600px]"></div>
             </section>
-            <!-- ================================================================ -->
 
+            <!-- Support Kanban -->
             <section id="tab-support-kanban" class="tab-content space-y-4">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border shadow-sm">
                     <div>
@@ -345,27 +642,26 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <label class="text-sm font-bold text-gray-600">Business Area:</label>
-                        <select id="support-kanban-ba-filter" onchange="ui.renderSupportKanban()" class="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        <select id="support-kanban-ba-filter" onchange="ui.renderSupportKanban()" class="form-input form-input-sm w-auto">
                             <option value="all">All Areas</option>
                         </select>
                     </div>
                 </div>
-                <div id="support-kanban-container" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 min-h-[600px]">
-                </div>
+                <div id="support-kanban-container" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 min-h-[600px]"></div>
             </section>
 
-            <!-- NEW TAB: Auditor Checklist -->
+            <!-- Auditor Checklist -->
             <section id="tab-auditor" class="tab-content space-y-6">
-                <div class="flex flex-wrap gap-4 bg-white p-4 rounded-xl shadow-sm">
+                <div class="flex flex-wrap gap-4 bg-white p-4 rounded-xl shadow-sm border">
                     <div class="flex-1 min-w-[200px]">
                         <label class="block text-xs font-bold text-gray-500 mb-1">Business Area</label>
-                        <select id="auditor-area-filter" onchange="ui.renderAuditorChecklist()" class="w-full border rounded-lg p-2 text-sm">
+                        <select id="auditor-area-filter" onchange="ui.renderAuditorChecklist()" class="form-input form-input-sm w-full">
                             <option value="all">All Areas</option>
                         </select>
                     </div>
                     <div class="flex-1 min-w-[200px]">
                         <label class="block text-xs font-bold text-gray-500 mb-1">State</label>
-                        <select id="auditor-state-filter" onchange="ui.renderAuditorChecklist()" class="w-full border rounded-lg p-2 text-sm">
+                        <select id="auditor-state-filter" onchange="ui.renderAuditorChecklist()" class="form-input form-input-sm w-full">
                             <option value="all">All States</option>
                             <option value="Active">Active</option>
                             <option value="Resolved">Resolved</option>
@@ -376,70 +672,63 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50 border-b">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
                             <tr>
-                                <th class="px-4 py-3 text-left font-bold text-gray-600">ID</th>
-                                <th class="px-4 py-3 text-left font-bold text-gray-600">Title</th>
-                                <th class="px-4 py-3 text-left font-bold text-gray-600">State</th>
-                                <th class="px-4 py-3 text-center font-bold text-gray-600">Compliance %</th>
-                                <th class="px-4 py-3 text-center font-bold text-gray-600">Business Priority</th>
-                                <th class="px-4 py-3 text-center font-bold text-gray-600">Iteration Path</th>
-                                <th class="px-4 py-3 text-center font-bold text-gray-600">Development Tasks</th>
-                                <th class="px-4 py-3 text-center font-bold text-gray-600">Testing Tasks</th>
-                                <th class="px-4 py-3 text-center font-bold text-gray-600">Test Cases (Pass)</th>
-                                <th class="px-4 py-3 text-center font-bold text-gray-600">Bugs Closed</th>
-                                <th class="px-4 py-3 text-center font-bold text-gray-600">Reviews Closed</th>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>State</th>
+                                <th class="text-center">Compliance %</th>
+                                <th class="text-center">Business Priority</th>
+                                <th class="text-center">Iteration Path</th>
+                                <th class="text-center">Development Tasks</th>
+                                <th class="text-center">Testing Tasks</th>
+                                <th class="text-center">Test Cases (Pass)</th>
+                                <th class="text-center">Bugs Closed</th>
+                                <th class="text-center">Reviews Closed</th>
                             </tr>
                         </thead>
-                        <tbody id="auditor-table-body">
-                        </tbody>
+                        <tbody id="auditor-table-body"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- ======================== TAB PROJECTS ======================== -->
+            <!-- Projects -->
             <section id="tab-projects" class="tab-content space-y-6">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl shadow-sm border">
                     <h2 class="text-2xl font-bold text-slate-800">📁 Projects</h2>
                     <span class="text-sm text-gray-500" id="projects-count">0 projects</span>
                 </div>
-                <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- سيتم تعبئتها بواسطة JavaScript -->
-                </div>
+                <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </section>
-            <!-- ============================================================ -->
+
         </main>
     </div>
 
     <!-- Story Modal -->
-    <div id="story-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div id="story-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center modal-overlay p-4">
+        <div class="modal-box w-full max-w-2xl">
             <div class="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
                 <h2 id="modal-title" class="text-xl font-bold text-slate-800 pr-8"></h2>
                 <button onclick="ui.closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
-            <div id="modal-body" class="p-6 space-y-6">
-            </div>
+            <div id="modal-body" class="p-6 space-y-6"></div>
         </div>
     </div>
 
-    <!-- Comments Popup Modal -->
-    <div id="comments-popup" class="fixed inset-0 z-[2000] hidden flex items-center justify-center bg-black/50 p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+    <!-- Comments Popup -->
+    <div id="comments-popup" class="fixed inset-0 z-[2000] hidden flex items-center justify-center modal-overlay p-4">
+        <div class="modal-box w-full max-w-4xl flex flex-col">
             <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10">
                 <h3 class="text-xl font-bold text-slate-800">💬 تعليقات المنطقة</h3>
-                <button onclick="areaCommentManager.closeCommentsPopup()" class="text-slate-500 hover:text-red-500 text-2xl font-bold leading-none">&times;</button>
+                <button onclick="areaCommentManager.closeCommentsPopup()" class="text-slate-500 hover:text-google-red text-2xl font-bold leading-none">&times;</button>
             </div>
-            <div id="comments-popup-content" class="p-6 overflow-y-auto">
-                <!-- سيتم تعبئته بواسطة JavaScript -->
-            </div>
+            <div id="comments-popup-content" class="p-6 overflow-y-auto"></div>
         </div>
     </div>
 
-    <script src="app.js">
-    </script>
-
+    <!-- ====== JavaScript (unchanged, kept as is) ====== -->
+    <script src="app.js"></script>
 </body>
 </html>
