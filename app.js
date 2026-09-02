@@ -3098,11 +3098,11 @@ const ui = {
                 <div class="border-t pt-4">
                     <h4 class="font-bold text-purple-700 text-sm border-b pb-1">📋 Project Tasks</h4>
                     <div class="space-y-2 mt-2">${tasksHtmlWithEdit || '<div class="text-gray-400 text-sm italic">No tasks added yet.</div>'}</div>
-                    <div class="mt-3 flex gap-2">
-                        <input type="text" id="new-task-title-${project.id}" placeholder="Task title..." class="form-input flex-1">
-                        <input type="date" id="new-task-due-${project.id}" class="form-input">
-                        <button onclick="projectManager.addTask('${project.id}', document.getElementById('new-task-title-${project.id}').value, document.getElementById('new-task-due-${project.id}').value); document.getElementById('new-task-title-${project.id}').value=''; document.getElementById('new-task-due-${project.id}').value='';" class="btn btn-primary">Add Task</button>
-                    </div>
+                   <div class="mt-3 flex gap-2">
+    <input type="text" id="new-task-title-${project.id}" placeholder="Task title..." class="form-input flex-1 min-w-0">
+    <input type="date" id="new-task-due-${project.id}" class="form-input w-32 flex-shrink-0">
+    <button onclick="projectManager.addTask('${project.id}', document.getElementById('new-task-title-${project.id}').value, document.getElementById('new-task-due-${project.id}').value); document.getElementById('new-task-title-${project.id}').value=''; document.getElementById('new-task-due-${project.id}').value='';" class="btn btn-primary whitespace-nowrap">Add Task</button>
+</div>
                 </div>
             </div>
         `;
