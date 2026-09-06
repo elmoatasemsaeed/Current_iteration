@@ -2278,24 +2278,44 @@ const ui = {
         }
     },
     generateStaffBarsWithCount(staffData, color, max, storyCounts) {
-        const entries = Object.entries(staffData);
-        if (entries.length === 0) return `<div class="text-gray-300 text-sm italic">No active tasks</div>`;
-        return entries.sort((a, b) => b[1] - a[1]).map(([name, hours]) => {
-            const perc = Math.min((hours / max) * 100, 100);
-            const isOver = hours > max;
-            const barColor = isOver ? 'bg-google-red' : (perc > 80 ? 'bg-google-yellow' : `bg-${color}`);
-            const storyCount = storyCounts[name] || 0;
-            return `
-                <div class="relative p-3 bg-slate-50/50 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors">
-                    <div class="flex justify-between mb-2 items-start">
-                        <span class="font-bold text-sm text-slate-700">${escapeHtml(name)} <span class="text-[10px] font-normal text-gray-400">(${storyCount} ${storyCount === 1 ? 'story' : 'stories'})</span></span>
-                        <span class="text-xs font-mono ${isOver ? 'text-google-red font-black' : 'text-slate-500'}">${hours.toFixed(1)} <span class="text-[10px] text-slate-400">/ ${max}h</span></span>
-                    </div>
-                    <div class="w-full bg-gray-200/70 rounded-full h-2"><div class="${barColor} h-2 rounded-full transition-all duration-1000 shadow-sm" style="width: ${perc}%"></div></div>
+    const entries = Object.entries(staffData);
+    if (entries.length === 0) return `<div class="text-gray-300 text-sm italic">No active tasks</div>`;
+
+    // ✅ خريطة بأكواد الألوان المضمونة بدلاً من الكلاسات
+    const colorMap = {
+        'google-blue': '#3b82f6',   // أزرق
+        'google-green': '#22c55e',  // أخضر
+        'google-yellow': '#eab308', // أصفر
+        'google-red': '#ef4444'     // أحمر
+    };
+    const defaultColor = colorMap[color] || '#3b82f6';
+
+    return entries.sort((a, b) => b[1] - a[1]).map(([name, hours]) => {
+        const perc = Math.min((hours / max) * 100, 100);
+        const isOver = hours > max;
+
+        // تحديد اللون بناءً على النسبة والحمولة
+        let barColor = defaultColor;
+        if (isOver) {
+            barColor = '#ef4444'; // أحمر (حمولة زائدة)
+        } else if (perc > 80) {
+            barColor = '#eab308'; // أصفر (حمولة عالية)
+        }
+
+        const storyCount = storyCounts[name] || 0;
+        return `
+            <div class="relative p-3 bg-slate-50/50 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors">
+                <div class="flex justify-between mb-2 items-start">
+                    <span class="font-bold text-sm text-slate-700">${escapeHtml(name)} <span class="text-[10px] font-normal text-gray-400">(${storyCount} ${storyCount === 1 ? 'story' : 'stories'})</span></span>
+                    <span class="text-xs font-mono ${isOver ? 'text-red-600 font-black' : 'text-slate-500'}">${hours.toFixed(1)} <span class="text-[10px] text-slate-400">/ ${max}h</span></span>
                 </div>
-            `;
-        }).join('');
-    },
+                <div class="w-full bg-gray-200/70 rounded-full h-2">
+                    <div class="h-2 rounded-full transition-all duration-1000 shadow-sm" style="width: ${perc}%; background-color: ${barColor};"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+},
     showFreeDevelopersPopup(freeDevsByArea) {
         let modal = document.getElementById('free-devs-modal');
         if (!modal) {
