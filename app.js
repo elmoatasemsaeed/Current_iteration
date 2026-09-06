@@ -2788,52 +2788,57 @@ const ui = {
         }
     },
     renderAuditorChecklist() {
-        const tbody = document.getElementById('auditor-table-body');
-        if (!tbody) return;
-        const areaFilter = document.getElementById('auditor-area-filter')?.value || 'all';
-        const stateFilter = document.getElementById('auditor-state-filter')?.value || 'all';
-        const areaSelect = document.getElementById('auditor-area-filter');
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
-        if (areaSelect && areaSelect.options.length <= 1) {
-            const areas = [...new Set(nonBacklog.map(s => s.area || "General"))];
-            areaSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
-        }
-        let filtered = nonBacklog;
-        if (areaFilter !== 'all') filtered = filtered.filter(s => (s.area || "General") === areaFilter);
-        if (stateFilter !== 'all') filtered = filtered.filter(s => s.state === stateFilter);
-        if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" class="text-center py-8 text-gray-400">No stories match the selected filters.</td></tr>`;
-            return;
-        }
-        const rowsHtml = filtered.map(story => {
-            const criteria = this.evaluateStoryCompliance(story);
-            const compliancePercent = Math.round((criteria.passedCount / criteria.totalCount) * 100);
-            let barColor = 'bg-google-red';
-            if (compliancePercent >= 80) barColor = 'bg-google-green';
-            else if (compliancePercent >= 50) barColor = 'bg-google-yellow';
-            return `
-                <tr class="border-b hover:bg-gray-50 transition">
-                    <td class="px-4 py-3 font-mono text-xs">#${story.id}</td>
-                    <td class="px-4 py-3 font-medium text-slate-700 max-w-xs truncate" title="${escapeHtml(story.title)}">${escapeHtml(story.title)}</td>
-                    <td class="px-4 py-3"><span class="status-badge status-active">${escapeHtml(story.state)}</span></td>
-                    <td class="px-4 py-3 text-center">
-                        <div class="flex flex-col items-center gap-1">
-                            <span class="text-xs font-bold">${compliancePercent}%</span>
-                            <div class="w-full bg-gray-200 rounded-full h-2 max-w-[80px]"><div class="${barColor} h-2 rounded-full" style="width: ${compliancePercent}%"></div></div>
+    const tbody = document.getElementById('auditor-table-body');
+    if (!tbody) return;
+    const areaFilter = document.getElementById('auditor-area-filter')?.value || 'all';
+    const stateFilter = document.getElementById('auditor-state-filter')?.value || 'all';
+    const areaSelect = document.getElementById('auditor-area-filter');
+    const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+    if (areaSelect && areaSelect.options.length <= 1) {
+        const areas = [...new Set(nonBacklog.map(s => s.area || "General"))];
+        areaSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+    }
+    let filtered = nonBacklog;
+    if (areaFilter !== 'all') filtered = filtered.filter(s => (s.area || "General") === areaFilter);
+    if (stateFilter !== 'all') filtered = filtered.filter(s => s.state === stateFilter);
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="text-center py-8 text-gray-400">No stories match the selected filters.</td></tr>`;
+        return;
+    }
+    const rowsHtml = filtered.map(story => {
+        const criteria = this.evaluateStoryCompliance(story);
+        const compliancePercent = Math.round((criteria.passedCount / criteria.totalCount) * 100);
+        
+        // ✅ FIX: استخدام ألوان مضمونة عبر style بدلاً من الكلاسات غير المعرفة
+        let barColor = '#ef4444'; // أحمر افتراضي
+        if (compliancePercent >= 80) barColor = '#22c55e'; // أخضر
+        else if (compliancePercent >= 50) barColor = '#eab308'; // أصفر
+
+        return `
+            <tr class="border-b hover:bg-gray-50 transition">
+                <td class="px-4 py-3 font-mono text-xs">#${story.id}</td>
+                <td class="px-4 py-3 font-medium text-slate-700 max-w-xs truncate" title="${escapeHtml(story.title)}">${escapeHtml(story.title)}</td>
+                <td class="px-4 py-3"><span class="status-badge status-active">${escapeHtml(story.state)}</span></td>
+                <td class="px-4 py-3 text-center">
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="text-xs font-bold">${compliancePercent}%</span>
+                        <div class="w-full bg-gray-200 rounded-full h-2 max-w-[80px]">
+                            <div class="h-2 rounded-full" style="width: ${compliancePercent}%; background-color: ${barColor};"></div>
                         </div>
-                    </td>
-                    <td class="px-4 py-3 text-center">${criteria.priority ? '✅' : '❌'}</td>
-                    <td class="px-4 py-3 text-center">${criteria.iterationPath ? '✅' : '❌'}</td>
-                    <td class="px-4 py-3 text-center">${criteria.devTasks ? '✅' : '❌'}</td>
-                    <td class="px-4 py-3 text-center">${criteria.testTasks ? '✅' : '❌'}</td>
-                    <td class="px-4 py-3 text-center">${criteria.testCasesPass ? '✅' : '❌'}</td>
-                    <td class="px-4 py-3 text-center">${criteria.bugsClosed ? '✅' : '❌'}</td>
-                    <td class="px-4 py-3 text-center">${criteria.reviewsClosed ? '✅' : '❌'}</td>
-                </tr>
-            `;
-        }).join('');
-        tbody.innerHTML = rowsHtml;
-    },
+                    </div>
+                </td>
+                <td class="px-4 py-3 text-center">${criteria.priority ? '✅' : '❌'}</td>
+                <td class="px-4 py-3 text-center">${criteria.iterationPath ? '✅' : '❌'}</td>
+                <td class="px-4 py-3 text-center">${criteria.devTasks ? '✅' : '❌'}</td>
+                <td class="px-4 py-3 text-center">${criteria.testTasks ? '✅' : '❌'}</td>
+                <td class="px-4 py-3 text-center">${criteria.testCasesPass ? '✅' : '❌'}</td>
+                <td class="px-4 py-3 text-center">${criteria.bugsClosed ? '✅' : '❌'}</td>
+                <td class="px-4 py-3 text-center">${criteria.reviewsClosed ? '✅' : '❌'}</td>
+            </tr>
+        `;
+    }).join('');
+    tbody.innerHTML = rowsHtml;
+},
     evaluateStoryCompliance(story) {
         let passedCount = 0;
         const totalCount = 7;
