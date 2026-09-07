@@ -882,32 +882,34 @@ const areaCommentManager = {
         content.innerHTML = html;
     },
     addCommentFromPopup(area) {
-        const textarea = document.getElementById(`area-comment-${area.replace(/\s/g, '')}`);
-        if (!textarea) return;
-        const text = textarea.value.trim();
-        if (!text) return;
-        this.addComment(area, text);
-        textarea.value = '';
-        this.openCommentsPopup();
-    },
+    const decodedArea = decodeURIComponent(area); // فك التشفير
+    const textarea = document.getElementById(`area-comment-${decodedArea.replace(/\s/g, '')}`);
+    if (!textarea) return;
+    const text = textarea.value.trim();
+    if (!text) return;
+    this.addComment(decodedArea, text);   // استخدم النص المفكوك
+    textarea.value = '';
+    this.openCommentsPopup();
+},
     deleteComment(area, index) {
-        if (!confirm('هل تريد حذف هذا التعليق؟')) return;
-        const comments = db.areaComments.filter(c => c.area === area);
-        if (comments[index]) {
-            const commentToDelete = comments[index];
-            const globalIndex = db.areaComments.indexOf(commentToDelete);
-            if (globalIndex > -1) {
-                db.areaComments.splice(globalIndex, 1);
-                dataProcessor.saveToGitHub().then(() => {
-                    this.openCommentsPopup();
-                    ui.renderKanban();
-                }).catch(err => {
-                    console.error('Failed to delete comment:', err);
-                    ui.showToast('فشل حذف التعليق: ' + err.message, 'error');
-                });
-            }
+    const decodedArea = decodeURIComponent(area); // فك التشفير
+    if (!confirm('هل تريد حذف هذا التعليق؟')) return;
+    const comments = db.areaComments.filter(c => c.area === decodedArea);
+    if (comments[index]) {
+        const commentToDelete = comments[index];
+        const globalIndex = db.areaComments.indexOf(commentToDelete);
+        if (globalIndex > -1) {
+            db.areaComments.splice(globalIndex, 1);
+            dataProcessor.saveToGitHub().then(() => {
+                this.openCommentsPopup();
+                ui.renderKanban();
+            }).catch(err => {
+                console.error('Failed to delete comment:', err);
+                ui.showToast('فشل حذف التعليق: ' + err.message, 'error');
+            });
         }
-    },
+    }
+},
     renderAreaComments(areas) {
         return '';
     }
