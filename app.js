@@ -236,6 +236,20 @@ function createStoryCard(story, options = {}) {
         const testCases = story.testCases || [];
         const totalTC = testCases.length;
         const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
+
+        // --- Bug Estimate (15% of total dev+test estimate) ---
+        const totalEst = devEst + testEst;
+        const bugEstimate = 0.15 * totalEst;
+        const actualBugEffort = (story.bugs || [])
+            .filter(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State']))
+            .reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0);
+        // Determine color based on performance
+        let bugColor = 'text-gray-500';
+        if (bugEstimate > 0) {
+            if (actualBugEffort <= bugEstimate) bugColor = 'text-google-green';
+            else bugColor = 'text-google-red';
+        }
+
         extraFields = `
             <div class="grid grid-cols-2 gap-2 border-t pt-2">
                 <div class="text-[11px]">
@@ -254,6 +268,14 @@ function createStoryCard(story, options = {}) {
                         <span class="text-indigo-500 text-[10px] font-bold">📋${completedTC}/${totalTC}</span>
                     </div>
                 </div>
+            </div>
+            <!-- Bug Estimate Section (always visible) -->
+            <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-200 text-[10px]">
+                <span class="font-bold text-gray-500">🐞 Bug Estimate (15%):</span>
+                <span class="font-mono">${bugEstimate.toFixed(1)}h</span>
+                <span class="font-bold text-gray-500">Actual:</span>
+                <span class="font-mono">${actualBugEffort.toFixed(1)}h</span>
+                <span class="font-bold ${bugColor}">${bugEstimate > 0 ? ((actualBugEffort / bugEstimate) * 100).toFixed(0) : 0}%</span>
             </div>
         `;
     }
