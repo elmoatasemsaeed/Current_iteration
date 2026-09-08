@@ -283,7 +283,7 @@ function createStoryCard(story, options = {}) {
     const borderClass = isBacklog ? 'border-purple-200' : (isSupport ? 'border-gray-200' : 'border-gray-100');
     return `
         <div class="card relative p-3 ${borderClass} hover:border-google-blue ${customClass}">
-            ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-800 text-white text-[7px] font-bold px-2 py-0.5 rounded-bl-md shadow-md z-10">📅 ${escapeHtml(releaseDate)}</div>` : ''}
+            ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-700 text-white text-xs font-bold px-3 py-1.5 rounded-bl-lg shadow-lg z-10 border border-white/20 backdrop-blur-sm">📅 ${escapeHtml(releaseDate)}</div>` : ''}
             ${tags.length > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${tags.map(tag => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(story.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${escapeHtml(tag.trim())}</span>`).join('')}</div>` : ''}
             ${tagDropdownHtml}
             <div class="flex justify-between items-center mb-2">
