@@ -511,7 +511,7 @@ const dataProcessor = {
                 if (!db.areaComments) db.areaComments = [];
                 if (!db.projects) db.projects = [];
                 if (!db.archivedProjects) db.archivedProjects = [];
-                if (!db.standupCommentsStore) db.standupCommentsStore = {};
+                if (!db.standupCommentsStore) db.standupCommentsStore = [];
                 
                 const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                     headers: { 'Authorization': `token ${token}` }
@@ -578,6 +578,9 @@ const dataProcessor = {
                     const path = row['Iteration Path'] || "";
                     area = path.includes('\\') ? path.split('\\')[0] : path;
                 }
+                // استخراج Pull Requests من الصف (تم إضافته من Azure)
+                const pullRequests = row['pullRequests'] || [];
+                
                 currentStory = {
                     id: row['ID'],
                     title: row['Title'],
@@ -602,12 +605,14 @@ const dataProcessor = {
                     devActualTime: parseFloat(row['TimeSheet_DevActualTime']) || 0,
                     testActualTime: parseFloat(row['TimeSheet_TestingActualTime']) || 0,
                     isBacklog: false,
-                    linkedProjectId: null
+                    linkedProjectId: null,
+                    pullRequests: pullRequests  // إضافة حقل Pull Requests
                 };
                 const existingStory = db.currentStories.find(s => s.id == currentStory.id);
                 if (existingStory) {
                     if (existingStory.customTags) currentStory.customTags = existingStory.customTags;
                     if (existingStory.linkedProjectId) currentStory.linkedProjectId = existingStory.linkedProjectId;
+                    if (existingStory.pullRequests) currentStory.pullRequests = existingStory.pullRequests; // الحفاظ على البيانات اليدوية
                 }
                 newStories.push(currentStory);
             } else if (row['Work Item Type'] === 'Task' && currentStory) {
@@ -665,6 +670,7 @@ const dataProcessor = {
                 testActualTime: 0,
                 isBacklog: true,
                 linkedProjectId: null
+                // لا نضيف pullRequests للباك لوج
             };
         }).filter(s => s !== null);
         db.backlogStories = backlogStories;
@@ -2408,6 +2414,23 @@ const ui = {
         const title = document.getElementById('modal-title');
         const body = document.getElementById('modal-body');
         title.innerText = `[#${s.id}] ${s.title}`;
+
+        // عرض Pull Requests إن وجدت
+        let prHtml = '';
+        if (s.pullRequests && s.pullRequests.length > 0) {
+            prHtml = `
+                <div class="space-y-2 mt-4">
+                    <h4 class="font-bold text-google-blue border-b pb-1">🔀 Pull Requests (${s.pullRequests.length})</h4>
+                    ${s.pullRequests.map(pr => `
+                        <div class="flex items-center gap-2 bg-blue-50 p-2 rounded border border-blue-200">
+                            <span class="text-sm font-mono">PR #${escapeHtml(pr.pullRequestId)}</span>
+                            <a href="${escapeHtml(pr.url)}" target="_blank" class="text-google-blue underline text-sm">🔗 فتح</a>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
         if (isBacklogStory(s)) {
             body.innerHTML = `
                 <div class="grid grid-cols-2 gap-4 text-sm">
@@ -2431,6 +2454,7 @@ const ui = {
                     <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Business Area</p><p class="font-semibold text-slate-700">${escapeHtml(s.area)}</p></div>
                     <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Priority</p><p class="font-semibold text-slate-700">P${escapeHtml(s.priority)}</p></div>
                 </div>
+                ${prHtml}
                 <div class="space-y-4">
                     <h4 class="font-bold text-google-blue border-b pb-1">🛠 Development Details</h4>
                     <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Assigned To:</b> ${escapeHtml(s.assignedTo)}</p><p><b>Dev End:</b> ${s.calc.devEnd instanceof Date ? escapeHtml(s.calc.devEnd.toLocaleString()) : 'TBD'}</p></div>
@@ -3271,6 +3295,26 @@ const commentManager = {
 };
 
 const azureDevOps = {
+    // دالة مساعدة لاستخراج Pull Requests من العلاقات
+    extractPullRequestsFromRelations(relations) {
+        const prs = [];
+        if (!relations) return prs;
+        relations.forEach(rel => {
+            if (rel.rel === 'ArtifactLink' && rel.url && rel.url.includes('pullrequest')) {
+                const match = rel.url.match(/pullrequest\/(\d+)/);
+                if (match) {
+                    prs.push({
+                        url: rel.url,
+                        pullRequestId: match[1]
+                    });
+                } else {
+                    prs.push({ url: rel.url, pullRequestId: 'Unknown' });
+                }
+            }
+        });
+        return prs;
+    },
+
     async sync() {
         const pat = sessionStorage.getItem('az_pat');
         if (!pat) {
@@ -3284,11 +3328,15 @@ const azureDevOps = {
         ui.showLoader();
         try {
             const authHeader = 'Basic ' + btoa(':' + pat);
+
+            // 1. جلب المعرفات من الكويري الرئيسية
             const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
             const mainRes = await fetch(mainQueryUrl, { headers: { 'Authorization': authHeader } });
             const mainData = await mainRes.json();
             const mainRelations = mainData.workItemRelations || [];
             const mainIds = [...new Set(mainRelations.map(r => r.target ? r.target.id : null).filter(id => id))];
+
+            // 2. جلب المعرفات من كويري الباك لوج (بنفس الطريقة القديمة)
             let backlogIds = [];
             if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
                 const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
@@ -3301,27 +3349,45 @@ const azureDevOps = {
                 }
                 console.log(`✅ Backlog IDs extracted: ${backlogIds.length}`);
             }
-            const allIds = [...new Set([...mainIds, ...backlogIds])];
-            if (allIds.length === 0) throw new Error("No items found in the specified queries.");
+
+            // 3. جلب تفاصيل القصص الأساسية مع العلاقات (باستخدام $expand=relations)
+            const mainDetailsMap = new Map();
             const chunkSize = 200;
-            let allDetails = [];
-            for (let i = 0; i < allIds.length; i += chunkSize) {
-                const chunk = allIds.slice(i, i + chunkSize);
+            for (let i = 0; i < mainIds.length; i += chunkSize) {
+                const chunk = mainIds.slice(i, i + chunkSize);
+                const idsParam = chunk.join(',');
+                const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/workitems?ids=${idsParam}&$expand=relations&api-version=6.0`;
+                const res = await fetch(url, { headers: { 'Authorization': authHeader } });
+                const data = await res.json();
+                data.value.forEach(item => {
+                    mainDetailsMap.set(item.id, item);
+                });
+            }
+
+            // 4. جلب تفاصيل الباك لوج بدون relations (بنفس الطريقة القديمة)
+            let backlogDetails = [];
+            if (backlogIds.length > 0) {
+                // نستخدم workitemsbatch بدون توسيع
                 const batchUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
                 const batchRes = await fetch(batchUrl, {
                     method: 'POST',
                     headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ids: chunk, fields: this.getRequiredFields() })
+                    body: JSON.stringify({ ids: backlogIds, fields: this.getRequiredFields() })
                 });
                 const batchData = await batchRes.json();
-                allDetails = allDetails.concat(batchData.value);
+                backlogDetails = batchData.value;
             }
-            const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
-            const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
-            await dataProcessor.processRows(mainRows);
-            const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
+
+            // 5. بناء صفوف القصص الأساسية باستخدام العلاقات
+            const mainRows = this.buildRowsFromRelations(mainRelations, mainDetailsMap);
+
+            // 6. بناء صفوف الباك لوج (بدون تغيير)
             const backlogRows = this.buildBacklogRows(backlogDetails);
+
+            // 7. معالجة الصفوف
+            await dataProcessor.processRows(mainRows);
             await dataProcessor.processBacklogRows(backlogRows);
+
             ui.showToast("✅ تمت المزامنة بنجاح مع Azure!", "success");
         } catch (error) {
             console.error("Azure Sync Error:", error);
@@ -3332,12 +3398,17 @@ const azureDevOps = {
             syncBtn.disabled = false;
         }
     },
+
     buildRowsFromRelations(relations, detailsMap) {
         const rows = [];
         relations.forEach(rel => {
             if (!rel.target) return;
-            const fields = detailsMap.get(rel.target.id);
-            if (!fields) return;
+            const item = detailsMap.get(rel.target.id);
+            if (!item) return;
+            const fields = item.fields || {};
+            // استخراج Pull Requests من العلاقات
+            const pullRequests = this.extractPullRequestsFromRelations(item.relations || []);
+
             rows.push({
                 'ID': rel.target.id,
                 'Work Item Type': fields["System.WorkItemType"],
@@ -3360,11 +3431,13 @@ const azureDevOps = {
                 'Tags': fields["System.Tags"],
                 'Changed Date': fields["System.ChangedDate"],
                 'Branch': fields["NT.Branch"],
-                'Customer': fields["Nt.Customer"]
+                'Customer': fields["Nt.Customer"],
+                'pullRequests': pullRequests  // إضافة حقل الـ Pull Requests
             });
         });
         return rows;
     },
+
     getRequiredFields() {
         return [
             "System.Id", "System.WorkItemType", "System.Title", "System.AssignedTo",
@@ -3377,6 +3450,7 @@ const azureDevOps = {
             "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer"
         ];
     },
+
     buildBacklogRows(details) {
         const rows = [];
         details.forEach(d => {
@@ -3405,6 +3479,7 @@ const azureDevOps = {
         });
         return rows;
     },
+
     saveSettings() {
         const settings = {
             org: document.getElementById('az-org').value,
