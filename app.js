@@ -195,6 +195,12 @@ function createStoryCard(story, options = {}) {
     const commentsCount = getStandupComments(story.id).length;
     const releaseDate = story.expectedRelease ? (story.expectedRelease instanceof Date ? story.expectedRelease.toLocaleDateString('en-GB') : new Date(story.expectedRelease).toLocaleDateString('en-GB')) : null;
 
+    // ----- الإضافة الجديدة: التحقق من صحة Iteration Path -----
+    const iterationPathValid = story.iterationPath && /[\d\/]/.test(story.iterationPath);
+    const iterationPathIndicator = (!isBacklog && !isSupport) 
+        ? `<span class="text-[10px] font-bold ${iterationPathValid ? 'text-green-600' : 'text-red-600'} ml-2">${iterationPathValid ? '✅' : '❌'} IP</span>` 
+        : '';
+
     let statusHtml = '';
     if (showStatus && !isBacklog) {
         const state = story.state || '';
@@ -237,13 +243,11 @@ function createStoryCard(story, options = {}) {
         const totalTC = testCases.length;
         const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
 
-        // --- Bug Estimate (15% of total dev+test estimate) ---
         const totalEst = devEst + testEst;
         const bugEstimate = 0.15 * totalEst;
         const actualBugEffort = (story.bugs || [])
             .filter(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State']))
             .reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0);
-        // Determine color based on performance
         let bugColor = 'text-gray-500';
         if (bugEstimate > 0) {
             if (actualBugEffort <= bugEstimate) bugColor = 'text-google-green';
@@ -269,7 +273,6 @@ function createStoryCard(story, options = {}) {
                     </div>
                 </div>
             </div>
-            <!-- Bug Estimate Section (always visible) -->
             <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-200 text-[10px]">
                 <span class="font-bold text-gray-500">🐞 Bug Estimate (15%):</span>
                 <span class="font-mono">${bugEstimate.toFixed(1)}h</span>
@@ -287,7 +290,10 @@ function createStoryCard(story, options = {}) {
             ${tags.length > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${tags.map(tag => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(story.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${escapeHtml(tag.trim())}</span>`).join('')}</div>` : ''}
             ${tagDropdownHtml}
             <div class="flex justify-between items-center mb-2">
-                <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-google-blue cursor-pointer hover:underline flex items-center gap-0.5">#${story.id} 🔍</div>
+                <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-google-blue cursor-pointer hover:underline flex items-center gap-0.5">
+                    #${story.id} 🔍
+                    ${iterationPathIndicator}
+                </div>
                 ${commentsHtml}
             </div>
             <div onclick="ui.openStoryModal('${story.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-google-blue transition">${escapeHtml(story.title)}</div>
