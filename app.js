@@ -15,7 +15,8 @@ const AZURE_CONFIG = {
     ORG: "NTDotNet",
     PROJECT: "LDM",
     QUERY_ID: "8a732680-07a6-4dff-bdbd-7800644f61b9",
-    BACKLOG_QUERY_ID: "8e60a3dd-d754-44d2-95ec-993c4e0d135b"
+    BACKLOG_QUERY_ID: "8e60a3dd-d754-44d2-95ec-993c4e0d135b",
+    TIMEOUT: 120000
 };
 
 /**
@@ -3325,128 +3326,154 @@ const commentManager = {
     }
 };
 
-const azureDevOps = {
-    async sync() {
-    const pat = sessionStorage.getItem('az_pat');
-    if (!pat) {
-        ui.showToast("Azure PAT مفقود. الرجاء تسجيل الدخول مجدداً.", "error");
-        return;
-    }
-
-    const syncBtn = document.querySelector("button[onclick='azureDevOps.sync()']");
-    const originalText = syncBtn.innerHTML;
-    syncBtn.innerHTML = "⏳ جاري المزامنة...";
-    syncBtn.disabled = true;
-    ui.showLoader();
-
-    // ✅ Snapshot للبيانات الحالية لاسترجاعها لو حصلت مشكلة
-    const dbSnapshot = JSON.parse(JSON.stringify(db));
+async function fetchWithTimeout(url, options = {}) {
+    const controller = new AbortController();
+    const timeoutMs = AZURE_CONFIG.TIMEOUT;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-        const authHeader = 'Basic ' + btoa(':' + pat);
-
-        // ============ Main Query ============
-        const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
-        const mainRes = await fetch(mainQueryUrl, { headers: { 'Authorization': authHeader } });
-
-        if (!mainRes.ok) {
-            throw new Error(`فشل الاتصال بـ Azure Main Query (${mainRes.status} ${mainRes.statusText}). تم إلغاء العملية لحماية البيانات.`);
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        return response;
+    } catch (error) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            throw new Error(`انتهت مدة الانتظار (${(timeoutMs / 1000 / 60).toFixed(1)} دقيقة). السيرفر لم يستجب.`);
         }
-        const mainData = await mainRes.json();
-        if (!mainData || mainData.errorCode) {
-            throw new Error(`Azure Main Query رجع خطأ: ${mainData?.message || 'Unknown error'}`);
-        }
-        const mainRelations = mainData.workItemRelations || [];
-        const mainIds = [...new Set(mainRelations.map(r => r.target ? r.target.id : null).filter(id => id))];
-
-        // ============ Backlog Query ============
-        let backlogIds = [];
-        if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
-            const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
-            const backlogRes = await fetch(backlogQueryUrl, { headers: { 'Authorization': authHeader } });
-
-            if (!backlogRes.ok) {
-                throw new Error(`فشل الاتصال بـ Azure Backlog Query (${backlogRes.status}). تم إلغاء العملية.`);
-            }
-            const backlogData = await backlogRes.json();
-            if (backlogData.errorCode) {
-                throw new Error(`Azure Backlog رجع خطأ: ${backlogData.message || 'Unknown'}`);
-            }
-            if (backlogData.workItemRelations && backlogData.workItemRelations.length > 0) {
-                backlogIds = backlogData.workItemRelations.map(r => r.target ? r.target.id : null).filter(id => id);
-            } else if (backlogData.workItems && backlogData.workItems.length > 0) {
-                backlogIds = backlogData.workItems.map(wi => wi.id).filter(id => id);
-            }
-            console.log(`✅ Backlog IDs extracted: ${backlogIds.length}`);
+        throw error;
+    }
+};
+const azureDevOps = {
+    async sync() {
+        const pat = sessionStorage.getItem('az_pat');
+        if (!pat) {
+            ui.showToast("Azure PAT مفقود. الرجاء تسجيل الدخول مجدداً.", "error");
+            return;
         }
 
-        const allIds = [...new Set([...mainIds, ...backlogIds])];
+        const syncBtn = document.querySelector("button[onclick='azureDevOps.sync()']");
+        const originalText = syncBtn.innerHTML;
+        syncBtn.innerHTML = "⏳ جاري المزامنة...";
+        syncBtn.disabled = true;
+        ui.showLoader();
 
-        if (allIds.length === 0) {
-            throw new Error("Azure رجّع 0 عناصر. تم إلغاء المزامنة لحماية البيانات الحالية.");
-        }
+        // ✅ Snapshot للبيانات الحالية لاسترجاعها لو حصلت مشكلة
+        const dbSnapshot = JSON.parse(JSON.stringify(db));
 
-        // ============ Batch Fetch ============
-        const chunkSize = 200;
-        let allDetails = [];
-        for (let i = 0; i < allIds.length; i += chunkSize) {
-            const chunk = allIds.slice(i, i + chunkSize);
-            const batchUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
-            const batchRes = await fetch(batchUrl, {
-                method: 'POST',
-                headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids: chunk, fields: this.getRequiredFields() })
+        try {
+            const authHeader = 'Basic ' + btoa(':' + pat);
+
+            // ============ Main Query ============
+            const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
+            const mainRes = await fetchWithTimeout(mainQueryUrl, {
+                headers: { 'Authorization': authHeader }
             });
 
-            if (!batchRes.ok) {
-                throw new Error(`فشل استرجاع تفاصيل الـ Work Items (${batchRes.status}). تم إلغاء العملية.`);
+            if (!mainRes.ok) {
+                throw new Error(`فشل الاتصال بـ Azure Main Query (${mainRes.status} ${mainRes.statusText}). تم إلغاء العملية لحماية البيانات.`);
             }
-            const batchData = await batchRes.json();
-            if (batchData.errorCode || !batchData.value) {
-                throw new Error(`Azure Batch رجع خطأ: ${batchData.message || 'Invalid response'}`);
+            const mainData = await mainRes.json();
+            if (!mainData || mainData.errorCode) {
+                throw new Error(`Azure Main Query رجع خطأ: ${mainData?.message || 'Unknown error'}`);
             }
-            allDetails = allDetails.concat(batchData.value);
-        }
+            const mainRelations = mainData.workItemRelations || [];
+            const mainIds = [...new Set(mainRelations.map(r => r.target ? r.target.id : null).filter(id => id))];
 
-        if (allDetails.length === 0) {
-            throw new Error("لم يتم استلام أي تفاصيل من Azure. تم إلغاء المزامنة.");
-        }
+            // ============ Backlog Query ============
+            let backlogIds = [];
+            if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
+                const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
+                const backlogRes = await fetchWithTimeout(backlogQueryUrl, {
+                    headers: { 'Authorization': authHeader }
+                });
 
-        // ============ بناء الصفوف ============
-        const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
-        const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
-
-        if (mainRows.length === 0) {
-            throw new Error("mainRows فاضية. تم إلغاء المزامنة لحماية البيانات.");
-        }
-
-        await dataProcessor.processRows(mainRows);
-
-        // Backlog (اختياري)
-        if (backlogIds.length > 0) {
-            const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
-            const backlogRows = this.buildBacklogRows(backlogDetails);
-            if (backlogRows.length > 0) {
-                await dataProcessor.processBacklogRows(backlogRows);
-            } else {
-                console.warn('⚠️ backlogRows فاضية - تم تخطي تحديث الـ backlog.');
+                if (!backlogRes.ok) {
+                    throw new Error(`فشل الاتصال بـ Azure Backlog Query (${backlogRes.status}). تم إلغاء العملية.`);
+                }
+                const backlogData = await backlogRes.json();
+                if (backlogData.errorCode) {
+                    throw new Error(`Azure Backlog رجع خطأ: ${backlogData.message || 'Unknown'}`);
+                }
+                if (backlogData.workItemRelations && backlogData.workItemRelations.length > 0) {
+                    backlogIds = backlogData.workItemRelations.map(r => r.target ? r.target.id : null).filter(id => id);
+                } else if (backlogData.workItems && backlogData.workItems.length > 0) {
+                    backlogIds = backlogData.workItems.map(wi => wi.id).filter(id => id);
+                }
+                console.log(`✅ Backlog IDs extracted: ${backlogIds.length}`);
             }
+
+            const allIds = [...new Set([...mainIds, ...backlogIds])];
+
+            if (allIds.length === 0) {
+                throw new Error("Azure رجّع 0 عناصر. تم إلغاء المزامنة لحماية البيانات الحالية.");
+            }
+
+            // ============ Batch Fetch ============
+            const chunkSize = 200;
+            let allDetails = [];
+            for (let i = 0; i < allIds.length; i += chunkSize) {
+                const chunk = allIds.slice(i, i + chunkSize);
+                const batchUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
+                const batchRes = await fetchWithTimeout(batchUrl, {
+                    method: 'POST',
+                    headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: chunk, fields: this.getRequiredFields() })
+                });
+
+                if (!batchRes.ok) {
+                    throw new Error(`فشل استرجاع تفاصيل الـ Work Items (${batchRes.status}). تم إلغاء العملية.`);
+                }
+                const batchData = await batchRes.json();
+                if (batchData.errorCode || !batchData.value) {
+                    throw new Error(`Azure Batch رجع خطأ: ${batchData.message || 'Invalid response'}`);
+                }
+                allDetails = allDetails.concat(batchData.value);
+                console.log(`✅ Batch ${Math.floor(i / chunkSize) + 1}: ${batchData.value.length} items loaded`);
+            }
+
+            if (allDetails.length === 0) {
+                throw new Error("لم يتم استلام أي تفاصيل من Azure. تم إلغاء المزامنة.");
+            }
+
+            // ============ بناء الصفوف ============
+            const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
+            const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
+
+            if (mainRows.length === 0) {
+                throw new Error("mainRows فاضية. تم إلغاء المزامنة لحماية البيانات.");
+            }
+
+            await dataProcessor.processRows(mainRows);
+
+            // Backlog (اختياري)
+            if (backlogIds.length > 0) {
+                const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
+                const backlogRows = this.buildBacklogRows(backlogDetails);
+                if (backlogRows.length > 0) {
+                    await dataProcessor.processBacklogRows(backlogRows);
+                } else {
+                    console.warn('⚠️ backlogRows فاضية - تم تخطي تحديث الـ backlog.');
+                }
+            }
+
+            ui.showToast("✅ تمت المزامنة بنجاح مع Azure!", "success");
+
+        } catch (error) {
+            console.error("Azure Sync Error:", error);
+
+            // ✅ استرجاع البيانات من الـ snapshot لو حصل أي تلف
+            db = dbSnapshot;
+            ui.showToast("❌ فشل الاتصال بـ Azure: " + error.message, "error");
+        } finally {
+            ui.hideLoader();
+            syncBtn.innerHTML = originalText;
+            syncBtn.disabled = false;
         }
+    },
 
-        ui.showToast("✅ تمت المزامنة بنجاح مع Azure!", "success");
-
-    } catch (error) {
-        console.error("Azure Sync Error:", error);
-
-        // ✅ استرجاع البيانات من الـ snapshot لو حصل أي تلف
-        db = dbSnapshot;
-        ui.showToast("❌ فشل الاتصال بـ Azure: " + error.message, "error");
-    } finally {
-        ui.hideLoader();
-        syncBtn.innerHTML = originalText;
-        syncBtn.disabled = false;
-    }
-},
     buildRowsFromRelations(relations, detailsMap) {
         const rows = [];
         relations.forEach(rel => {
@@ -3480,6 +3507,7 @@ const azureDevOps = {
         });
         return rows;
     },
+
     getRequiredFields() {
         return [
             "System.Id", "System.WorkItemType", "System.Title", "System.AssignedTo",
@@ -3492,6 +3520,7 @@ const azureDevOps = {
             "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer"
         ];
     },
+
     buildBacklogRows(details) {
         const rows = [];
         details.forEach(d => {
@@ -3520,6 +3549,7 @@ const azureDevOps = {
         });
         return rows;
     },
+
     saveSettings() {
         const settings = {
             org: document.getElementById('az-org').value,
@@ -3531,7 +3561,6 @@ const azureDevOps = {
         ui.showToast("تم حفظ إعدادات Azure بنجاح", "success");
     }
 };
-
 function executeWithSave(action, successMsg = 'تم الحفظ بنجاح', errorMsg = 'فشل الحفظ', callback = null) {
     ui.showLoader();
     Promise.resolve(action())
