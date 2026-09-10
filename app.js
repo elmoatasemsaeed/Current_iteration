@@ -460,91 +460,118 @@ const dataProcessor = {
         return this._savePromise;
     },
     async _saveToGitHubInternal() {
-        const token = sessionStorage.getItem('gh_token');
-        if (!token) throw new Error('GitHub token missing');
-        const timestamp = Date.now();
-        const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}?t=${timestamp}`, {
-            headers: { 'Authorization': `token ${token}` }
-        });
-        if (!metaRes.ok) throw new Error(`Failed to get metadata: ${metaRes.status}`);
-        const metaData = await metaRes.json();
-        const latestSha = metaData.sha;
-        const dataToSave = { ...db };
-        delete dataToSave.sha;
-        const jsonString = JSON.stringify(dataToSave, null, 2);
-        const content = btoa(unescape(encodeURIComponent(jsonString)));
-        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-            method: 'PUT',
-            headers: { 'Authorization': `token ${token}` },
-            body: JSON.stringify({
-                message: `Update db.json [${new Date().toLocaleString()}]`,
-                content: content,
-                sha: latestSha
-            })
-        });
-        if (!response.ok) {
-            const error = await response.json();
-            if (response.status === 409) {
-                console.warn('Conflict detected, retrying...');
-                return this._saveToGitHubInternal();
-            }
-            throw new Error(error.message);
+    const token = sessionStorage.getItem('gh_token');
+    if (!token) throw new Error('GitHub token missing');
+
+    // ✅ Guard: رفض الحفظ لو كل الجداول الأساسية فاضية (حماية من المسح)
+    const hasContent =
+        (db.currentStories?.length || 0) +
+        (db.backlogStories?.length || 0) +
+        (db.users?.length || 0) > 0;
+
+    if (!hasContent) {
+        throw new Error('رفض الحفظ: قاعدة البيانات فاضية تماماً (حماية من المسح).');
+    }
+
+    const timestamp = Date.now();
+    const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}?t=${timestamp}`, {
+        headers: { 'Authorization': `token ${token}` }
+    });
+
+    if (!metaRes.ok) {
+        if (metaRes.status === 404) {
+            throw new Error('الملف غير موجود على GitHub. لا يمكن الحفظ بدون SHA.');
         }
-        const result = await response.json();
-        db.sha = result.content.sha;
-        console.log('Saved successfully with new SHA');
-        return result;
-    },
+        throw new Error(`Failed to get metadata: ${metaRes.status} ${metaRes.statusText}`);
+    }
+
+    const metaData = await metaRes.json();
+    const latestSha = metaData.sha;
+
+    const dataToSave = { ...db };
+    delete dataToSave.sha;
+    const jsonString = JSON.stringify(dataToSave, null, 2);
+    const content = btoa(unescape(encodeURIComponent(jsonString)));
+
+    const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${token}` },
+        body: JSON.stringify({
+            message: `Update db.json [${new Date().toLocaleString()}]`,
+            content: content,
+            sha: latestSha
+        })
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        if (response.status === 409) {
+            console.warn('Conflict detected, retrying...');
+            return this._saveToGitHubInternal();
+        }
+        throw new Error(error.message || `Save failed: ${response.status}`);
+    }
+
+    const result = await response.json();
+    db.sha = result.content.sha;
+    console.log('Saved successfully with new SHA');
+    return result;
+},
     async sync() {
-        const token = sessionStorage.getItem('gh_token');
-        try {
-            const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3.raw'
-                }
-            });
-            if (response.ok) {
-                db = await response.json();
-                if (!db.customTags) db.customTags = [];
-                if (!db.backlogStories) db.backlogStories = [];
-                if (!db.areaComments) db.areaComments = [];
-                if (!db.projects) db.projects = [];
-                if (!db.archivedProjects) db.archivedProjects = [];
-                if (!db.standupCommentsStore) db.standupCommentsStore = {};
-                
-                const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                    headers: { 'Authorization': `token ${token}` }
-                });
-                const metaData = await metaRes.json();
-                db.sha = metaData.sha;
-                
-                const convertDates = (story) => {
-                    if (story.expectedRelease) story.expectedRelease = new Date(story.expectedRelease);
-                    if (story.changedDate) story.changedDate = new Date(story.changedDate);
-                    return story;
-                };
-                if (db.currentStories && db.currentStories.length > 0) {
-                    db.currentStories = db.currentStories.map(convertDates);
-                    this.calculateTimelines(db.currentStories);
-                }
-                if (db.backlogStories && db.backlogStories.length > 0) {
-                    db.backlogStories = db.backlogStories.map(convertDates);
-                }
-                
-                migrateStandupComments();
-                pruneStandupComments();
-                
-                ui.renderAll();
-            } else {
-                console.log("File not found, creating new DB...");
-                this.saveToGitHub();
+    const token = sessionStorage.getItem('gh_token');
+    try {
+        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+            headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3.raw'
             }
-        } catch (e) {
-            console.error("Sync Error:", e);
-            ui.showToast("خطأ في المزامنة مع GitHub: " + e.message, "error");
+        });
+
+        if (response.ok) {
+            db = await response.json();
+            if (!db.customTags) db.customTags = [];
+            if (!db.backlogStories) db.backlogStories = [];
+            if (!db.areaComments) db.areaComments = [];
+            if (!db.projects) db.projects = [];
+            if (!db.archivedProjects) db.archivedProjects = [];
+            if (!db.standupCommentsStore) db.standupCommentsStore = {};
+
+            const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+            const metaData = await metaRes.json();
+            db.sha = metaData.sha;
+
+            const convertDates = (story) => {
+                if (story.expectedRelease) story.expectedRelease = new Date(story.expectedRelease);
+                if (story.changedDate) story.changedDate = new Date(story.changedDate);
+                return story;
+            };
+            if (db.currentStories && db.currentStories.length > 0) {
+                db.currentStories = db.currentStories.map(convertDates);
+                this.calculateTimelines(db.currentStories);
+            }
+            if (db.backlogStories && db.backlogStories.length > 0) {
+                db.backlogStories = db.backlogStories.map(convertDates);
+            }
+
+            migrateStandupComments();
+            pruneStandupComments();
+
+            ui.renderAll();
+        } else if (response.status === 404) {
+            // ✅ فقط لو الملف مش موجود فعلاً
+            console.log("File not found, creating new DB...");
+            this.saveToGitHub();
+        } else {
+            // ✅ أي خطأ تاني (500, 408, 401, 403...) → منكملش ولا نكتب داتا
+            throw new Error(`GitHub API returned ${response.status} ${response.statusText}`);
         }
-    },
+    } catch (e) {
+        console.error("Sync Error:", e);
+        ui.showToast("خطأ في المزامنة مع GitHub: " + e.message, "error");
+    }
+},
     async handleCSV(event) {
         const file = event.target.files[0];
         ui.showLoader();
@@ -567,92 +594,37 @@ const dataProcessor = {
         }
     },
     async processRows(rows) {
-        const newStories = [];
-        let currentStory = null;
-        rows.forEach(row => {
-            const itemType = row['Work Item Type'];
-            if (itemType === 'User Story' || itemType === 'CR' || itemType === 'Support log') {
-                let area = row['Business Area'];
-                if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
-                if (!area || area.trim() === "") {
-                    const path = row['Iteration Path'] || "";
-                    area = path.includes('\\') ? path.split('\\')[0] : path;
-                }
-                currentStory = {
-                    id: row['ID'],
-                    title: row['Title'],
-                    type: itemType,
-                    state: row['State'],
-                    assignedTo: row['Assigned To'] || "Unassigned",
-                    tester: row['Assigned To Tester'] || "Unassigned",
-                    area: area || "General",
-                    priority: parseInt(row['Business Priority']) || 999,
-                    tags: row['Tags'] ? row['Tags'].split(';').filter(t => t.trim() !== "") : [],
-                    expectedRelease: row['Release Expected Date'] ? new Date(row['Release Expected Date']) : null,
-                    branch: row['Branch'] || "N/A",
-                    customer: row['Customer'] || "General",
-                    changedDate: row['Changed Date'] ? new Date(row['Changed Date']) : null,
-                    tasks: [],
-                    bugs: [],
-                    testCases: [],
-                    reviews: [],
-                    calc: {},
-                    customTags: [],
-                    iterationPath: row['Iteration Path'] || "",
-                    devActualTime: parseFloat(row['TimeSheet_DevActualTime']) || 0,
-                    testActualTime: parseFloat(row['TimeSheet_TestingActualTime']) || 0,
-                    isBacklog: false,
-                    linkedProjectId: null
-                };
-                const existingStory = db.currentStories.find(s => s.id == currentStory.id);
-                if (existingStory) {
-                    if (existingStory.customTags) currentStory.customTags = existingStory.customTags;
-                    if (existingStory.linkedProjectId) currentStory.linkedProjectId = existingStory.linkedProjectId;
-                }
-                newStories.push(currentStory);
-            } else if (row['Work Item Type'] === 'Task' && currentStory) {
-                currentStory.tasks.push(row);
-            } else if (row['Work Item Type'] === 'Bug' && currentStory) {
-                currentStory.bugs.push(row);
-            } else if (row['Work Item Type'] === 'Test Case' && currentStory) {
-                currentStory.testCases.push({
-                    id: row['ID'],
-                    state: row['State']
-                });
-            } else if (row['Work Item Type'] === 'Review' && currentStory) {
-                currentStory.reviews.push({
-                    id: row['ID'],
-                    title: row['Title'],
-                    state: row['State'],
-                    assignedTo: row['Assigned To'] || "Unassigned"
-                });
+    // ✅ Guard 1: منع التنفيذ لو الصفوف فاضية
+    if (!Array.isArray(rows) || rows.length === 0) {
+        console.warn('⚠️ processRows: لم يتم استلام أي صفوف. تم إلغاء العملية لحماية البيانات.');
+        ui.showToast('⚠️ لم يتم استلام بيانات من Azure. تم إلغاء التحديث لحماية البيانات.', 'error');
+        return;
+    }
+
+    const newStories = [];
+    let currentStory = null;
+    rows.forEach(row => {
+        const itemType = row['Work Item Type'];
+        if (itemType === 'User Story' || itemType === 'CR' || itemType === 'Support log') {
+            let area = row['Business Area'];
+            if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
+            if (!area || area.trim() === "") {
+                const path = row['Iteration Path'] || "";
+                area = path.includes('\\') ? path.split('\\')[0] : path;
             }
-        });
-        this.calculateTimelines(newStories);
-        db.currentStories = newStories;
-        
-        pruneStandupComments();
-        await this.saveToGitHub();
-    },
-    async processBacklogRows(rows) {
-        console.log(`Processing ${rows.length} backlog rows`);
-        const backlogStories = rows.map(row => {
-            const state = row['State'] || "";
-            if (!["New", "Approved"].includes(state)) return null;
-            const area = row['Business Area'] || "General";
-            return {
+            currentStory = {
                 id: row['ID'],
-                title: row['Title'] || "Untitled",
-                type: 'User Story',
-                state: state,
+                title: row['Title'],
+                type: itemType,
+                state: row['State'],
                 assignedTo: row['Assigned To'] || "Unassigned",
-                tester: "Unassigned",
-                area: area,
+                tester: row['Assigned To Tester'] || "Unassigned",
+                area: area || "General",
                 priority: parseInt(row['Business Priority']) || 999,
                 tags: row['Tags'] ? row['Tags'].split(';').filter(t => t.trim() !== "") : [],
                 expectedRelease: row['Release Expected Date'] ? new Date(row['Release Expected Date']) : null,
-                branch: "N/A",
-                customer: "General",
+                branch: row['Branch'] || "N/A",
+                customer: row['Customer'] || "General",
                 changedDate: row['Changed Date'] ? new Date(row['Changed Date']) : null,
                 tasks: [],
                 bugs: [],
@@ -661,19 +633,102 @@ const dataProcessor = {
                 calc: {},
                 customTags: [],
                 iterationPath: row['Iteration Path'] || "",
-                devActualTime: 0,
-                testActualTime: 0,
-                isBacklog: true,
+                devActualTime: parseFloat(row['TimeSheet_DevActualTime']) || 0,
+                testActualTime: parseFloat(row['TimeSheet_TestingActualTime']) || 0,
+                isBacklog: false,
                 linkedProjectId: null
             };
-        }).filter(s => s !== null);
-        db.backlogStories = backlogStories;
-        
-        pruneStandupComments();
-        await this.saveToGitHub();
-        console.log(`Saved ${backlogStories.length} backlog stories`);
-        ui.renderAll();
-    },
+            const existingStory = db.currentStories.find(s => s.id == currentStory.id);
+            if (existingStory) {
+                if (existingStory.customTags) currentStory.customTags = existingStory.customTags;
+                if (existingStory.linkedProjectId) currentStory.linkedProjectId = existingStory.linkedProjectId;
+            }
+            newStories.push(currentStory);
+        } else if (row['Work Item Type'] === 'Task' && currentStory) {
+            currentStory.tasks.push(row);
+        } else if (row['Work Item Type'] === 'Bug' && currentStory) {
+            currentStory.bugs.push(row);
+        } else if (row['Work Item Type'] === 'Test Case' && currentStory) {
+            currentStory.testCases.push({
+                id: row['ID'],
+                state: row['State']
+            });
+        } else if (row['Work Item Type'] === 'Review' && currentStory) {
+            currentStory.reviews.push({
+                id: row['ID'],
+                title: row['Title'],
+                state: row['State'],
+                assignedTo: row['Assigned To'] || "Unassigned"
+            });
+        }
+    });
+
+    // ✅ Guard 2: لو لم يتم بناء أي قصة بعد المعالجة
+    if (newStories.length === 0) {
+        console.warn('⚠️ processRows: لم يتم بناء أي قصة من الصفوف المستلمة. تم إلغاء التحديث.');
+        ui.showToast('⚠️ لم يتم بناء أي قصة. تم إلغاء التحديث لحماية البيانات.', 'error');
+        return;
+    }
+
+    this.calculateTimelines(newStories);
+    db.currentStories = newStories;
+
+    pruneStandupComments();
+    await this.saveToGitHub();
+},
+    async processBacklogRows(rows) {
+    // ✅ Guard 1: منع التنفيذ لو الصفوف فاضية
+    if (!Array.isArray(rows) || rows.length === 0) {
+        console.warn('⚠️ processBacklogRows: لم يتم استلام أي صفوف. تم تخطي تحديث الـ Backlog.');
+        return;
+    }
+
+    console.log(`Processing ${rows.length} backlog rows`);
+    const backlogStories = rows.map(row => {
+        const state = row['State'] || "";
+        if (!["New", "Approved"].includes(state)) return null;
+        const area = row['Business Area'] || "General";
+        return {
+            id: row['ID'],
+            title: row['Title'] || "Untitled",
+            type: 'User Story',
+            state: state,
+            assignedTo: row['Assigned To'] || "Unassigned",
+            tester: "Unassigned",
+            area: area,
+            priority: parseInt(row['Business Priority']) || 999,
+            tags: row['Tags'] ? row['Tags'].split(';').filter(t => t.trim() !== "") : [],
+            expectedRelease: row['Release Expected Date'] ? new Date(row['Release Expected Date']) : null,
+            branch: "N/A",
+            customer: "General",
+            changedDate: row['Changed Date'] ? new Date(row['Changed Date']) : null,
+            tasks: [],
+            bugs: [],
+            testCases: [],
+            reviews: [],
+            calc: {},
+            customTags: [],
+            iterationPath: row['Iteration Path'] || "",
+            devActualTime: 0,
+            testActualTime: 0,
+            isBacklog: true,
+            linkedProjectId: null
+        };
+    }).filter(s => s !== null);
+
+    // ✅ Guard 2: لو مفيش قصص مؤهلة بعد الفلترة، لا نكتب فوق الـ backlog الحالي
+    if (backlogStories.length === 0) {
+        console.warn('⚠️ processBacklogRows: لم يتم بناء أي قصة بعد الفلترة. تم إلغاء تحديث الـ Backlog.');
+        return;
+    }
+
+    db.backlogStories = backlogStories;
+
+    pruneStandupComments();
+    await this.saveToGitHub();
+    console.log(`Saved ${backlogStories.length} backlog stories`);
+    ui.renderAll();
+},
     calculateTimelines(stories) {
         stories.sort((a, b) => (a.priority || 999) - (b.priority || 999));
         const staffAvailability = {};
@@ -3272,66 +3327,126 @@ const commentManager = {
 
 const azureDevOps = {
     async sync() {
-        const pat = sessionStorage.getItem('az_pat');
-        if (!pat) {
-            ui.showToast("Azure PAT مفقود. الرجاء تسجيل الدخول مجدداً.", "error");
-            return;
+    const pat = sessionStorage.getItem('az_pat');
+    if (!pat) {
+        ui.showToast("Azure PAT مفقود. الرجاء تسجيل الدخول مجدداً.", "error");
+        return;
+    }
+
+    const syncBtn = document.querySelector("button[onclick='azureDevOps.sync()']");
+    const originalText = syncBtn.innerHTML;
+    syncBtn.innerHTML = "⏳ جاري المزامنة...";
+    syncBtn.disabled = true;
+    ui.showLoader();
+
+    // ✅ Snapshot للبيانات الحالية لاسترجاعها لو حصلت مشكلة
+    const dbSnapshot = JSON.parse(JSON.stringify(db));
+
+    try {
+        const authHeader = 'Basic ' + btoa(':' + pat);
+
+        // ============ Main Query ============
+        const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
+        const mainRes = await fetch(mainQueryUrl, { headers: { 'Authorization': authHeader } });
+
+        if (!mainRes.ok) {
+            throw new Error(`فشل الاتصال بـ Azure Main Query (${mainRes.status} ${mainRes.statusText}). تم إلغاء العملية لحماية البيانات.`);
         }
-        const syncBtn = document.querySelector("button[onclick='azureDevOps.sync()']");
-        const originalText = syncBtn.innerHTML;
-        syncBtn.innerHTML = "⏳ جاري المزامنة...";
-        syncBtn.disabled = true;
-        ui.showLoader();
-        try {
-            const authHeader = 'Basic ' + btoa(':' + pat);
-            const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
-            const mainRes = await fetch(mainQueryUrl, { headers: { 'Authorization': authHeader } });
-            const mainData = await mainRes.json();
-            const mainRelations = mainData.workItemRelations || [];
-            const mainIds = [...new Set(mainRelations.map(r => r.target ? r.target.id : null).filter(id => id))];
-            let backlogIds = [];
-            if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
-                const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
-                const backlogRes = await fetch(backlogQueryUrl, { headers: { 'Authorization': authHeader } });
-                const backlogData = await backlogRes.json();
-                if (backlogData.workItemRelations && backlogData.workItemRelations.length > 0) {
-                    backlogIds = backlogData.workItemRelations.map(r => r.target ? r.target.id : null).filter(id => id);
-                } else if (backlogData.workItems && backlogData.workItems.length > 0) {
-                    backlogIds = backlogData.workItems.map(wi => wi.id).filter(id => id);
-                }
-                console.log(`✅ Backlog IDs extracted: ${backlogIds.length}`);
+        const mainData = await mainRes.json();
+        if (!mainData || mainData.errorCode) {
+            throw new Error(`Azure Main Query رجع خطأ: ${mainData?.message || 'Unknown error'}`);
+        }
+        const mainRelations = mainData.workItemRelations || [];
+        const mainIds = [...new Set(mainRelations.map(r => r.target ? r.target.id : null).filter(id => id))];
+
+        // ============ Backlog Query ============
+        let backlogIds = [];
+        if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
+            const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
+            const backlogRes = await fetch(backlogQueryUrl, { headers: { 'Authorization': authHeader } });
+
+            if (!backlogRes.ok) {
+                throw new Error(`فشل الاتصال بـ Azure Backlog Query (${backlogRes.status}). تم إلغاء العملية.`);
             }
-            const allIds = [...new Set([...mainIds, ...backlogIds])];
-            if (allIds.length === 0) throw new Error("No items found in the specified queries.");
-            const chunkSize = 200;
-            let allDetails = [];
-            for (let i = 0; i < allIds.length; i += chunkSize) {
-                const chunk = allIds.slice(i, i + chunkSize);
-                const batchUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
-                const batchRes = await fetch(batchUrl, {
-                    method: 'POST',
-                    headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ids: chunk, fields: this.getRequiredFields() })
-                });
-                const batchData = await batchRes.json();
-                allDetails = allDetails.concat(batchData.value);
+            const backlogData = await backlogRes.json();
+            if (backlogData.errorCode) {
+                throw new Error(`Azure Backlog رجع خطأ: ${backlogData.message || 'Unknown'}`);
             }
-            const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
-            const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
-            await dataProcessor.processRows(mainRows);
+            if (backlogData.workItemRelations && backlogData.workItemRelations.length > 0) {
+                backlogIds = backlogData.workItemRelations.map(r => r.target ? r.target.id : null).filter(id => id);
+            } else if (backlogData.workItems && backlogData.workItems.length > 0) {
+                backlogIds = backlogData.workItems.map(wi => wi.id).filter(id => id);
+            }
+            console.log(`✅ Backlog IDs extracted: ${backlogIds.length}`);
+        }
+
+        const allIds = [...new Set([...mainIds, ...backlogIds])];
+
+        if (allIds.length === 0) {
+            throw new Error("Azure رجّع 0 عناصر. تم إلغاء المزامنة لحماية البيانات الحالية.");
+        }
+
+        // ============ Batch Fetch ============
+        const chunkSize = 200;
+        let allDetails = [];
+        for (let i = 0; i < allIds.length; i += chunkSize) {
+            const chunk = allIds.slice(i, i + chunkSize);
+            const batchUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
+            const batchRes = await fetch(batchUrl, {
+                method: 'POST',
+                headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: chunk, fields: this.getRequiredFields() })
+            });
+
+            if (!batchRes.ok) {
+                throw new Error(`فشل استرجاع تفاصيل الـ Work Items (${batchRes.status}). تم إلغاء العملية.`);
+            }
+            const batchData = await batchRes.json();
+            if (batchData.errorCode || !batchData.value) {
+                throw new Error(`Azure Batch رجع خطأ: ${batchData.message || 'Invalid response'}`);
+            }
+            allDetails = allDetails.concat(batchData.value);
+        }
+
+        if (allDetails.length === 0) {
+            throw new Error("لم يتم استلام أي تفاصيل من Azure. تم إلغاء المزامنة.");
+        }
+
+        // ============ بناء الصفوف ============
+        const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
+        const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
+
+        if (mainRows.length === 0) {
+            throw new Error("mainRows فاضية. تم إلغاء المزامنة لحماية البيانات.");
+        }
+
+        await dataProcessor.processRows(mainRows);
+
+        // Backlog (اختياري)
+        if (backlogIds.length > 0) {
             const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
             const backlogRows = this.buildBacklogRows(backlogDetails);
-            await dataProcessor.processBacklogRows(backlogRows);
-            ui.showToast("✅ تمت المزامنة بنجاح مع Azure!", "success");
-        } catch (error) {
-            console.error("Azure Sync Error:", error);
-            ui.showToast("❌ فشل الاتصال بـ Azure: " + error.message, "error");
-        } finally {
-            ui.hideLoader();
-            syncBtn.innerHTML = originalText;
-            syncBtn.disabled = false;
+            if (backlogRows.length > 0) {
+                await dataProcessor.processBacklogRows(backlogRows);
+            } else {
+                console.warn('⚠️ backlogRows فاضية - تم تخطي تحديث الـ backlog.');
+            }
         }
-    },
+
+        ui.showToast("✅ تمت المزامنة بنجاح مع Azure!", "success");
+
+    } catch (error) {
+        console.error("Azure Sync Error:", error);
+
+        // ✅ استرجاع البيانات من الـ snapshot لو حصل أي تلف
+        db = dbSnapshot;
+        ui.showToast("❌ فشل الاتصال بـ Azure: " + error.message, "error");
+    } finally {
+        ui.hideLoader();
+        syncBtn.innerHTML = originalText;
+        syncBtn.disabled = false;
+    }
+},
     buildRowsFromRelations(relations, detailsMap) {
         const rows = [];
         relations.forEach(rel => {
