@@ -31,6 +31,18 @@
   ],
   "deliveryLogs": [
     {
+      "storyId": "182613",
+      "to": "تم التسليم لايمن عبر الواتساب",
+      "date": "8/31/2026",
+      "timestamp": 1788161966807
+    },
+    {
+      "storyId": "182608",
+      "to": "تم التسليم لايمن عبر الواتساب",
+      "date": "8/31/2026",
+      "timestamp": 1788164328820
+    },
+    {
       "storyId": "182623",
       "to": "تم التسليم لعبدالرحمن عبر الواستاب",
       "date": "9/1/2026",
@@ -1637,7 +1649,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-09-16T05:38:35.633Z",
+      "changedDate": "2026-09-17T08:16:42.680Z",
       "tasks": [
         {
           "ID": 186454,
@@ -3195,7 +3207,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Saja Lab_576",
-      "changedDate": "2026-09-16T08:33:58.907Z",
+      "changedDate": "2026-09-17T07:24:13.387Z",
       "tasks": [
         {
           "ID": 186969,
@@ -3377,7 +3389,23 @@
           "Customer": "Saja Lab_576"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": 188073,
+          "Work Item Type": "Bug",
+          "Title": "(Preliminary) water mark doesn't display after printing preliminary reports.",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-17T09:11:12.643Z",
+          "Customer": "Saja Lab_576"
+        }
+      ],
       "testCases": [
         {
           "id": 187005,
@@ -3389,11 +3417,11 @@
         },
         {
           "id": 187082,
-          "state": "Design"
+          "state": "Inprogress"
         },
         {
           "id": 187083,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187084,
@@ -3401,7 +3429,7 @@
         },
         {
           "id": 187086,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187098,
@@ -3584,6 +3612,54 @@
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
+      "id": 186736,
+      "title": "Saja Lab - Claim invoice and Notes: Copied from Wareed labs",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Mahmoud Ahmed",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 1,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Saja Lab_576",
+      "changedDate": "2026-09-17T09:26:28.813Z",
+      "tasks": [
+        {
+          "ID": 188063,
+          "Work Item Type": "Task",
+          "Title": "TR012 : Copy Saja Lab Claim Invoice, Credit Note and Debit Note from Wareed Lab.",
+          "Assigned To": "Mahmoud Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 1,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-17T07:59:15.833Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-09-17T09:22:14.04Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-09-17T09:22:14.04Z",
+          "Customer": "Saja Lab_576"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "devEnd": "2026-09-17T07:59:15.833Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Front Team\\2026\\Front-September 13-3",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": false,
@@ -3993,6 +4069,36 @@
           "Assigned To Tester": "Unassigned",
           "State": "New",
           "Changed Date": "2026-09-16T16:02:08.137Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 188061,
+          "Work Item Type": "Task",
+          "Title": "backend:create api  Get Spin Wheel User Last Run",
+          "Assigned To": "Saleh Abdelrahem",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-17T07:40:29.177Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 188062,
+          "Work Item Type": "Task",
+          "Title": "backend:create api  Log Spin Wheel User Selection",
+          "Assigned To": "Saleh Abdelrahem",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-17T07:40:29.177Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -5974,7 +6080,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-09-14T07:38:39.820Z",
+      "changedDate": "2026-09-17T08:16:42.680Z",
       "tasks": [
         {
           "ID": 185926,
@@ -6210,7 +6316,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Mozmen Labs_1494",
-      "changedDate": "2026-09-16T13:28:28.937Z",
+      "changedDate": "2026-09-17T07:25:23.810Z",
       "tasks": [
         {
           "ID": 186379,
@@ -6549,8 +6655,8 @@
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-09-16T12:53:46.393Z",
+          "State": "Cancel",
+          "Changed Date": "2026-09-17T09:28:25.7Z",
           "Customer": "Mozmen Labs_1494"
         }
       ],
@@ -6730,22 +6836,23 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Dr Mohamed Khedr Lab_0382",
-      "changedDate": "2026-09-17T00:51:55.440Z",
+      "changedDate": "2026-09-17T09:00:35.620Z",
       "tasks": [
         {
           "ID": 187986,
           "Work Item Type": "Task",
           "Title": "DB Work: Create new reports package for Khedr Lab",
-          "Assigned To": "Ahmed Farag",
+          "Assigned To": "Mostafa Mahmoud",
           "Activity": "DB Modification",
           "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 4,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-09-16T12:16:00.47Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-09-16T12:16:00.47Z",
+          "Tags": "liquibase; V.4.3.0; Wait .Net review",
+          "Changed Date": "2026-09-17T09:44:16.493Z",
           "Customer": "Dr Mohamed Khedr Lab_0382"
         },
         {
@@ -7755,6 +7862,37 @@
       "linkedProjectId": null
     },
     {
+      "id": 185396,
+      "title": "Assuit University - Oracle LDM Pathology Integration",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Mostafa Taha",
+      "tester": "Unassigned",
+      "area": "LDM Integration",
+      "priority": 2,
+      "tags": [],
+      "expectedRelease": "2026-09-17T21:00:00.000Z",
+      "branch": "Egypt",
+      "customer": "Assuit University Hospitals_412",
+      "changedDate": "2026-09-17T09:12:00.513Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 2,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
       "id": 158429,
       "title": "Update Ezz Lab Odoo CRM Integration - Add New API",
       "type": "User Story",
@@ -7818,7 +7956,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-09-16T10:15:26.863Z",
+      "changedDate": "2026-09-17T09:31:26.327Z",
       "tasks": [
         {
           "ID": 184923,
@@ -7915,7 +8053,7 @@
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-09-16T10:15:26.863Z",
+          "Changed Date": "2026-09-17T09:31:26.327Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -8089,12 +8227,13 @@
       "area": "Internal lab",
       "priority": 5,
       "tags": [
-        "Waiting Bug 186645 to be published"
+        "PMD",
+        " Waiting Bug 186645 to be published"
       ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-09-17T06:39:35.593Z",
+      "changedDate": "2026-09-17T07:14:18.703Z",
       "tasks": [
         {
           "ID": 185835,
@@ -8287,7 +8426,7 @@
       "testCases": [
         {
           "id": 186152,
-          "state": "Design"
+          "state": "Closed"
         },
         {
           "id": 186266,
@@ -9495,7 +9634,23 @@
           "Customer": "Internal CR_2000"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": 188075,
+          "Work Item Type": "Bug",
+          "Title": "Saving Thumbnail and Cover Images with BMP Extension Displays an \"Unspecified Bug\" Error",
+          "Assigned To": "Saleh Abdelrahem",
+          "Activity": "",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-17T09:12:42.343Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
       "testCases": [],
       "reviews": [],
       "calc": {
@@ -9694,6 +9849,36 @@
           "State": "New",
           "Changed Date": "2026-09-15T16:05:29.993Z",
           "Customer": "Wateen Lab_325"
+        },
+        {
+          "ID": 188068,
+          "Work Item Type": "Bug",
+          "Title": "Approved by (Name & signature) are not removed after undo review in clinical group reports.",
+          "Assigned To": "Esraa Abd El Salam",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-17T09:03:49.27Z",
+          "Customer": "Wateen Lab_325"
+        },
+        {
+          "ID": 188070,
+          "Work Item Type": "Bug",
+          "Title": "In system parameter setup , (Display name) check box is not working as expected.",
+          "Assigned To": "Esraa Abd El Salam",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-17T09:02:31.11Z",
+          "Customer": "Wateen Lab_325"
         }
       ],
       "testCases": [
@@ -9783,11 +9968,11 @@
         },
         {
           "id": 187869,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 187870,
-          "state": "Inprogress"
+          "state": "Fail"
         },
         {
           "id": 187872,
@@ -9883,8 +10068,7 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Tags": "On Hold",
-          "Changed Date": "2026-09-16T17:15:58.51Z",
+          "Changed Date": "2026-09-17T09:30:55.04Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -10190,7 +10374,7 @@
       "id": 179378,
       "title": "Alborg KSA - Registration - Registration to respect the new permissions of \" include and exclude services.\"",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Tested",
       "assignedTo": "Ibrahim Ahmed",
       "tester": "Mostafa Mamdouh",
       "area": "Registration",
@@ -10199,7 +10383,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-09-14T16:28:33.590Z",
+      "changedDate": "2026-09-17T09:34:17.670Z",
       "tasks": [
         {
           "ID": 187582,
@@ -10332,9 +10516,9 @@
           "Activated Date": "2026-09-14T16:03:11.067Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-September 13-3",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "State": "Closed",
           "Tags": "simple",
-          "Changed Date": "2026-09-14T16:12:15.683Z",
+          "Changed Date": "2026-09-17T09:29:35.697Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -10350,8 +10534,8 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-September 13-3",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-09-14T13:40:54.67Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-09-14T13:40:54.67Z",
+          "State": "Closed",
+          "Changed Date": "2026-09-17T08:24:05.827Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -10360,13 +10544,30 @@
           "Title": "Execution of CR 179378",
           "Assigned To": "Mostafa Mamdouh",
           "Activity": "Testing",
-          "Original Estimation": 8,
+          "Original Estimation": 7,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 3,
+          "TimeSheet_TestingActualTime": 7,
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-September 13-3",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-09-15T21:35:10.063Z",
+          "Resolved Date": "2026-09-17T09:19:50.93Z",
+          "State": "Closed",
+          "Changed Date": "2026-09-17T09:23:04.14Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 188067,
+          "Work Item Type": "Task",
+          "Title": "Review Task",
+          "Assigned To": "Mostafa Mohamed",
+          "Activity": "Testing",
+          "Original Estimation": 0.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.75,
+          "Activated Date": "2026-09-17T08:26:44.98Z",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "State": "Closed",
+          "Changed Date": "2026-09-17T09:23:26.48Z",
           "Customer": "Al Borg KSA_530"
         }
       ],
@@ -10374,295 +10575,295 @@
       "testCases": [
         {
           "id": 187652,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187653,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187654,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187655,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187656,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187657,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187658,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187659,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187660,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187661,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187662,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187663,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187664,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187665,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187666,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187667,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187668,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187669,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187670,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187671,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187672,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187673,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187674,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187675,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187676,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187677,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187678,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187679,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187680,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187681,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187682,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187683,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187684,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187685,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187686,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187687,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187688,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187689,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187690,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187691,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187692,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187693,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187694,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187695,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187696,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187697,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187698,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187699,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187700,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187701,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187702,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187703,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187704,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187705,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187706,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187707,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187708,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187709,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187710,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187711,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187712,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187713,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187714,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187715,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187716,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187717,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187718,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187719,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187720,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187721,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187722,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 187723,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 187724,
-          "state": "Design"
+          "state": "Not Applicable"
         }
       ],
       "reviews": [],
@@ -10691,7 +10892,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-09-16T17:02:16.443Z",
+      "changedDate": "2026-09-17T08:39:25.537Z",
       "tasks": [
         {
           "ID": 188005,
@@ -10749,12 +10950,14 @@
           "Assigned To": "Ibrahim Ahmed",
           "Activity": "Development",
           "Original Estimation": 0.3,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-17T07:32:31.12Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-September 13-3",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-09-16T14:07:45.53Z",
+          "Resolved Date": "2026-09-17T08:27:49.747Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-09-17T08:27:49.747Z",
           "Customer": "Alameda_0062"
         },
         {
@@ -10764,12 +10967,14 @@
           "Assigned To": "Ibrahim Ahmed",
           "Activity": "Development",
           "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.75,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-17T08:41:21.05Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-September 13-3",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-09-16T14:08:47.457Z",
+          "Resolved Date": "2026-09-17T08:58:57.75Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-09-17T08:58:57.75Z",
           "Customer": "Alameda_0062"
         },
         {
@@ -10781,10 +10986,11 @@
           "Original Estimation": 0.5,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-17T08:59:51.063Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-September 13-3",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-09-16T14:09:28.743Z",
+          "State": "Active",
+          "Changed Date": "2026-09-17T08:59:51.063Z",
           "Customer": "Alameda_0062"
         },
         {
@@ -10871,7 +11077,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-22T08:00:00.000Z",
+        "devEnd": "2026-09-22T06:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -12191,6 +12397,36 @@
           "Resolved Date": "2026-06-21T11:02:49.373Z",
           "State": "Closed",
           "Changed Date": "2026-07-30T12:17:50.11Z",
+          "Customer": "Ezz Lab_461"
+        },
+        {
+          "ID": 188055,
+          "Work Item Type": "Bug",
+          "Title": "Ezz Connect App Issues",
+          "Assigned To": "Mostafa Mohamed",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-17T08:15:41.233Z",
+          "Customer": "Ezz Lab_461"
+        },
+        {
+          "ID": 188057,
+          "Work Item Type": "Bug",
+          "Title": "Ezz Collect App Issues",
+          "Assigned To": "eslam anwar",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-17T07:34:41.59Z",
           "Customer": "Ezz Lab_461"
         }
       ],
@@ -13814,7 +14050,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-09-16T12:10:46.817Z",
+      "changedDate": "2026-09-17T09:07:14.437Z",
       "tasks": [
         {
           "ID": 183437,
@@ -13880,7 +14116,7 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-09-15T16:13:26.867Z",
+          "Changed Date": "2026-09-17T09:07:14.437Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -13911,7 +14147,7 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-09-15T16:13:26.867Z",
+          "Changed Date": "2026-09-17T09:07:14.437Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -13927,7 +14163,7 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-09-15T16:13:26.867Z",
+          "Changed Date": "2026-09-17T09:07:14.437Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -13943,7 +14179,7 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-09-15T16:13:26.867Z",
+          "Changed Date": "2026-09-17T09:07:14.437Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -13958,7 +14194,7 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-09-15T16:13:26.867Z",
+          "Changed Date": "2026-09-17T09:07:14.437Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -13973,7 +14209,7 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-09-15T16:13:26.867Z",
+          "Changed Date": "2026-09-17T09:07:14.437Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -14003,7 +14239,7 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-09-15T16:13:26.867Z",
+          "Changed Date": "2026-09-17T09:07:14.437Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -14018,7 +14254,7 @@
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-09-15T16:13:26.867Z",
+          "Changed Date": "2026-09-17T09:07:14.437Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -18660,6 +18896,37 @@
       "linkedProjectId": null
     },
     {
+      "id": 167729,
+      "title": "Service Mail | Exception error while sending the emails (#49102)",
+      "type": "Support log",
+      "state": "Resolved",
+      "assignedTo": "Saddam Raees",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Hasa Health Cluster_12",
+      "changedDate": "2026-09-17T09:26:09.130Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 1.5,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
       "id": 168244,
       "title": "Update Ezz Lab - Update [Add Doctor] API - Add Field \"doctorAreaId\"   / Update [Update Doctor] API - Add Field \"doctorAreaId\"",
       "type": "User Story",
@@ -19329,7 +19596,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-08-26T12:53:07.313Z",
+        "devEnd": "2026-09-17T09:59:15.833Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -21233,7 +21500,7 @@
       "id": 178844,
       "title": "At the Admin portal, at Add/edit client, at LDM integrations section, add two new mandatory fields ‘Transaction Time Interval (minutes)’ & ‘Setup Interval Time (hours)’. & add a \"Sync Now\" button.",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "reem.abdulmuttalib",
       "tester": "Bassant Raafat",
       "area": "Home Visit",
@@ -21242,7 +21509,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-09-17T07:08:55.160Z",
+      "changedDate": "2026-09-17T07:41:51.687Z",
       "tasks": [
         {
           "ID": 180651,
@@ -21402,12 +21669,13 @@
           "Activity": "Testing",
           "Original Estimation": 8.4,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 3,
+          "TimeSheet_TestingActualTime": 5.58,
           "Activated Date": "2026-07-30T07:53:06.98Z",
           "Iteration Path": "Home Visit\\2026\\home_visit September 13-26",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-09-16T08:17:58.84Z",
+          "Resolved Date": "2026-09-17T07:27:52.457Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-09-17T07:29:43.27Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -21524,97 +21792,97 @@
         },
         {
           "id": 182061,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182062,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182063,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182064,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182065,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182066,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182067,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182068,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182069,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182070,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182071,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182072,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182073,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182074,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182075,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182076,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182077,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182078,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182079,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182080,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 182081,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 182082,
-          "state": "Design"
+          "state": "Pass"
         }
       ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-07-21T06:00:00.000Z",
-        "testEnd": "2026-07-27T09:00:00.000Z",
+        "testEnd": "2026-07-23T11:00:00.000Z",
         "finalEnd": "2026-09-15T13:24:50.090Z"
       },
       "customTags": [],
@@ -21725,14 +21993,14 @@
           "Title": "#CR179840: Execution",
           "Assigned To": "Mahmoud Mohamed",
           "Activity": "Testing",
-          "Original Estimation": 5,
+          "Original Estimation": 10,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 3,
+          "TimeSheet_TestingActualTime": 5,
           "Activated Date": "2026-09-15T10:33:43.24Z",
           "Iteration Path": "Home Visit\\2026\\home_visit September 13-26",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-09-15T14:17:56.17Z",
+          "Changed Date": "2026-09-17T08:12:13.677Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -24145,6 +24413,37 @@
       "linkedProjectId": null
     },
     {
+      "id": 182273,
+      "title": "Al hassa >> export data",
+      "type": "Support log",
+      "state": "Resolved",
+      "assignedTo": "Saddam Raees",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Hasa Health Cluster_12",
+      "changedDate": "2026-09-17T09:47:18.300Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 0.5,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
       "id": 182669,
       "title": "@Ezz lab results>> Need production APK",
       "type": "Support log",
@@ -25135,12 +25434,12 @@
           "Activity": "Testing",
           "Original Estimation": 20,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 5,
+          "TimeSheet_TestingActualTime": 5.67,
           "Activated Date": "2026-09-10T10:45:22.01Z",
           "Iteration Path": "Home Visit\\2026\\home_visit September 13-26",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-09-15T07:50:14.527Z",
+          "Changed Date": "2026-09-17T08:52:14.53Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -26229,8 +26528,8 @@
       "id": 185559,
       "title": "AL-Borg UAE >> Need to Deploy the Latest LDM Release to the Stage Server",
       "type": "Support log",
-      "state": "Reactive",
-      "assignedTo": "Mohamed Fawzy",
+      "state": "Resolved",
+      "assignedTo": "Ammar Yasser",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
@@ -26240,7 +26539,7 @@
       "expectedRelease": null,
       "branch": "UAE",
       "customer": "Al Borg UAE_531",
-      "changedDate": "2026-09-17T06:16:43.113Z",
+      "changedDate": "2026-09-17T09:44:56.260Z",
       "tasks": [
         {
           "ID": 185575,
@@ -27571,7 +27870,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-13T08:00:00.000Z",
+        "devEnd": "2026-09-01T11:00:00.000Z",
         "testEnd": "2026-10-12T10:00:00.000Z",
         "finalEnd": "2026-10-12T10:00:00.000Z"
       },
@@ -27723,7 +28022,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-17T08:00:00.000Z",
+        "devEnd": "2026-09-10T13:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -28153,7 +28452,7 @@
       "title": "Alameda - Publish new CR (#48437)",
       "type": "Support log",
       "state": "Resolved",
-      "assignedTo": "Saddam Raees",
+      "assignedTo": "Ahmed Gamal",
       "tester": "Unassigned",
       "area": "Internal lab",
       "priority": 999,
@@ -28163,32 +28462,86 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-09-16T17:55:37.833Z",
+      "changedDate": "2026-09-17T09:21:31.200Z",
       "tasks": [
         {
           "ID": 186659,
           "Work Item Type": "Task",
           "Title": "Move to task #186103 to stage then live after testing on stage",
-          "Assigned To": "Mohamed Qassem",
+          "Assigned To": "Ahmed Farag",
           "Activity": "DB Modification",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-17T08:31:57.37Z",
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-09-17T08:44:14.373Z",
+          "State": "To Be Reviewed",
+          "Tags": "Stage publish",
+          "Changed Date": "2026-09-17T08:44:19.49Z",
+          "Customer": "Alameda_0062"
+        }
+      ],
+      "bugs": [
+        {
+          "ID": 188053,
+          "Work Item Type": "Bug",
+          "Title": "Outsource Lab: System Prevent Add New Outsource Lab or Edit on an outsource Lab with Displaying of Error Message",
+          "Assigned To": "Abdelrahman Salman",
+          "Activity": "",
+          "Original Estimation": 0.25,
+          "TimeSheet_DevActualTime": 0.25,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-17T09:22:37.187Z",
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-09-17T09:22:44.187Z",
+          "State": "Resolved",
+          "Tags": "No action taken",
+          "Changed Date": "2026-09-17T09:22:44.187Z",
+          "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 188058,
+          "Work Item Type": "Bug",
+          "Title": "Outsource Services: Displaying of Error in Order List Report",
+          "Assigned To": "Abdelrahman Salman",
+          "Activity": "",
+          "Original Estimation": 0.25,
+          "TimeSheet_DevActualTime": 0.25,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-17T09:23:02.17Z",
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-09-17T09:23:02.17Z",
+          "State": "Resolved",
+          "Tags": "No action taken",
+          "Changed Date": "2026-09-17T09:23:02.17Z",
+          "Customer": "Alameda_0062"
+        },
+        {
+          "ID": 188079,
+          "Work Item Type": "Bug",
+          "Title": "Outsource Services: Error to get Details",
+          "Assigned To": "Ahmed Gamal",
+          "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-09-16T17:14:06.693Z",
+          "Changed Date": "2026-09-17T09:41:53.313Z",
           "Customer": "Alameda_0062"
         }
       ],
-      "bugs": [],
       "testCases": [],
       "reviews": [],
       "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
+        "devEnd": "2026-09-17T08:31:57.370Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
       },
       "customTags": [],
       "iterationPath": "LDM",
@@ -28201,8 +28554,8 @@
       "id": 186710,
       "title": "Move CR : 176350 from Stage to live",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Mohamed Refaat",
+      "state": "Resolved",
+      "assignedTo": "Hebatullah Mohamed",
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 999,
@@ -28210,7 +28563,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-09-14T07:12:59.143Z",
+      "changedDate": "2026-09-17T09:53:33.983Z",
       "tasks": [
         {
           "ID": 187555,
@@ -28240,7 +28593,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
+      "devActualTime": 2,
       "testActualTime": 3,
       "isBacklog": false,
       "linkedProjectId": null
@@ -28313,20 +28666,19 @@
       "id": 186944,
       "title": "MEDLAB FINANCIAL SUPPORT_STAGE",
       "type": "Support log",
-      "state": "On-Hold",
+      "state": "Resolved",
       "assignedTo": "Hesham Elsayed",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
       "tags": [
         "Backup => D:\\MedLab_New_Stage\\Backup\\16-09-2026\\Old",
-        " Published stage",
-        " waiting Tester"
+        " Published stage"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-09-16T12:17:23.117Z",
+      "changedDate": "2026-09-17T09:19:24.593Z",
       "tasks": [
         {
           "ID": 187935,
@@ -28450,8 +28802,8 @@
       "id": 187088,
       "title": "Borg production >API Get Result Raw data & pdf > Not Respect Key 'Outbounddata Releasing Strategy ' if apply key with Mapping contract",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Mostafa Taha",
+      "state": "Resolved",
+      "assignedTo": "Hebatullah Mohamed",
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 999,
@@ -28459,7 +28811,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-09-14T17:17:17.320Z",
+      "changedDate": "2026-09-17T09:48:19.393Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -28696,7 +29048,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Acculab_423",
-      "changedDate": "2026-09-16T13:45:39.727Z",
+      "changedDate": "2026-09-17T08:06:43.680Z",
       "tasks": [
         {
           "ID": 187644,
@@ -28720,7 +29072,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-15T08:00:00.000Z",
+        "devEnd": "2026-09-20T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -28843,15 +29195,15 @@
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Tags": "On Hold; Waiting tester to respond",
-          "Changed Date": "2026-09-15T15:30:27.81Z",
+          "Tags": "Check update in expected result; On Hold; Waiting tester to respond",
+          "Changed Date": "2026-09-17T09:02:59.897Z",
           "Customer": "Alameda_0062"
         }
       ],
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-15T10:00:00.000Z",
+        "devEnd": "2026-09-20T09:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -28879,7 +29231,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Shamel Lab_624",
-      "changedDate": "2026-09-16T13:43:10.087Z",
+      "changedDate": "2026-09-17T08:07:53.720Z",
       "tasks": [
         {
           "ID": 187650,
@@ -28967,8 +29319,8 @@
       "id": 187752,
       "title": "[BBM] @EBGH >> #BBM Integ : publish  SLs (180572 , 186588) into prod",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Mohamed Refaat",
+      "state": "Resolved",
+      "assignedTo": "Abdullah Nasser",
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 999,
@@ -28976,7 +29328,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "EBGH_62",
-      "changedDate": "2026-09-16T15:10:42.757Z",
+      "changedDate": "2026-09-17T09:52:03.180Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -28989,7 +29341,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
+      "devActualTime": 2,
       "testActualTime": 2,
       "isBacklog": false,
       "linkedProjectId": null
@@ -29039,7 +29391,23 @@
       "branch": "KSA",
       "customer": "Saja Lab_576",
       "changedDate": "2026-09-16T14:45:30.623Z",
-      "tasks": [],
+      "tasks": [
+        {
+          "ID": 188072,
+          "Work Item Type": "Task",
+          "Title": "Saja Lab >>Remove All Registration Templates Except Patient Data",
+          "Assigned To": "Mohamed Qassem",
+          "Activity": "DB Modification",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-August 23-12",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-17T09:10:05.987Z",
+          "Customer": "Saja Lab_576"
+        }
+      ],
       "bugs": [
         {
           "ID": 188025,
@@ -29156,8 +29524,8 @@
       "id": 187856,
       "title": "[API] MEDLAB #Whatsapp: Restrict Contract ID for releasing Whatsapp messages",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Mostafa Taha",
+      "state": "Resolved",
+      "assignedTo": "Hassan Hussein",
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 999,
@@ -29165,7 +29533,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Med Lab KSA_290",
-      "changedDate": "2026-09-17T06:32:11.027Z",
+      "changedDate": "2026-09-17T09:48:29.837Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -29187,7 +29555,7 @@
       "id": 187894,
       "title": "Bupa stage then production_download status don't set with download service",
       "type": "Support log",
-      "state": "Active",
+      "state": "On-Hold",
       "assignedTo": "Bothyna Mostafa",
       "tester": "Unassigned",
       "area": "Internal lab",
@@ -29196,7 +29564,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Bupa KSA_121",
-      "changedDate": "2026-09-16T13:00:39.713Z",
+      "changedDate": "2026-09-17T07:42:56.617Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -29253,8 +29621,8 @@
       "id": 187934,
       "title": "[Integ]MedLab : Move Resend App to live",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Mostafa Taha",
+      "state": "Resolved",
+      "assignedTo": "Hassan Hussein",
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 999,
@@ -29262,7 +29630,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Med Lab KSA_290",
-      "changedDate": "2026-09-16T16:55:44.763Z",
+      "changedDate": "2026-09-17T09:49:19.293Z",
       "tasks": [
         {
           "ID": 187968,
@@ -29301,8 +29669,8 @@
       "id": 187936,
       "title": "Al-Borg UAE >> Need to Deploy the Latest LDM Release to the Production Server",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Karim El-Saeed",
+      "state": "Resolved",
+      "assignedTo": "Ammar Yasser",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
@@ -29312,7 +29680,7 @@
       "expectedRelease": null,
       "branch": "UAE",
       "customer": "Al Borg UAE_531",
-      "changedDate": "2026-09-17T07:04:41.610Z",
+      "changedDate": "2026-09-17T09:36:46.340Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -29325,7 +29693,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
-      "devActualTime": 24.5,
+      "devActualTime": 35.5,
       "testActualTime": 32.5,
       "isBacklog": false,
       "linkedProjectId": null
@@ -29370,11 +29738,13 @@
       "tester": "Unassigned",
       "area": "Internal lab",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "change priorty"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "EBGH_62",
-      "changedDate": "2026-09-16T09:31:06.937Z",
+      "changedDate": "2026-09-17T07:27:06.307Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -29436,7 +29806,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "DSAH - Dr. Samir Abbas Hospital_287",
-      "changedDate": "2026-09-16T19:08:19.383Z",
+      "changedDate": "2026-09-17T08:08:02.317Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -29455,19 +29825,66 @@
       "linkedProjectId": null
     },
     {
-      "id": 188032,
-      "title": "#EBGH: Extract data from DB",
+      "id": 188051,
+      "title": "#Borg ksa- issue in  statinig worklist",
       "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mahmoud Mohamed",
+      "state": "Active",
+      "assignedTo": "Ahmed Gamal",
       "tester": "Unassigned",
       "area": "Internal lab",
       "priority": 999,
       "tags": [],
       "expectedRelease": null,
       "branch": "KSA",
-      "customer": "EBGH_62",
-      "changedDate": "2026-09-17T07:08:45.663Z",
+      "customer": "Al Borg KSA_530",
+      "changedDate": "2026-09-17T09:25:25.043Z",
+      "tasks": [
+        {
+          "ID": 188080,
+          "Work Item Type": "Task",
+          "Title": "DB_Modification Al-Borg KSA Stage SP:  LDM_DATA.PATH_WORKLIST.LDM_STAINING_SEARCH takes too long time",
+          "Assigned To": "Ahmed Farag",
+          "Activity": "DB Modification",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-17T09:49:22.693Z",
+          "Customer": "Al Borg KSA_530"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
+      "id": 188056,
+      "title": "#Mozman Lab Stage and production: Add the patient’s mobile number to the results report",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Hesham Elsayed",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Mozmen Labs_1494",
+      "changedDate": "2026-09-17T09:23:48.027Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -29480,8 +29897,55 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
-      "devActualTime": 1.5,
-      "testActualTime": 2,
+      "devActualTime": 0,
+      "testActualTime": 0.5,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
+      "id": 188069,
+      "title": "#Issue in print newborn report",
+      "type": "Support log",
+      "state": "On-Hold",
+      "assignedTo": "Ahmed Gamal",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Borg KSA_530",
+      "changedDate": "2026-09-17T09:21:09.747Z",
+      "tasks": [
+        {
+          "ID": 188074,
+          "Work Item Type": "Task",
+          "Title": "DB_Modification Borg Stage need to change format of the date from stored procedure",
+          "Assigned To": "Ahmed Farag",
+          "Activity": "DB Modification",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-17T09:49:32.63Z",
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-09-17T09:49:32.63Z",
+          "Customer": "Al Borg KSA_530"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "devEnd": "2026-09-20T11:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 0,
+      "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null
     }
