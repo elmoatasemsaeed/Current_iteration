@@ -2520,7 +2520,7 @@ const ui = {
             </div>
             <p class="text-gray-500 mt-0.5">
                 <span class="font-bold">State:</span> ${escapeHtml(b['State'])} |
-                <span class="font-bold">Effort:</span> ${escapeHtml(b['Original Estimation'])}h |
+                <span class="font-bold">Estimation:</span> ${escapeHtml(b['Original Estimation'])}h |
                 <span class="font-bold">Assigned To:</span> ${escapeHtml(b['Assigned To'] || 'Unassigned')}
             </p>
         </div>
