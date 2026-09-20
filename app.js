@@ -2508,15 +2508,24 @@ const ui = {
                     `).join('') : '<p class="text-xs text-gray-400 italic">No test cases linked yet.</p>'}</div>
                 </div>
                 ${s.bugs && s.bugs.length > 0 ? `
-                <div class="space-y-2">
-                    <h4 class="font-bold text-google-red border-b pb-1">🐞 Bugs (${s.bugs.length})</h4>
-                    ${s.bugs.map(b => `
-                        <div class="text-[11px] border-l-2 border-google-red pl-2 py-1">
-                            <p class="font-bold">${escapeHtml(b['Title'])}</p>
-                            <p class="text-gray-500">State: ${escapeHtml(b['State'])} | Effort: ${escapeHtml(b['Original Estimation'])}h</p>
-                        </div>
-                    `).join('')}
-                </div>` : ''}
+<div class="space-y-2">
+    <h4 class="font-bold text-google-red border-b pb-1">🐞 Bugs (${s.bugs.length})</h4>
+    ${s.bugs.map(b => `
+        <div class="text-[11px] border-l-2 border-google-red pl-2 py-1">
+            <div class="flex justify-between items-start gap-2">
+                <p class="font-bold flex-1">
+                    <span class="font-mono text-google-red bg-google-red-light px-1.5 py-0.5 rounded text-[10px] mr-1">#${escapeHtml(b['ID'])}</span>
+                    ${escapeHtml(b['Title'])}
+                </p>
+            </div>
+            <p class="text-gray-500 mt-0.5">
+                <span class="font-bold">State:</span> ${escapeHtml(b['State'])} |
+                <span class="font-bold">Effort:</span> ${escapeHtml(b['Original Estimation'])}h |
+                <span class="font-bold">Assigned To:</span> ${escapeHtml(b['Assigned To'] || 'Unassigned')}
+            </p>
+        </div>
+    `).join('')}
+</div>` : ''}
                 <div class="mt-6 p-4 bg-google-blue-light rounded-xl border border-google-blue/30">
                     <div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-google-blue uppercase">Internal Delivery Target</span><span class="text-sm font-bold text-google-blue">${s.calc.finalEnd instanceof Date ? escapeHtml(s.calc.finalEnd.toLocaleString()) : 'Calculating...'}</span></div>
                     <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? escapeHtml(s.expectedRelease.toLocaleDateString()) : 'Not Scheduled'}</span></div>
