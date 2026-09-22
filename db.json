@@ -1814,7 +1814,7 @@
       "id": 181010,
       "title": "Zatca - Update Payment & Invoice Settings to Add Claim Invoice Date Configuration",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Tested",
       "assignedTo": "mohamed.abdelghany",
       "tester": "Ammar Yasser",
       "area": "Front and Financial",
@@ -1826,7 +1826,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-09-22T09:58:15.200Z",
+      "changedDate": "2026-09-22T12:55:13.010Z",
       "tasks": [
         {
           "ID": 188383,
@@ -1925,8 +1925,8 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-September 13-3",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-09-22T09:58:37.053Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-09-22T09:58:37.053Z",
+          "State": "Closed",
+          "Changed Date": "2026-09-22T12:54:58.887Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -1942,8 +1942,8 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-September 13-3",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-09-22T09:58:29.327Z",
-          "State": "To Be Reviewed",
-          "Changed Date": "2026-09-22T09:58:29.327Z",
+          "State": "Closed",
+          "Changed Date": "2026-09-22T12:55:03.193Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -1961,6 +1961,40 @@
           "State": "Closed",
           "Tags": "liquibase; V.4.3.0; Wait .Net review",
           "Changed Date": "2026-09-22T11:34:59.28Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 188943,
+          "Work Item Type": "Task",
+          "Title": "#181010_Review CR`s TCs Excution",
+          "Assigned To": "Amr Mohamed",
+          "Activity": "Testing",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 1,
+          "Activated Date": "2026-09-22T12:42:34.44Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-09-22T12:56:13.783Z",
+          "State": "Closed",
+          "Changed Date": "2026-09-22T12:56:16.99Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 188944,
+          "Work Item Type": "Task",
+          "Title": "#176564_Review CR`s TCs Preparation",
+          "Assigned To": "Amr Mohamed",
+          "Activity": "Testing",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.5,
+          "Activated Date": "2026-09-22T12:42:31.153Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-09-22T12:56:24.09Z",
+          "State": "Closed",
+          "Changed Date": "2026-09-22T12:56:49.653Z",
           "Customer": "Al Borg KSA_530"
         }
       ],
@@ -2030,8 +2064,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-09-21T07:00:00.000Z",
-        "testEnd": "2026-09-22T06:00:00.000Z",
-        "finalEnd": "2026-09-22T06:00:00.000Z"
+        "testEnd": "2026-09-23T07:00:00.000Z",
+        "finalEnd": "2026-09-23T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-September 13-3",
@@ -3571,7 +3605,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Saja Lab_576",
-      "changedDate": "2026-09-22T12:15:45.023Z",
+      "changedDate": "2026-09-22T13:09:48.857Z",
       "tasks": [
         {
           "ID": 186969,
@@ -4232,6 +4266,21 @@
           "Assigned To Tester": "Unassigned",
           "State": "New",
           "Changed Date": "2026-09-22T07:14:33.893Z",
+          "Customer": "Saja Lab_576"
+        },
+        {
+          "ID": 188950,
+          "Work Item Type": "Bug",
+          "Title": "In pathology report, the title (Report images) is not displayed for the whole report images",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-22T13:08:35.34Z",
           "Customer": "Saja Lab_576"
         }
       ],
@@ -8736,6 +8785,14 @@
         {
           "id": 188883,
           "state": "Design"
+        },
+        {
+          "id": 188920,
+          "state": "Design"
+        },
+        {
+          "id": 188925,
+          "state": "Design"
         }
       ],
       "reviews": [],
@@ -8858,6 +8915,22 @@
           "State": "New",
           "Changed Date": "2026-09-21T13:14:13.747Z",
           "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 188939,
+          "Work Item Type": "Task",
+          "Title": "DB Modification - Add new Input Parameter in SP CLAIMINVOICE_PKG.INS_CLAIMINVOICEHEADER",
+          "Assigned To": "Mostafa Mahmoud",
+          "Activity": "DB Modification",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-22T12:39:16.44Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-09-22T12:39:16.44Z",
+          "Customer": "Al Borg KSA_530"
         }
       ],
       "bugs": [],
@@ -8937,7 +9010,7 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-10-14T08:00:00.000Z",
+        "devEnd": "2026-10-14T09:00:00.000Z",
         "testEnd": "2026-10-15T06:00:00.000Z",
         "finalEnd": "2026-10-15T06:00:00.000Z"
       },
@@ -9391,7 +9464,7 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-10-14T10:00:00.000Z",
+        "devEnd": "2026-10-14T11:00:00.000Z",
         "testEnd": "2026-10-20T12:00:00.000Z",
         "finalEnd": "2026-10-20T12:00:00.000Z"
       },
@@ -16487,7 +16560,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-09-21T17:44:46.310Z",
+      "changedDate": "2026-09-22T12:49:21.160Z",
       "tasks": [
         {
           "ID": 183437,
@@ -17040,6 +17113,10 @@
         },
         {
           "id": 188835,
+          "state": "Design"
+        },
+        {
+          "id": 188946,
           "state": "Design"
         }
       ],
@@ -20722,7 +20799,7 @@
       "id": 165465,
       "title": "Home Visit - Enhance the re-assign and reschedule workflow",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "yara mohsen",
       "tester": "Bassant Raafat",
       "area": "Home Visit",
@@ -20733,7 +20810,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-09-22T10:17:58.167Z",
+      "changedDate": "2026-09-22T12:31:41.110Z",
       "tasks": [
         {
           "ID": 169708,
@@ -21225,15 +21302,17 @@
           "ID": 188886,
           "Work Item Type": "Bug",
           "Title": "Admin error is displayed when reactivating cancelled or rejected visit",
-          "Assigned To": "yara mohsen",
+          "Assigned To": "Bassant Raafat",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 0.2,
+          "TimeSheet_DevActualTime": 0.2,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-22T12:31:34.993Z",
           "Iteration Path": "Home Visit\\2026\\home_visit September 13-26",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-09-22T09:53:03.823Z",
+          "Resolved Date": "2026-09-22T12:31:34.993Z",
+          "State": "Resolved",
+          "Changed Date": "2026-09-22T12:31:34.993Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -21242,7 +21321,7 @@
       "calc": {
         "devEnd": "2026-04-30T12:18:40.417Z",
         "testEnd": "2026-05-06T06:00:00.000Z",
-        "finalEnd": "2026-05-06T06:00:00.000Z"
+        "finalEnd": "2026-09-22T13:31:34.993Z"
       },
       "customTags": [],
       "iterationPath": "Home Visit\\2026\\home_visit September 13-26",
@@ -22706,15 +22785,30 @@
           "State": "Active",
           "Changed Date": "2026-09-21T13:50:26.87Z",
           "Customer": "Wareed Lab_294"
+        },
+        {
+          "ID": 188948,
+          "Work Item Type": "Task",
+          "Title": "apply new required at frontend add visit",
+          "Assigned To": "reem.abdulmuttalib",
+          "Activity": "Development",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Home Visit\\2025\\home_visit January 5-19",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-22T12:57:42.46Z",
+          "Customer": "Wareed Lab_294"
         }
       ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-06-25T12:29:03.280Z",
-        "testEnd": "2026-06-28T06:00:00.000Z",
-        "finalEnd": "2026-06-28T06:00:00.000Z"
+        "devEnd": "2026-06-28T08:00:00.000Z",
+        "testEnd": "2026-06-29T06:00:00.000Z",
+        "finalEnd": "2026-06-29T06:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "Home Visit\\2026\\home_visit September 13-26",
@@ -23718,7 +23812,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-09-21T16:54:57.597Z",
+      "changedDate": "2026-09-22T13:11:56.717Z",
       "tasks": [
         {
           "ID": 180079,
@@ -24866,7 +24960,7 @@
           "Iteration Path": "Home Visit\\2026\\home_visit September 13-26",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-09-21T13:20:56.4Z",
+          "Changed Date": "2026-09-22T13:11:56.717Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -24908,12 +25002,13 @@
           "Assigned To": "mostafa kamel",
           "Activity": "Development",
           "Original Estimation": 4,
-          "TimeSheet_DevActualTime": 2,
+          "TimeSheet_DevActualTime": 2.25,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "Home Visit\\2026\\home_visit September 13-26",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-09-21T16:54:57.597Z",
+          "Resolved Date": "2026-09-22T12:32:12.34Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-09-22T12:32:12.34Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -25231,9 +25326,9 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-28T06:00:00.000Z",
-        "testEnd": "2026-10-07T06:00:00.000Z",
-        "finalEnd": "2026-10-07T06:00:00.000Z"
+        "devEnd": "2026-09-27T08:00:00.000Z",
+        "testEnd": "2026-10-06T06:00:00.000Z",
+        "finalEnd": "2026-10-06T06:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "Home Visit\\2026\\home_visit September 13-26",
@@ -28455,22 +28550,40 @@
           "ID": 188931,
           "Work Item Type": "Bug",
           "Title": "Registration >> Dynamic Registration: Internal Server Error (HTTP 500) triggers while registering by reservation",
-          "Assigned To": "Karim El-Saeed",
+          "Assigned To": "Ahmed Mohamed",
           "Activity": "",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-09-22T12:00:58.07Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-09-22T12:00:58.07Z",
+          "Resolved Date": "2026-09-22T12:22:40.64Z",
+          "State": "Resolved",
+          "Tags": "No action taken",
+          "Changed Date": "2026-09-22T12:22:40.64Z",
           "Customer": "Ansary Labs_604"
         },
         {
           "ID": 188937,
           "Work Item Type": "Bug",
           "Title": "[Reservation] Remove strict prefix validation requiring \"Mobile No.\" to start with (5)",
+          "Assigned To": "Karim El-Saeed",
+          "Activity": "",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-22T12:23:00.84Z",
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-09-22T12:23:00.84Z",
+          "Customer": "Ansary Labs_604"
+        },
+        {
+          "ID": 188945,
+          "Work Item Type": "Bug",
+          "Title": "publish this bug (186786)solving to stage server",
           "Assigned To": "Mohamed Fawzy",
           "Activity": "",
           "Original Estimation": 0,
@@ -28479,7 +28592,7 @@
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-09-22T12:17:15.38Z",
+          "Changed Date": "2026-09-22T12:44:03.107Z",
           "Customer": "Ansary Labs_604"
         }
       ],
@@ -28487,8 +28600,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-08-30T08:00:00.000Z",
-        "testEnd": "2026-10-07T08:00:00.000Z",
-        "finalEnd": "2026-10-07T08:00:00.000Z"
+        "testEnd": "2026-10-06T08:00:00.000Z",
+        "finalEnd": "2026-10-06T08:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM",
@@ -28677,7 +28790,7 @@
           "ID": 188434,
           "Work Item Type": "Bug",
           "Title": "When user press payment appears error",
-          "Assigned To": "Karim El-Saeed",
+          "Assigned To": "Mohamed Bahaa",
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0.5,
@@ -28685,9 +28798,10 @@
           "Activated Date": "2026-09-22T10:55:31.63Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Tags": "waiting db compare",
-          "Changed Date": "2026-09-22T11:16:34.32Z",
+          "Resolved Date": "2026-09-22T13:12:54.363Z",
+          "State": "Resolved",
+          "Tags": "resolved after DB Compare",
+          "Changed Date": "2026-09-22T13:12:54.363Z",
           "Customer": "El Hekma Labs_432"
         }
       ],
@@ -29281,14 +29395,14 @@
           "Assigned To": "Mostafa Mahmoud",
           "Activity": "DB Modification",
           "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 3,
+          "TimeSheet_DevActualTime": 4.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-09-14T11:58:48.587Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Tags": "liquibase; V.4.3.0",
-          "Changed Date": "2026-09-22T09:48:25.323Z",
+          "Tags": "liquibase; On Hold; V.4.3.0; wait test",
+          "Changed Date": "2026-09-22T12:38:06.013Z",
           "Customer": "Acculab_423"
         }
       ],
@@ -29349,13 +29463,15 @@
           "Assigned To": "Mostafa Mahmoud",
           "Activity": "DB Modification",
           "Original Estimation": 1.5,
-          "TimeSheet_DevActualTime": 1.5,
+          "TimeSheet_DevActualTime": 3,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-09-22T09:47:54.6Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-09-22T09:47:54.6Z",
+          "Resolved Date": "2026-09-22T12:36:14.27Z",
+          "State": "To Be Reviewed",
+          "Tags": "liquibase; V.4.3.0",
+          "Changed Date": "2026-09-22T12:36:14.27Z",
           "Customer": "Alameda_0062"
         }
       ],
@@ -29399,7 +29515,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-14T11:39:46.180Z",
+        "devEnd": "2026-09-14T09:39:46.180Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -29982,6 +30098,21 @@
           "State": "Active",
           "Changed Date": "2026-09-22T12:05:00.647Z",
           "Customer": "Eden Lab_445"
+        },
+        {
+          "ID": 188942,
+          "Work Item Type": "Bug",
+          "Title": "#Eden Local: Error message display when click at edit button at service page",
+          "Assigned To": "Mahmoud Mohamed",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-22T12:37:36.453Z",
+          "Customer": "Eden Lab_445"
         }
       ],
       "testCases": [],
@@ -29995,39 +30126,6 @@
       "customTags": [],
       "iterationPath": "LDM",
       "devActualTime": 1,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
-      "id": 188149,
-      "title": "#Eden LAB: we need to delete transaction data and compare DB to release  DB",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mahmoud Mohamed",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 999,
-      "tags": [
-        "CLOSED"
-      ],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Eden Lab_445",
-      "changedDate": "2026-09-21T18:04:00.680Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 3.5,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null
@@ -30300,7 +30398,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-09-22T06:48:24.593Z",
+      "changedDate": "2026-09-22T13:09:41.477Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -30615,15 +30713,31 @@
       "branch": "Iraq",
       "customer": "Al Borg KSA_530",
       "changedDate": "2026-09-22T11:07:24.483Z",
-      "tasks": [],
+      "tasks": [
+        {
+          "ID": 188940,
+          "Work Item Type": "Task",
+          "Title": "DB_Modification Al-Borg Live worklist execution with different processing units returns same record SP: SP_WORKLIST_NEWADVANCEDSEARCH",
+          "Assigned To": "Ahmed Attia",
+          "Activity": "DB Modification",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-22T12:59:19.7Z",
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-09-22T13:09:55.42Z",
+          "Customer": "Al Borg KSA_530"
+        }
+      ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
       "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
+        "devEnd": "2026-09-23T06:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
       },
       "customTags": [],
       "iterationPath": "LDM",
@@ -30884,8 +30998,8 @@
       "id": 188915,
       "title": "Alfa lab _ Task from database ( add delta check percentage to this task 188388)",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Mostafa Mahmoud",
+      "state": "Resolved",
+      "assignedTo": "Bothyna Mostafa",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
@@ -30893,7 +31007,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alfa Lab Egypt_424",
-      "changedDate": "2026-09-22T12:20:18.270Z",
+      "changedDate": "2026-09-22T12:24:23.287Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -30906,8 +31020,39 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
-      "devActualTime": 0,
+      "devActualTime": 0.5,
       "testActualTime": 0.25,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
+      "id": 188933,
+      "title": "@Al Borg-KSA_Need To Insert Data Into DB",
+      "type": "Support log",
+      "state": "Resolved",
+      "assignedTo": "Amr Mohamed",
+      "tester": "Unassigned",
+      "area": "LDM Integration",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Borg KSA_530",
+      "changedDate": "2026-09-22T13:10:25.300Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 0.5,
+      "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null
     },
@@ -30925,6 +31070,37 @@
       "branch": "KSA",
       "customer": "Bupa KSA_121",
       "changedDate": "2026-09-22T12:11:31.303Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
+      "id": 188941,
+      "title": "ALfaEgy_we need to update the clinical group for services and its related nested and tests",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Moamen SalahElDeen",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Alfa Lab Egypt_424",
+      "changedDate": "2026-09-22T12:39:20.703Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
