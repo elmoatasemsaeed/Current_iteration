@@ -2082,6 +2082,14 @@
         {
           "id": 189364,
           "state": "Design"
+        },
+        {
+          "id": 189370,
+          "state": "Design"
+        },
+        {
+          "id": 189371,
+          "state": "Design"
         }
       ],
       "reviews": [],
@@ -5739,7 +5747,7 @@
       "id": 187846,
       "title": "Alameda SAP Integration - Send pre-analytical sample status changes",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Tested",
       "assignedTo": "Hebatullah Mohamed",
       "tester": "Hebatullah Mohamed",
       "area": "LDM Integration",
@@ -5748,7 +5756,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-09-24T10:41:53.730Z",
+      "changedDate": "2026-09-24T12:10:13.557Z",
       "tasks": [],
       "bugs": [
         {
@@ -7555,6 +7563,86 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-09-21T11:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Front Team\\2026\\Front-September 13-3",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
+      "id": 178666,
+      "title": "Metra Lab - Add a Checkbox for Mandatory Money Transfer Reasons",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Mahmoud Ahmed",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 2,
+      "tags": [
+        "Money Transfer"
+      ],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Metra Labs_468",
+      "changedDate": "2026-09-24T11:51:49.557Z",
+      "tasks": [
+        {
+          "ID": 189300,
+          "Work Item Type": "Task",
+          "Title": "DB Modification LDM_DEV : insert new record at Systemparameter Table",
+          "Assigned To": "Ahmed Attia",
+          "Activity": "DB Modification",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-24T06:19:08.937Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Tags": "liquibase; V4.3.0; Wait .Net review",
+          "Changed Date": "2026-09-24T09:16:14.527Z",
+          "Customer": "Metra Labs_468"
+        },
+        {
+          "ID": 189366,
+          "Work Item Type": "Task",
+          "Title": "BD005 | Modify Get Default Settings and Get Custom Setting API in PaymentInvoiceSettingsApiController to return Money Transfer Reason Requried.",
+          "Assigned To": "Mahmoud Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-24T11:50:21.7Z",
+          "Customer": "Metra Labs_468"
+        },
+        {
+          "ID": 189368,
+          "Work Item Type": "Task",
+          "Title": "BD009 | Modify Save Default Settings and Custom Setting API  to save the Money Transfer Reason Requried parameter",
+          "Assigned To": "Mahmoud Ahmed",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-24T11:50:12.877Z",
+          "Customer": "Metra Labs_468"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "devEnd": "2026-09-27T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -10410,7 +10498,7 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-24T10:20:00.780Z",
+        "devEnd": "2026-09-27T07:00:00.000Z",
         "testEnd": "2026-09-29T07:00:00.000Z",
         "finalEnd": "2026-09-29T07:00:00.000Z"
       },
@@ -10778,7 +10866,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-09-22T09:14:45.200Z",
+      "changedDate": "2026-09-24T12:11:16.700Z",
       "tasks": [],
       "bugs": [
         {
@@ -11298,7 +11386,7 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-24T12:20:00.780Z",
+        "devEnd": "2026-09-27T09:00:00.000Z",
         "testEnd": "2026-09-29T12:00:00.000Z",
         "finalEnd": "2026-09-29T12:00:00.000Z"
       },
@@ -15682,7 +15770,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-09-24T09:02:23.703Z",
+      "changedDate": "2026-09-24T11:50:43.317Z",
       "tasks": [
         {
           "ID": 183437,
@@ -21217,7 +21305,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-27T06:00:00.000Z",
+        "devEnd": "2026-09-27T11:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -22073,7 +22161,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-09-24T11:10:02.203Z",
+      "changedDate": "2026-09-24T11:58:36.070Z",
       "tasks": [],
       "bugs": [
         {
@@ -22125,7 +22213,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-09-24T11:24:49.757Z",
           "State": "Resolved",
-          "Changed Date": "2026-09-24T11:24:49.757Z",
+          "Changed Date": "2026-09-24T11:58:36.07Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -22142,7 +22230,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-09-24T11:23:22.467Z",
           "State": "Resolved",
-          "Changed Date": "2026-09-24T11:23:22.467Z",
+          "Changed Date": "2026-09-24T11:58:36.07Z",
           "Customer": "Al Hasa Health Cluster_12"
         },
         {
@@ -22159,7 +22247,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-09-24T11:24:46.613Z",
           "State": "Resolved",
-          "Changed Date": "2026-09-24T11:24:46.613Z",
+          "Changed Date": "2026-09-24T11:58:36.07Z",
           "Customer": "Al Hasa Health Cluster_12"
         }
       ],
@@ -22918,7 +23006,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-09-23T10:34:14.330Z",
+      "changedDate": "2026-09-24T12:06:01.950Z",
       "tasks": [
         {
           "ID": 180079,
@@ -24278,6 +24366,21 @@
           "State": "To Be Reviewed",
           "Changed Date": "2026-09-24T11:02:58.11Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 189369,
+          "Work Item Type": "Task",
+          "Title": "FrontEnd: Handle phone num and loader in add visit cards",
+          "Assigned To": "mostafa kamel",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0.32,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Home Visit\\2026\\home_visit September 13-26",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-09-24T12:09:37.63Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [
@@ -24578,7 +24681,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-27T11:00:00.000Z",
+        "devEnd": "2026-09-27T13:00:00.000Z",
         "testEnd": "2026-10-06T06:00:00.000Z",
         "finalEnd": "2026-10-06T06:00:00.000Z"
       },
@@ -28171,13 +28274,13 @@
           "Assigned To": "Ahmed Attia",
           "Activity": "DB Modification",
           "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_DevActualTime": 1.25,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-09-24T08:49:16.217Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "Closed",
-          "Changed Date": "2026-09-24T11:43:40.18Z",
+          "Changed Date": "2026-09-24T11:50:37.483Z",
           "Customer": "El Hekma Labs_432"
         }
       ],
@@ -28465,6 +28568,23 @@
           "Tags": "DB 189317 point 2",
           "Changed Date": "2026-09-24T11:30:15.8Z",
           "Customer": "El Hekma Labs_432"
+        },
+        {
+          "ID": 189338,
+          "Work Item Type": "Bug",
+          "Title": "The Mandatory Service Field doesn't retrieve the entered data from drop down list",
+          "Assigned To": "Abdelrahman Salman",
+          "Activity": "",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 1,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-09-24T11:12:53.04Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-September 13-3",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-09-24T11:47:37.99Z",
+          "State": "Resolved",
+          "Changed Date": "2026-09-24T11:47:37.99Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "testCases": [],
