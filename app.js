@@ -3598,7 +3598,7 @@ const azureDevOps = {
             'Title': fields["System.Title"] || "Untitled",
             'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
             'Business Area': area,
-            'Backlog Item Type': fields["NT.Backlog.Item.Type"] || "" "",  // ✅ جديد
+            'Backlog Item Type': fields["NT.Backlog.Item.Type"] ||  "",  // ✅ جديد
             'State': state,
             'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
             'Release Expected Date': fields["MyCompany.MyProcess.Release"] ? new Date(fields["MyCompany.MyProcess.Release"]) : null,
