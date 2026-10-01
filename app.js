@@ -608,16 +608,20 @@ const dataProcessor = {
         const itemType = row['Work Item Type'];
         if (itemType === 'User Story' || itemType === 'CR' || itemType === 'Support log') {
             let area = row['Business Area'];
+
+            // تعديل مسميات Integration (لكل الأنواع)
             if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
 
-            // ✅ منطق MobileApp الجديد
-            if (area && area.trim().toLowerCase() === "mobileapp") {
+            // ✅ منطق MobileApp الجديد — يُطبق فقط على User Story و CR
+            const isUserStoryOrCR = (itemType === 'User Story' || itemType === 'CR');
+            if (isUserStoryOrCR && area && area.trim().toLowerCase() === "mobileapp") {
                 const backItemType = row['Backlog Item Type'];
                 if (backItemType && backItemType.toString().trim() !== "") {
                     area = backItemType.toString().trim();
                 }
             }
 
+            // fallback على Iteration Path لو لسه فاضية
             if (!area || area.trim() === "") {
                 const path = row['Iteration Path'] || "";
                 area = path.includes('\\') ? path.split('\\')[0] : path;
@@ -699,10 +703,18 @@ const dataProcessor = {
         const state = row['State'] || "";
         if (!["New", "Approved"].includes(state)) return null;
 
+        const itemType = row['Work Item Type'] || 'User Story';
+
+        // ✅ الـ Backlog أصلاً User Stories فقط، لكن بنتحقق للاتساق
+        const isUserStoryOrCR = (itemType === 'User Story' || itemType === 'CR');
+
         let area = row['Business Area'] || "";
 
-        // ✅ منطق MobileApp الجديد
-        if (area && area.trim().toLowerCase() === "mobileapp") {
+        // تعديل مسميات Integration
+        if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
+
+        // ✅ منطق MobileApp — يُطبق فقط على User Story و CR
+        if (isUserStoryOrCR && area && area.trim().toLowerCase() === "mobileapp") {
             const backItemType = row['Backlog Item Type'];
             if (backItemType && backItemType.toString().trim() !== "") {
                 area = backItemType.toString().trim();
@@ -743,7 +755,7 @@ const dataProcessor = {
         };
     }).filter(s => s !== null);
 
-    // ✅ Guard 2: لو مفيش قصص مؤهلة بعد الفلترة، لا نكتب فوق الـ backlog الحالي
+    // ✅ Guard 2
     if (backlogStories.length === 0) {
         console.warn('⚠️ processBacklogRows: لم يتم بناء أي قصة بعد الفلترة. تم إلغاء تحديث الـ Backlog.');
         return;
