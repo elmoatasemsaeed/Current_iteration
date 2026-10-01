@@ -608,25 +608,11 @@ const dataProcessor = {
         const itemType = row['Work Item Type'];
         if (itemType === 'User Story' || itemType === 'CR' || itemType === 'Support log') {
             let area = row['Business Area'];
-
-            // تعديل مسميات Integration (لكل الأنواع)
             if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
-
-            // ✅ منطق MobileApp الجديد — يُطبق فقط على User Story و CR
-            const isUserStoryOrCR = (itemType === 'User Story' || itemType === 'CR');
-            if (isUserStoryOrCR && area && area.trim().toLowerCase() === "mobileapp") {
-                const backItemType = row['Backlog Item Type'];
-                if (backItemType && backItemType.toString().trim() !== "") {
-                    area = backItemType.toString().trim();
-                }
-            }
-
-            // fallback على Iteration Path لو لسه فاضية
             if (!area || area.trim() === "") {
                 const path = row['Iteration Path'] || "";
                 area = path.includes('\\') ? path.split('\\')[0] : path;
             }
-
             currentStory = {
                 id: row['ID'],
                 title: row['Title'],
@@ -702,31 +688,7 @@ const dataProcessor = {
     const backlogStories = rows.map(row => {
         const state = row['State'] || "";
         if (!["New", "Approved"].includes(state)) return null;
-
-        const itemType = row['Work Item Type'] || 'User Story';
-
-        // ✅ الـ Backlog أصلاً User Stories فقط، لكن بنتحقق للاتساق
-        const isUserStoryOrCR = (itemType === 'User Story' || itemType === 'CR');
-
-        let area = row['Business Area'] || "";
-
-        // تعديل مسميات Integration
-        if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
-
-        // ✅ منطق MobileApp — يُطبق فقط على User Story و CR
-        if (isUserStoryOrCR && area && area.trim().toLowerCase() === "mobileapp") {
-            const backItemType = row['Backlog Item Type'];
-            if (backItemType && backItemType.toString().trim() !== "") {
-                area = backItemType.toString().trim();
-            }
-        }
-
-        if (!area || area.trim() === "") {
-            const path = row['Iteration Path'] || "";
-            area = path.includes('\\') ? path.split('\\')[0] : path;
-        }
-        if (!area || area.trim() === "") area = "General";
-
+        const area = row['Business Area'] || "General";
         return {
             id: row['ID'],
             title: row['Title'] || "Untitled",
@@ -755,7 +717,7 @@ const dataProcessor = {
         };
     }).filter(s => s !== null);
 
-    // ✅ Guard 2
+    // ✅ Guard 2: لو مفيش قصص مؤهلة بعد الفلترة، لا نكتب فوق الـ backlog الحالي
     if (backlogStories.length === 0) {
         console.warn('⚠️ processBacklogRows: لم يتم بناء أي قصة بعد الفلترة. تم إلغاء تحديث الـ Backlog.');
         return;
@@ -3549,8 +3511,7 @@ const azureDevOps = {
                 'Tags': fields["System.Tags"],
                 'Changed Date': fields["System.ChangedDate"],
                 'Branch': fields["NT.Branch"],
-                'Customer': fields["Nt.Customer"],
-            'Backlog Item Type': fields["NT.Backlog.Item.Type"] || ""
+                'Customer': fields["Nt.Customer"]
             });
         });
         return rows;
@@ -3565,50 +3526,38 @@ const azureDevOps = {
             "System.IterationPath", "Custom.CustomResolvedDate", "MyCompany.MyProcess.TestedDate",
             "MyCompany.MyProcess.Tester", "Microsoft.VSTS.Common.ResolvedDate",
             "System.State", "MyCompany.MyProcess.Release", "MyCompany.MyProcess.BusinessPriority",
-            "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer",
-        "NT.Backlog.Item.Type" 
+            "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer"
         ];
     },
 
     buildBacklogRows(details) {
-    const rows = [];
-    details.forEach(d => {
-        const fields = d.fields || {};
-        const state = fields["System.State"] || "";
-        if (!["New", "Approved"].includes(state)) return;
-        let area = fields["MyCompany.MyProcess.BusinessArea"] || "";
-        if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
-
-        // ✅ منطق MobileApp الجديد
-        if (area && area.trim().toLowerCase() === "mobileapp") {
-            const backItemType = fields["NT.Backlog.Item.Type"];
-            if (backItemType && backItemType.toString().trim() !== "") {
-                area = backItemType.toString().trim();
+        const rows = [];
+        details.forEach(d => {
+            const fields = d.fields || {};
+            const state = fields["System.State"] || "";
+            if (!["New", "Approved"].includes(state)) return;
+            let area = fields["MyCompany.MyProcess.BusinessArea"] || "";
+            if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
+            if (!area || area.trim() === "") {
+                const path = fields["System.IterationPath"] || "";
+                area = path.includes('\\') ? path.split('\\')[0] : path;
             }
-        }
-
-        if (!area || area.trim() === "") {
-            const path = fields["System.IterationPath"] || "";
-            area = path.includes('\\') ? path.split('\\')[0] : path;
-        }
-
-        rows.push({
-            'ID': d.id,
-            'Work Item Type': fields["System.WorkItemType"] || "User Story",
-            'Title': fields["System.Title"] || "Untitled",
-            'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
-            'Business Area': area,
-            'Backlog Item Type': fields["NT.Backlog.Item.Type"] ||  "",  // ✅ جديد
-            'State': state,
-            'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
-            'Release Expected Date': fields["MyCompany.MyProcess.Release"] ? new Date(fields["MyCompany.MyProcess.Release"]) : null,
-            'Tags': fields["System.Tags"] || "",
-            'Iteration Path': fields["System.IterationPath"] || "",
-            'Changed Date': fields["System.ChangedDate"] ? new Date(fields["System.ChangedDate"]) : null
+            rows.push({
+                'ID': d.id,
+                'Work Item Type': fields["System.WorkItemType"] || "User Story",
+                'Title': fields["System.Title"] || "Untitled",
+                'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
+                'Business Area': area,
+                'State': state,
+                'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
+                'Release Expected Date': fields["MyCompany.MyProcess.Release"] ? new Date(fields["MyCompany.MyProcess.Release"]) : null,
+                'Tags': fields["System.Tags"] || "",
+                'Iteration Path': fields["System.IterationPath"] || "",
+                'Changed Date': fields["System.ChangedDate"] ? new Date(fields["System.ChangedDate"]) : null
+            });
         });
-    });
-    return rows;
-},
+        return rows;
+    },
 
     saveSettings() {
         const settings = {
