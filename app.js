@@ -3550,7 +3550,7 @@ const azureDevOps = {
                 'Changed Date': fields["System.ChangedDate"],
                 'Branch': fields["NT.Branch"],
                 'Customer': fields["Nt.Customer"],
-            'Backlog Item Type': fields["NT.BacklogItemType"] || ""
+            'Backlog Item Type': fields["NT.Backlog.Item.Type"] || ""
             });
         });
         return rows;
@@ -3566,7 +3566,7 @@ const azureDevOps = {
             "MyCompany.MyProcess.Tester", "Microsoft.VSTS.Common.ResolvedDate",
             "System.State", "MyCompany.MyProcess.Release", "MyCompany.MyProcess.BusinessPriority",
             "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer",
-        "NT.BacklogItemType" 
+        "NT.Backlog.Item.Type" 
         ];
     },
 
@@ -3581,7 +3581,7 @@ const azureDevOps = {
 
         // ✅ منطق MobileApp الجديد
         if (area && area.trim().toLowerCase() === "mobileapp") {
-            const backItemType = fields["NT.BacklogItemType"];
+            const backItemType = fields["NT.Backlog.Item.Type"];
             if (backItemType && backItemType.toString().trim() !== "") {
                 area = backItemType.toString().trim();
             }
@@ -3598,7 +3598,7 @@ const azureDevOps = {
             'Title': fields["System.Title"] || "Untitled",
             'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
             'Business Area': area,
-            'Backlog Item Type': fields["NT.BacklogItemType"] || "",  // ✅ جديد
+            'Backlog Item Type': fields["NT.Backlog.Item.Type"] || "" "",  // ✅ جديد
             'State': state,
             'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
             'Release Expected Date': fields["MyCompany.MyProcess.Release"] ? new Date(fields["MyCompany.MyProcess.Release"]) : null,
