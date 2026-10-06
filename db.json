@@ -6255,6 +6255,21 @@
           "State": "Active",
           "Changed Date": "2026-10-06T06:18:59.437Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 190855,
+          "Work Item Type": "Task",
+          "Title": "fix all governorates not retrieved",
+          "Assigned To": "yara mohsen",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Home Visit",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-06T06:55:13.07Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [
@@ -9916,7 +9931,7 @@
         },
         {
           "id": 188992,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 188995,
@@ -17299,12 +17314,13 @@
       "area": "Internal lab",
       "priority": 100,
       "tags": [
-        "enhanced report"
+        "enhanced report",
+        " PMD"
       ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-06T06:13:46.760Z",
+      "changedDate": "2026-10-06T06:41:02.223Z",
       "tasks": [
         {
           "ID": 183437,
@@ -23433,7 +23449,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-10-06T06:19:00.347Z",
+      "changedDate": "2026-10-06T06:55:13.990Z",
       "tasks": [
         {
           "ID": 177114,
@@ -32780,6 +32796,14 @@
         {
           "id": 190854,
           "state": "Design"
+        },
+        {
+          "id": 190856,
+          "state": "Design"
+        },
+        {
+          "id": 190857,
+          "state": "Design"
         }
       ],
       "reviews": [],
@@ -32920,37 +32944,6 @@
       "iterationPath": "LDM",
       "devActualTime": 2.25,
       "testActualTime": 2.5,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
-      "id": 189426,
-      "title": "Frist Med Production >Stop Trigger used for table IntegrationoutboxResult",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hebatullah Mohamed",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "First Med Lab_320",
-      "changedDate": "2026-10-05T09:19:07.193Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 1,
-      "testActualTime": 1,
       "isBacklog": false,
       "linkedProjectId": null
     },
@@ -34049,108 +34042,6 @@
       "linkedProjectId": null
     },
     {
-      "id": 189755,
-      "title": "Ansary Publish Issue",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mohamed Bahaa",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 999,
-      "tags": [
-        "DONE"
-      ],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Ansary Labs_604",
-      "changedDate": "2026-10-05T13:53:55.347Z",
-      "tasks": [
-        {
-          "ID": 189793,
-          "Work Item Type": "Task",
-          "Title": "Water mark display at cash reciept when  print the reciept afer registration",
-          "Assigned To": "Mohamed Fawzy",
-          "Activity": "Testing",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0.17,
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-01T07:41:44.367Z",
-          "Customer": "Ansary Labs_604"
-        }
-      ],
-      "bugs": [
-        {
-          "ID": 189756,
-          "Work Item Type": "Bug",
-          "Title": "Appears error when user change role for user",
-          "Assigned To": "Mohamed Bahaa",
-          "Activity": "",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.67,
-          "TimeSheet_TestingActualTime": 0.5,
-          "Activated Date": "2026-09-29T05:53:25.763Z",
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-09-29T06:17:06.683Z",
-          "State": "Closed",
-          "Changed Date": "2026-09-30T06:53:44.11Z",
-          "Customer": "Ansary Labs_604"
-        },
-        {
-          "ID": 189794,
-          "Work Item Type": "Bug",
-          "Title": "Water mark(Copy) display at cash reciept when  print the reciept afer registration",
-          "Assigned To": "Mostafa Mohamed",
-          "Activity": "",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 1,
-          "Activated Date": "2026-09-29T09:14:05.76Z",
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-09-29T09:19:16.017Z",
-          "State": "Resolved",
-          "Changed Date": "2026-10-01T07:41:44.823Z",
-          "Customer": "Ansary Labs_604"
-        },
-        {
-          "ID": 190039,
-          "Work Item Type": "Bug",
-          "Title": "Search Registration_ Can't add Service in edit mode",
-          "Assigned To": "Mostafa Mohamed",
-          "Activity": "",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.67,
-          "TimeSheet_TestingActualTime": 1,
-          "Activated Date": "2026-09-29T14:26:47.86Z",
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-09-29T14:34:23.5Z",
-          "State": "Resolved",
-          "Tags": "published on stage",
-          "Changed Date": "2026-10-01T07:41:43.55Z",
-          "Customer": "Ansary Labs_604"
-        }
-      ],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 0.02,
-      "testActualTime": 2,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
       "id": 189813,
       "title": "ropertingdate column for all clients to be indexed",
       "type": "Support log",
@@ -34363,37 +34254,6 @@
       "linkedProjectId": null
     },
     {
-      "id": 190642,
-      "title": "dsah >> Enable microbiogy culture results transfer to the formatted text result table under Lab_result schema (#50102)",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Saddam Raees",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "DSAH - Dr. Samir Abbas Hospital_287",
-      "changedDate": "2026-10-05T09:21:37.213Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 5.5,
-      "testActualTime": 0.17,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
       "id": 190673,
       "title": "Move CR:179488 from local to Stage",
       "type": "Support log",
@@ -34547,11 +34407,13 @@
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "DONE"
+      ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "El Hekma Labs_432",
-      "changedDate": "2026-10-06T06:09:01.117Z",
+      "changedDate": "2026-10-06T06:41:18.893Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
