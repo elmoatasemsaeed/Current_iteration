@@ -7547,6 +7547,37 @@
       "linkedProjectId": null
     },
     {
+      "id": 190722,
+      "title": "Alborg UAE - Claims: Create new template copied from Form 20 in excel format",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Hesham Elsayed",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 1,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Borg KSA_530",
+      "changedDate": "2026-10-11T12:04:41.133Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
       "id": 190904,
       "title": "Al shamel Labs - search Results - with change analyzer , the non- numeric ref range will updated according to the changed analyzer",
       "type": "User Story",
@@ -7626,6 +7657,10 @@
         {
           "id": 191703,
           "state": "Design"
+        },
+        {
+          "id": 191707,
+          "state": "Design"
         }
       ],
       "reviews": [],
@@ -7655,7 +7690,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-10-11T11:55:55.943Z",
+      "changedDate": "2026-10-11T12:05:53.083Z",
       "tasks": [
         {
           "ID": 191575,
@@ -7667,11 +7702,11 @@
           "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-11T11:14:12.39Z",
-          "Iteration Path": "LDM\\Candidate CRs",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-11T11:37:31.23Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-11T11:55:55.943Z",
+          "Changed Date": "2026-10-11T12:05:53.083Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -7684,11 +7719,11 @@
           "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-11T11:14:15.38Z",
-          "Iteration Path": "LDM\\Candidate CRs",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-11T11:32:55.773Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-11T11:55:55.943Z",
+          "Changed Date": "2026-10-11T12:05:53.083Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -7700,10 +7735,10 @@
           "Original Estimation": 3,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Candidate CRs",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-10-11T11:36:58.547Z",
+          "Changed Date": "2026-10-11T12:05:53.083Z",
           "Customer": "Al Borg KSA_530"
         },
         {
@@ -7715,10 +7750,10 @@
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Candidate CRs",
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-10-11T11:37:25.207Z",
+          "Changed Date": "2026-10-11T12:05:53.083Z",
           "Customer": "Al Borg KSA_530"
         }
       ],
@@ -8096,7 +8131,7 @@
         "finalEnd": "2026-10-12T13:00:00.000Z"
       },
       "customTags": [],
-      "iterationPath": "LDM\\Candidate CRs",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": false,
@@ -15576,7 +15611,7 @@
       "id": 189646,
       "title": "Neuro Hospital - DMS HIS Integration (Copy From SKUH)",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Mostafa Taha",
       "tester": "Hebatullah Mohamed",
       "area": "LDM Integration",
@@ -15585,7 +15620,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Neuro Hospital_0021",
-      "changedDate": "2026-10-08T07:56:28.387Z",
+      "changedDate": "2026-10-11T12:04:16.550Z",
       "tasks": [
         {
           "ID": 191440,
@@ -15604,7 +15639,23 @@
           "Customer": "Neuro Hospital_0021"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": 191704,
+          "Work Item Type": "Bug",
+          "Title": "API> api/Integration/Neuro/DMS/Results/GetCumulativeReport: not obey keys",
+          "Assigned To": "Mostafa Taha",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-11T12:04:18.207Z",
+          "Customer": "Neuro Hospital_0021"
+        }
+      ],
       "testCases": [],
       "reviews": [],
       "calc": {
@@ -16456,7 +16507,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-11T08:42:24.487Z",
+      "changedDate": "2026-10-11T12:06:31.870Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -32225,12 +32276,13 @@
       "tags": [
         "Backup => D:\\MedLab_New_Stage\\Backup\\11-10-2026\\Old",
         " Backup => D:\\MedLab_New_Stage\\Backup\\16-09-2026\\Old",
-        " Published stage"
+        " Published stage",
+        " waiting Tester"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-11T10:37:27.267Z",
+      "changedDate": "2026-10-11T12:03:33.027Z",
       "tasks": [
         {
           "ID": 187935,
@@ -34670,57 +34722,6 @@
       "linkedProjectId": null
     },
     {
-      "id": 189753,
-      "title": "#MRC: Attachment uploaded in LDM is visible in Web Result even though the service is not reviewed",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mahmoud Mohamed",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 999,
-      "tags": [
-        "Webresult"
-      ],
-      "expectedRelease": null,
-      "branch": "Ethiopia",
-      "customer": "MRC - Misr Radiology Center Lab_104",
-      "changedDate": "2026-10-11T07:54:39.857Z",
-      "tasks": [
-        {
-          "ID": 190871,
-          "Work Item Type": "Task",
-          "Title": "update OR_SELECTACCESSTIONATTACHMENTS procedure to get the reviewed only",
-          "Assigned To": "Mostafa Mahmoud",
-          "Activity": "Development",
-          "Original Estimation": 1.5,
-          "TimeSheet_DevActualTime": 2,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-06T09:30:02.343Z",
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-06T10:25:27.323Z",
-          "State": "Closed",
-          "Tags": "liquibase; V.4.4.0",
-          "Changed Date": "2026-10-11T07:54:49.267Z",
-          "Customer": "MRC - Misr Radiology Center Lab_104"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-10-20T10:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 6.5,
-      "testActualTime": 1.5,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
       "id": 190065,
       "title": "ِAnsary Live | Odoo integration  >>No records fired for extra services",
       "type": "Support log",
@@ -35831,7 +35832,24 @@
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
       "changedDate": "2026-10-11T12:00:58.490Z",
-      "tasks": [],
+      "tasks": [
+        {
+          "ID": 191705,
+          "Work Item Type": "Task",
+          "Title": "CR-191578- Execution",
+          "Assigned To": "Bassant Raafat",
+          "Activity": "Testing",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-11T12:04:40.2Z",
+          "Iteration Path": "Home Visit",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-10-11T12:04:45.547Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
@@ -35874,6 +35892,37 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
+      "id": 191581,
+      "title": "Collector App - Add LDM Reservation No",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Mostafa Mohamed",
+      "tester": "Unassigned",
+      "area": "Home Visit",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Internal NT",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-10-11T12:04:10.323Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "Home Visit",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": false,
