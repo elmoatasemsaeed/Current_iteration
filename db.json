@@ -2969,7 +2969,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-10-11T09:47:44.957Z",
+      "changedDate": "2026-10-11T11:14:54.793Z",
       "tasks": [
         {
           "ID": 191396,
@@ -2997,10 +2997,11 @@
           "Original Estimation": 8,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-11T11:17:57.64Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-11T09:42:59.46Z",
+          "State": "Active",
+          "Changed Date": "2026-10-11T11:17:57.64Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3025,13 +3026,14 @@
           "Assigned To": "Karim El-Saeed",
           "Activity": "Development",
           "Original Estimation": 1.25,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-11T10:11:30.787Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-10-11T10:45:44.987Z",
+          "Resolved Date": "2026-10-11T11:17:53.087Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-10-11T11:17:53.087Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -3294,7 +3296,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-02T13:00:00.000Z",
+        "devEnd": "2026-11-02T11:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -3309,7 +3311,7 @@
       "id": 186192,
       "title": "Create New Report - Cancelled Overview",
       "type": "User Story",
-      "state": "Active",
+      "state": "On-Hold",
       "assignedTo": "yara mohsen",
       "tester": "Unassigned",
       "area": "Home Visit",
@@ -3318,7 +3320,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-09-28T09:29:09.640Z",
+      "changedDate": "2026-10-11T11:36:52.657Z",
       "tasks": [
         {
           "ID": 190615,
@@ -7208,13 +7210,14 @@
           "Title": "cache all needed values",
           "Assigned To": "yara mohsen",
           "Activity": "Development",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "Home Visit",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-09T00:17:58.3Z",
+          "Resolved Date": "2026-10-11T11:32:03.47Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-10-11T11:32:03.47Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -7599,6 +7602,22 @@
         {
           "id": 191573,
           "state": "Design"
+        },
+        {
+          "id": 191580,
+          "state": "Design"
+        },
+        {
+          "id": 191602,
+          "state": "Design"
+        },
+        {
+          "id": 191604,
+          "state": "Design"
+        },
+        {
+          "id": 191607,
+          "state": "Design"
         }
       ],
       "reviews": [],
@@ -7607,6 +7626,466 @@
         "devEnd": "TBD",
         "testEnd": "---",
         "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
+      "id": 191438,
+      "title": "Alborg KSA - Skip receiving sample/sample location step in Pathologist worklist/Case details.",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Mohamed Samy",
+      "tester": "Saddam Raees",
+      "area": "Internal lab",
+      "priority": 1,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Borg KSA_530",
+      "changedDate": "2026-10-11T11:38:05.693Z",
+      "tasks": [
+        {
+          "ID": 191575,
+          "Work Item Type": "Task",
+          "Title": "BD009 - Pathology | Pathologist Worklist | Skip sample location validation when opening Case Result",
+          "Assigned To": "Mohamed Samy",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 1,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-11T11:14:12.39Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-10-11T11:37:31.23Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-10-11T11:38:05.693Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 191576,
+          "Work Item Type": "Task",
+          "Title": "BD009 - Pathology | Case Details | Skip sample location validation on case load and Previous/Next",
+          "Assigned To": "Mohamed Samy",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-11T11:14:15.38Z",
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-10-11T11:32:55.773Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-10-11T11:38:05.693Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 191609,
+          "Work Item Type": "Task",
+          "Title": "Execution task for CR 191438",
+          "Assigned To": "Saddam Raees",
+          "Activity": "Testing",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-11T11:36:58.547Z",
+          "Customer": "Al Borg KSA_530"
+        },
+        {
+          "ID": 191610,
+          "Work Item Type": "Task",
+          "Title": "Preparation task for CR 191438",
+          "Assigned To": "Saddam Raees",
+          "Activity": "Testing",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Candidate CRs",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-11T11:37:25.207Z",
+          "Customer": "Al Borg KSA_530"
+        }
+      ],
+      "bugs": [],
+      "testCases": [
+        {
+          "id": 191611,
+          "state": "Design"
+        },
+        {
+          "id": 191612,
+          "state": "Design"
+        },
+        {
+          "id": 191613,
+          "state": "Design"
+        },
+        {
+          "id": 191614,
+          "state": "Design"
+        },
+        {
+          "id": 191615,
+          "state": "Design"
+        },
+        {
+          "id": 191616,
+          "state": "Design"
+        },
+        {
+          "id": 191617,
+          "state": "Design"
+        },
+        {
+          "id": 191618,
+          "state": "Design"
+        },
+        {
+          "id": 191619,
+          "state": "Design"
+        },
+        {
+          "id": 191620,
+          "state": "Design"
+        },
+        {
+          "id": 191621,
+          "state": "Design"
+        },
+        {
+          "id": 191622,
+          "state": "Design"
+        },
+        {
+          "id": 191623,
+          "state": "Design"
+        },
+        {
+          "id": 191624,
+          "state": "Design"
+        },
+        {
+          "id": 191625,
+          "state": "Design"
+        },
+        {
+          "id": 191626,
+          "state": "Design"
+        },
+        {
+          "id": 191627,
+          "state": "Design"
+        },
+        {
+          "id": 191628,
+          "state": "Design"
+        },
+        {
+          "id": 191629,
+          "state": "Design"
+        },
+        {
+          "id": 191630,
+          "state": "Design"
+        },
+        {
+          "id": 191631,
+          "state": "Design"
+        },
+        {
+          "id": 191632,
+          "state": "Design"
+        },
+        {
+          "id": 191633,
+          "state": "Design"
+        },
+        {
+          "id": 191634,
+          "state": "Design"
+        },
+        {
+          "id": 191635,
+          "state": "Design"
+        },
+        {
+          "id": 191636,
+          "state": "Design"
+        },
+        {
+          "id": 191637,
+          "state": "Design"
+        },
+        {
+          "id": 191638,
+          "state": "Design"
+        },
+        {
+          "id": 191639,
+          "state": "Design"
+        },
+        {
+          "id": 191640,
+          "state": "Design"
+        },
+        {
+          "id": 191641,
+          "state": "Design"
+        },
+        {
+          "id": 191642,
+          "state": "Design"
+        },
+        {
+          "id": 191643,
+          "state": "Design"
+        },
+        {
+          "id": 191644,
+          "state": "Design"
+        },
+        {
+          "id": 191645,
+          "state": "Design"
+        },
+        {
+          "id": 191646,
+          "state": "Design"
+        },
+        {
+          "id": 191647,
+          "state": "Design"
+        },
+        {
+          "id": 191648,
+          "state": "Design"
+        },
+        {
+          "id": 191649,
+          "state": "Design"
+        },
+        {
+          "id": 191650,
+          "state": "Design"
+        },
+        {
+          "id": 191651,
+          "state": "Design"
+        },
+        {
+          "id": 191652,
+          "state": "Design"
+        },
+        {
+          "id": 191653,
+          "state": "Design"
+        },
+        {
+          "id": 191654,
+          "state": "Design"
+        },
+        {
+          "id": 191655,
+          "state": "Design"
+        },
+        {
+          "id": 191656,
+          "state": "Design"
+        },
+        {
+          "id": 191657,
+          "state": "Design"
+        },
+        {
+          "id": 191658,
+          "state": "Design"
+        },
+        {
+          "id": 191659,
+          "state": "Design"
+        },
+        {
+          "id": 191660,
+          "state": "Design"
+        },
+        {
+          "id": 191661,
+          "state": "Design"
+        },
+        {
+          "id": 191662,
+          "state": "Design"
+        },
+        {
+          "id": 191663,
+          "state": "Design"
+        },
+        {
+          "id": 191664,
+          "state": "Design"
+        },
+        {
+          "id": 191665,
+          "state": "Design"
+        },
+        {
+          "id": 191666,
+          "state": "Design"
+        },
+        {
+          "id": 191667,
+          "state": "Design"
+        },
+        {
+          "id": 191668,
+          "state": "Design"
+        },
+        {
+          "id": 191669,
+          "state": "Design"
+        },
+        {
+          "id": 191670,
+          "state": "Design"
+        },
+        {
+          "id": 191671,
+          "state": "Design"
+        },
+        {
+          "id": 191672,
+          "state": "Design"
+        },
+        {
+          "id": 191673,
+          "state": "Design"
+        },
+        {
+          "id": 191674,
+          "state": "Design"
+        },
+        {
+          "id": 191675,
+          "state": "Design"
+        },
+        {
+          "id": 191676,
+          "state": "Design"
+        },
+        {
+          "id": 191677,
+          "state": "Design"
+        },
+        {
+          "id": 191678,
+          "state": "Design"
+        },
+        {
+          "id": 191679,
+          "state": "Design"
+        },
+        {
+          "id": 191680,
+          "state": "Design"
+        },
+        {
+          "id": 191681,
+          "state": "Design"
+        },
+        {
+          "id": 191682,
+          "state": "Design"
+        },
+        {
+          "id": 191683,
+          "state": "Design"
+        },
+        {
+          "id": 191684,
+          "state": "Design"
+        },
+        {
+          "id": 191685,
+          "state": "Design"
+        },
+        {
+          "id": 191686,
+          "state": "Design"
+        },
+        {
+          "id": 191687,
+          "state": "Design"
+        },
+        {
+          "id": 191688,
+          "state": "Design"
+        },
+        {
+          "id": 191689,
+          "state": "Design"
+        },
+        {
+          "id": 191690,
+          "state": "Design"
+        },
+        {
+          "id": 191691,
+          "state": "Design"
+        },
+        {
+          "id": 191692,
+          "state": "Design"
+        },
+        {
+          "id": 191693,
+          "state": "Design"
+        },
+        {
+          "id": 191694,
+          "state": "Design"
+        },
+        {
+          "id": 191695,
+          "state": "Design"
+        },
+        {
+          "id": 191696,
+          "state": "Design"
+        },
+        {
+          "id": 191697,
+          "state": "Design"
+        },
+        {
+          "id": 191698,
+          "state": "Design"
+        },
+        {
+          "id": 191699,
+          "state": "Design"
+        },
+        {
+          "id": 191700,
+          "state": "Design"
+        },
+        {
+          "id": 191701,
+          "state": "Design"
+        }
+      ],
+      "reviews": [],
+      "calc": {
+        "devEnd": "2026-10-11T11:14:12.390Z",
+        "testEnd": "2026-10-12T13:00:00.000Z",
+        "finalEnd": "2026-10-12T13:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
@@ -8102,9 +8581,9 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-08T08:00:00.000Z",
-        "testEnd": "2026-11-09T07:00:00.000Z",
-        "finalEnd": "2026-11-09T07:00:00.000Z"
+        "devEnd": "2026-11-05T14:00:00.000Z",
+        "testEnd": "2026-11-08T07:00:00.000Z",
+        "finalEnd": "2026-11-08T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
@@ -9393,8 +9872,9 @@
           "TimeSheet_TestingActualTime": 2,
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-08T11:56:35.59Z",
+          "Resolved Date": "2026-10-11T11:13:42.383Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-10-11T11:13:42.383Z",
           "Customer": "Alameda_0062"
         }
       ],
@@ -9421,102 +9901,102 @@
       "testCases": [
         {
           "id": 190922,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190923,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190924,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190925,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190926,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190927,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190928,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190929,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190930,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190931,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190932,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190933,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190934,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190935,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190936,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190937,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190938,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190939,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190940,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190941,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190942,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190943,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 190944,
-          "state": "Design"
+          "state": "Pass"
         }
       ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-10-13T09:00:00.000Z",
-        "testEnd": "2026-10-14T10:00:00.000Z",
-        "finalEnd": "2026-10-14T10:00:00.000Z"
+        "testEnd": "2026-10-14T06:00:00.000Z",
+        "finalEnd": "2026-10-14T06:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
@@ -12707,13 +13187,14 @@
           "Title": "CR_ 175517 >> Preparation",
           "Assigned To": "Mostafa Mohamed",
           "Activity": "Testing",
-          "Original Estimation": 0,
+          "Original Estimation": 2,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 2,
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-08T11:56:36.033Z",
+          "Resolved Date": "2026-10-11T11:17:10.5Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-10-11T11:17:10.5Z",
           "Customer": "Alameda_0062"
         }
       ],
@@ -12739,95 +13220,95 @@
       "testCases": [
         {
           "id": 191188,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191189,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191190,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191191,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191192,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191193,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191194,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191195,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191196,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191197,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191198,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191199,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191200,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191201,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191202,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191203,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191204,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191205,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191206,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191207,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191208,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191209,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191210,
-          "state": "Design"
+          "state": "Pass"
         }
       ],
       "reviews": [],
@@ -13116,11 +13597,13 @@
       "tester": "Abdulrahman Elbetar",
       "area": "MobileApp",
       "priority": 3,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-11T10:49:46.173Z",
+      "changedDate": "2026-10-11T11:39:57.733Z",
       "tasks": [
         {
           "ID": 184923,
@@ -13486,9 +13969,9 @@
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-06T05:24:12.24Z",
-          "State": "Resolved",
+          "State": "Closed",
           "Tags": "not published",
-          "Changed Date": "2026-10-07T07:38:30.457Z",
+          "Changed Date": "2026-10-11T11:11:27.167Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -13644,7 +14127,7 @@
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\AppLink-October 1-29",
       "devActualTime": 0,
-      "testActualTime": 0,
+      "testActualTime": 0.5,
       "isBacklog": false,
       "linkedProjectId": null
     },
@@ -14596,13 +15079,14 @@
           "Title": "CR_ 175515 >> Preparation",
           "Assigned To": "Mostafa Mohamed",
           "Activity": "Testing",
-          "Original Estimation": 0,
+          "Original Estimation": 2,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 2,
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-08T11:59:04.397Z",
+          "Resolved Date": "2026-10-11T11:19:43.253Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-10-11T11:19:43.253Z",
           "Customer": "Alameda_0062"
         }
       ],
@@ -14610,95 +15094,95 @@
       "testCases": [
         {
           "id": 191165,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191166,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191167,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191168,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191169,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191170,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191171,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191172,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191173,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191174,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191175,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191176,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191177,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191178,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191179,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191180,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191181,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191182,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191183,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191184,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191185,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191186,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 191187,
-          "state": "Design"
+          "state": "Pass"
         }
       ],
       "reviews": [],
@@ -18000,8 +18484,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2025-09-21T09:00:00.000Z",
-        "testEnd": "2026-11-09T07:00:00.000Z",
-        "finalEnd": "2026-11-09T07:00:00.000Z"
+        "testEnd": "2026-11-08T07:00:00.000Z",
+        "finalEnd": "2026-11-08T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
@@ -19891,7 +20375,88 @@
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 191582,
+          "state": "Design"
+        },
+        {
+          "id": 191583,
+          "state": "Design"
+        },
+        {
+          "id": 191584,
+          "state": "Design"
+        },
+        {
+          "id": 191585,
+          "state": "Design"
+        },
+        {
+          "id": 191586,
+          "state": "Design"
+        },
+        {
+          "id": 191587,
+          "state": "Design"
+        },
+        {
+          "id": 191588,
+          "state": "Design"
+        },
+        {
+          "id": 191589,
+          "state": "Design"
+        },
+        {
+          "id": 191590,
+          "state": "Design"
+        },
+        {
+          "id": 191591,
+          "state": "Design"
+        },
+        {
+          "id": 191592,
+          "state": "Design"
+        },
+        {
+          "id": 191593,
+          "state": "Design"
+        },
+        {
+          "id": 191594,
+          "state": "Design"
+        },
+        {
+          "id": 191595,
+          "state": "Design"
+        },
+        {
+          "id": 191596,
+          "state": "Design"
+        },
+        {
+          "id": 191597,
+          "state": "Design"
+        },
+        {
+          "id": 191598,
+          "state": "Design"
+        },
+        {
+          "id": 191599,
+          "state": "Design"
+        },
+        {
+          "id": 191600,
+          "state": "Design"
+        },
+        {
+          "id": 191601,
+          "state": "Design"
+        }
+      ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-10-08T11:00:00.000Z",
@@ -20270,7 +20835,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-08T12:00:00.000Z",
+        "devEnd": "2026-11-08T10:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -30187,8 +30752,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-08-30T08:00:00.000Z",
-        "testEnd": "2026-11-09T12:00:00.000Z",
-        "finalEnd": "2026-11-09T12:00:00.000Z"
+        "testEnd": "2026-11-08T12:00:00.000Z",
+        "finalEnd": "2026-11-08T12:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM",
@@ -31253,8 +31818,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-10-20T06:00:00.000Z",
-        "testEnd": "2026-11-09T14:00:00.000Z",
-        "finalEnd": "2026-11-09T14:00:00.000Z"
+        "testEnd": "2026-11-08T14:00:00.000Z",
+        "finalEnd": "2026-11-08T14:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
@@ -32691,8 +33256,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-09-22T08:00:00.000Z",
-        "testEnd": "2026-11-11T08:00:00.000Z",
-        "finalEnd": "2026-11-11T08:00:00.000Z"
+        "testEnd": "2026-11-10T08:00:00.000Z",
+        "finalEnd": "2026-11-10T08:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
@@ -33822,14 +34387,14 @@
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0.67,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.5,
           "Activated Date": "2026-10-11T09:31:22.233Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-11T09:55:13.213Z",
-          "State": "Resolved",
+          "State": "Closed",
           "Tags": "check Comment",
-          "Changed Date": "2026-10-11T09:55:13.213Z",
+          "Changed Date": "2026-10-11T11:15:03.39Z",
           "Customer": "Abha Private Hospital_14"
         },
         {
@@ -33838,13 +34403,29 @@
           "Title": "Integration | GetAccessionSamplesByORC |Integration | GetAccessionSamplesByORC | Change Data Response Type from Array to Object",
           "Assigned To": "Mohamed Refaat",
           "Activity": "",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-11T11:41:34.763Z",
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-10-11T11:41:34.763Z",
+          "Customer": "Abha Private Hospital_14"
+        },
+        {
+          "ID": 191606,
+          "Work Item Type": "Bug",
+          "Title": "#Patient report: Amended result section still prints on the patient report after the user performs “Undo Review”",
+          "Assigned To": "Bothyna Mostafa",
+          "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-10-11T11:02:24.713Z",
+          "Changed Date": "2026-10-11T11:29:26.877Z",
           "Customer": "Abha Private Hospital_14"
         }
       ],
@@ -34493,58 +35074,6 @@
       "linkedProjectId": null
     },
     {
-      "id": 190906,
-      "title": "Al-shamel | Issue in Registration stage and preproduction",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mohamed Abd-Elalim",
-      "tester": "Unassigned",
-      "area": "Registration",
-      "priority": 999,
-      "tags": [
-        "Published Pre Production",
-        " published side port",
-        " Published stage",
-        " V1.0_AlShamel_22_7_2026_SL_190906"
-      ],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Al Shamel Lab_624",
-      "changedDate": "2026-10-11T11:03:15.333Z",
-      "tasks": [
-        {
-          "ID": 191435,
-          "Work Item Type": "Task",
-          "Title": "Sl 190906 | review Pr",
-          "Assigned To": "Fatma Fayed",
-          "Activity": "Development",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.33,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-07T14:09:25.463Z",
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Changed Date": "2026-10-07T14:10:35.89Z",
-          "Customer": "Al Shamel Lab_624"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-10-19T07:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 5.25,
-      "testActualTime": 4,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
       "id": 191080,
       "title": "Wareed Mobile app - design Updates",
       "type": "User Story",
@@ -34692,110 +35221,6 @@
       "iterationPath": "LDM",
       "devActualTime": 0.02,
       "testActualTime": 2,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
-      "id": 191216,
-      "title": "#50455_ Mozmen lab >> Export Data Files for Enhanced Reports",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Yasmine Fouad",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Mozmen Labs_1494",
-      "changedDate": "2026-10-07T18:22:49.027Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-September 13-3",
-      "devActualTime": 1.5,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null
-    },
-    {
-      "id": 191388,
-      "title": "#Al Shamel KSA: we need to publish SL: 190906,187635 and SL: 189497 at production server",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hesham Elsayed",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 999,
-      "tags": [
-        "Backup => D:\\Alshamel_PreProduction\\Backup\\07-10-2026\\Old",
-        " Backup => D:\\LDM_Release2026\\Backups\\11-10-2026\\Old",
-        " Backup => D:\\LDM_SidePort\\Backups\\07-10-2026\\Old",
-        " Published Live",
-        " Published Pre Production",
-        " published side port",
-        " V1.0_AlShamel_22_7_2026_SL_191388"
-      ],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Al Shamel Lab_624",
-      "changedDate": "2026-10-11T11:03:15.333Z",
-      "tasks": [
-        {
-          "ID": 191403,
-          "Work Item Type": "Task",
-          "Title": "DB Modifications : check tasks #187648 and #189571 on alshamel live db",
-          "Assigned To": "Ahmed Farag",
-          "Activity": "DB Modification",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-07T12:22:27.74Z",
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-07T12:30:49.577Z",
-          "State": "Closed",
-          "Tags": "No action has been taken",
-          "Changed Date": "2026-10-11T07:53:20.137Z",
-          "Customer": "Al Shamel Lab_624"
-        },
-        {
-          "ID": 191517,
-          "Work Item Type": "Task",
-          "Title": "SL 191388 | Review Pr",
-          "Assigned To": "Fatma Fayed",
-          "Activity": "Development",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.33,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-11T07:55:16.043Z",
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-10-11T07:59:35.043Z",
-          "Customer": "Al Shamel Lab_624"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-10-08T07:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 3.75,
-      "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null
     },
@@ -35188,7 +35613,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Acculab_423",
-      "changedDate": "2026-10-11T10:44:50.537Z",
+      "changedDate": "2026-10-11T11:07:11.127Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -35201,7 +35626,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
-      "devActualTime": 2.75,
+      "devActualTime": 3.08,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null
@@ -35373,6 +35798,68 @@
       "customTags": [],
       "iterationPath": "LDM",
       "devActualTime": 1,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
+      "id": 191578,
+      "title": "Collector App API - Send LDM Reservation No",
+      "type": "User Story",
+      "state": "Resolved",
+      "assignedTo": "reem.abdulmuttalib",
+      "tester": "Unassigned",
+      "area": "Home Visit",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Internal NT",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-10-11T11:38:02.803Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "Home Visit",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null
+    },
+    {
+      "id": 191579,
+      "title": "#Al Shamel: Formula input tests (Calcium, Albumin) print on the patient report even though “Visible” is unchecked in the Test’s Formula setup",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Mohamed Hany",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Al Shamel Lab_624",
+      "changedDate": "2026-10-11T11:20:25.247Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null
