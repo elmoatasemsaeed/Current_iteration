@@ -196,13 +196,15 @@ function createStoryCard(story, options = {}) {
     const commentsCount = getStandupComments(story.id).length;
     const releaseDate = story.expectedRelease ? (story.expectedRelease instanceof Date ? story.expectedRelease.toLocaleDateString('en-GB') : new Date(story.expectedRelease).toLocaleDateString('en-GB')) : null;
 
-    // ----- الإضافة الجديدة: التحقق من صحة Iteration Path -----
-   const iterationPathIndicator = (!isBacklog && !isSupport) 
-    ? `<span class="text-[10px] font-bold ${iterationPathValid ? 'text-green-600' : 'text-red-600'} ml-2 inline-flex items-center gap-1 min-w-0 max-w-[240px]" title="${escapeHtml(story.iterationPath || 'N/A')}">
-            ${iterationPathValid ? '✅' : '❌'}
-            <span class="truncate">IP: ${escapeHtml(story.iterationPath || 'N/A')}</span>
-       </span>` 
-    : '';
+    // ----- التحقق من صحة Iteration Path -----
+    const iterationPathValid = !!(story.iterationPath && /[\d\/]/.test(story.iterationPath));
+    const iterationPathIndicator = (!isBacklog && !isSupport)
+        ? `<span class="text-[10px] font-bold ${iterationPathValid ? 'text-green-600' : 'text-red-600'} ml-2 inline-flex items-center gap-1 min-w-0 max-w-[240px]" title="${escapeHtml(story.iterationPath || 'N/A')}">
+                ${iterationPathValid ? '✅' : '❌'}
+                <span class="truncate">IP: ${escapeHtml(story.iterationPath || 'N/A')}</span>
+           </span>`
+        : '';
+
     let statusHtml = '';
     if (showStatus && !isBacklog) {
         const state = story.state || '';
@@ -216,7 +218,7 @@ function createStoryCard(story, options = {}) {
 
     let projectSelectHtml = showProjectSelect && !isBacklog ? renderProjectSelect(story) : '';
     let tagDropdownHtml = showTagDropdown ? renderTagDropdown(story.id, story.customTags || []) : '';
-    let commentsHtml = showCommentsButton && !isBacklog ? 
+    let commentsHtml = showCommentsButton && !isBacklog ?
         `<button onclick="ui.openCommentsModal('${story.id}')" class="btn btn-outline text-indigo-600 border-indigo-300 hover:bg-indigo-50 text-xs py-1 px-2">💬 <span class="font-bold">${commentsCount}</span></button>` : '';
 
     let extraFields = '';
@@ -291,7 +293,7 @@ function createStoryCard(story, options = {}) {
             ${releaseDate ? `<div class="absolute top-0 right-0 bg-purple-700 text-white text-xs font-bold px-3 py-1.5 rounded-bl-lg shadow-lg z-10 border border-white/20 backdrop-blur-sm">📅 ${escapeHtml(releaseDate)}</div>` : ''}
             ${tags.length > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${tags.map(tag => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(story.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${escapeHtml(tag.trim())}</span>`).join('')}</div>` : ''}
             ${tagDropdownHtml}
-            <div class="flex justify-between items-center mb-2">
+            <div class="flex justify-between items-center mb-2 gap-2">
                 <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-google-blue cursor-pointer hover:underline flex items-center gap-0.5 min-w-0 flex-1">
                     #${story.id} 🔍
                     ${iterationPathIndicator}
@@ -304,7 +306,6 @@ function createStoryCard(story, options = {}) {
         </div>
     `;
 }
-
 // =================================================================
 // ARCHIVER
 // =================================================================
