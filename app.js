@@ -197,11 +197,12 @@ function createStoryCard(story, options = {}) {
     const releaseDate = story.expectedRelease ? (story.expectedRelease instanceof Date ? story.expectedRelease.toLocaleDateString('en-GB') : new Date(story.expectedRelease).toLocaleDateString('en-GB')) : null;
 
     // ----- الإضافة الجديدة: التحقق من صحة Iteration Path -----
-    const iterationPathValid = story.iterationPath && /[\d\/]/.test(story.iterationPath);
-    const iterationPathIndicator = (!isBacklog && !isSupport) 
-        ? `<span class="text-[10px] font-bold ${iterationPathValid ? 'text-green-600' : 'text-red-600'} ml-2">${iterationPathValid ? '✅' : '❌'} IP</span>` 
-        : '';
-
+   const iterationPathIndicator = (!isBacklog && !isSupport) 
+    ? `<span class="text-[10px] font-bold ${iterationPathValid ? 'text-green-600' : 'text-red-600'} ml-2 inline-flex items-center gap-1 min-w-0 max-w-[240px]" title="${escapeHtml(story.iterationPath || 'N/A')}">
+            ${iterationPathValid ? '✅' : '❌'}
+            <span class="truncate">IP: ${escapeHtml(story.iterationPath || 'N/A')}</span>
+       </span>` 
+    : '';
     let statusHtml = '';
     if (showStatus && !isBacklog) {
         const state = story.state || '';
@@ -291,7 +292,7 @@ function createStoryCard(story, options = {}) {
             ${tags.length > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${tags.map(tag => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(story.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${escapeHtml(tag.trim())}</span>`).join('')}</div>` : ''}
             ${tagDropdownHtml}
             <div class="flex justify-between items-center mb-2">
-                <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-google-blue cursor-pointer hover:underline flex items-center gap-0.5">
+                <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-google-blue cursor-pointer hover:underline flex items-center gap-0.5 min-w-0 flex-1">
                     #${story.id} 🔍
                     ${iterationPathIndicator}
                 </div>
