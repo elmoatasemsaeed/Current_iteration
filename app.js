@@ -1382,12 +1382,25 @@ const ui = {
     // =================================================================
     // PULL REQUEST ANALYTICS — NEW VIEW
     // =================================================================
-            calculatePRStatsByArea() {
+               calculatePRStatsByArea() {
         const prs = db.pullRequests || [];
         const storyMap = new Map();
         [...(db.currentStories || []), ...(db.backlogStories || [])].forEach(s => {
             if (s && s.id != null) storyMap.set(s.id.toString(), s);
         });
+
+        // ✅ Same area-resolution logic as processRows (for User Story / CR / Support log)
+        const resolveStoryArea = (story) => {
+            let area = story.area;
+            if (area && area.trim().toLowerCase() === "integration") {
+                area = "LDM Integration";
+            }
+            if (!area || area.trim() === "") {
+                const path = story.iterationPath || "";
+                area = path.includes('\\') ? path.split('\\')[0] : path;
+            }
+            return area || 'General';
+        };
 
         const areaMap = {};
         const now = Date.now();
@@ -1407,24 +1420,37 @@ const ui = {
 
         prs.forEach(pr => {
             // =========================================================
-            // AREA RESOLUTION — same source as User Story Kanban:
-            //   PR → linked Story → story.area  (already resolved in processRows)
-            //
-            //   • User Story / CR      → story.area || "General"
-            //   • Support log          → "Support Log" (dedicated area)
-            //   • No story / other type → "Unlinked"
+            // AREA RESOLUTION (priority order)
+            //   1) Title starts with "SL"        → "Support Log"
+            //   2) Repo name is not "LDM"        → repo name
+            //   3) Linked Story = Support log    → "Support Log"
+            //   4) Linked Story = User Story/CR  → resolveStoryArea(story)
+            //                                       (same as processRows:
+            //                                        "integration"→"LDM Integration",
+            //                                        empty → Iteration Path)
+            //   5) Otherwise                     → "Unlinked"
             // =========================================================
             let area = 'Unlinked';
-            if (pr.linkedStoryId) {
+            const prTitle = (pr.title || '').trim();
+            const prRepo  = (pr.repository || '').trim();
+
+            if (/^SL/i.test(prTitle)) {
+                // Rule 1: Support Log PR (title starts with SL)
+                area = 'Support Log';
+            } else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
+                // Rule 2: Non-LDM repo → area = repo name
+                area = prRepo;
+            } else if (pr.linkedStoryId) {
+                // Rules 3 & 4: story-based resolution
                 const story = storyMap.get(pr.linkedStoryId.toString());
                 if (story) {
                     if (story.type === 'Support log') {
                         area = 'Support Log';
                     } else if (isRegularStory(story)) {
-                        // ✅ Exactly like renderKanban: s.area || "General"
-                        area = story.area || 'General';
+                        // ✅ Same logic as processRows
+                        area = resolveStoryArea(story);
                     }
-                    // else (Task / Bug / Review / unknown type) → stays 'Unlinked'
+                    // else (Task / Bug / Review / unknown) → stays 'Unlinked'
                 }
             }
 
