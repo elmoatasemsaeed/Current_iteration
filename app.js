@@ -1382,7 +1382,7 @@ const ui = {
     // =================================================================
     // PULL REQUEST ANALYTICS — NEW VIEW
     // =================================================================
-            calculatePRStatsByArea() {
+          calculatePRStatsByArea() {
         const prs = db.pullRequests || [];
         const storyMap = new Map();       // storyId → story
         const childToParent = new Map();  // task/bug/tc/review ID → parent story
@@ -1407,20 +1407,38 @@ const ui = {
         (db.currentStories || []).forEach(indexStory);
         (db.backlogStories || []).forEach(indexStory);
 
-        // ✅ Same area-resolution logic as processRows (for User Story / CR)
-        // ✅ Support log stories get "Support Log"
+        // ✅ Same area-resolution logic as processRows
+        //    + Support log → "Support Log"
+        //    + If area == "LDM" → drill into iteration path for sub-area
         const resolveStoryArea = (story) => {
             if (!story) return 'Unlinked';
             if (story.type === 'Support log') return 'Support Log';
             if (!isRegularStory(story)) return 'Unlinked';
-            let area = story.area;
-            if (area && area.trim().toLowerCase() === "integration") {
+
+            let area = (story.area || '').trim();
+            const path = story.iterationPath || '';
+
+            // "integration" → "LDM Integration"
+            if (area.toLowerCase() === "integration") {
                 area = "LDM Integration";
             }
-            if (!area || area.trim() === "") {
-                const path = story.iterationPath || "";
-                area = path.includes('\\') ? path.split('\\')[0] : path;
+
+            // Empty area → first segment of iteration path
+            if (!area) {
+                area = path.includes('\\') ? path.split('\\')[0].trim() : path.trim();
+                if (area.toLowerCase() === "integration") area = "LDM Integration";
             }
+
+            // ✅ NEW: if area === "LDM", drill one level into iteration path
+            if (area && area.toUpperCase() === "LDM" && path.includes('\\')) {
+                const segments = path.split('\\').map(s => s.trim()).filter(s => s);
+                // segments[0] == "LDM" → take next non-empty segment
+                if (segments.length > 1) {
+                    area = segments[1];
+                    if (area.toLowerCase() === "integration") area = "LDM Integration";
+                }
+            }
+
             return area || 'General';
         };
 
@@ -1456,25 +1474,19 @@ const ui = {
             const prRepo  = (pr.repository || '').trim();
 
             if (/^SL/i.test(prTitle)) {
-                // Rule 1
                 area = 'Support Log';
             } else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
-                // Rule 2
                 area = prRepo;
             } else if (pr.linkedStoryId) {
                 const id = pr.linkedStoryId.toString();
-
-                // Rule 3 & 4: linkedStoryId matches a Story directly
                 const directStory = storyMap.get(id);
                 if (directStory) {
                     area = resolveStoryArea(directStory);
                 } else {
-                    // Rule 5: linkedStoryId matches a child item (Task/Bug/TC/Review)
                     const parentStory = childToParent.get(id);
                     if (parentStory) {
                         area = resolveStoryArea(parentStory);
                     }
-                    // Rule 6: nothing matched → stays 'Unlinked'
                 }
             }
 
@@ -1510,6 +1522,7 @@ const ui = {
             avgStalledDays: a.stalled > 0 ? a.stalledDaysTotal / a.stalled : 0
         })).sort((a, b) => b.total - a.total);
     },
+    
     renderPullRequestsTab() {
         const container = document.getElementById('pr-container');
         if (!container) return;
