@@ -8620,41 +8620,6 @@
               "vote": 10
             }
           ]
-        },
-        {
-          "id": 7643,
-          "title": "Develop 189304",
-          "status": "completed",
-          "createdBy": "Ibrahim Ahmed",
-          "repository": "LDM",
-          "creationDate": "2026-09-30T17:56:40.807Z",
-          "closedDate": "2026-10-01T08:58:31.149Z",
-          "cycleTimeHours": 15.030650555555555,
-          "linkedStoryId": "189304",
-          "sourceRefName": "refs/heads/develop_189304",
-          "targetRefName": "refs/heads/develop",
-          "reviewers": [
-            {
-              "name": "Bardis Khamees",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 0
-            },
-            {
-              "name": "gamal kasem",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 10
-            }
-          ]
         }
       ]
     },
@@ -15108,6 +15073,41 @@
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": [
+        {
+          "id": 8216,
+          "title": "US #180055 : Fix design issue",
+          "status": "active",
+          "createdBy": "Ola Gamal",
+          "repository": "LDM",
+          "creationDate": "2026-10-25T12:41:44.526Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "180055",
+          "sourceRefName": "refs/heads/develop_US187576",
+          "targetRefName": "refs/heads/develop",
+          "reviewers": [
+            {
+              "name": "Bardis Khamees",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "gamal kasem",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        },
         {
           "id": 7902,
           "title": "US #180055 : Fix design issues",
@@ -38122,6 +38122,99 @@
       "linkedProjectId": null,
       "pullRequests": [
         {
+          "id": 8218,
+          "title": "SL #192253 , #192255 Fix design issues Related Work Items: #194361",
+          "status": "active",
+          "createdBy": "Esraa Abd El Salam",
+          "repository": "LDM",
+          "creationDate": "2026-10-25T12:52:27.798Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "192253",
+          "sourceRefName": "refs/heads/Master_PreProduction_CR_186739",
+          "targetRefName": "refs/heads/Master_PreProduction",
+          "reviewers": [
+            {
+              "name": "Bardis Khamees",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        },
+        {
+          "id": 8217,
+          "title": "SL #192253 - Release : Fix missing spaces between the first, second, and third names when adding an existing patient from the Patient page if the patient exists in the patient table but not in the registration table by updating the name concatenation in GetFilteredName to include spaces between names within AddEditPatientData class",
+          "status": "active",
+          "createdBy": "Mohamed Samy",
+          "repository": "LDM",
+          "creationDate": "2026-10-25T12:45:39.574Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "192253",
+          "sourceRefName": "refs/heads/Master_PreProduction_SL#192253",
+          "targetRefName": "refs/heads/Master_PreProduction",
+          "reviewers": [
+            {
+              "name": "Bardis Khamees",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        },
+        {
+          "id": 8214,
+          "title": "SL_ #192253 Bug_ #194442 Dynamic Registration: apply Payer Attachments valida...",
+          "status": "active",
+          "createdBy": "Samir Mohamed",
+          "repository": "LDM",
+          "creationDate": "2026-10-25T12:32:48.904Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "192253",
+          "sourceRefName": "refs/heads/Master_PreProduction_Bug_194442",
+          "targetRefName": "refs/heads/Master_PreProduction",
+          "reviewers": [
+            {
+              "name": "Bardis Khamees",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        },
+        {
           "id": 8193,
           "title": "Integration: SL #192253 Bugs #192986 Fix outbox message delete duplications f...",
           "status": "completed",
@@ -45163,12 +45256,12 @@
         {
           "id": 8208,
           "title": "Inlab 182278 task 194433: new ALFAKSA_SP_REPORTING_PATIENTFOOTER_ENHANCED (Al...",
-          "status": "active",
+          "status": "completed",
           "createdBy": "Moamen SalahElDeen",
           "repository": "WebLDM-Liquibase",
           "creationDate": "2026-10-25T11:17:31.226Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-10-25T12:30:25.127Z",
+          "cycleTimeHours": 1.2149725,
           "linkedStoryId": "182278",
           "sourceRefName": "refs/heads/Moamen_main",
           "targetRefName": "refs/heads/main",
@@ -45187,6 +45280,10 @@
             },
             {
               "name": "Moamen SalahElDeen",
+              "vote": 10
+            },
+            {
+              "name": "Ahmed Attia",
               "vote": 10
             }
           ]
@@ -46415,6 +46512,192 @@
   },
   "pullRequests": [
     {
+      "id": 8218,
+      "title": "SL #192253 , #192255 Fix design issues Related Work Items: #194361",
+      "status": "active",
+      "createdBy": "Esraa Abd El Salam",
+      "repository": "LDM",
+      "creationDate": "2026-10-25T12:52:27.798Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "192253",
+      "sourceRefName": "refs/heads/Master_PreProduction_CR_186739",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Khamees",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8217,
+      "title": "SL #192253 - Release : Fix missing spaces between the first, second, and third names when adding an existing patient from the Patient page if the patient exists in the patient table but not in the registration table by updating the name concatenation in GetFilteredName to include spaces between names within AddEditPatientData class",
+      "status": "active",
+      "createdBy": "Mohamed Samy",
+      "repository": "LDM",
+      "creationDate": "2026-10-25T12:45:39.574Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "192253",
+      "sourceRefName": "refs/heads/Master_PreProduction_SL#192253",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Khamees",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8216,
+      "title": "US #180055 : Fix design issue",
+      "status": "active",
+      "createdBy": "Ola Gamal",
+      "repository": "LDM",
+      "creationDate": "2026-10-25T12:41:44.526Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "180055",
+      "sourceRefName": "refs/heads/develop_US187576",
+      "targetRefName": "refs/heads/develop",
+      "reviewers": [
+        {
+          "name": "Bardis Khamees",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "gamal kasem",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8215,
+      "title": "Master PreProduction MBR Outreach",
+      "status": "abandoned",
+      "createdBy": "Mahmoud Essam",
+      "repository": "LDM",
+      "creationDate": "2026-10-25T12:36:29.725Z",
+      "closedDate": "2026-10-25T12:45:25.804Z",
+      "cycleTimeHours": null,
+      "linkedStoryId": null,
+      "sourceRefName": "refs/heads/Master_PreProduction_MBR_Outreach",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Khamees",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8214,
+      "title": "SL_ #192253 Bug_ #194442 Dynamic Registration: apply Payer Attachments valida...",
+      "status": "active",
+      "createdBy": "Samir Mohamed",
+      "repository": "LDM",
+      "creationDate": "2026-10-25T12:32:48.904Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "192253",
+      "sourceRefName": "refs/heads/Master_PreProduction_Bug_194442",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Khamees",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8213,
+      "title": "PR for task 194429",
+      "status": "active",
+      "createdBy": "Mostafa Mahmoud",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-10-25T12:24:14.009Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "194429",
+      "sourceRefName": "refs/heads/mostafa",
+      "targetRefName": "refs/heads/main",
+      "reviewers": [
+        {
+          "name": "[LDM]\\DB-Approvers",
+          "vote": 10
+        },
+        {
+          "name": "[LDM]\\APP-Approvers",
+          "vote": 0
+        },
+        {
+          "name": "Ahmed Attia",
+          "vote": 10
+        }
+      ]
+    },
+    {
       "id": 8212,
       "title": "Develop CR 183571",
       "status": "active",
@@ -46520,12 +46803,12 @@
     {
       "id": 8208,
       "title": "Inlab 182278 task 194433: new ALFAKSA_SP_REPORTING_PATIENTFOOTER_ENHANCED (Al...",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Moamen SalahElDeen",
       "repository": "WebLDM-Liquibase",
       "creationDate": "2026-10-25T11:17:31.226Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-10-25T12:30:25.127Z",
+      "cycleTimeHours": 1.2149725,
       "linkedStoryId": "182278",
       "sourceRefName": "refs/heads/Moamen_main",
       "targetRefName": "refs/heads/main",
@@ -46544,6 +46827,10 @@
         },
         {
           "name": "Moamen SalahElDeen",
+          "vote": 10
+        },
+        {
+          "name": "Ahmed Attia",
           "vote": 10
         }
       ]
@@ -48760,12 +49047,12 @@
     {
       "id": 8118,
       "title": "push updates on saja package for task 193747",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Ahmed Attia",
       "repository": "WebLDM-Liquibase",
       "creationDate": "2026-10-20T13:34:35.412Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-10-25T12:31:09.017Z",
+      "cycleTimeHours": 118.94266805555556,
       "linkedStoryId": "193747",
       "sourceRefName": "refs/heads/atiya",
       "targetRefName": "refs/heads/main",
@@ -60892,204 +61179,6 @@
         {
           "name": "Fatma Fayed",
           "vote": 10
-        }
-      ]
-    },
-    {
-      "id": 7643,
-      "title": "Develop 189304",
-      "status": "completed",
-      "createdBy": "Ibrahim Ahmed",
-      "repository": "LDM",
-      "creationDate": "2026-09-30T17:56:40.807Z",
-      "closedDate": "2026-10-01T08:58:31.149Z",
-      "cycleTimeHours": 15.030650555555555,
-      "linkedStoryId": "189304",
-      "sourceRefName": "refs/heads/develop_189304",
-      "targetRefName": "refs/heads/develop",
-      "reviewers": [
-        {
-          "name": "Bardis Khamees",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "gamal kasem",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 10
-        }
-      ]
-    },
-    {
-      "id": 7642,
-      "title": "Develop CR 166516 Add Manual Points",
-      "status": "completed",
-      "createdBy": "mohamed.abdelghany",
-      "repository": "LDM",
-      "creationDate": "2026-09-30T17:16:44.986Z",
-      "closedDate": "2026-10-01T09:02:24.963Z",
-      "cycleTimeHours": 15.761104722222223,
-      "linkedStoryId": "166516",
-      "sourceRefName": "refs/heads/develop_CR_166516",
-      "targetRefName": "refs/heads/develop",
-      "reviewers": [
-        {
-          "name": "Bardis Khamees",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "gamal kasem",
-          "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7641,
-      "title": "Integration #185396",
-      "status": "completed",
-      "createdBy": "Mostafa Taha",
-      "repository": "LDM",
-      "creationDate": "2026-09-30T16:13:48.726Z",
-      "closedDate": "2026-09-30T19:10:04.990Z",
-      "cycleTimeHours": 2.937851111111111,
-      "linkedStoryId": "185396",
-      "sourceRefName": "refs/heads/Master_PreProduction_185396",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Khamees",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 10
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7640,
-      "title": "SL #190148 - Release : Merge Ansary branch into Master",
-      "status": "completed",
-      "createdBy": "Mohamed Samy",
-      "repository": "LDM",
-      "creationDate": "2026-09-30T16:01:21.720Z",
-      "closedDate": "2026-09-30T16:03:29.464Z",
-      "cycleTimeHours": 0.03548444444444444,
-      "linkedStoryId": "190148",
-      "sourceRefName": "refs/heads/Master_PreProduction_SL#190148",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Khamees",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "gamal kasem",
-          "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7639,
-      "title": "V2.0 Bupa 21 07 2026 Integ TempBaseline",
-      "status": "completed",
-      "createdBy": "Mohamed Refaat",
-      "repository": "LDM",
-      "creationDate": "2026-09-30T15:59:41.839Z",
-      "closedDate": "2026-10-01T00:00:51.715Z",
-      "cycleTimeHours": 8.01941,
-      "linkedStoryId": "2026",
-      "sourceRefName": "refs/heads/V2.0_Bupa_21_07_2026_Integ_TempBaseline",
-      "targetRefName": "refs/heads/V2.0_Bupa_21_07_2026",
-      "reviewers": [
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 10
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "gamal kasem",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7638,
-      "title": "SL #182515 Bug #184323 Task #190183 - Outreach Refactor",
-      "status": "completed",
-      "createdBy": "Karim El-Saeed",
-      "repository": "LDM",
-      "creationDate": "2026-09-30T15:58:44.828Z",
-      "closedDate": "2026-09-30T16:28:47.621Z",
-      "cycleTimeHours": 0.5007758333333333,
-      "linkedStoryId": "182515",
-      "sourceRefName": "refs/heads/Master_PreProduction_190183",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Khamees",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
         }
       ]
     }
