@@ -1382,146 +1382,174 @@ const ui = {
     // =================================================================
     // PULL REQUEST ANALYTICS — NEW VIEW
     // =================================================================
-          calculatePRStatsByArea() {
-        const prs = db.pullRequests || [];
-        const storyMap = new Map();       // storyId → story
-        const childToParent = new Map();  // task/bug/tc/review ID → parent story
+         calculatePRStatsByArea() {
+    const prs = db.pullRequests || [];
+    const storyMap = new Map();       // storyId → story
+    const childItemMap = new Map();   // child work item ID → child item
+    const childToParent = new Map();  // child ID → parent story
 
-        const indexStory = (story) => {
-            if (!story || story.id == null) return;
-            storyMap.set(story.id.toString(), story);
-            (story.tasks || []).forEach(t => {
-                if (t && t['ID'] != null) childToParent.set(t['ID'].toString(), story);
-            });
-            (story.bugs || []).forEach(b => {
-                if (b && b['ID'] != null) childToParent.set(b['ID'].toString(), story);
-            });
-            (story.testCases || []).forEach(tc => {
-                if (tc && tc.id != null) childToParent.set(tc.id.toString(), story);
-            });
-            (story.reviews || []).forEach(r => {
-                if (r && r.id != null) childToParent.set(r.id.toString(), story);
-            });
+    const getItemId = (item) => {
+        if (!item) return null;
+        const id = item.ID ?? item.id ?? item.Id;
+        return id != null ? id.toString() : null;
+    };
+
+    const indexStory = (story) => {
+        if (!story) return;
+        const storyId = getItemId(story);
+        if (!storyId) return;
+
+        storyMap.set(storyId, story);
+
+        const indexChild = (child) => {
+            const childId = getItemId(child);
+            if (!childId) return;
+            childItemMap.set(childId, child);
+            childToParent.set(childId, story);
         };
 
-        (db.currentStories || []).forEach(indexStory);
-        (db.backlogStories || []).forEach(indexStory);
+        (story.tasks || []).forEach(indexChild);
+        (story.bugs || []).forEach(indexChild);
+        (story.testCases || []).forEach(indexChild);
+        (story.reviews || []).forEach(indexChild);
+    };
 
-        // ✅ Same area-resolution logic as processRows
-        //    + Support log → "Support Log"
-        //    + If area == "LDM" → drill into iteration path for sub-area
-        const resolveStoryArea = (story) => {
-            if (!story) return 'Unlinked';
-            if (story.type === 'Support log') return 'Support Log';
-            if (!isRegularStory(story)) return 'Unlinked';
+    (db.currentStories || []).forEach(indexStory);
+    (db.backlogStories || []).forEach(indexStory);
 
-            let area = (story.area || '').trim();
-            const path = story.iterationPath || '';
+    // ✅ نفس منطق معالجة Area الموجود في processRows
+    const resolveAreaFromWorkItem = (item, { allowGeneral = true } = {}) => {
+        if (!item) return allowGeneral ? 'General' : null;
 
-            // "integration" → "LDM Integration"
-            if (area.toLowerCase() === "integration") {
-                area = "LDM Integration";
+        const type = String(item.type || item['Work Item Type'] || '').trim();
+
+        // Support log له نفس معاملة SL
+        if (/^support\s*log$/i.test(type)) return 'Support Log';
+
+        let area = String(item.area ?? item['Business Area'] ?? '').trim();
+        const path = String(item.iterationPath ?? item['Iteration Path'] ?? '').trim();
+
+        // لو Work Item فرعي ومالوش Area ولا Iteration Path → Unlinked
+        if (!area && !path && !allowGeneral) return null;
+
+        if (area.toLowerCase() === 'integration') area = 'LDM Integration';
+
+        if (!area) {
+            area = path.includes('\\') ? path.split('\\')[0].trim() : path.trim();
+            if (area.toLowerCase() === 'integration') area = 'LDM Integration';
+        }
+
+        // لو Area = LDM ننزل مستوى في Iteration Path
+        if (area && area.toUpperCase() === 'LDM' && path.includes('\\')) {
+            const segments = path.split('\\').map(s => s.trim()).filter(Boolean);
+            if (segments.length > 1) {
+                area = segments[1];
+                if (area.toLowerCase() === 'integration') area = 'LDM Integration';
             }
+        }
 
-            // Empty area → first segment of iteration path
-            if (!area) {
-                area = path.includes('\\') ? path.split('\\')[0].trim() : path.trim();
-                if (area.toLowerCase() === "integration") area = "LDM Integration";
-            }
+        return area || (allowGeneral ? 'General' : null);
+    };
 
-            // ✅ NEW: if area === "LDM", drill one level into iteration path
-            if (area && area.toUpperCase() === "LDM" && path.includes('\\')) {
-                const segments = path.split('\\').map(s => s.trim()).filter(s => s);
-                // segments[0] == "LDM" → take next non-empty segment
-                if (segments.length > 1) {
-                    area = segments[1];
-                    if (area.toLowerCase() === "integration") area = "LDM Integration";
-                }
-            }
+    const areaMap = {};
+    const now = Date.now();
+    const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
 
-            return area || 'General';
-        };
+    const ensureArea = (area) => {
+        if (!areaMap[area]) {
+            areaMap[area] = {
+                area,
+                total: 0, active: 0, completed: 0, abandoned: 0,
+                approved: 0, stalled: 0, stalledDaysTotal: 0,
+                cycleTimes: [], prs: []
+            };
+        }
+        return areaMap[area];
+    };
 
-        const areaMap = {};
-        const now = Date.now();
-        const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+    prs.forEach(pr => {
+        let area = 'Unlinked';
+        const prTitle = (pr.title || '').trim();
+        const prRepo  = (pr.repository || '').trim();
 
-        const ensureArea = (area) => {
-            if (!areaMap[area]) {
-                areaMap[area] = {
-                    area,
-                    total: 0, active: 0, completed: 0, abandoned: 0,
-                    approved: 0, stalled: 0, stalledDaysTotal: 0,
-                    cycleTimes: [], prs: []
-                };
-            }
-            return areaMap[area];
-        };
+        // 1) Support log / SL في أول العنوان → Support Log
+        if (/^(SL|Support\s*Log)\b/i.test(prTitle)) {
+            area = 'Support Log';
+        }
+        // 2) Repo مش LDM → اسم الريبو
+        else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
+            area = prRepo;
+        }
+        // 3) مربوط بـ Work Item
+        else if (pr.linkedStoryId) {
+            const id = pr.linkedStoryId.toString();
+            const directStory = storyMap.get(id);
 
-        prs.forEach(pr => {
-            // =========================================================
-            // AREA RESOLUTION (priority order)
-            //   1) Title starts with "SL"          → "Support Log"
-            //   2) Repo name is not "LDM"          → repo name
-            //   3) linkedStoryId = User Story / CR → resolveStoryArea(story)
-            //   4) linkedStoryId = Support log     → "Support Log"
-            //   5) linkedStoryId = Task/Bug/TC/Review
-            //                                      → resolveStoryArea(parentStory)
-            //   6) Otherwise                       → "Unlinked"
-            // =========================================================
-            let area = 'Unlinked';
-            const prTitle = (pr.title || '').trim();
-            const prRepo  = (pr.repository || '').trim();
+            if (directStory) {
+                // User Story / CR / Support log
+                area = resolveAreaFromWorkItem(directStory, { allowGeneral: true });
+            } else {
+                const childItem = childItemMap.get(id);
 
-            if (/^SL/i.test(prTitle)) {
-                area = 'Support Log';
-            } else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
-                area = prRepo;
-            } else if (pr.linkedStoryId) {
-                const id = pr.linkedStoryId.toString();
-                const directStory = storyMap.get(id);
-                if (directStory) {
-                    area = resolveStoryArea(directStory);
+                if (childItem) {
+                    const childType = String(childItem.type || childItem['Work Item Type'] || '').trim();
+
+                    // ✅ Task / Bug / أي Work Item فرعي عنده Area أو Iteration Path
+                    // نستخدم Area الخاصة به هو نفسه
+                    const childArea = resolveAreaFromWorkItem(childItem, { allowGeneral: false });
+
+                    if (childArea) {
+                        area = childArea;
+                    } else if (!/^(Task|Bug)$/i.test(childType)) {
+                        // Test Case / Review مالهمش Area غالباً → نرجع للـ Parent Story
+                        const parentStory = childToParent.get(id);
+                        if (parentStory) {
+                            area = resolveAreaFromWorkItem(parentStory, { allowGeneral: true });
+                        }
+                    }
+                    // لو Task/Bug ومالوش Area ولا Iteration Path → تفضل Unlinked
                 } else {
                     const parentStory = childToParent.get(id);
                     if (parentStory) {
-                        area = resolveStoryArea(parentStory);
+                        area = resolveAreaFromWorkItem(parentStory, { allowGeneral: true });
                     }
                 }
             }
+        }
 
-            const a = ensureArea(area);
-            a.total++;
-            a.prs.push(pr);
+        const a = ensureArea(area);
+        a.total++;
+        a.prs.push(pr);
 
-            const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
-            if (hasApproval) a.approved++;
+        const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
+        if (hasApproval) a.approved++;
 
-            if (pr.status === 'active') {
-                a.active++;
-                if (pr.creationDate && !hasApproval) {
-                    const ageMs = now - new Date(pr.creationDate).getTime();
-                    if (ageMs >= THREE_DAYS) {
-                        a.stalled++;
-                        a.stalledDaysTotal += Math.floor(ageMs / (1000 * 60 * 60 * 24));
-                    }
+        if (pr.status === 'active') {
+            a.active++;
+            if (pr.creationDate && !hasApproval) {
+                const ageMs = now - new Date(pr.creationDate).getTime();
+                if (ageMs >= THREE_DAYS) {
+                    a.stalled++;
+                    a.stalledDaysTotal += Math.floor(ageMs / (1000 * 60 * 60 * 24));
                 }
-            } else if (pr.status === 'completed') {
-                a.completed++;
-                if (pr.cycleTimeHours != null) a.cycleTimes.push(pr.cycleTimeHours);
-            } else if (pr.status === 'abandoned') {
-                a.abandoned++;
             }
-        });
+        } else if (pr.status === 'completed') {
+            a.completed++;
+            if (pr.cycleTimeHours != null) a.cycleTimeTimes = undefined;
+            if (pr.cycleTimeHours != null) a.cycleTimes.push(pr.cycleTimeHours);
+        } else if (pr.status === 'abandoned') {
+            a.abandoned++;
+        }
+    });
 
-        return Object.values(areaMap).map(a => ({
-            ...a,
-            avgCycleTime: a.cycleTimes.length > 0
-                ? a.cycleTimes.reduce((s, v) => s + v, 0) / a.cycleTimes.length
-                : null,
-            avgStalledDays: a.stalled > 0 ? a.stalledDaysTotal / a.stalled : 0
-        })).sort((a, b) => b.total - a.total);
-    },
+    return Object.values(areaMap).map(a => ({
+        ...a,
+        avgCycleTime: a.cycleTimes.length > 0
+            ? a.cycleTimes.reduce((s, v) => s + v, 0) / a.cycleTimes.length
+            : null,
+        avgStalledDays: a.stalled > 0 ? a.stalledDaysTotal / a.stalled : 0
+    })).sort((a, b) => b.total - a.total);
+},
     
     renderPullRequestsTab() {
         const container = document.getElementById('pr-container');
