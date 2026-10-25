@@ -11502,13 +11502,15 @@
           "Title": "DataBase :  Add column 'logdata'  in table mobileloguserlogin",
           "Assigned To": "Mostafa Mahmoud",
           "Activity": "DB Modification",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-25T12:59:52.86Z",
           "Iteration Path": "MobileApp\\2026\\Mobile-November 1-30",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-25T11:01:45.94Z",
+          "Resolved Date": "2026-10-25T13:00:59.21Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-10-25T13:00:59.21Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -11516,10 +11518,9 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
+        "devEnd": "2026-10-25T12:59:52.860Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
       },
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\Mobile-November 1-30",
@@ -17334,7 +17335,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-04-30T15:23:01.843Z",
+        "devEnd": "2026-10-25T12:59:52.860Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -22219,14 +22220,14 @@
       "type": "User Story",
       "state": "Resolved",
       "assignedTo": "mohamed.abdelghany",
-      "tester": "Unassigned",
+      "tester": "Abdelrahman Salman",
       "area": "Front and Financial",
       "priority": 5,
       "tags": [],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Eden Lab_445",
-      "changedDate": "2026-10-25T12:52:56.820Z",
+      "changedDate": "2026-10-25T12:55:30.460Z",
       "tasks": [
         {
           "ID": 193069,
@@ -22310,15 +22311,35 @@
           "State": "New",
           "Changed Date": "2026-10-25T12:53:31.337Z",
           "Customer": "Eden Lab_445"
+        },
+        {
+          "ID": 194594,
+          "Work Item Type": "Task",
+          "Title": "Execution Task for CR 192243",
+          "Assigned To": "mohamed.abdelghany",
+          "Activity": "Testing",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-25T12:53:56.36Z",
+          "Customer": "Eden Lab_445"
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 194596,
+          "state": "Design"
+        }
+      ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-10-21T07:00:00.000Z",
-        "testEnd": "2026-10-22T06:00:00.000Z",
-        "finalEnd": "2026-10-22T06:00:00.000Z"
+        "testEnd": "2026-10-22T11:00:00.000Z",
+        "finalEnd": "2026-10-22T11:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
@@ -24246,6 +24267,30 @@
         {
           "id": 194584,
           "state": "Design"
+        },
+        {
+          "id": 194585,
+          "state": "Design"
+        },
+        {
+          "id": 194587,
+          "state": "Design"
+        },
+        {
+          "id": 194588,
+          "state": "Design"
+        },
+        {
+          "id": 194589,
+          "state": "Design"
+        },
+        {
+          "id": 194591,
+          "state": "Design"
+        },
+        {
+          "id": 194593,
+          "state": "Design"
         }
       ],
       "reviews": [],
@@ -24334,8 +24379,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2025-09-21T09:00:00.000Z",
-        "testEnd": "2026-10-22T06:00:00.000Z",
-        "finalEnd": "2026-10-22T06:00:00.000Z"
+        "testEnd": "2026-10-19T06:00:00.000Z",
+        "finalEnd": "2026-10-19T06:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
@@ -34368,8 +34413,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-08-30T08:00:00.000Z",
-        "testEnd": "2026-10-22T11:00:00.000Z",
-        "finalEnd": "2026-10-22T11:00:00.000Z"
+        "testEnd": "2026-10-19T11:00:00.000Z",
+        "finalEnd": "2026-10-19T11:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM",
@@ -38068,16 +38113,17 @@
           "ID": 194442,
           "Work Item Type": "Bug",
           "Title": "Registration Blocked by Required Payer Attachments Field Missing from Registration Template",
-          "Assigned To": "Samir Mohamed",
+          "Assigned To": "Mohamed Abd-Elalim",
           "Activity": "",
           "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-25T10:40:20.54Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-10-25T12:32:50.11Z",
+          "Resolved Date": "2026-10-25T12:54:20.003Z",
+          "State": "Resolved",
+          "Changed Date": "2026-10-25T12:54:20.003Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -42709,7 +42755,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-10-25T11:12:26.290Z",
+      "changedDate": "2026-10-25T12:57:30.710Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -42722,6 +42768,38 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 194456,
+      "title": "[Hl7]Alameda #IMTHOM : Consider Service Priority from TQ.9.1",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Mohamed Ayman",
+      "tester": "Unassigned",
+      "area": "LDM Integration",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Alameda_0062",
+      "changedDate": "2026-10-25T13:00:18.473Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": false,
@@ -42764,8 +42842,8 @@
       "id": 194590,
       "title": "Neuro hos Application issue",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Ibrahim Ahmed",
+      "state": "Resolved",
+      "assignedTo": "Mohamed Abd-Elalim",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
@@ -42773,7 +42851,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Neuro Hospital_0021",
-      "changedDate": "2026-10-25T12:50:52.687Z",
+      "changedDate": "2026-10-25T13:01:24.363Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -42786,7 +42864,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0,
+      "devActualTime": 0.25,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
