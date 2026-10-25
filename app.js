@@ -1661,7 +1661,7 @@ const ui = {
             `;
         }).join('');
 
-        container.innerHTML = summaryHtml + `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">${cardsHtml}</div>`;
+        container.innerHTML = summaryHtml + `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">${cardsHtml}</div>`;
     },
 
     showAreaPRDetails(encodedAreaName) {
