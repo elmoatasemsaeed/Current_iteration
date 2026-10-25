@@ -1382,7 +1382,7 @@ const ui = {
     // =================================================================
     // PULL REQUEST ANALYTICS — NEW VIEW
     // =================================================================
-    calculatePRStatsByArea() {
+        calculatePRStatsByArea() {
         const prs = db.pullRequests || [];
         const storyMap = new Map();
         [...(db.currentStories || []), ...(db.backlogStories || [])].forEach(s => {
@@ -1406,11 +1406,35 @@ const ui = {
         };
 
         prs.forEach(pr => {
+            // =========================================================
+            // AREA RESOLUTION LOGIC
+            // 1) Support log  → "Support Log"
+            // 2) User Story / CR → resolve area exactly like processRows
+            // 3) Anything else (or nothing) → "Unlinked"
+            // =========================================================
             let area = 'Unlinked';
             if (pr.linkedStoryId) {
                 const story = storyMap.get(pr.linkedStoryId.toString());
-                if (story) area = story.area || 'General';
+                if (story) {
+                    if (story.type === 'Support log') {
+                        // ✅ Support Log gets its own dedicated area
+                        area = 'Support Log';
+                    } else if (isRegularStory(story)) {
+                        // ✅ Same area-resolution logic as processRows
+                        let resolvedArea = story.area;
+                        if (resolvedArea && resolvedArea.trim().toLowerCase() === "integration") {
+                            resolvedArea = "LDM Integration";
+                        }
+                        if (!resolvedArea || resolvedArea.trim() === "") {
+                            const path = story.iterationPath || "";
+                            resolvedArea = path.includes('\\') ? path.split('\\')[0] : path;
+                        }
+                        area = resolvedArea || 'General';
+                    }
+                    // else: story exists but is not Support log / User Story / CR → stays 'Unlinked'
+                }
             }
+
             const a = ensureArea(area);
             a.total++;
             a.prs.push(pr);
