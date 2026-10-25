@@ -40,7 +40,8 @@ let db = {
     areaComments: [],
     projects: [],
     archivedProjects: [],
-    standupCommentsStore: {}
+    standupCommentsStore: {},
+    pullRequests: []
 };
 
 let currentData = [];
@@ -411,6 +412,7 @@ const auth = {
                     if (!db.projects) db.projects = [];
                     if (!db.archivedProjects) db.archivedProjects = [];
                     if (!db.standupCommentsStore) db.standupCommentsStore = {};
+                    if (!db.pullRequests) db.pullRequests = [];
                     
                     migrateStandupComments();
                     
@@ -538,6 +540,7 @@ const dataProcessor = {
             if (!db.projects) db.projects = [];
             if (!db.archivedProjects) db.archivedProjects = [];
             if (!db.standupCommentsStore) db.standupCommentsStore = {};
+            if (!db.pullRequests) db.pullRequests = [];
 
             const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                 headers: { 'Authorization': `token ${token}` }
@@ -639,12 +642,14 @@ const dataProcessor = {
                 devActualTime: parseFloat(row['TimeSheet_DevActualTime']) || 0,
                 testActualTime: parseFloat(row['TimeSheet_TestingActualTime']) || 0,
                 isBacklog: false,
-                linkedProjectId: null
+                linkedProjectId: null,
+                pullRequests: []
             };
             const existingStory = db.currentStories.find(s => s.id == currentStory.id);
             if (existingStory) {
                 if (existingStory.customTags) currentStory.customTags = existingStory.customTags;
                 if (existingStory.linkedProjectId) currentStory.linkedProjectId = existingStory.linkedProjectId;
+                if (existingStory.pullRequests) currentStory.pullRequests = existingStory.pullRequests;
             }
             newStories.push(currentStory);
         } else if (row['Work Item Type'] === 'Task' && currentStory) {
@@ -715,7 +720,8 @@ const dataProcessor = {
             devActualTime: 0,
             testActualTime: 0,
             isBacklog: true,
-            linkedProjectId: null
+            linkedProjectId: null,
+            pullRequests: []
         };
     }).filter(s => s !== null);
 
@@ -724,6 +730,16 @@ const dataProcessor = {
         console.warn('⚠️ processBacklogRows: لم يتم بناء أي قصة بعد الفلترة. تم إلغاء تحديث الـ Backlog.');
         return;
     }
+
+    // حافظ على customTags وlinkedProjectId وpullRequests الموجودة من قبل
+    backlogStories.forEach(story => {
+        const existing = (db.backlogStories || []).find(s => s.id == story.id);
+        if (existing) {
+            if (existing.customTags) story.customTags = existing.customTags;
+            if (existing.linkedProjectId) story.linkedProjectId = existing.linkedProjectId;
+            if (existing.pullRequests) story.pullRequests = existing.pullRequests;
+        }
+    });
 
     db.backlogStories = backlogStories;
 
@@ -1252,6 +1268,116 @@ const ui = {
             default: break;
         }
     },
+
+    // =================================================================
+    // PULL REQUEST STATS HELPERS
+    // =================================================================
+    calculatePRStats() {
+        const prs = db.pullRequests || [];
+        const completed = prs.filter(pr => pr.status === 'completed' && pr.cycleTimeHours != null);
+        const avgCycleTime = completed.length > 0
+            ? completed.reduce((s, pr) => s + pr.cycleTimeHours, 0) / completed.length
+            : 0;
+
+        const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+        const stalePRs = prs.filter(pr => {
+            if (pr.status !== 'active') return false;
+            if (!pr.creationDate) return false;
+            const ageMs = now - new Date(pr.creationDate).getTime();
+            if (ageMs < threeDaysMs) return false;
+            const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
+            return !hasApproval;
+        });
+
+        return {
+            total: prs.length,
+            active: prs.filter(pr => pr.status === 'active').length,
+            completed: completed.length,
+            abandoned: prs.filter(pr => pr.status === 'abandoned').length,
+            avgCycleTime,
+            stalePRs
+        };
+    },
+
+    showStalePRs() {
+        const modal = document.getElementById('story-modal');
+        const titleEl = document.getElementById('modal-title');
+        const body = document.getElementById('modal-body');
+        const stats = this.calculatePRStats();
+        titleEl.innerText = `⚠️ Stale Pull Requests (>3 days, no approval) — ${stats.stalePRs.length}`;
+
+        if (stats.stalePRs.length === 0) {
+            body.innerHTML = `<div class="text-center py-10 text-gray-400">لا توجد PRs قديمة. ممتاز! 🎉</div>`;
+        } else {
+            body.innerHTML = `<div class="space-y-2">${stats.stalePRs.map(pr => {
+                const days = Math.floor((Date.now() - new Date(pr.creationDate).getTime()) / (1000 * 60 * 60 * 24));
+                return `
+                    <div class="bg-google-red-light border border-google-red/30 p-3 rounded-lg">
+                        <div class="flex justify-between items-start gap-2">
+                            <div class="min-w-0 flex-1">
+                                <span class="font-mono text-google-red font-bold">#${pr.id}</span>
+                                <span class="text-sm text-slate-700 ml-2">${escapeHtml(pr.title)}</span>
+                            </div>
+                            <span class="bg-google-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">${days} days</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            By ${escapeHtml(pr.createdBy)} · Repo: ${escapeHtml(pr.repository)} · Story: #${pr.linkedStoryId || 'N/A'}
+                        </div>
+                        <div class="text-xs text-gray-400 mt-1">
+                            Reviewers: ${pr.reviewers.map(r => `${escapeHtml(r.name)} (vote: ${r.vote})`).join(', ') || 'None'}
+                        </div>
+                    </div>
+                `;
+            }).join('')}</div>`;
+        }
+
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    },
+
+    renderPullRequestsForStory(story) {
+        const prs = story.pullRequests || [];
+        if (!prs || prs.length === 0) return '';
+
+        const statusMap = {
+            active:    { label: 'Active',    cls: 'bg-blue-100 text-blue-700 border-blue-300' },
+            completed: { label: 'Completed', cls: 'bg-green-100 text-green-700 border-green-300' },
+            abandoned: { label: 'Abandoned', cls: 'bg-gray-100 text-gray-600 border-gray-300' }
+        };
+
+        return `
+            <div class="space-y-2">
+                <h4 class="font-bold text-indigo-700 border-b pb-1 flex items-center gap-2">
+                    🔀 Pull Requests (${prs.length})
+                </h4>
+                ${prs.map(pr => {
+                    const cfg = statusMap[pr.status] || statusMap.active;
+                    const created = pr.creationDate ? new Date(pr.creationDate).toLocaleDateString('en-GB') : '—';
+                    const cycle = (pr.cycleTimeHours != null) ? `${pr.cycleTimeHours.toFixed(1)}h` : '—';
+                    return `
+                        <div class="flex justify-between items-start text-[11px] bg-white border border-indigo-100 p-2 rounded-lg shadow-sm gap-2">
+                            <div class="flex flex-col min-w-0 flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-mono text-indigo-600 font-bold">#${pr.id}</span>
+                                    <span class="text-slate-700 truncate" title="${escapeHtml(pr.title)}">${escapeHtml(pr.title)}</span>
+                                </div>
+                                <span class="text-gray-400 text-[9px] mt-1">Created: ${created} · by ${escapeHtml(pr.createdBy)} · Repo: ${escapeHtml(pr.repository)}</span>
+                                ${pr.reviewers && pr.reviewers.length > 0 ? `
+                                    <span class="text-gray-400 text-[9px] mt-0.5">👥 ${pr.reviewers.map(r => `${escapeHtml(r.name)} (${r.vote >= 5 ? '✅' : r.vote <= -5 ? '❌' : '⏳'})`).join(' · ')}</span>
+                                ` : ''}
+                            </div>
+                            <div class="flex flex-col items-end gap-1 shrink-0">
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold border ${cfg.cls}">${cfg.label}</span>
+                                <span class="text-[9px] text-gray-500 font-mono">⏱ ${cycle}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    },
+
     renderDashboard() {
         const container = document.getElementById('dashboard-container');
         if (!container) return;
@@ -1289,6 +1415,33 @@ const ui = {
                 </div>
             </div>
         `;
+        // ✅ NEW: PR Stats
+        const prStats = this.calculatePRStats();
+        const prStatsHtml = `
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-gradient-to-br from-indigo-100 to-indigo-200 p-4 rounded-2xl shadow-lg text-slate-800">
+                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Total Pull Requests</div>
+                    <div class="text-4xl font-black mt-1">${prStats.total}</div>
+                    <div class="text-[10px] mt-2 bg-white/50 inline-block px-2 py-0.5 rounded">
+                        ${prStats.active} active · ${prStats.completed} completed · ${prStats.abandoned} abandoned
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-teal-100 to-teal-200 p-4 rounded-2xl shadow-lg text-slate-800">
+                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Avg PR Cycle Time</div>
+                    <div class="text-4xl font-black mt-1">${prStats.avgCycleTime.toFixed(1)}h</div>
+                    <div class="text-[10px] mt-2 bg-white/50 inline-block px-2 py-0.5 rounded">
+                        Across ${prStats.completed} completed PRs
+                    </div>
+                </div>
+                <div onclick="ui.showStalePRs()" 
+                     class="bg-gradient-to-br ${prStats.stalePRs.length > 0 ? 'from-red-100 to-red-200' : 'from-slate-100 to-slate-200'} p-4 rounded-2xl shadow-lg text-slate-800 cursor-pointer hover:scale-105 transition-transform">
+                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Stale PRs (&gt;3 days, no approval)</div>
+                    <div class="text-4xl font-black mt-1">${prStats.stalePRs.length}</div>
+                    <div class="text-[10px] mt-2 bg-white/50 inline-block px-2 py-0.5 rounded">Click for details</div>
+                </div>
+            </div>
+        `;
+
         const nonBacklogData = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const areaStateMap = {};
         const allStates = new Set();
@@ -1390,6 +1543,7 @@ const ui = {
 
         container.innerHTML = `
             ${staffStatsHtml}
+            ${prStatsHtml}
             ${areaStatsHtml}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 ${branchStatsHtml}
@@ -2499,6 +2653,7 @@ const ui = {
                         </div>
                     `).join('')}</div>
                 </div>
+                ${this.renderPullRequestsForStory(s)}
                 <div class="space-y-4">
                     <h4 class="font-bold text-purple-700 border-b pb-1">🔍 QA & Testing</h4>
                     <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Tester:</b> ${escapeHtml(s.tester)}</p><p><b>Test End:</b> ${s.calc.testEnd instanceof Date ? escapeHtml(s.calc.testEnd.toLocaleString()) : 'Waiting'}</p></div>
@@ -3470,7 +3625,25 @@ const azureDevOps = {
                 }
             }
 
-            ui.showToast("✅ تمت المزامنة بنجاح مع Azure!", "success");
+            // ============ Pull Requests (اختياري — لا يوقف المزامنة الأساسية) ============
+            let prCount = 0;
+            try {
+                const prs = await this.fetchPullRequests(authHeader);
+                db.pullRequests = prs;
+                prCount = prs.length;
+
+                // ربط PRs بالقصص عبر linkedStoryId
+                this.linkPullRequestsToStories();
+
+                // حفظ مرة أخرى لضمان تضمين PRs داخل db.json
+                await dataProcessor.saveToGitHub();
+                console.log(`✅ تم ربط ${prCount} PR بالقصص وحفظها.`);
+            } catch (prError) {
+                console.warn('⚠️ فشل تحميل الـ Pull Requests (المزامنة الأساسية تمت بنجاح):', prError);
+                ui.showToast("⚠️ المزامنة تمت، لكن فشل جلب الـ Pull Requests: " + prError.message, "error");
+            }
+
+            ui.showToast(`✅ تمت المزامنة بنجاح! (${prCount} PR محدّث)`, "success");
 
         } catch (error) {
             console.error("Azure Sync Error:", error);
@@ -3483,6 +3656,66 @@ const azureDevOps = {
             syncBtn.innerHTML = originalText;
             syncBtn.disabled = false;
         }
+    },
+
+    // ============ Pull Requests Fetcher ============
+    async fetchPullRequests(authHeader) {
+        const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests?searchCriteria.status=all&$top=500&api-version=7.1`;
+        const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
+
+        if (!res.ok) {
+            throw new Error(`فشل جلب الـ Pull Requests (${res.status} ${res.statusText}).`);
+        }
+        const data = await res.json();
+        if (!data || !Array.isArray(data.value)) {
+            console.warn('⚠️ Azure لم يُرجع أي Pull Requests.');
+            return [];
+        }
+
+        console.log(`✅ تم استلام ${data.value.length} Pull Request من Azure.`);
+
+        return data.value.map(pr => {
+            const creationDate = pr.creationDate ? new Date(pr.creationDate) : null;
+            const closedDate = pr.closedDate ? new Date(pr.closedDate) : null;
+
+            let cycleTimeHours = null;
+            if (pr.status === 'completed' && creationDate && closedDate) {
+                cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
+            }
+
+            const titleMatch = (pr.title || '').match(/#?(\d{4,6})/);
+            const linkedStoryId = titleMatch ? titleMatch[1] : null;
+
+            return {
+                id: pr.pullRequestId,
+                title: pr.title || '',
+                status: pr.status || 'unknown',
+                createdBy: pr.createdBy?.displayName || 'Unknown',
+                repository: pr.repository?.name || 'N/A',
+                creationDate: creationDate ? creationDate.toISOString() : null,
+                closedDate: closedDate ? closedDate.toISOString() : null,
+                cycleTimeHours: cycleTimeHours,
+                linkedStoryId: linkedStoryId,
+                sourceRefName: pr.sourceRefName || '',
+                targetRefName: pr.targetRefName || '',
+                reviewers: (pr.reviewers || []).map(r => ({
+                    name: r.displayName || 'Unknown',
+                    vote: r.vote != null ? r.vote : 0
+                }))
+            };
+        });
+    },
+
+    linkPullRequestsToStories() {
+        const linkFn = (stories) => {
+            (stories || []).forEach(story => {
+                story.pullRequests = (db.pullRequests || []).filter(pr =>
+                    pr.linkedStoryId && pr.linkedStoryId.toString() === story.id.toString()
+                );
+            });
+        };
+        linkFn(db.currentStories);
+        linkFn(db.backlogStories);
     },
 
     buildRowsFromRelations(relations, detailsMap) {
@@ -3593,6 +3826,7 @@ window.onload = () => {
     if (!db.projects) db.projects = [];
     if (!db.archivedProjects) db.archivedProjects = [];
     if (!db.standupCommentsStore) db.standupCommentsStore = {};
+    if (!db.pullRequests) db.pullRequests = [];
     const saved = localStorage.getItem('saved_creds');
     if (saved) {
         const creds = JSON.parse(saved);
