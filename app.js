@@ -1265,6 +1265,7 @@ const ui = {
             case 'tab-auditor': this.renderAuditorChecklist(); break;
             case 'tab-support-kanban': this.renderSupportKanban(); break;
             case 'tab-projects': this.renderProjectsTab(); break;
+            case 'tab-pull-requests': this.renderPullRequestsTab(); break;
             default: break;
         }
     },
@@ -1376,6 +1377,257 @@ const ui = {
                 }).join('')}
             </div>
         `;
+    },
+
+    // =================================================================
+    // PULL REQUEST ANALYTICS — NEW VIEW
+    // =================================================================
+    calculatePRStatsByArea() {
+        const prs = db.pullRequests || [];
+        const storyMap = new Map();
+        [...(db.currentStories || []), ...(db.backlogStories || [])].forEach(s => {
+            if (s && s.id != null) storyMap.set(s.id.toString(), s);
+        });
+
+        const areaMap = {};
+        const now = Date.now();
+        const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+
+        const ensureArea = (area) => {
+            if (!areaMap[area]) {
+                areaMap[area] = {
+                    area,
+                    total: 0, active: 0, completed: 0, abandoned: 0,
+                    approved: 0, stalled: 0, stalledDaysTotal: 0,
+                    cycleTimes: [], prs: []
+                };
+            }
+            return areaMap[area];
+        };
+
+        prs.forEach(pr => {
+            let area = 'Unlinked';
+            if (pr.linkedStoryId) {
+                const story = storyMap.get(pr.linkedStoryId.toString());
+                if (story) area = story.area || 'General';
+            }
+            const a = ensureArea(area);
+            a.total++;
+            a.prs.push(pr);
+
+            const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
+            if (hasApproval) a.approved++;
+
+            if (pr.status === 'active') {
+                a.active++;
+                if (pr.creationDate && !hasApproval) {
+                    const ageMs = now - new Date(pr.creationDate).getTime();
+                    if (ageMs >= THREE_DAYS) {
+                        a.stalled++;
+                        a.stalledDaysTotal += Math.floor(ageMs / (1000 * 60 * 60 * 24));
+                    }
+                }
+            } else if (pr.status === 'completed') {
+                a.completed++;
+                if (pr.cycleTimeHours != null) a.cycleTimes.push(pr.cycleTimeHours);
+            } else if (pr.status === 'abandoned') {
+                a.abandoned++;
+            }
+        });
+
+        return Object.values(areaMap).map(a => ({
+            ...a,
+            avgCycleTime: a.cycleTimes.length > 0
+                ? a.cycleTimes.reduce((s, v) => s + v, 0) / a.cycleTimes.length
+                : null,
+            avgStalledDays: a.stalled > 0 ? a.stalledDaysTotal / a.stalled : 0
+        })).sort((a, b) => b.total - a.total);
+    },
+
+    renderPullRequestsTab() {
+        const container = document.getElementById('pr-container');
+        if (!container) return;
+
+        const prStats = this.calculatePRStats();
+        const areaStats = this.calculatePRStatsByArea();
+
+        const summaryHtml = `
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                <div class="bg-gradient-to-br from-indigo-100 to-indigo-200 p-4 rounded-2xl shadow-lg text-slate-800">
+                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Total PRs</div>
+                    <div class="text-4xl font-black mt-1">${prStats.total}</div>
+                </div>
+                <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-4 rounded-2xl shadow-lg text-slate-800">
+                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Active</div>
+                    <div class="text-4xl font-black mt-1">${prStats.active}</div>
+                </div>
+                <div class="bg-gradient-to-br from-green-100 to-green-200 p-4 rounded-2xl shadow-lg text-slate-800">
+                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Completed</div>
+                    <div class="text-4xl font-black mt-1">${prStats.completed}</div>
+                </div>
+                <div class="bg-gradient-to-br from-teal-100 to-teal-200 p-4 rounded-2xl shadow-lg text-slate-800">
+                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Avg Cycle</div>
+                    <div class="text-4xl font-black mt-1">${prStats.avgCycleTime.toFixed(1)}h</div>
+                </div>
+                <div onclick="ui.showStalePRs()"
+                     class="bg-gradient-to-br ${prStats.stalePRs.length > 0 ? 'from-red-100 to-red-200' : 'from-slate-100 to-slate-200'} p-4 rounded-2xl shadow-lg text-slate-800 cursor-pointer hover:scale-105 transition-transform">
+                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Stalled (&gt;3d)</div>
+                    <div class="text-4xl font-black mt-1">${prStats.stalePRs.length}</div>
+                </div>
+            </div>
+        `;
+
+        if (areaStats.length === 0) {
+            container.innerHTML = summaryHtml + `<div class="text-center py-20 text-gray-400">No Pull Requests found. Sync with Azure to load them.</div>`;
+            return;
+        }
+
+        const cardsHtml = areaStats.map(a => {
+            const hasStalled = a.stalled > 0;
+            return `
+                <div class="card p-5 border-2 ${hasStalled ? 'border-red-200' : 'border-gray-100'} hover:border-google-blue transition cursor-pointer"
+                     onclick="ui.showAreaPRDetails('${encodeURIComponent(a.area)}')">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="min-w-0 flex-1 pr-2">
+                            <h3 class="font-bold text-lg text-slate-800 truncate" title="${escapeHtml(a.area)}">📍 ${escapeHtml(a.area)}</h3>
+                            <p class="text-[10px] uppercase font-bold ${hasStalled ? 'text-red-600' : 'text-green-600'} mt-0.5">
+                                ${hasStalled ? `⚠️ ${a.stalled} stalled PR${a.stalled === 1 ? '' : 's'}` : '✅ No stalled PRs'}
+                            </p>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <div class="text-3xl font-black text-indigo-600 leading-none">${a.total}</div>
+                            <div class="text-[9px] text-gray-400 uppercase font-bold mt-1">Total PRs</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-sm mb-3">
+                        <div class="bg-blue-50 p-2 rounded">
+                            <div class="text-[9px] text-blue-600 font-bold uppercase">Active</div>
+                            <div class="text-lg font-black text-blue-700 leading-tight">${a.active}</div>
+                        </div>
+                        <div class="bg-green-50 p-2 rounded">
+                            <div class="text-[9px] text-green-600 font-bold uppercase">Completed</div>
+                            <div class="text-lg font-black text-green-700 leading-tight">${a.completed}</div>
+                        </div>
+                        <div class="bg-teal-50 p-2 rounded">
+                            <div class="text-[9px] text-teal-600 font-bold uppercase">Approved</div>
+                            <div class="text-lg font-black text-teal-700 leading-tight">${a.approved}</div>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded">
+                            <div class="text-[9px] text-gray-500 font-bold uppercase">Abandoned</div>
+                            <div class="text-lg font-black text-gray-600 leading-tight">${a.abandoned}</div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-dashed border-gray-200 pt-3 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-600">⏱ Avg Cycle Time</span>
+                            <span class="font-mono font-bold text-teal-700">${a.avgCycleTime != null ? a.avgCycleTime.toFixed(1) + 'h' : '—'}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold ${hasStalled ? 'text-red-600' : 'text-gray-500'}">⚠️ Stalled (&gt;3d, no approval)</span>
+                            <span class="font-mono font-bold ${hasStalled ? 'text-red-600' : 'text-gray-400'}">
+                                ${a.stalled}${hasStalled ? ` (avg ${a.avgStalledDays.toFixed(1)}d)` : ''}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-gray-100 text-center text-xs font-bold text-google-blue">View Details →</div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = summaryHtml + `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">${cardsHtml}</div>`;
+    },
+
+    showAreaPRDetails(encodedAreaName) {
+        const areaName = decodeURIComponent(encodedAreaName);
+        const stats = this.calculatePRStatsByArea();
+        const areaStats = stats.find(a => a.area === areaName);
+        if (!areaStats) return;
+
+        const modal = document.getElementById('story-modal');
+        const title = document.getElementById('modal-title');
+        const body = document.getElementById('modal-body');
+        title.innerText = `🔀 ${areaName} — ${areaStats.total} PRs`;
+
+        const statusMap = {
+            active:    { label: 'Active',    cls: 'bg-blue-100 text-blue-700 border-blue-300' },
+            completed: { label: 'Completed', cls: 'bg-green-100 text-green-700 border-green-300' },
+            abandoned: { label: 'Abandoned', cls: 'bg-gray-100 text-gray-600 border-gray-300' },
+            unknown:   { label: 'Unknown',   cls: 'bg-slate-100 text-slate-500 border-slate-300' }
+        };
+        const statusOrder = { active: 0, completed: 1, abandoned: 2, unknown: 3 };
+        const now = Date.now();
+        const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+
+        const enriched = areaStats.prs.map(pr => {
+            const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
+            const ageDays = pr.creationDate ? Math.floor((now - new Date(pr.creationDate).getTime()) / (1000 * 60 * 60 * 24)) : null;
+            const isStalled = pr.status === 'active' && pr.creationDate &&
+                (now - new Date(pr.creationDate).getTime()) >= THREE_DAYS && !hasApproval;
+            return { ...pr, hasApproval, ageDays, isStalled };
+        }).sort((a, b) => {
+            if (a.isStalled !== b.isStalled) return a.isStalled ? -1 : 1;
+            const sa = statusOrder[a.status] ?? 3;
+            const sb = statusOrder[b.status] ?? 3;
+            if (sa !== sb) return sa - sb;
+            return (b.creationDate ? new Date(b.creationDate).getTime() : 0) -
+                   (a.creationDate ? new Date(a.creationDate).getTime() : 0);
+        });
+
+        const summaryBar = `
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
+                <div class="bg-indigo-50 p-2 rounded text-center"><div class="text-[9px] text-indigo-600 font-bold uppercase">Total</div><div class="text-lg font-black text-indigo-700">${areaStats.total}</div></div>
+                <div class="bg-blue-50 p-2 rounded text-center"><div class="text-[9px] text-blue-600 font-bold uppercase">Active</div><div class="text-lg font-black text-blue-700">${areaStats.active}</div></div>
+                <div class="bg-green-50 p-2 rounded text-center"><div class="text-[9px] text-green-600 font-bold uppercase">Completed</div><div class="text-lg font-black text-green-700">${areaStats.completed}</div></div>
+                <div class="bg-teal-50 p-2 rounded text-center"><div class="text-[9px] text-teal-600 font-bold uppercase">Approved</div><div class="text-lg font-black text-teal-700">${areaStats.approved}</div></div>
+                <div class="bg-red-50 p-2 rounded text-center"><div class="text-[9px] text-red-600 font-bold uppercase">Stalled</div><div class="text-lg font-black text-red-700">${areaStats.stalled}</div></div>
+            </div>
+            <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded mb-4">
+                <span class="font-bold text-slate-600">⏱ Avg Cycle Time:</span>
+                <span class="font-mono font-bold text-teal-700">${areaStats.avgCycleTime != null ? areaStats.avgCycleTime.toFixed(1) + 'h' : '—'}</span>
+            </div>
+        `;
+
+        const prsHtml = enriched.map(pr => {
+            const cfg = statusMap[pr.status] || statusMap.unknown;
+            const created = pr.creationDate ? new Date(pr.creationDate).toLocaleDateString('en-GB') : '—';
+            const cycle = pr.cycleTimeHours != null ? pr.cycleTimeHours.toFixed(1) + 'h' : '—';
+            return `
+                <div class="p-3 border rounded-lg mb-2 ${pr.isStalled ? 'bg-red-50 border-red-300' : 'bg-white border-gray-200'}">
+                    <div class="flex justify-between items-start gap-2">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-mono font-bold text-indigo-600">#${pr.id}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${cfg.cls}">${cfg.label}</span>
+                                ${pr.isStalled ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500 text-white">⚠️ STALLED ${pr.ageDays}d</span>` : ''}
+                                ${pr.hasApproval ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 border border-green-300">👍 Approved</span>' : ''}
+                            </div>
+                            <div class="text-sm font-medium text-slate-700 mt-1 break-words">${escapeHtml(pr.title)}</div>
+                            <div class="text-[11px] text-gray-500 mt-1">
+                                By ${escapeHtml(pr.createdBy)} · Repo: ${escapeHtml(pr.repository)} · Story: #${pr.linkedStoryId || 'N/A'}
+                            </div>
+                            ${pr.reviewers && pr.reviewers.length > 0 ? `
+                                <div class="text-[11px] text-gray-500 mt-0.5">
+                                    👥 ${pr.reviewers.map(r => `${escapeHtml(r.name)} (${r.vote >= 5 ? '✅' : r.vote <= -5 ? '❌' : '⏳'})`).join(' · ')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="text-right shrink-0">
+                            <div class="text-[10px] text-gray-400 uppercase font-bold">Created</div>
+                            <div class="text-xs font-bold text-slate-700">${created}</div>
+                            <div class="text-[10px] text-gray-400 uppercase font-bold mt-1">Cycle</div>
+                            <div class="text-xs font-mono font-bold ${pr.cycleTimeHours != null ? 'text-teal-700' : 'text-gray-400'}">${cycle}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        body.innerHTML = summaryBar + (prsHtml || '<div class="text-center py-10 text-gray-400">No PRs in this area.</div>');
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
     },
 
     renderDashboard() {
