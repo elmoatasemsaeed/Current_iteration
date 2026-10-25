@@ -1382,7 +1382,7 @@ const ui = {
     // =================================================================
     // PULL REQUEST ANALYTICS — NEW VIEW
     // =================================================================
-         calculatePRStatsByArea() {
+        calculatePRStatsByArea() {
     const prs = db.pullRequests || [];
     const storyMap = new Map();       // storyId → story
     const childItemMap = new Map();   // child work item ID → child item
@@ -1468,19 +1468,37 @@ const ui = {
     };
 
     prs.forEach(pr => {
+        // =========================================================
+        // AREA RESOLUTION (priority order)
+        //   1) Title starts with "SL" / "SL_" / "Support log"
+        //                                         → "Support Log"
+        //   2) Title starts with "integration"     → "LDM Integration"
+        //   3) Repo name is not "LDM"              → repo name
+        //   4) linkedStoryId = User Story / CR / Support log
+        //                                         → resolveAreaFromWorkItem(story)
+        //   5) linkedStoryId = Task / Bug (has area or iteration path)
+        //                                         → resolveAreaFromWorkItem(child)
+        //   6) linkedStoryId = Test Case / Review
+        //                                         → resolveAreaFromWorkItem(parentStory)
+        //   7) Otherwise                           → "Unlinked"
+        // =========================================================
         let area = 'Unlinked';
         const prTitle = (pr.title || '').trim();
         const prRepo  = (pr.repository || '').trim();
 
-        // 1) Support log / SL في أول العنوان → Support Log
+        // 1) Support log / SL / SL_ في أول العنوان → Support Log
         if (/^(SL|Support\s*Log)(?:\b|_)/i.test(prTitle)) {
             area = 'Support Log';
         }
-        // 2) Repo مش LDM → اسم الريبو
+        // 2) integration في أول العنوان → LDM Integration
+        else if (/^integration(?:\b|_|\/|-)/i.test(prTitle)) {
+            area = 'LDM Integration';
+        }
+        // 3) Repo مش LDM → اسم الريبو
         else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
             area = prRepo;
         }
-        // 3) مربوط بـ Work Item
+        // 4) مربوط بـ Work Item
         else if (pr.linkedStoryId) {
             const id = pr.linkedStoryId.toString();
             const directStory = storyMap.get(id);
@@ -1535,7 +1553,6 @@ const ui = {
             }
         } else if (pr.status === 'completed') {
             a.completed++;
-            if (pr.cycleTimeHours != null) a.cycleTimeTimes = undefined;
             if (pr.cycleTimeHours != null) a.cycleTimes.push(pr.cycleTimeHours);
         } else if (pr.status === 'abandoned') {
             a.abandoned++;
