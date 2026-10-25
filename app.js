@@ -1473,7 +1473,7 @@ const ui = {
         const prRepo  = (pr.repository || '').trim();
 
         // 1) Support log / SL في أول العنوان → Support Log
-        if (/^(SL|Support\s*Log)\b/i.test(prTitle)) {
+        if (/^(SL|Support\s*Log)(?:\b|_)/i.test(prTitle)) {
             area = 'Support Log';
         }
         // 2) Repo مش LDM → اسم الريبو
