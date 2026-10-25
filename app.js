@@ -1280,13 +1280,13 @@ const ui = {
             ? completed.reduce((s, pr) => s + pr.cycleTimeHours, 0) / completed.length
             : 0;
 
-        const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
+        const threeDaysMs = 1 * 24 * 60 * 60 * 1000;
         const now = Date.now();
         const stalePRs = prs.filter(pr => {
             if (pr.status !== 'active') return false;
             if (!pr.creationDate) return false;
             const ageMs = now - new Date(pr.creationDate).getTime();
-            if (ageMs < threeDaysMs) return false;
+            if (ageMs < oneDayMs) return false;
             const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
             return !hasApproval;
         });
@@ -1306,13 +1306,13 @@ const ui = {
         const titleEl = document.getElementById('modal-title');
         const body = document.getElementById('modal-body');
         const stats = this.calculatePRStats();
-        titleEl.innerText = `⚠️ Stale Pull Requests (>3 days, no approval) — ${stats.stalePRs.length}`;
+        titleEl.innerText = `⚠️ Stale Pull Requests (>1 day, no approval) — ${stats.stalePRs.length}`;
 
         if (stats.stalePRs.length === 0) {
             body.innerHTML = `<div class="text-center py-10 text-gray-400">لا توجد PRs قديمة. ممتاز! 🎉</div>`;
         } else {
             body.innerHTML = `<div class="space-y-2">${stats.stalePRs.map(pr => {
-                const days = Math.floor((Date.now() - new Date(pr.creationDate).getTime()) / (1000 * 60 * 60 * 24));
+                const days = (Date.now() - new Date(pr.creationDate).getTime()) / (1000 * 60 * 60 * 24);
                 return `
                     <div class="bg-google-red-light border border-google-red/30 p-3 rounded-lg">
                         <div class="flex justify-between items-start gap-2">
@@ -1320,7 +1320,7 @@ const ui = {
                                 <span class="font-mono text-google-red font-bold">#${pr.id}</span>
                                 <span class="text-sm text-slate-700 ml-2">${escapeHtml(pr.title)}</span>
                             </div>
-                            <span class="bg-google-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">${days} days</span>
+                            <span class="bg-google-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">${days.toFixed(1)} days</span>
                         </div>
                         <div class="text-xs text-gray-500 mt-1">
                             By ${escapeHtml(pr.createdBy)} · Repo: ${escapeHtml(pr.repository)} · Story: #${pr.linkedStoryId || 'N/A'}
@@ -1453,7 +1453,7 @@ const ui = {
 
     const areaMap = {};
     const now = Date.now();
-    const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+    const ONE_DAY = 1 * 24 * 60 * 60 * 1000;
 
     const ensureArea = (area) => {
         if (!areaMap[area]) {
@@ -1546,9 +1546,9 @@ const ui = {
             a.active++;
             if (pr.creationDate && !hasApproval) {
                 const ageMs = now - new Date(pr.creationDate).getTime();
-                if (ageMs >= THREE_DAYS) {
+                if (ageMs >= ONE_DAY) {
                     a.stalled++;
-                    a.stalledDaysTotal += Math.floor(ageMs / (1000 * 60 * 60 * 24));
+                    a.stalledDaysTotal += ageMs / (1000 * 60 * 60 * 24);
                 }
             }
         } else if (pr.status === 'completed') {
@@ -1595,7 +1595,7 @@ const ui = {
                 </div>
                 <div onclick="ui.showStalePRs()"
                      class="bg-gradient-to-br ${prStats.stalePRs.length > 0 ? 'from-red-100 to-red-200' : 'from-slate-100 to-slate-200'} p-4 rounded-2xl shadow-lg text-slate-800 cursor-pointer hover:scale-105 transition-transform">
-                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Stalled (&gt;3d)</div>
+                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Stalled (&gt;1d)</div>
                     <div class="text-4xl font-black mt-1">${prStats.stalePRs.length}</div>
                 </div>
             </div>
@@ -1615,7 +1615,7 @@ const ui = {
                         <div class="min-w-0 flex-1 pr-2">
                             <h3 class="font-bold text-lg text-slate-800 truncate" title="${escapeHtml(a.area)}">📍 ${escapeHtml(a.area)}</h3>
                             <p class="text-[10px] uppercase font-bold ${hasStalled ? 'text-red-600' : 'text-green-600'} mt-0.5">
-                                ${hasStalled ? `⚠️ ${a.stalled} stalled PR${a.stalled === 1 ? '' : 's'}` : '✅ No stalled PRs'}
+                                ${hasStalled ? `⚠️ ${a.stalled} stalled PR${a.stalled === 1 ? '' : 's'} (>1d)` : '✅ No stalled PRs'}
                             </p>
                         </div>
                         <div class="text-right shrink-0">
@@ -1649,7 +1649,7 @@ const ui = {
                             <span class="font-mono font-bold text-teal-700">${a.avgCycleTime != null ? a.avgCycleTime.toFixed(1) + 'h' : '—'}</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold ${hasStalled ? 'text-red-600' : 'text-gray-500'}">⚠️ Stalled (&gt;3d, no approval)</span>
+                            <span class="text-xs font-bold ${hasStalled ? 'text-red-600' : 'text-gray-500'}">⚠️ Stalled (&gt;1d, no approval)</span>
                             <span class="font-mono font-bold ${hasStalled ? 'text-red-600' : 'text-gray-400'}">
                                 ${a.stalled}${hasStalled ? ` (avg ${a.avgStalledDays.toFixed(1)}d)` : ''}
                             </span>
@@ -1683,13 +1683,13 @@ const ui = {
         };
         const statusOrder = { active: 0, completed: 1, abandoned: 2, unknown: 3 };
         const now = Date.now();
-        const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+        const ONE_DAY = 1 * 24 * 60 * 60 * 1000;
 
         const enriched = areaStats.prs.map(pr => {
             const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
-            const ageDays = pr.creationDate ? Math.floor((now - new Date(pr.creationDate).getTime()) / (1000 * 60 * 60 * 24)) : null;
+            const ageDays = pr.creationDate ? ((now - new Date(pr.creationDate).getTime()) / (1000 * 60 * 60 * 24)) : null;
             const isStalled = pr.status === 'active' && pr.creationDate &&
-                (now - new Date(pr.creationDate).getTime()) >= THREE_DAYS && !hasApproval;
+                (now - new Date(pr.creationDate).getTime()) >= ONE_DAY && !hasApproval;
             return { ...pr, hasApproval, ageDays, isStalled };
         }).sort((a, b) => {
             if (a.isStalled !== b.isStalled) return a.isStalled ? -1 : 1;
@@ -1725,7 +1725,7 @@ const ui = {
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="font-mono font-bold text-indigo-600">#${pr.id}</span>
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${cfg.cls}">${cfg.label}</span>
-                                ${pr.isStalled ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500 text-white">⚠️ STALLED ${pr.ageDays}d</span>` : ''}
+                                ${pr.isStalled ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500 text-white">⚠️ STALLED ${pr.ageDays.toFixed(1)}d</span>` : ''}
                                 ${pr.hasApproval ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 border border-green-300">👍 Approved</span>' : ''}
                             </div>
                             <div class="text-sm font-medium text-slate-700 mt-1 break-words">${escapeHtml(pr.title)}</div>
@@ -1811,7 +1811,7 @@ const ui = {
                 </div>
                 <div onclick="ui.showStalePRs()" 
                      class="bg-gradient-to-br ${prStats.stalePRs.length > 0 ? 'from-red-100 to-red-200' : 'from-slate-100 to-slate-200'} p-4 rounded-2xl shadow-lg text-slate-800 cursor-pointer hover:scale-105 transition-transform">
-                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Stale PRs (&gt;3 days, no approval)</div>
+                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Stale PRs (&gt;1 day, no approval)</div>
                     <div class="text-4xl font-black mt-1">${prStats.stalePRs.length}</div>
                     <div class="text-[10px] mt-2 bg-white/50 inline-block px-2 py-0.5 rounded">Click for details</div>
                 </div>
