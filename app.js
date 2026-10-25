@@ -1382,7 +1382,7 @@ const ui = {
     // =================================================================
     // PULL REQUEST ANALYTICS — NEW VIEW
     // =================================================================
-        calculatePRStatsByArea() {
+            calculatePRStatsByArea() {
         const prs = db.pullRequests || [];
         const storyMap = new Map();
         [...(db.currentStories || []), ...(db.backlogStories || [])].forEach(s => {
@@ -1407,31 +1407,24 @@ const ui = {
 
         prs.forEach(pr => {
             // =========================================================
-            // AREA RESOLUTION LOGIC
-            // 1) Support log  → "Support Log"
-            // 2) User Story / CR → resolve area exactly like processRows
-            // 3) Anything else (or nothing) → "Unlinked"
+            // AREA RESOLUTION — same source as User Story Kanban:
+            //   PR → linked Story → story.area  (already resolved in processRows)
+            //
+            //   • User Story / CR      → story.area || "General"
+            //   • Support log          → "Support Log" (dedicated area)
+            //   • No story / other type → "Unlinked"
             // =========================================================
             let area = 'Unlinked';
             if (pr.linkedStoryId) {
                 const story = storyMap.get(pr.linkedStoryId.toString());
                 if (story) {
                     if (story.type === 'Support log') {
-                        // ✅ Support Log gets its own dedicated area
                         area = 'Support Log';
                     } else if (isRegularStory(story)) {
-                        // ✅ Same area-resolution logic as processRows
-                        let resolvedArea = story.area;
-                        if (resolvedArea && resolvedArea.trim().toLowerCase() === "integration") {
-                            resolvedArea = "LDM Integration";
-                        }
-                        if (!resolvedArea || resolvedArea.trim() === "") {
-                            const path = story.iterationPath || "";
-                            resolvedArea = path.includes('\\') ? path.split('\\')[0] : path;
-                        }
-                        area = resolvedArea || 'General';
+                        // ✅ Exactly like renderKanban: s.area || "General"
+                        area = story.area || 'General';
                     }
-                    // else: story exists but is not Support log / User Story / CR → stays 'Unlinked'
+                    // else (Task / Bug / Review / unknown type) → stays 'Unlinked'
                 }
             }
 
