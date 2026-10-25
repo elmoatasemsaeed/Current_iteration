@@ -1382,15 +1382,37 @@ const ui = {
     // =================================================================
     // PULL REQUEST ANALYTICS — NEW VIEW
     // =================================================================
-               calculatePRStatsByArea() {
+            calculatePRStatsByArea() {
         const prs = db.pullRequests || [];
-        const storyMap = new Map();
-        [...(db.currentStories || []), ...(db.backlogStories || [])].forEach(s => {
-            if (s && s.id != null) storyMap.set(s.id.toString(), s);
-        });
+        const storyMap = new Map();       // storyId → story
+        const childToParent = new Map();  // task/bug/tc/review ID → parent story
 
-        // ✅ Same area-resolution logic as processRows (for User Story / CR / Support log)
+        const indexStory = (story) => {
+            if (!story || story.id == null) return;
+            storyMap.set(story.id.toString(), story);
+            (story.tasks || []).forEach(t => {
+                if (t && t['ID'] != null) childToParent.set(t['ID'].toString(), story);
+            });
+            (story.bugs || []).forEach(b => {
+                if (b && b['ID'] != null) childToParent.set(b['ID'].toString(), story);
+            });
+            (story.testCases || []).forEach(tc => {
+                if (tc && tc.id != null) childToParent.set(tc.id.toString(), story);
+            });
+            (story.reviews || []).forEach(r => {
+                if (r && r.id != null) childToParent.set(r.id.toString(), story);
+            });
+        };
+
+        (db.currentStories || []).forEach(indexStory);
+        (db.backlogStories || []).forEach(indexStory);
+
+        // ✅ Same area-resolution logic as processRows (for User Story / CR)
+        // ✅ Support log stories get "Support Log"
         const resolveStoryArea = (story) => {
+            if (!story) return 'Unlinked';
+            if (story.type === 'Support log') return 'Support Log';
+            if (!isRegularStory(story)) return 'Unlinked';
             let area = story.area;
             if (area && area.trim().toLowerCase() === "integration") {
                 area = "LDM Integration";
@@ -1421,36 +1443,38 @@ const ui = {
         prs.forEach(pr => {
             // =========================================================
             // AREA RESOLUTION (priority order)
-            //   1) Title starts with "SL"        → "Support Log"
-            //   2) Repo name is not "LDM"        → repo name
-            //   3) Linked Story = Support log    → "Support Log"
-            //   4) Linked Story = User Story/CR  → resolveStoryArea(story)
-            //                                       (same as processRows:
-            //                                        "integration"→"LDM Integration",
-            //                                        empty → Iteration Path)
-            //   5) Otherwise                     → "Unlinked"
+            //   1) Title starts with "SL"          → "Support Log"
+            //   2) Repo name is not "LDM"          → repo name
+            //   3) linkedStoryId = User Story / CR → resolveStoryArea(story)
+            //   4) linkedStoryId = Support log     → "Support Log"
+            //   5) linkedStoryId = Task/Bug/TC/Review
+            //                                      → resolveStoryArea(parentStory)
+            //   6) Otherwise                       → "Unlinked"
             // =========================================================
             let area = 'Unlinked';
             const prTitle = (pr.title || '').trim();
             const prRepo  = (pr.repository || '').trim();
 
             if (/^SL/i.test(prTitle)) {
-                // Rule 1: Support Log PR (title starts with SL)
+                // Rule 1
                 area = 'Support Log';
             } else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
-                // Rule 2: Non-LDM repo → area = repo name
+                // Rule 2
                 area = prRepo;
             } else if (pr.linkedStoryId) {
-                // Rules 3 & 4: story-based resolution
-                const story = storyMap.get(pr.linkedStoryId.toString());
-                if (story) {
-                    if (story.type === 'Support log') {
-                        area = 'Support Log';
-                    } else if (isRegularStory(story)) {
-                        // ✅ Same logic as processRows
-                        area = resolveStoryArea(story);
+                const id = pr.linkedStoryId.toString();
+
+                // Rule 3 & 4: linkedStoryId matches a Story directly
+                const directStory = storyMap.get(id);
+                if (directStory) {
+                    area = resolveStoryArea(directStory);
+                } else {
+                    // Rule 5: linkedStoryId matches a child item (Task/Bug/TC/Review)
+                    const parentStory = childToParent.get(id);
+                    if (parentStory) {
+                        area = resolveStoryArea(parentStory);
                     }
-                    // else (Task / Bug / Review / unknown) → stays 'Unlinked'
+                    // Rule 6: nothing matched → stays 'Unlinked'
                 }
             }
 
@@ -1486,7 +1510,6 @@ const ui = {
             avgStalledDays: a.stalled > 0 ? a.stalledDaysTotal / a.stalled : 0
         })).sort((a, b) => b.total - a.total);
     },
-
     renderPullRequestsTab() {
         const container = document.getElementById('pr-container');
         if (!container) return;
