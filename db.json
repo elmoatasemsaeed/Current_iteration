@@ -6997,19 +6997,19 @@
         },
         {
           "id": 193014,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 193015,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 193017,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 193022,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 193054,
@@ -7021,7 +7021,7 @@
         },
         {
           "id": 193059,
-          "state": "Ready"
+          "state": "Fail"
         },
         {
           "id": 193060,
@@ -9827,7 +9827,7 @@
       "id": 190904,
       "title": "Al shamel Labs - search Results - with change analyzer , the non- numeric ref range will updated according to the changed analyzer",
       "type": "User Story",
-      "state": "Active",
+      "state": "Resolved",
       "assignedTo": "Mohamed Hany",
       "tester": "Esraa Abdelrahman",
       "area": "Internal lab",
@@ -9836,7 +9836,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Shamel Lab_624",
-      "changedDate": "2026-10-25T10:34:18.537Z",
+      "changedDate": "2026-10-26T06:44:32.790Z",
       "tasks": [
         {
           "ID": 191511,
@@ -10705,16 +10705,16 @@
       "id": 194432,
       "title": "AppLink APIs - Update API [Log User Action] > Add \"appVersion\"",
       "type": "User Story",
-      "state": "Active",
+      "state": "Resolved",
       "assignedTo": "Saleh Abdelrahem",
-      "tester": "Unassigned",
+      "tester": "Abdulrahman Elbetar",
       "area": "MobileApp",
       "priority": 1,
       "tags": [],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-25T13:51:41.163Z",
+      "changedDate": "2026-10-26T06:47:00.627Z",
       "tasks": [
         {
           "ID": 194439,
@@ -13233,7 +13233,7 @@
       "id": 180055,
       "title": "Khedr lab - Create new  patient reports",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "Ola Gamal",
       "tester": "Mohamed Abdelhady",
       "area": "Internal lab",
@@ -13242,7 +13242,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Dr Mohamed Khedr Lab_0382",
-      "changedDate": "2026-10-25T13:13:15.893Z",
+      "changedDate": "2026-10-26T06:54:20.683Z",
       "tasks": [
         {
           "ID": 187986,
@@ -13996,13 +13996,15 @@
           "Title": "more than one previous result displayed in report",
           "Assigned To": "Mohamed Abdelhady",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 0.1,
+          "TimeSheet_DevActualTime": 0.17,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-26T06:55:20.5Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-22T17:10:38.207Z",
+          "Resolved Date": "2026-10-26T06:55:26.503Z",
+          "State": "Resolved",
+          "Changed Date": "2026-10-26T06:55:26.503Z",
           "Customer": "Dr Mohamed Khedr Lab_0382"
         }
       ],
@@ -16007,6 +16009,69 @@
       ]
     },
     {
+      "id": 191961,
+      "title": "Client Portal - With Change user password, Ask for old Password for Confirmation",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Saleh Abdelrahem",
+      "tester": "Unassigned",
+      "area": "MobileApp",
+      "priority": 2,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Internal NT",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-10-26T06:50:19.353Z",
+      "tasks": [
+        {
+          "ID": 194646,
+          "Work Item Type": "Task",
+          "Title": "preparation task",
+          "Assigned To": "Saleh Abdelrahem",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp\\2026\\AppLink-October 1-29",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-26T06:50:48Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 194647,
+          "Work Item Type": "Task",
+          "Title": "backend : edit api for change password",
+          "Assigned To": "Saleh Abdelrahem",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp\\2026\\AppLink-October 1-29",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-26T06:54:15.563Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "MobileApp\\2026\\AppLink-October 1-29",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
       "id": 192158,
       "title": "Neuro Espitalia Hosp - Result Receipt (Copied from SKUH)",
       "type": "User Story",
@@ -16680,7 +16745,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-10-25T14:33:47.747Z",
+      "changedDate": "2026-10-26T07:00:11.720Z",
       "tasks": [
         {
           "ID": 190051,
@@ -17048,7 +17113,7 @@
         }
       ],
       "calc": {
-        "devEnd": "2026-10-22T12:00:00.000Z",
+        "devEnd": "2026-10-26T08:55:20.500Z",
         "testEnd": "2026-10-28T12:00:00.000Z",
         "finalEnd": "2026-10-28T12:00:00.000Z"
       },
@@ -22950,7 +23015,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-25T10:14:38.643Z",
+      "changedDate": "2026-10-26T06:43:42.850Z",
       "tasks": [
         {
           "ID": 194120,
@@ -36436,38 +36501,6 @@
       "pullRequests": []
     },
     {
-      "id": 192603,
-      "title": "AlfaKSA_New Servers_ we  need to run invalid objects and fix sequences",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mostafa Mohamed",
-      "tester": "Unassigned",
-      "area": "Registration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Alfa Lab KSA_286",
-      "changedDate": "2026-10-18T11:07:48.720Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 1.25,
-      "testActualTime": 1,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 192671,
       "title": "QMS: Regression CR",
       "type": "User Story",
@@ -39214,75 +39247,11 @@
       "pullRequests": []
     },
     {
-      "id": 193078,
-      "title": "Ansary - Request to Export Test Question Setup from Database",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mostafa Mohamed",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Ansar Specialized clinics_298",
-      "changedDate": "2026-10-21T15:46:04.737Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 0.75,
-      "testActualTime": 2,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
-      "id": 193079,
-      "title": "Ansary_Task from database (Copy Branch Setup)",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mostafa Mohamed",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Ansar Specialized clinics_298",
-      "changedDate": "2026-10-21T15:46:05.390Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 0.5,
-      "testActualTime": 0.5,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 193186,
       "title": "Alfa KSA: Migration Issues",
       "type": "Support log",
       "state": "Resolved",
-      "assignedTo": "Ibrahim Ahmed",
+      "assignedTo": "Mohamed Ragab",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
@@ -39293,7 +39262,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Alfa Lab KSA_286",
-      "changedDate": "2026-10-22T13:51:10.030Z",
+      "changedDate": "2026-10-26T06:22:02.613Z",
       "tasks": [
         {
           "ID": 193817,
@@ -39722,102 +39691,6 @@
       "pullRequests": []
     },
     {
-      "id": 193927,
-      "title": "AlfaEgyNewServer_the report give crash printing the report",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mostafa Mohamed",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Alfa Lab Egypt_424",
-      "changedDate": "2026-10-21T15:43:34.283Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 0.75,
-      "testActualTime": 1,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
-      "id": 193942,
-      "title": "AlfaEgy_Server231_unable to print the barcode or any report",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mostafa Mohamed",
-      "tester": "Unassigned",
-      "area": "Registration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Alfa Lab Egypt_424",
-      "changedDate": "2026-10-21T15:43:34.640Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 1,
-      "testActualTime": 1,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
-      "id": 193954,
-      "title": "AlfaEgy_Server231_the results value disappear after saving action",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mostafa Mohamed",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Alfa Lab Egypt_424",
-      "changedDate": "2026-10-21T15:46:04.383Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 1,
-      "testActualTime": 1,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 194002,
       "title": "#Borg uae - check issue in all service report is not open in some cases",
       "type": "Support log",
@@ -40218,40 +40091,6 @@
       "pullRequests": []
     },
     {
-      "id": 194227,
-      "title": "al hakma >> we need to publish SL192962",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mohamed Hany",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 999,
-      "tags": [
-        "waiting dowentime"
-      ],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "El Hekma Labs_432",
-      "changedDate": "2026-10-26T05:47:50.423Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 1.5,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 194239,
       "title": "# alfa ksa - issue in set download status at deviceloadline",
       "type": "Support log",
@@ -40347,70 +40186,6 @@
           ]
         }
       ]
-    },
-    {
-      "id": 194315,
-      "title": "AlfaKSA_we need to run invalid objects and fix sequences",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mostafa Mohamed",
-      "tester": "Unassigned",
-      "area": "Registration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Alfa Lab KSA_286",
-      "changedDate": "2026-10-24T04:34:37.967Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 3,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
-      "id": 194316,
-      "title": "ALFAKSA_the search screen didn't retrieve data",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mostafa Mohamed",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Alfa Lab KSA_286",
-      "changedDate": "2026-10-24T04:36:14.310Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 2,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
     },
     {
       "id": 194328,
@@ -40889,6 +40664,38 @@
       "customTags": [],
       "iterationPath": "LDM",
       "devActualTime": 1.25,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 194644,
+      "title": "Al Hassa >> Add a new column “Collection (S360)” to service mail procedures",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Mostafa Mahmoud",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Hasa Health Cluster_12",
+      "changedDate": "2026-10-26T06:52:01.177Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
