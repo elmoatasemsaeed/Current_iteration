@@ -1273,33 +1273,41 @@ const ui = {
     // =================================================================
     // PULL REQUEST STATS HELPERS
     // =================================================================
-    calculatePRStats() {
-        const prs = db.pullRequests || [];
-        const completed = prs.filter(pr => pr.status === 'completed' && pr.cycleTimeHours != null);
-        const avgCycleTime = completed.length > 0
-            ? completed.reduce((s, pr) => s + pr.cycleTimeHours, 0) / completed.length
-            : 0;
+calculatePRStats() {
+    const prs = db.pullRequests || [];
+    const completed = prs.filter(pr => pr.status === 'completed' && pr.cycleTimeHours != null);
+    const avgCycleTime = completed.length > 0
+        ? completed.reduce((s, pr) => s + pr.cycleTimeHours, 0) / completed.length
+        : 0;
 
-        const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
-        const now = Date.now();
-        const stalePRs = prs.filter(pr => {
-            if (pr.status !== 'active') return false;
-            if (!pr.creationDate) return false;
-            const ageMs = now - new Date(pr.creationDate).getTime();
-            if (ageMs < threeDaysMs) return false;
-            const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
-            return !hasApproval;
-        });
+    const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    const stalePRs = prs.filter(pr => {
+        if (pr.status !== 'active') return false;
+        if (!pr.creationDate) return false;
+        const ageMs = now - new Date(pr.creationDate).getTime();
+        if (ageMs < threeDaysMs) return false;
+        const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
+        return !hasApproval;
+    });
 
-        return {
-            total: prs.length,
-            active: prs.filter(pr => pr.status === 'active').length,
-            completed: completed.length,
-            abandoned: prs.filter(pr => pr.status === 'abandoned').length,
-            avgCycleTime,
-            stalePRs
-        };
-    },
+    // ✅ NEW: PRs معتمدة لكن لسه active (مستنية merge)
+    const approvedNotCompletedPRs = prs.filter(pr => {
+        if (pr.status !== 'active') return false;
+        return (pr.reviewers || []).some(r => r.vote >= 5);
+    });
+
+    return {
+        total: prs.length,
+        active: prs.filter(pr => pr.status === 'active').length,
+        completed: completed.length,
+        abandoned: prs.filter(pr => pr.status === 'abandoned').length,
+        avgCycleTime,
+        stalePRs,
+        approvedNotCompleted: approvedNotCompletedPRs.length,
+        approvedNotCompletedPRs
+    };
+},
 
     showStalePRs() {
         const modal = document.getElementById('story-modal');
@@ -1382,204 +1390,207 @@ const ui = {
     // =================================================================
     // PULL REQUEST ANALYTICS — NEW VIEW
     // =================================================================
-        calculatePRStatsByArea() {
-    const prs = db.pullRequests || [];
-    const storyMap = new Map();       // storyId → story
-    const childItemMap = new Map();   // child work item ID → child item
-    const childToParent = new Map();  // child ID → parent story
+           calculatePRStatsByArea() {
+        const prs = db.pullRequests || [];
+        const storyMap = new Map();
+        const childItemMap = new Map();
+        const childToParent = new Map();
 
-    const getItemId = (item) => {
-        if (!item) return null;
-        const id = item.ID ?? item.id ?? item.Id;
-        return id != null ? id.toString() : null;
-    };
-
-    const indexStory = (story) => {
-        if (!story) return;
-        const storyId = getItemId(story);
-        if (!storyId) return;
-
-        storyMap.set(storyId, story);
-
-        const indexChild = (child) => {
-            const childId = getItemId(child);
-            if (!childId) return;
-            childItemMap.set(childId, child);
-            childToParent.set(childId, story);
+        const getItemId = (item) => {
+            if (!item) return null;
+            const id = item.ID ?? item.id ?? item.Id;
+            return id != null ? id.toString() : null;
         };
 
-        (story.tasks || []).forEach(indexChild);
-        (story.bugs || []).forEach(indexChild);
-        (story.testCases || []).forEach(indexChild);
-        (story.reviews || []).forEach(indexChild);
-    };
+        const indexStory = (story) => {
+            if (!story) return;
+            const storyId = getItemId(story);
+            if (!storyId) return;
+            storyMap.set(storyId, story);
+            const indexChild = (child) => {
+                const childId = getItemId(child);
+                if (!childId) return;
+                childItemMap.set(childId, child);
+                childToParent.set(childId, story);
+            };
+            (story.tasks || []).forEach(indexChild);
+            (story.bugs || []).forEach(indexChild);
+            (story.testCases || []).forEach(indexChild);
+            (story.reviews || []).forEach(indexChild);
+        };
 
-    (db.currentStories || []).forEach(indexStory);
-    (db.backlogStories || []).forEach(indexStory);
+        (db.currentStories || []).forEach(indexStory);
+        (db.backlogStories || []).forEach(indexStory);
 
-    // ✅ نفس منطق معالجة Area الموجود في processRows
-    const resolveAreaFromWorkItem = (item, { allowGeneral = true } = {}) => {
-        if (!item) return allowGeneral ? 'General' : null;
+        const resolveAreaFromWorkItem = (item, { allowGeneral = true } = {}) => {
+            if (!item) return allowGeneral ? 'General' : null;
 
-        const type = String(item.type || item['Work Item Type'] || '').trim();
+            const type = String(item.type || item['Work Item Type'] || '').trim();
+            if (/^support\s*log$/i.test(type)) return 'Support Log';
 
-        // Support log له نفس معاملة SL
-        if (/^support\s*log$/i.test(type)) return 'Support Log';
+            let area = String(item.area ?? item['Business Area'] ?? '').trim();
+            const path = String(item.iterationPath ?? item['Iteration Path'] ?? '').trim();
 
-        let area = String(item.area ?? item['Business Area'] ?? '').trim();
-        const path = String(item.iterationPath ?? item['Iteration Path'] ?? '').trim();
-
-        // لو Work Item فرعي ومالوش Area ولا Iteration Path → Unlinked
-        if (!area && !path && !allowGeneral) return null;
-
-        if (area.toLowerCase() === 'integration') area = 'LDM Integration';
-
-        if (!area) {
-            area = path.includes('\\') ? path.split('\\')[0].trim() : path.trim();
+            if (!area && !path && !allowGeneral) return null;
             if (area.toLowerCase() === 'integration') area = 'LDM Integration';
-        }
 
-        // لو Area = LDM ننزل مستوى في Iteration Path
-        if (area && area.toUpperCase() === 'LDM' && path.includes('\\')) {
-            const segments = path.split('\\').map(s => s.trim()).filter(Boolean);
-            if (segments.length > 1) {
-                area = segments[1];
+            if (!area) {
+                area = path.includes('\\') ? path.split('\\')[0].trim() : path.trim();
                 if (area.toLowerCase() === 'integration') area = 'LDM Integration';
             }
-        }
 
-        return area || (allowGeneral ? 'General' : null);
-    };
+            if (area && area.toUpperCase() === 'LDM' && path.includes('\\')) {
+                const segments = path.split('\\').map(s => s.trim()).filter(Boolean);
+                if (segments.length > 1) {
+                    area = segments[1];
+                    if (area.toLowerCase() === 'integration') area = 'LDM Integration';
+                }
+            }
+            return area || (allowGeneral ? 'General' : null);
+        };
 
-    const areaMap = {};
-    const now = Date.now();
-    const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+        const areaMap = {};
+        const now = Date.now();
+        const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
 
-    const ensureArea = (area) => {
-        if (!areaMap[area]) {
-            areaMap[area] = {
-                area,
-                total: 0, active: 0, completed: 0, abandoned: 0,
-                approved: 0, stalled: 0, stalledDaysTotal: 0,
-                cycleTimes: [], prs: []
-            };
-        }
-        return areaMap[area];
-    };
+        const ensureArea = (area) => {
+            if (!areaMap[area]) {
+                areaMap[area] = {
+                    area,
+                    total: 0, active: 0, completed: 0, abandoned: 0,
+                    approved: 0, stalled: 0, stalledDaysTotal: 0,
+                    approvedNotCompleted: 0,
+                    cycleTimes: [], prs: []
+                };
+            }
+            return areaMap[area];
+        };
 
-    prs.forEach(pr => {
-                // =========================================================
-        // AREA RESOLUTION (priority order)
-        //   1) Title starts with "SL" / "SL_" / "Support log"
-        //                                         → "Support Log"
-        //   2) Title starts with "integration"     → "LDM Integration"
-        //   3) Repo name is not "LDM"              → repo name (Team Name)
-        //   4) Repo = "LDM" + linked work item (ANY type):
-        //      User Story / CR / Support log / Bug / Task / Test Case / Review
-        //      → process EXACTLY like User Stories in Kanban
-        //        (Business Area first → Iteration Path fallback)
-        //   5) Otherwise                           → "Unlinked"
-        // =========================================================
-        let area = 'Unlinked';
-        const prTitle = (pr.title || '').trim();
-        const prRepo  = (pr.repository || '').trim();
+        prs.forEach(pr => {
+            // =========================================================
+            // AREA RESOLUTION (priority order)
+            //   1) Title starts with "SL" / "SL_" / "Support log" → "Support Log"
+            //   2) Title starts with "integration"                → "LDM Integration"
+            //   3) Repo ≠ "LDM"                                   → repo name (Team Name)
+            //   4) Repo = "LDM" + any linked work item
+            //      (User Story / CR / Support log / Bug / Task / TC / Review)
+            //      → same logic as Kanban User Stories (Business Area → Iteration Path)
+            //   5) Otherwise                                      → "Unlinked"
+            // =========================================================
+            let area = 'Unlinked';
+            const prTitle = (pr.title || '').trim();
+            const prRepo  = (pr.repository || '').trim();
 
-        // 1) Support log / SL / SL_ في أول العنوان → Support Log
-        if (/^(SL|Support\s*Log)(?:\b|_)/i.test(prTitle)) {
-            area = 'Support Log';
-        }
-        // 2) integration في أول العنوان → LDM Integration
-        else if (/^integration(?:\b|_|\/|-)/i.test(prTitle)) {
-            area = 'LDM Integration';
-        }
-        // 3) Repo مش LDM → اسم الريبو (اسم التيم)
-        else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
-            area = prRepo;
-        }
-        // 4) Repo = LDM ومربوط بـ Work Item (أي نوع)
-        else if (pr.linkedStoryId) {
-            const id = pr.linkedStoryId.toString();
-            const linkedItem = storyMap.get(id) || childItemMap.get(id);
+            if (/^(SL|Support\s*Log)(?:\b|_)/i.test(prTitle)) {
+                area = 'Support Log';
+            }
+            else if (/^integration(?:\b|_|\/|-)/i.test(prTitle)) {
+                area = 'LDM Integration';
+            }
+            else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
+                area = prRepo;
+            }
+            else if (pr.linkedStoryId) {
+                const id = pr.linkedStoryId.toString();
+                const linkedItem = storyMap.get(id) || childItemMap.get(id);
 
-            if (linkedItem) {
-                // ✅ نعالجه بنفس منطق الـ User Story في الكانبان:
-                // Business Area → Iteration Path → General
-                area = resolveAreaFromWorkItem(linkedItem, { allowGeneral: true });
+                if (linkedItem) {
+                    area = resolveAreaFromWorkItem(linkedItem, { allowGeneral: true });
 
-                // Test Cases / Reviews مابنخزنش عندهم area/iterationPath،
-                // فنرجع للـ Parent Story بتاعتهم
-                if (area === 'General') {
-                    const parentStory = childToParent.get(id);
-                    if (parentStory) {
-                        const parentArea = resolveAreaFromWorkItem(parentStory, { allowGeneral: false });
-                        if (parentArea) area = parentArea;
+                    // Test Cases / Reviews مابيخزنوش Area/IterationPath → نرجع للـ Parent
+                    if (area === 'General') {
+                        const parentStory = childToParent.get(id);
+                        if (parentStory) {
+                            const parentArea = resolveAreaFromWorkItem(parentStory, { allowGeneral: false });
+                            if (parentArea) area = parentArea;
+                        }
                     }
                 }
             }
-        }
-        
-        const a = ensureArea(area);
-        a.total++;
-        a.prs.push(pr);
 
-        const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
-        if (hasApproval) a.approved++;
+            const a = ensureArea(area);
+            a.total++;
+            a.prs.push(pr);
 
-        if (pr.status === 'active') {
-            a.active++;
-            if (pr.creationDate && !hasApproval) {
-                const ageMs = now - new Date(pr.creationDate).getTime();
-                if (ageMs >= THREE_DAYS) {
-                    a.stalled++;
-                    a.stalledDaysTotal += Math.floor(ageMs / (1000 * 60 * 60 * 24));
+            const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
+            if (hasApproval) a.approved++;
+
+            if (pr.status === 'active') {
+                a.active++;
+                if (hasApproval) {
+                    a.approvedNotCompleted++;
                 }
+                if (pr.creationDate && !hasApproval) {
+                    const ageMs = now - new Date(pr.creationDate).getTime();
+                    if (ageMs >= THREE_DAYS) {
+                        a.stalled++;
+                        a.stalledDaysTotal += Math.floor(ageMs / (1000 * 60 * 60 * 24));
+                    }
+                }
+            } else if (pr.status === 'completed') {
+                a.completed++;
+                if (pr.cycleTimeHours != null) a.cycleTimes.push(pr.cycleTimeHours);
+            } else if (pr.status === 'abandoned') {
+                a.abandoned++;
             }
-        } else if (pr.status === 'completed') {
-            a.completed++;
-            if (pr.cycleTimeHours != null) a.cycleTimes.push(pr.cycleTimeHours);
-        } else if (pr.status === 'abandoned') {
-            a.abandoned++;
-        }
-    });
+        });
 
-    return Object.values(areaMap).map(a => ({
-        ...a,
-        avgCycleTime: a.cycleTimes.length > 0
-            ? a.cycleTimes.reduce((s, v) => s + v, 0) / a.cycleTimes.length
-            : null,
-        avgStalledDays: a.stalled > 0 ? a.stalledDaysTotal / a.stalled : 0
-    })).sort((a, b) => b.total - a.total);
-},
+        return Object.values(areaMap).map(a => ({
+            ...a,
+            avgCycleTime: a.cycleTimes.length > 0
+                ? a.cycleTimes.reduce((s, v) => s + v, 0) / a.cycleTimes.length
+                : null,
+            avgStalledDays: a.stalled > 0 ? a.stalledDaysTotal / a.stalled : 0
+        })).sort((a, b) => b.total - a.total);
+    },
     
-    renderPullRequestsTab() {
+        renderPullRequestsTab() {
         const container = document.getElementById('pr-container');
         if (!container) return;
 
         const prStats = this.calculatePRStats();
         const areaStats = this.calculatePRStatsByArea();
 
+        // ===== 🔥 كروت كبيرة: Active + Approved Not Completed + شريط أرقام صغيرة =====
         const summaryHtml = `
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-                <div class="bg-gradient-to-br from-indigo-100 to-indigo-200 p-4 rounded-2xl shadow-lg text-slate-800">
-                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Total PRs</div>
-                    <div class="text-4xl font-black mt-1">${prStats.total}</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-6 rounded-2xl shadow-lg text-slate-800">
+                    <div class="text-[11px] opacity-70 font-bold uppercase tracking-wider">Active</div>
+                    <div class="text-6xl font-black mt-2 text-blue-700">${prStats.active}</div>
+                    <div class="text-[10px] mt-3 bg-white/60 inline-block px-2 py-0.5 rounded font-bold">
+                        Open PRs · needs review / merge
+                    </div>
                 </div>
-                <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-4 rounded-2xl shadow-lg text-slate-800">
-                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Active</div>
-                    <div class="text-4xl font-black mt-1">${prStats.active}</div>
+                <div class="bg-gradient-to-br from-teal-100 to-teal-200 p-6 rounded-2xl shadow-lg text-slate-800">
+                    <div class="text-[11px] opacity-70 font-bold uppercase tracking-wider">Approved · Not Completed</div>
+                    <div class="text-6xl font-black mt-2 text-teal-700">${prStats.approvedNotCompleted}</div>
+                    <div class="text-[10px] mt-3 bg-white/60 inline-block px-2 py-0.5 rounded font-bold">
+                        ✅ معتمدة — مستنية merge
+                    </div>
                 </div>
-                <div class="bg-gradient-to-br from-green-100 to-green-200 p-4 rounded-2xl shadow-lg text-slate-800">
-                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Completed</div>
-                    <div class="text-4xl font-black mt-1">${prStats.completed}</div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                <div class="bg-white border border-gray-200 p-3 rounded-xl shadow-sm">
+                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Total</div>
+                    <div class="text-2xl font-bold mt-1 text-slate-700">${prStats.total}</div>
                 </div>
-                <div class="bg-gradient-to-br from-teal-100 to-teal-200 p-4 rounded-2xl shadow-lg text-slate-800">
-                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Avg Cycle</div>
-                    <div class="text-4xl font-black mt-1">${prStats.avgCycleTime.toFixed(1)}h</div>
+                <div class="bg-white border border-gray-200 p-3 rounded-xl shadow-sm">
+                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Completed</div>
+                    <div class="text-2xl font-bold mt-1 text-green-600">${prStats.completed}</div>
+                </div>
+                <div class="bg-white border border-gray-200 p-3 rounded-xl shadow-sm">
+                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Abandoned</div>
+                    <div class="text-2xl font-bold mt-1 text-gray-500">${prStats.abandoned}</div>
+                </div>
+                <div class="bg-white border border-gray-200 p-3 rounded-xl shadow-sm">
+                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Avg Cycle</div>
+                    <div class="text-2xl font-bold mt-1 text-teal-600">${prStats.avgCycleTime.toFixed(1)}h</div>
                 </div>
                 <div onclick="ui.showStalePRs()"
-                     class="bg-gradient-to-br ${prStats.stalePRs.length > 0 ? 'from-red-100 to-red-200' : 'from-slate-100 to-slate-200'} p-4 rounded-2xl shadow-lg text-slate-800 cursor-pointer hover:scale-105 transition-transform">
-                    <div class="text-[10px] opacity-80 font-bold uppercase tracking-wider">Stalled (&gt;3d)</div>
-                    <div class="text-4xl font-black mt-1">${prStats.stalePRs.length}</div>
+                     class="bg-white border ${prStats.stalePRs.length > 0 ? 'border-red-300' : 'border-gray-200'} p-3 rounded-xl shadow-sm cursor-pointer hover:border-red-400">
+                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Stalled &gt;3d</div>
+                    <div class="text-2xl font-bold mt-1 ${prStats.stalePRs.length > 0 ? 'text-red-600' : 'text-gray-400'}">${prStats.stalePRs.length}</div>
                 </div>
             </div>
         `;
@@ -1591,63 +1602,67 @@ const ui = {
 
         const cardsHtml = areaStats.map(a => {
             const hasStalled = a.stalled > 0;
+            const hasApprovedPending = a.approvedNotCompleted > 0;
+            const alertBorder = (hasStalled || hasApprovedPending) ? 'border-orange-200' : 'border-gray-100';
+
             return `
-                <div class="card p-5 border-2 ${hasStalled ? 'border-red-200' : 'border-gray-100'} hover:border-google-blue transition cursor-pointer"
+                <div class="card p-5 border-2 ${alertBorder} hover:border-google-blue transition cursor-pointer"
                      onclick="ui.showAreaPRDetails('${encodeURIComponent(a.area)}')">
+
                     <div class="flex justify-between items-start mb-3">
                         <div class="min-w-0 flex-1 pr-2">
                             <h3 class="font-bold text-lg text-slate-800 truncate" title="${escapeHtml(a.area)}">📍 ${escapeHtml(a.area)}</h3>
-                            <p class="text-[10px] uppercase font-bold ${hasStalled ? 'text-red-600' : 'text-green-600'} mt-0.5">
-                                ${hasStalled ? `⚠️ ${a.stalled} stalled PR${a.stalled === 1 ? '' : 's'}` : '✅ No stalled PRs'}
+                            <p class="text-[10px] uppercase font-bold ${hasApprovedPending ? 'text-teal-600' : hasStalled ? 'text-red-600' : 'text-green-600'} mt-0.5">
+                                ${hasApprovedPending ? `🔔 ${a.approvedNotCompleted} ready to merge` : hasStalled ? `⚠️ ${a.stalled} stalled` : '✅ All clear'}
                             </p>
                         </div>
-                        <div class="text-right shrink-0">
-                            <div class="text-3xl font-black text-indigo-600 leading-none">${a.total}</div>
-                            <div class="text-[9px] text-gray-400 uppercase font-bold mt-1">Total PRs</div>
+                    </div>
+
+                    <!-- 🔥 رقمين كبار: Active + Approved Not Completed -->
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 p-3 rounded-xl text-center">
+                            <div class="text-[9px] text-blue-700 font-bold uppercase tracking-wider">Active</div>
+                            <div class="text-4xl font-black text-blue-700 leading-none mt-1">${a.active}</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-teal-50 to-teal-100 border border-teal-200 p-3 rounded-xl text-center">
+                            <div class="text-[9px] text-teal-700 font-bold uppercase tracking-wider leading-tight">Approved<br>Not Completed</div>
+                            <div class="text-4xl font-black text-teal-700 leading-none mt-1">${a.approvedNotCompleted}</div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2 text-sm mb-3">
-                        <div class="bg-blue-50 p-2 rounded">
-                            <div class="text-[9px] text-blue-600 font-bold uppercase">Active</div>
-                            <div class="text-lg font-black text-blue-700 leading-tight">${a.active}</div>
+                    <!-- 📊 شريط أرقام صغيرة -->
+                    <div class="flex justify-between gap-1 text-[10px] bg-slate-50 p-2 rounded-lg border border-slate-100">
+                        <div class="flex flex-col items-center">
+                            <span class="text-gray-400 uppercase font-bold text-[8px]">Total</span>
+                            <span class="text-xs font-bold text-slate-700">${a.total}</span>
                         </div>
-                        <div class="bg-green-50 p-2 rounded">
-                            <div class="text-[9px] text-green-600 font-bold uppercase">Completed</div>
-                            <div class="text-lg font-black text-green-700 leading-tight">${a.completed}</div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-gray-400 uppercase font-bold text-[8px]">Done</span>
+                            <span class="text-xs font-bold text-green-600">${a.completed}</span>
                         </div>
-                        <div class="bg-teal-50 p-2 rounded">
-                            <div class="text-[9px] text-teal-600 font-bold uppercase">Approved</div>
-                            <div class="text-lg font-black text-teal-700 leading-tight">${a.approved}</div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-gray-400 uppercase font-bold text-[8px]">Aband.</span>
+                            <span class="text-xs font-bold text-gray-500">${a.abandoned}</span>
                         </div>
-                        <div class="bg-gray-50 p-2 rounded">
-                            <div class="text-[9px] text-gray-500 font-bold uppercase">Abandoned</div>
-                            <div class="text-lg font-black text-gray-600 leading-tight">${a.abandoned}</div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-gray-400 uppercase font-bold text-[8px]">Stalled</span>
+                            <span class="text-xs font-bold ${hasStalled ? 'text-red-600' : 'text-gray-400'}">${a.stalled}</span>
                         </div>
-                    </div>
-
-                    <div class="border-t border-dashed border-gray-200 pt-3 space-y-2">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-slate-600">⏱ Avg Cycle Time</span>
-                            <span class="font-mono font-bold text-teal-700">${a.avgCycleTime != null ? a.avgCycleTime.toFixed(1) + 'h' : '—'}</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold ${hasStalled ? 'text-red-600' : 'text-gray-500'}">⚠️ Stalled (&gt;3d, no approval)</span>
-                            <span class="font-mono font-bold ${hasStalled ? 'text-red-600' : 'text-gray-400'}">
-                                ${a.stalled}${hasStalled ? ` (avg ${a.avgStalledDays.toFixed(1)}d)` : ''}
-                            </span>
+                        <div class="flex flex-col items-center">
+                            <span class="text-gray-400 uppercase font-bold text-[8px]">Cycle</span>
+                            <span class="text-xs font-bold text-teal-600">${a.avgCycleTime != null ? a.avgCycleTime.toFixed(1) + 'h' : '—'}</span>
                         </div>
                     </div>
 
-                    <div class="mt-3 pt-3 border-t border-gray-100 text-center text-xs font-bold text-google-blue">View Details →</div>
+                    <div class="mt-3 pt-2 border-t border-gray-100 text-center text-[10px] font-bold text-google-blue">View Details →</div>
                 </div>
             `;
         }).join('');
 
-        container.innerHTML = summaryHtml + `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">${cardsHtml}</div>`;
+        container.innerHTML = summaryHtml + `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">${cardsHtml}</div>`;
     },
 
-    showAreaPRDetails(encodedAreaName) {
+       showAreaPRDetails(encodedAreaName) {
         const areaName = decodeURIComponent(encodedAreaName);
         const stats = this.calculatePRStatsByArea();
         const areaStats = stats.find(a => a.area === areaName);
@@ -1673,9 +1688,13 @@ const ui = {
             const ageDays = pr.creationDate ? Math.floor((now - new Date(pr.creationDate).getTime()) / (1000 * 60 * 60 * 24)) : null;
             const isStalled = pr.status === 'active' && pr.creationDate &&
                 (now - new Date(pr.creationDate).getTime()) >= THREE_DAYS && !hasApproval;
-            return { ...pr, hasApproval, ageDays, isStalled };
+            const isApprovedPending = pr.status === 'active' && hasApproval;
+            return { ...pr, hasApproval, ageDays, isStalled, isApprovedPending };
         }).sort((a, b) => {
+            // Stalled أولاً (الأخطر)
             if (a.isStalled !== b.isStalled) return a.isStalled ? -1 : 1;
+            // ثم Approved-Pending (جاهز للدمج)
+            if (a.isApprovedPending !== b.isApprovedPending) return a.isApprovedPending ? -1 : 1;
             const sa = statusOrder[a.status] ?? 3;
             const sb = statusOrder[b.status] ?? 3;
             if (sa !== sb) return sa - sb;
@@ -1684,12 +1703,22 @@ const ui = {
         });
 
         const summaryBar = `
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
-                <div class="bg-indigo-50 p-2 rounded text-center"><div class="text-[9px] text-indigo-600 font-bold uppercase">Total</div><div class="text-lg font-black text-indigo-700">${areaStats.total}</div></div>
-                <div class="bg-blue-50 p-2 rounded text-center"><div class="text-[9px] text-blue-600 font-bold uppercase">Active</div><div class="text-lg font-black text-blue-700">${areaStats.active}</div></div>
-                <div class="bg-green-50 p-2 rounded text-center"><div class="text-[9px] text-green-600 font-bold uppercase">Completed</div><div class="text-lg font-black text-green-700">${areaStats.completed}</div></div>
-                <div class="bg-teal-50 p-2 rounded text-center"><div class="text-[9px] text-teal-600 font-bold uppercase">Approved</div><div class="text-lg font-black text-teal-700">${areaStats.approved}</div></div>
-                <div class="bg-red-50 p-2 rounded text-center"><div class="text-[9px] text-red-600 font-bold uppercase">Stalled</div><div class="text-lg font-black text-red-700">${areaStats.stalled}</div></div>
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-4 rounded-xl text-center">
+                    <div class="text-[10px] text-blue-700 font-bold uppercase tracking-wider">Active</div>
+                    <div class="text-4xl font-black text-blue-700 leading-none mt-1">${areaStats.active}</div>
+                </div>
+                <div class="bg-gradient-to-br from-teal-100 to-teal-200 p-4 rounded-xl text-center">
+                    <div class="text-[10px] text-teal-700 font-bold uppercase tracking-wider">Approved · Not Completed</div>
+                    <div class="text-4xl font-black text-teal-700 leading-none mt-1">${areaStats.approvedNotCompleted}</div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4 text-xs">
+                <div class="bg-slate-50 p-2 rounded text-center"><div class="text-[9px] text-slate-500 font-bold uppercase">Total</div><div class="text-sm font-bold text-slate-700">${areaStats.total}</div></div>
+                <div class="bg-slate-50 p-2 rounded text-center"><div class="text-[9px] text-slate-500 font-bold uppercase">Completed</div><div class="text-sm font-bold text-green-600">${areaStats.completed}</div></div>
+                <div class="bg-slate-50 p-2 rounded text-center"><div class="text-[9px] text-slate-500 font-bold uppercase">Approved</div><div class="text-sm font-bold text-teal-600">${areaStats.approved}</div></div>
+                <div class="bg-slate-50 p-2 rounded text-center"><div class="text-[9px] text-slate-500 font-bold uppercase">Abandoned</div><div class="text-sm font-bold text-gray-500">${areaStats.abandoned}</div></div>
+                <div class="bg-slate-50 p-2 rounded text-center"><div class="text-[9px] text-slate-500 font-bold uppercase">Stalled</div><div class="text-sm font-bold ${areaStats.stalled > 0 ? 'text-red-600' : 'text-gray-400'}">${areaStats.stalled}</div></div>
             </div>
             <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded mb-4">
                 <span class="font-bold text-slate-600">⏱ Avg Cycle Time:</span>
@@ -1701,15 +1730,20 @@ const ui = {
             const cfg = statusMap[pr.status] || statusMap.unknown;
             const created = pr.creationDate ? new Date(pr.creationDate).toLocaleDateString('en-GB') : '—';
             const cycle = pr.cycleTimeHours != null ? pr.cycleTimeHours.toFixed(1) + 'h' : '—';
+            const isApprovedPending = pr.isApprovedPending;
+            const cardBg = pr.isStalled ? 'bg-red-50 border-red-300'
+                          : isApprovedPending ? 'bg-teal-50 border-teal-300'
+                          : 'bg-white border-gray-200';
             return `
-                <div class="p-3 border rounded-lg mb-2 ${pr.isStalled ? 'bg-red-50 border-red-300' : 'bg-white border-gray-200'}">
+                <div class="p-3 border rounded-lg mb-2 ${cardBg}">
                     <div class="flex justify-between items-start gap-2">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="font-mono font-bold text-indigo-600">#${pr.id}</span>
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${cfg.cls}">${cfg.label}</span>
                                 ${pr.isStalled ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500 text-white">⚠️ STALLED ${pr.ageDays}d</span>` : ''}
-                                ${pr.hasApproval ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 border border-green-300">👍 Approved</span>' : ''}
+                                ${isApprovedPending ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-500 text-white">✅ READY TO MERGE</span>` : ''}
+                                ${pr.hasApproval && !isApprovedPending ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 border border-green-300">👍 Approved</span>' : ''}
                             </div>
                             <div class="text-sm font-medium text-slate-700 mt-1 break-words">${escapeHtml(pr.title)}</div>
                             <div class="text-[11px] text-gray-500 mt-1">
@@ -1736,7 +1770,6 @@ const ui = {
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     },
-
     renderDashboard() {
         const container = document.getElementById('dashboard-container');
         if (!container) return;
