@@ -1468,19 +1468,17 @@ const ui = {
     };
 
     prs.forEach(pr => {
-        // =========================================================
+                // =========================================================
         // AREA RESOLUTION (priority order)
         //   1) Title starts with "SL" / "SL_" / "Support log"
         //                                         → "Support Log"
         //   2) Title starts with "integration"     → "LDM Integration"
-        //   3) Repo name is not "LDM"              → repo name
-        //   4) linkedStoryId = User Story / CR / Support log
-        //                                         → resolveAreaFromWorkItem(story)
-        //   5) linkedStoryId = Task / Bug (has area or iteration path)
-        //                                         → resolveAreaFromWorkItem(child)
-        //   6) linkedStoryId = Test Case / Review
-        //                                         → resolveAreaFromWorkItem(parentStory)
-        //   7) Otherwise                           → "Unlinked"
+        //   3) Repo name is not "LDM"              → repo name (Team Name)
+        //   4) Repo = "LDM" + linked work item (ANY type):
+        //      User Story / CR / Support log / Bug / Task / Test Case / Review
+        //      → process EXACTLY like User Stories in Kanban
+        //        (Business Area first → Iteration Path fallback)
+        //   5) Otherwise                           → "Unlinked"
         // =========================================================
         let area = 'Unlinked';
         const prTitle = (pr.title || '').trim();
@@ -1494,47 +1492,32 @@ const ui = {
         else if (/^integration(?:\b|_|\/|-)/i.test(prTitle)) {
             area = 'LDM Integration';
         }
-        // 3) Repo مش LDM → اسم الريبو
+        // 3) Repo مش LDM → اسم الريبو (اسم التيم)
         else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
             area = prRepo;
         }
-        // 4) مربوط بـ Work Item
+        // 4) Repo = LDM ومربوط بـ Work Item (أي نوع)
         else if (pr.linkedStoryId) {
             const id = pr.linkedStoryId.toString();
-            const directStory = storyMap.get(id);
+            const linkedItem = storyMap.get(id) || childItemMap.get(id);
 
-            if (directStory) {
-                // User Story / CR / Support log
-                area = resolveAreaFromWorkItem(directStory, { allowGeneral: true });
-            } else {
-                const childItem = childItemMap.get(id);
+            if (linkedItem) {
+                // ✅ نعالجه بنفس منطق الـ User Story في الكانبان:
+                // Business Area → Iteration Path → General
+                area = resolveAreaFromWorkItem(linkedItem, { allowGeneral: true });
 
-                if (childItem) {
-                    const childType = String(childItem.type || childItem['Work Item Type'] || '').trim();
-
-                    // ✅ Task / Bug / أي Work Item فرعي عنده Area أو Iteration Path
-                    // نستخدم Area الخاصة به هو نفسه
-                    const childArea = resolveAreaFromWorkItem(childItem, { allowGeneral: false });
-
-                    if (childArea) {
-                        area = childArea;
-                    } else if (!/^(Task|Bug)$/i.test(childType)) {
-                        // Test Case / Review مالهمش Area غالباً → نرجع للـ Parent Story
-                        const parentStory = childToParent.get(id);
-                        if (parentStory) {
-                            area = resolveAreaFromWorkItem(parentStory, { allowGeneral: true });
-                        }
-                    }
-                    // لو Task/Bug ومالوش Area ولا Iteration Path → تفضل Unlinked
-                } else {
+                // Test Cases / Reviews مابنخزنش عندهم area/iterationPath،
+                // فنرجع للـ Parent Story بتاعتهم
+                if (area === 'General') {
                     const parentStory = childToParent.get(id);
                     if (parentStory) {
-                        area = resolveAreaFromWorkItem(parentStory, { allowGeneral: true });
+                        const parentArea = resolveAreaFromWorkItem(parentStory, { allowGeneral: false });
+                        if (parentArea) area = parentArea;
                     }
                 }
             }
         }
-
+        
         const a = ensureArea(area);
         a.total++;
         a.prs.push(pr);
