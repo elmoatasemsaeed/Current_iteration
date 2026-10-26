@@ -445,69 +445,160 @@ const archiver = {
 // =================================================================
 const auth = {
     async handleLogin() {
-        const u = document.getElementById('username').value;
+        const u = document.getElementById('username').value.trim();
         const p = document.getElementById('password').value;
-        const t = document.getElementById('gh-token').value;
-        const azPat = document.getElementById('az-pat').value;
+        const t = document.getElementById('gh-token').value.trim();
+        const azPat = document.getElementById('az-pat').value.trim();
         const rem = document.getElementById('remember-me').checked;
-        if (!u || !p || !t || !azPat) return alert("برجاء ملء جميع البيانات بما في ذلك Azure PAT");
-        sessionStorage.setItem('az_pat', azPat);
+
+        if (!u || !p) return alert("برجاء إدخال اسم المستخدم وكلمة المرور");
+
         const loginBtn = document.querySelector("button[onclick='auth.handleLogin()']");
         const originalText = loginBtn.innerText;
         loginBtn.innerText = "جاري التحقق...";
         loginBtn.disabled = true;
+
         try {
-            const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                headers: {
-                    'Authorization': `token ${t}`,
-                    'Accept': 'application/vnd.github.v3.raw'
-                }
-            });
-            if (response.ok) {
-                const remoteDb = await response.json();
-                const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                    headers: { 'Authorization': `token ${t}` }
-                });
-                const metaData = await metaRes.json();
-                const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
-                if (userMatch) {
-                    // ✅ Migration: viewers old schema
-                    if (userMatch.role === 'viewer' && !userMatch.allowedTabs) {
-                        userMatch.allowedTabs = ALL_TABS.map(tab => tab.id);
-                    }
-                    if (userMatch.role === 'viewer' && !userMatch.allowedAreas) {
-                        userMatch.allowedAreas = [];
-                    }
-                    db = remoteDb;
-                    db.sha = metaData.sha;
-                    if (!db.customTags) db.customTags = [];
-                    if (!db.backlogStories) db.backlogStories = [];
-                    if (!db.areaComments) db.areaComments = [];
-                    if (!db.projects) db.projects = [];
-                    if (!db.archivedProjects) db.archivedProjects = [];
-                    if (!db.standupCommentsStore) db.standupCommentsStore = {};
-                    if (!db.pullRequests) db.pullRequests = [];
-                    if (!db.workItemsMap) db.workItemsMap = {};
-                    
-                    migrateStandupComments();
-                    
-                    sessionStorage.setItem('gh_token', t);
-                    sessionStorage.setItem('az_pat', azPat);
-                    if (rem) localStorage.setItem('saved_creds', JSON.stringify({ u, p, t, azPat }));
-                    currentUser = userMatch;
-                    if (currentUser.role === 'admin') {
-                        archiver.runArchive();
-                    }
-                    this.startApp();
-                } else {
-                    alert("خطأ في اسم المستخدم أو كلمة المرور داخل ملف GitHub");
-                }
-            } else {
-                alert("تعذر الوصول للملف. تأكد من Token ومن اسم المستودع (Repo Name)");
+            // ============================================================
+            // 1) محاولة القراءة بالتوكن أولاً (لو موجود)
+            // ============================================================
+            let response = null;
+            let usedToken = false;
+
+            if (t) {
+                try {
+                    response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+                        headers: {
+                            'Authorization': `token ${t}`,
+                            'Accept': 'application/vnd.github.v3.raw'
+                        }
+                    });
+                    if (response.ok) usedToken = true;
+                    else response = null;
+                } catch (e) { response = null; }
             }
+
+            // ============================================================
+            // 2) fallback: قراءة Anonymous (للريبو العام — بدون توكن)
+            // ============================================================
+            if (!response) {
+                try {
+                    response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+                        headers: { 'Accept': 'application/vnd.github.v3.raw' }
+                    });
+                } catch (e) { response = null; }
+            }
+
+            if (!response || !response.ok) {
+                if (response && [401, 403, 404].includes(response.status)) {
+                    alert("تعذر الوصول لملف البيانات.\nلو الريبو خاص، لازم تدخل GitHub Token صالح.");
+                } else {
+                    alert("تعذر الاتصال بـ GitHub. تأكد من الإنترنت.");
+                }
+                return;
+            }
+
+            const remoteDb = await response.json();
+
+            // ============================================================
+            // 3) قراءة الـ SHA (مطلوب للأدمن فقط عند الحفظ)
+            // ============================================================
+            let remoteSha = null;
+            if (usedToken) {
+                try {
+                    const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+                        headers: { 'Authorization': `token ${t}` }
+                    });
+                    if (metaRes.ok) {
+                        const metaData = await metaRes.json();
+                        remoteSha = metaData.sha;
+                    }
+                } catch (e) { /* ignore */ }
+            }
+
+            // ============================================================
+            // 4) التحقق من بيانات المستخدم
+            // ============================================================
+            const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
+            if (!userMatch) {
+                alert("خطأ في اسم المستخدم أو كلمة المرور");
+                return;
+            }
+
+            // Migration للـ viewers القدامى
+            if (userMatch.role === 'viewer') {
+                if (!userMatch.allowedTabs) userMatch.allowedTabs = ALL_TABS.map(tab => tab.id);
+                if (!userMatch.allowedAreas) userMatch.allowedAreas = [];
+            }
+
+            // ============================================================
+            // 5) التحقق من متطلبات كل دور
+            // ============================================================
+            if (userMatch.role === 'admin') {
+                if (!t) {
+                    alert("❌ الأدمن لازم يدخل GitHub Token.");
+                    return;
+                }
+                if (!usedToken) {
+                    alert("❌ GitHub Token غير صالح أو لا يملك صلاحيات على الريبو.");
+                    return;
+                }
+                if (!azPat) {
+                    alert("❌ الأدمن لازم يدخل Azure PAT.");
+                    return;
+                }
+                sessionStorage.setItem('gh_token', t);
+                sessionStorage.setItem('az_pat', azPat);
+                sessionStorage.removeItem('viewer_mode');
+            } else {
+                // ✅ Viewer: التوكن و Azure PAT اختياريين
+                if (t) sessionStorage.setItem('gh_token', t);
+                else sessionStorage.removeItem('gh_token');
+
+                if (azPat) sessionStorage.setItem('az_pat', azPat);
+                else sessionStorage.removeItem('az_pat');
+
+                sessionStorage.setItem('viewer_mode', '1');
+            }
+
+            // ============================================================
+            // 6) تحميل الـ DB وتجهيز الحالة
+            // ============================================================
+            db = remoteDb;
+            db.sha = remoteSha;
+            if (!db.customTags) db.customTags = [];
+            if (!db.backlogStories) db.backlogStories = [];
+            if (!db.areaComments) db.areaComments = [];
+            if (!db.projects) db.projects = [];
+            if (!db.archivedProjects) db.archivedProjects = [];
+            if (!db.standupCommentsStore) db.standupCommentsStore = {};
+            if (!db.pullRequests) db.pullRequests = [];
+            if (!db.workItemsMap) db.workItemsMap = {};
+
+            migrateStandupComments();
+
+            // حفظ الـ creds (بدون توكن للفيو)
+            if (rem) {
+                const credsToSave = { u, p };
+                if (userMatch.role === 'admin') {
+                    credsToSave.t = t;
+                    credsToSave.azPat = azPat;
+                } else {
+                    if (t) credsToSave.t = t;
+                    if (azPat) credsToSave.azPat = azPat;
+                }
+                localStorage.setItem('saved_creds', JSON.stringify(credsToSave));
+            }
+
+            currentUser = userMatch;
+            if (currentUser.role === 'admin') {
+                archiver.runArchive();
+            }
+            this.startApp();
+
         } catch (e) {
             console.error(e);
-            alert("حدث خطأ في الاتصال بـ GitHub. تأكد من الإنترنت والـ Token");
+            alert("حدث خطأ في الاتصال بـ GitHub: " + (e.message || "تأكد من الإنترنت"));
         } finally {
             loginBtn.innerText = originalText;
             loginBtn.disabled = false;
@@ -551,6 +642,9 @@ const auth = {
     },
     logout() {
         localStorage.removeItem('saved_creds');
+        sessionStorage.removeItem('gh_token');
+        sessionStorage.removeItem('az_pat');
+        sessionStorage.removeItem('viewer_mode');
         location.reload();
     }
 };
@@ -566,6 +660,9 @@ const dataProcessor = {
         return this._savePromise;
     },
     async _saveToGitHubInternal() {
+    // ✅ منع الفيو من الحفظ نهائياً
+    if (!canEdit()) throw new Error('ليس لديك صلاحية للحفظ');
+
     const token = sessionStorage.getItem('gh_token');
     if (!token) throw new Error('GitHub token missing');
 
@@ -624,13 +721,11 @@ const dataProcessor = {
 },
     async sync() {
     const token = sessionStorage.getItem('gh_token');
+    const headers = { 'Accept': 'application/vnd.github.v3.raw' };
+    if (token) headers['Authorization'] = `token ${token}`;
+
     try {
-        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-            headers: {
-                'Authorization': `token ${token}`,
-                'Accept': 'application/vnd.github.v3.raw'
-            }
-        });
+        const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, { headers });
 
         if (response.ok) {
             db = await response.json();
@@ -643,13 +738,20 @@ const dataProcessor = {
             if (!db.pullRequests) db.pullRequests = [];
             if (!db.workItemsMap) db.workItemsMap = {};
 
-            const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
-                headers: { 'Authorization': `token ${token}` }
-            });
-            const metaData = await metaRes.json();
-            db.sha = metaData.sha;
+            // SHA مطلوب فقط للأدمن (Viewer مش بيحفظ)
+            if (token) {
+                try {
+                    const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    if (metaRes.ok) {
+                        const metaData = await metaRes.json();
+                        db.sha = metaData.sha;
+                    }
+                } catch (e) { /* ignore */ }
+            }
 
-            // ✅ إعادة ربط currentUser بعد الـ sync (لضمان الصلاحيات المحدثة)
+            // ✅ إعادة ربط currentUser بعد الـ sync
             if (currentUser) {
                 const refreshed = (db.users || []).find(usr => usr.username === currentUser.username);
                 if (refreshed) {
@@ -682,7 +784,7 @@ const dataProcessor = {
             ui.renderAll();
         } else if (response.status === 404) {
             console.log("File not found, creating new DB...");
-            this.saveToGitHub();
+            if (canEdit()) this.saveToGitHub();
         } else {
             throw new Error(`GitHub API returned ${response.status} ${response.statusText}`);
         }
@@ -3191,7 +3293,6 @@ const ui = {
     openStoryModal(storyId) {
         const s = currentData.find(item => item.id.toString() === storyId.toString());
         if (!s) return;
-        // فحص صلاحية الإيريا للفيو
         if (!isAreaAllowed(s.area || 'General')) return ui.showToast('ليس لديك صلاحية لعرض هذه القصة', 'error');
         const modal = document.getElementById('story-modal');
         const title = document.getElementById('modal-title');
@@ -4010,12 +4111,11 @@ const settings = {
     _editingUserIndex: null,
 
     toggleViewerPermissions() {
-        const role = document.getElementById('new-user-role').value;
+        const roleEl = document.getElementById('new-user-role');
         const container = document.getElementById('viewer-permissions');
-        if (container) {
-            if (role === 'viewer') container.classList.remove('hidden');
-            else container.classList.add('hidden');
-        }
+        if (!roleEl || !container) return;
+        if (roleEl.value === 'viewer') container.classList.remove('hidden');
+        else container.classList.add('hidden');
     },
 
     renderUserFormCheckboxes() {
@@ -4037,7 +4137,6 @@ const settings = {
                 </label>
             `).join('');
         }
-        // إظهار/إخفاء القسم بناءً على الدور الحالي
         this.toggleViewerPermissions();
     },
 
@@ -4089,7 +4188,6 @@ const settings = {
         });
     },
 
-    // alias للتوافق مع الـ HTML القديم
     addUser() { this.saveUser(); },
 
     editUser(index) {
@@ -4103,4 +4201,513 @@ const settings = {
         this.toggleViewerPermissions();
 
         document.querySelectorAll('.user-tab-checkbox').forEach(cb => {
-            cb.checked = (
+            cb.checked = (user.allowedTabs || []).includes(cb.value);
+        });
+        document.querySelectorAll('.user-area-checkbox').forEach(cb => {
+            cb.checked = (user.allowedAreas || []).includes(cb.value);
+        });
+
+        const submitBtn = document.getElementById('user-submit-btn');
+        const cancelBtn = document.getElementById('user-cancel-btn');
+        if (submitBtn) submitBtn.textContent = 'Update User';
+        if (cancelBtn) cancelBtn.classList.remove('hidden');
+        document.getElementById('new-user-name').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    },
+
+    cancelEdit() {
+        this._editingUserIndex = null;
+        this.resetUserForm();
+    },
+
+    resetUserForm() {
+        const nameEl = document.getElementById('new-user-name');
+        const passEl = document.getElementById('new-user-pass');
+        const roleEl = document.getElementById('new-user-role');
+        if (nameEl) nameEl.value = '';
+        if (passEl) passEl.value = '';
+        if (roleEl) roleEl.value = 'viewer';
+        this.toggleViewerPermissions();
+        document.querySelectorAll('.user-tab-checkbox, .user-area-checkbox').forEach(cb => cb.checked = false);
+        const submitBtn = document.getElementById('user-submit-btn');
+        const cancelBtn = document.getElementById('user-cancel-btn');
+        if (submitBtn) submitBtn.textContent = 'Create User';
+        if (cancelBtn) cancelBtn.classList.add('hidden');
+    },
+
+    removeUser(index) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        if (db.users[index].username === currentUser.username) return alert("Cannot delete yourself!");
+        db.users.splice(index, 1);
+        dataProcessor.saveToGitHub();
+        ui.renderSettings();
+    },
+
+    addVacation() {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        const name = document.getElementById('staff-select').value;
+        const date = document.getElementById('vacation-date').value;
+        if (!date) return;
+        db.vacations.push({ name, date });
+        dataProcessor.saveToGitHub();
+        ui.renderSettings();
+    },
+    removeVacation(i) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        db.vacations.splice(i, 1);
+        dataProcessor.saveToGitHub();
+        ui.renderSettings();
+    },
+    addHoliday() {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        const date = document.getElementById('holiday-date').value;
+        if (!date) return;
+        db.holidays.push(date);
+        dataProcessor.saveToGitHub();
+        ui.renderSettings();
+    },
+    removeHoliday(i) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        db.holidays.splice(i, 1);
+        dataProcessor.saveToGitHub();
+        ui.renderSettings();
+    }
+};
+
+// =================================================================
+// TAG MANAGER
+// =================================================================
+const tagManager = {
+    addTag() {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        const input = document.getElementById('new-tag-input');
+        const tagName = input.value.trim();
+        if (!tagName || db.customTags.includes(tagName)) return;
+        db.customTags.push(tagName);
+        input.value = '';
+        dataProcessor.saveToGitHub();
+        this.renderTagsSettings();
+        ui.renderAll();
+    },
+    removeTag(tagName) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        tagName = decodeURIComponent(tagName);
+        db.customTags = db.customTags.filter(t => t !== tagName);
+        dataProcessor.saveToGitHub();
+        this.renderTagsSettings();
+        ui.renderAll();
+    },
+    assignTagToStory(storyId, tagName) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        const story = db.currentStories.find(s => s.ID == storyId);
+        if (story) { story.customTag = tagName; dataProcessor.saveToGitHub(); }
+    },
+    renderTagsSettings() {
+        const container = document.getElementById('tags-list');
+        if (!container) return;
+        container.innerHTML = db.customTags.map(tag => `
+            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">${escapeHtml(tag)}<button onclick="tagManager.removeTag('${encodeURIComponent(tag)}')" class="text-google-red hover:text-red-700 font-bold">×</button></span>
+        `).join('');
+    },
+    toggleTagInStory(storyId, tagName) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        tagName = decodeURIComponent(tagName);
+        let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
+        if (!story) story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
+        if (story) {
+            if (!story.customTags) story.customTags = [];
+            const index = story.customTags.indexOf(tagName);
+            if (index > -1) story.customTags.splice(index, 1);
+            else story.customTags.push(tagName);
+            dataProcessor.saveToGitHub();
+            ui.renderKanban();
+        } else {
+            console.error("Story not found in database for ID:", storyId);
+        }
+    }
+};
+
+// =================================================================
+// COMMENT MANAGER
+// =================================================================
+const commentManager = {
+    updateComment(storyId, text) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        if (!db.standupCommentsStore) db.standupCommentsStore = {};
+        if (!db.standupCommentsStore[storyId]) db.standupCommentsStore[storyId] = [];
+        db.standupCommentsStore[storyId].push({
+            text: text,
+            date: new Date().toLocaleString('en-GB'),
+            timestamp: Date.now()
+        });
+        dataProcessor.saveToGitHub();
+        ui.renderActiveCards();
+    }
+};
+
+// =================================================================
+// AZURE DEVOPS
+// =================================================================
+async function fetchWithTimeout(url, options = {}) {
+    const controller = new AbortController();
+    const timeoutMs = AZURE_CONFIG.TIMEOUT;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        return response;
+    } catch (error) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            throw new Error(`انتهت مدة الانتظار (${(timeoutMs / 1000 / 60).toFixed(1)} دقيقة). السيرفر لم يستجب.`);
+        }
+        throw error;
+    }
+};
+
+const azureDevOps = {
+    async sync() {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        const pat = sessionStorage.getItem('az_pat');
+        if (!pat) {
+            ui.showToast("Azure PAT مفقود. الرجاء تسجيل الدخول مجدداً.", "error");
+            return;
+        }
+
+        const syncBtn = document.querySelector("button[onclick='azureDevOps.sync()']");
+        const originalText = syncBtn.innerHTML;
+        syncBtn.innerHTML = "⏳ جاري المزامنة...";
+        syncBtn.disabled = true;
+        ui.showLoader();
+
+        const dbSnapshot = JSON.parse(JSON.stringify(db));
+
+        try {
+            const authHeader = 'Basic ' + btoa(':' + pat);
+
+            const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
+            const mainRes = await fetchWithTimeout(mainQueryUrl, {
+                headers: { 'Authorization': authHeader }
+            });
+
+            if (!mainRes.ok) {
+                throw new Error(`فشل الاتصال بـ Azure Main Query (${mainRes.status} ${mainRes.statusText}). تم إلغاء العملية لحماية البيانات.`);
+            }
+            const mainData = await mainRes.json();
+            if (!mainData || mainData.errorCode) {
+                throw new Error(`Azure Main Query رجع خطأ: ${mainData?.message || 'Unknown error'}`);
+            }
+            const mainRelations = mainData.workItemRelations || [];
+            const mainIds = [...new Set(mainRelations.map(r => r.target ? r.target.id : null).filter(id => id))];
+
+            let backlogIds = [];
+            if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
+                const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
+                const backlogRes = await fetchWithTimeout(backlogQueryUrl, {
+                    headers: { 'Authorization': authHeader }
+                });
+
+                if (!backlogRes.ok) {
+                    throw new Error(`فشل الاتصال بـ Azure Backlog Query (${backlogRes.status}). تم إلغاء العملية.`);
+                }
+                const backlogData = await backlogRes.json();
+                if (backlogData.errorCode) {
+                    throw new Error(`Azure Backlog رجع خطأ: ${backlogData.message || 'Unknown'}`);
+                }
+                if (backlogData.workItemRelations && backlogData.workItemRelations.length > 0) {
+                    backlogIds = backlogData.workItemRelations.map(r => r.target ? r.target.id : null).filter(id => id);
+                } else if (backlogData.workItems && backlogData.workItems.length > 0) {
+                    backlogIds = backlogData.workItems.map(wi => wi.id).filter(id => id);
+                }
+                console.log(`✅ Backlog IDs extracted: ${backlogIds.length}`);
+            }
+
+            const allIds = [...new Set([...mainIds, ...backlogIds])];
+
+            if (allIds.length === 0) {
+                throw new Error("Azure رجّع 0 عناصر. تم إلغاء المزامنة لحماية البيانات الحالية.");
+            }
+
+            const chunkSize = 200;
+            let allDetails = [];
+            for (let i = 0; i < allIds.length; i += chunkSize) {
+                const chunk = allIds.slice(i, i + chunkSize);
+                const batchUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
+                const batchRes = await fetchWithTimeout(batchUrl, {
+                    method: 'POST',
+                    headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: chunk, fields: this.getRequiredFields() })
+                });
+
+                if (!batchRes.ok) {
+                    throw new Error(`فشل استرجاع تفاصيل الـ Work Items (${batchRes.status}). تم إلغاء العملية.`);
+                }
+                const batchData = await batchRes.json();
+                if (batchData.errorCode || !batchData.value) {
+                    throw new Error(`Azure Batch رجع خطأ: ${batchData.message || 'Invalid response'}`);
+                }
+                allDetails = allDetails.concat(batchData.value);
+                console.log(`✅ Batch ${Math.floor(i / chunkSize) + 1}: ${batchData.value.length} items loaded`);
+            }
+
+            if (allDetails.length === 0) {
+                throw new Error("لم يتم استلام أي تفاصيل من Azure. تم إلغاء المزامنة.");
+            }
+
+            db.workItemsMap = {};
+            allDetails.forEach(d => {
+                const fields = d.fields || {};
+                db.workItemsMap[d.id] = {
+                    id: d.id.toString(),
+                    type: fields["System.WorkItemType"] || "",
+                    area: fields["MyCompany.MyProcess.BusinessArea"] || "",
+                    iterationPath: fields["System.IterationPath"] || "",
+                    parentId: fields["System.Parent"] ? fields["System.Parent"].toString() : null,
+                    title: fields["System.Title"] || ""
+                };
+            });
+
+            const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
+            const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
+
+            if (mainRows.length === 0) {
+                throw new Error("mainRows فاضية. تم إلغاء المزامنة لحماية البيانات.");
+            }
+
+            await dataProcessor.processRows(mainRows);
+
+            if (backlogIds.length > 0) {
+                const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
+                const backlogRows = this.buildBacklogRows(backlogDetails);
+                if (backlogRows.length > 0) {
+                    await dataProcessor.processBacklogRows(backlogRows);
+                } else {
+                    console.warn('⚠️ backlogRows فاضية - تم تخطي تحديث الـ backlog.');
+                }
+            }
+
+            let prCount = 0;
+            try {
+                const prs = await this.fetchPullRequests(authHeader);
+                db.pullRequests = prs;
+                prCount = prs.length;
+
+                this.linkPullRequestsToStories();
+
+                await dataProcessor.saveToGitHub();
+                console.log(`✅ تم ربط ${prCount} PR بالقصص وحفظها.`);
+            } catch (prError) {
+                console.warn('⚠️ فشل تحميل الـ Pull Requests (المزامنة الأساسية تمت بنجاح):', prError);
+                ui.showToast("⚠️ المزامنة تمت، لكن فشل جلب الـ Pull Requests: " + prError.message, "error");
+            }
+
+            ui.showToast(`✅ تمت المزامنة بنجاح! (${prCount} PR محدّث)`, "success");
+
+        } catch (error) {
+            console.error("Azure Sync Error:", error);
+            db = dbSnapshot;
+            ui.showToast("❌ فشل الاتصال بـ Azure: " + error.message, "error");
+        } finally {
+            ui.hideLoader();
+            syncBtn.innerHTML = originalText;
+            syncBtn.disabled = false;
+        }
+    },
+
+    async fetchPullRequests(authHeader) {
+        const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests?searchCriteria.status=all&$top=500&$expand=WorkItems&api-version=7.1`;
+        const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
+
+        if (!res.ok) {
+            throw new Error(`فشل جلب الـ Pull Requests (${res.status} ${res.statusText}).`);
+        }
+        const data = await res.json();
+        if (!data || !Array.isArray(data.value)) {
+            console.warn('⚠️ Azure لم يُرجع أي Pull Requests.');
+            return [];
+        }
+
+        console.log(`✅ تم استلام ${data.value.length} Pull Request من Azure.`);
+
+        return data.value.map(pr => {
+            const creationDate = pr.creationDate ? new Date(pr.creationDate) : null;
+            const closedDate = pr.closedDate ? new Date(pr.closedDate) : null;
+
+            let cycleTimeHours = null;
+            if (pr.status === 'completed' && creationDate && closedDate) {
+                cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
+            }
+
+            let linkedStoryId = null;
+            if (pr.workItemRefs && pr.workItemRefs.length > 0) {
+                linkedStoryId = pr.workItemRefs[0].id.toString();
+            } else {
+                const titleMatch = (pr.title || '').match(/#?(\d{4,6})/);
+                linkedStoryId = titleMatch ? titleMatch[1] : null;
+            }
+
+            return {
+                id: pr.pullRequestId,
+                title: pr.title || '',
+                status: pr.status || 'unknown',
+                createdBy: pr.createdBy?.displayName || 'Unknown',
+                repository: pr.repository?.name || 'N/A',
+                creationDate: creationDate ? creationDate.toISOString() : null,
+                closedDate: closedDate ? closedDate.toISOString() : null,
+                cycleTimeHours: cycleTimeHours,
+                linkedStoryId: linkedStoryId,
+                sourceRefName: pr.sourceRefName || '',
+                targetRefName: pr.targetRefName || '',
+                reviewers: (pr.reviewers || []).map(r => ({
+                    name: r.displayName || 'Unknown',
+                    vote: r.vote != null ? r.vote : 0
+                }))
+            };
+        });
+    },
+
+    linkPullRequestsToStories() {
+        const linkFn = (stories) => {
+            (stories || []).forEach(story => {
+                story.pullRequests = (db.pullRequests || []).filter(pr =>
+                    pr.linkedStoryId && pr.linkedStoryId.toString() === story.id.toString()
+                );
+            });
+        };
+        linkFn(db.currentStories);
+        linkFn(db.backlogStories);
+    },
+
+    buildRowsFromRelations(relations, detailsMap) {
+        const rows = [];
+        relations.forEach(rel => {
+            if (!rel.target) return;
+            const fields = detailsMap.get(rel.target.id);
+            if (!fields) return;
+            rows.push({
+                'ID': rel.target.id,
+                'Work Item Type': fields["System.WorkItemType"],
+                'Title': fields["System.Title"],
+                'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
+                'Activity': fields["Microsoft.VSTS.Common.Activity"] || "",
+                'Original Estimation': fields["NT.OriginalEstimation"] || 0,
+                'TimeSheet_DevActualTime': fields["Custom.TimeSheet_DevActualTime"] || 0,
+                'TimeSheet_TestingActualTime': fields["Custom.TimeSheet_TestingActualTime"] || 0,
+                'Activated Date': fields["Microsoft.VSTS.Common.ActivatedDate"],
+                'Business Area': fields["MyCompany.MyProcess.BusinessArea"],
+                'Iteration Path': fields["System.IterationPath"],
+                'CustomResolvedDate': fields["Custom.CustomResolvedDate"],
+                'Tested Date': fields["MyCompany.MyProcess.TestedDate"],
+                'Assigned To Tester': fields["MyCompany.MyProcess.Tester"]?.displayName || "Unassigned",
+                'Resolved Date': fields["Microsoft.VSTS.Common.ResolvedDate"],
+                'State': fields["System.State"],
+                'Release Expected Date': fields["MyCompany.MyProcess.Release"],
+                'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"],
+                'Tags': fields["System.Tags"],
+                'Changed Date': fields["System.ChangedDate"],
+                'Branch': fields["NT.Branch"],
+                'Customer': fields["Nt.Customer"]
+            });
+        });
+        return rows;
+    },
+
+    getRequiredFields() {
+        return [
+            "System.Id", "System.WorkItemType", "System.Title", "System.AssignedTo",
+            "Microsoft.VSTS.Common.Activity", "NT.OriginalEstimation",
+            "Custom.TimeSheet_DevActualTime", "Custom.TimeSheet_TestingActualTime",
+            "Microsoft.VSTS.Common.ActivatedDate", "MyCompany.MyProcess.BusinessArea",
+            "System.IterationPath", "Custom.CustomResolvedDate", "MyCompany.MyProcess.TestedDate",
+            "MyCompany.MyProcess.Tester", "Microsoft.VSTS.Common.ResolvedDate",
+            "System.State", "MyCompany.MyProcess.Release", "MyCompany.MyProcess.BusinessPriority",
+            "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer",
+            "System.Parent"
+        ];
+    },
+
+    buildBacklogRows(details) {
+        const rows = [];
+        details.forEach(d => {
+            const fields = d.fields || {};
+            const state = fields["System.State"] || "";
+            if (!["New", "Approved"].includes(state)) return;
+            let area = fields["MyCompany.MyProcess.BusinessArea"] || "";
+            if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
+            if (!area || area.trim() === "") {
+                const path = fields["System.IterationPath"] || "";
+                area = path.includes('\\') ? path.split('\\')[0] : path;
+            }
+            rows.push({
+                'ID': d.id,
+                'Work Item Type': fields["System.WorkItemType"] || "User Story",
+                'Title': fields["System.Title"] || "Untitled",
+                'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
+                'Business Area': area,
+                'State': state,
+                'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
+                'Release Expected Date': fields["MyCompany.MyProcess.Release"] ? new Date(fields["MyCompany.MyProcess.Release"]) : null,
+                'Tags': fields["System.Tags"] || "",
+                'Iteration Path': fields["System.IterationPath"] || "",
+                'Changed Date': fields["System.ChangedDate"] ? new Date(fields["System.ChangedDate"]) : null
+            });
+        });
+        return rows;
+    },
+
+    saveSettings() {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        const settings = {
+            org: document.getElementById('az-org').value,
+            project: document.getElementById('az-project').value,
+            queryId: document.getElementById('az-query-id').value,
+            backlogQueryId: document.getElementById('az-backlog-query-id').value
+        };
+        localStorage.setItem('az_settings', JSON.stringify(settings));
+        ui.showToast("تم حفظ إعدادات Azure بنجاح", "success");
+    }
+};
+
+// =================================================================
+// EXECUTE WITH SAVE
+// =================================================================
+function executeWithSave(action, successMsg = 'تم الحفظ بنجاح', errorMsg = 'فشل الحفظ', callback = null) {
+    if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+    ui.showLoader();
+    Promise.resolve(action())
+        .then(() => dataProcessor.saveToGitHub())
+        .then(() => {
+            ui.showToast(successMsg, 'success');
+            if (callback) callback();
+            else ui.renderAll();
+        })
+        .catch(err => {
+            console.error(err);
+            ui.showToast(`${errorMsg}: ${err.message}`, 'error');
+        })
+        .finally(() => ui.hideLoader());
+}
+
+// =================================================================
+// INIT
+// =================================================================
+window.onload = () => {
+    if (!db.areaComments) db.areaComments = [];
+    if (!db.projects) db.projects = [];
+    if (!db.archivedProjects) db.archivedProjects = [];
+    if (!db.standupCommentsStore) db.standupCommentsStore = {};
+    if (!db.pullRequests) db.pullRequests = [];
+    if (!db.workItemsMap) db.workItemsMap = {};
+    const saved = localStorage.getItem('saved_creds');
+    if (saved) {
+        const creds = JSON.parse(saved);
+        document.getElementById('username').value = creds.u || '';
+        document.getElementById('password').value = creds.p || '';
+        document.getElementById('gh-token').value = creds.t || '';
+        document.getElementById('az-pat').value = creds.azPat || '';
+        auth.handleLogin();
+    }
+};
