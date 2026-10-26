@@ -404,38 +404,19 @@
         <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
             <h1 class="text-3xl font-bold text-center mb-8 text-google-blue">Login</h1>
             <div class="space-y-4">
-    <div>
-        <label class="block text-xs font-bold text-gray-600 mb-1">Username</label>
-        <input type="text" id="username" placeholder="Username" class="form-input">
+                <input type="text" id="username" placeholder="Username" class="form-input">
+                <input type="password" id="password" placeholder="Password" class="form-input">
+                <input type="password" id="gh-token" placeholder="GitHub Personal Access Token" class="form-input">
+                <input type="password" id="az-pat" placeholder="Azure Personal Access Token (PAT)" class="form-input">
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="remember-me" class="w-4 h-4 accent-google-blue">
+                    <label for="remember-me" class="text-sm text-gray-600">Remember Me</label>
+                </div>
+                <button onclick="auth.handleLogin()" class="btn btn-primary w-full justify-center">Sign In</button>
+            </div>
+            <p class="text-[10px] text-gray-400 mt-4 text-center italic">Ensure token has correct permissions (repo scope)</p>
+        </div>
     </div>
-    <div>
-        <label class="block text-xs font-bold text-gray-600 mb-1">Password</label>
-        <input type="password" id="password" placeholder="Password" class="form-input">
-    </div>
-    <div>
-        <label class="block text-xs font-bold text-gray-600 mb-1">
-            GitHub Token
-            <span class="text-gray-400 font-normal">(مطلوب للأدمن فقط)</span>
-        </label>
-        <input type="password" id="gh-token" placeholder="GitHub PAT (اتركه فارغاً لو Viewer)" class="form-input">
-    </div>
-    <div>
-        <label class="block text-xs font-bold text-gray-600 mb-1">
-            Azure PAT
-            <span class="text-gray-400 font-normal">(مطلوب للأدمن فقط)</span>
-        </label>
-        <input type="password" id="az-pat" placeholder="Azure PAT (اتركه فارغاً لو Viewer)" class="form-input">
-    </div>
-    <div class="flex items-center gap-2">
-        <input type="checkbox" id="remember-me" class="w-4 h-4 accent-google-blue">
-        <label for="remember-me" class="text-sm text-gray-600">Remember Me</label>
-    </div>
-    <button onclick="auth.handleLogin()" class="btn btn-primary w-full justify-center">Sign In</button>
-</div>
-<p class="text-[10px] text-gray-400 mt-4 text-center italic leading-relaxed">
-    🔓 <b>Viewer</b>: يقدر يدخل بـ Username/Password بس (بدون Token) — بشرط إن الريبو Public.<br>
-    🔐 <b>Admin</b>: لازم GitHub Token (repo scope) + Azure PAT.
-</p>
 
     <!-- Main App -->
     <div id="app-container" class="hidden">
@@ -541,37 +522,21 @@
             <section id="tab-settings" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="card p-6">
-    <h3 class="font-bold mb-4 flex items-center gap-2">👥 User Management</h3>
-    <div class="space-y-3 mb-6">
-        <input type="text" id="new-user-name" placeholder="Username" class="form-input">
-        <input type="password" id="new-user-pass" placeholder="Password" class="form-input">
-        <select id="new-user-role" onchange="settings.toggleViewerPermissions()" class="form-input">
-            <option value="viewer">Viewer (Read Only)</option>
-            <option value="admin">Admin (Full Access)</option>
-        </select>
-
-        <div id="viewer-permissions" class="space-y-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
-            <div>
-                <label class="block text-xs font-bold text-gray-600 mb-2">Allowed Tabs:</label>
-                <div id="new-user-tabs" class="grid grid-cols-2 gap-1 max-h-44 overflow-y-auto"></div>
-            </div>
-            <div>
-                <label class="block text-xs font-bold text-gray-600 mb-2">Allowed Business Areas:</label>
-                <div id="new-user-areas" class="grid grid-cols-2 gap-1 max-h-44 overflow-y-auto"></div>
-                <p class="text-[10px] text-gray-400 mt-1">اترك الكل فارغاً = كل الإيرياز مسموحة</p>
-            </div>
-        </div>
-
-        <div class="flex gap-2">
-            <button id="user-submit-btn" onclick="settings.saveUser()" class="btn btn-primary flex-1 justify-center">Create User</button>
-            <button id="user-cancel-btn" onclick="settings.cancelEdit()" class="btn btn-outline hidden">Cancel</button>
-        </div>
-    </div>
-    <div class="border-t pt-4">
-        <h4 class="text-sm font-bold text-gray-500 mb-2">Existing Users:</h4>
-        <div id="users-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
-    </div>
-</div>
+                        <h3 class="font-bold mb-4 flex items-center gap-2">👥 User Management</h3>
+                        <div class="space-y-3 mb-6">
+                            <input type="text" id="new-user-name" placeholder="Username" class="form-input">
+                            <input type="password" id="new-user-pass" placeholder="Password" class="form-input">
+                            <select id="new-user-role" class="form-input">
+                                <option value="viewer">Viewer (Read Only)</option>
+                                <option value="admin">Admin (Full Access)</option>
+                            </select>
+                            <button onclick="settings.addUser()" class="btn btn-primary w-full justify-center">Create User</button>
+                        </div>
+                        <div class="border-t pt-4">
+                            <h4 class="text-sm font-bold text-gray-500 mb-2">Existing Users:</h4>
+                            <div id="users-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                        </div>
+                    </div>
 
                     <div class="card p-6">
                         <h3 class="font-bold mb-4">Add Vacation For Employee</h3>
