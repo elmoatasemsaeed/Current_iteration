@@ -404,19 +404,38 @@
         <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
             <h1 class="text-3xl font-bold text-center mb-8 text-google-blue">Login</h1>
             <div class="space-y-4">
-                <input type="text" id="username" placeholder="Username" class="form-input">
-                <input type="password" id="password" placeholder="Password" class="form-input">
-                <input type="password" id="gh-token" placeholder="GitHub Personal Access Token" class="form-input">
-                <input type="password" id="az-pat" placeholder="Azure Personal Access Token (PAT)" class="form-input">
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" id="remember-me" class="w-4 h-4 accent-google-blue">
-                    <label for="remember-me" class="text-sm text-gray-600">Remember Me</label>
-                </div>
-                <button onclick="auth.handleLogin()" class="btn btn-primary w-full justify-center">Sign In</button>
-            </div>
-            <p class="text-[10px] text-gray-400 mt-4 text-center italic">Ensure token has correct permissions (repo scope)</p>
-        </div>
+    <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">Username</label>
+        <input type="text" id="username" placeholder="Username" class="form-input">
     </div>
+    <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">Password</label>
+        <input type="password" id="password" placeholder="Password" class="form-input">
+    </div>
+    <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">
+            GitHub Token
+            <span class="text-gray-400 font-normal">(مطلوب للأدمن فقط)</span>
+        </label>
+        <input type="password" id="gh-token" placeholder="GitHub PAT (اتركه فارغاً لو Viewer)" class="form-input">
+    </div>
+    <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">
+            Azure PAT
+            <span class="text-gray-400 font-normal">(مطلوب للأدمن فقط)</span>
+        </label>
+        <input type="password" id="az-pat" placeholder="Azure PAT (اتركه فارغاً لو Viewer)" class="form-input">
+    </div>
+    <div class="flex items-center gap-2">
+        <input type="checkbox" id="remember-me" class="w-4 h-4 accent-google-blue">
+        <label for="remember-me" class="text-sm text-gray-600">Remember Me</label>
+    </div>
+    <button onclick="auth.handleLogin()" class="btn btn-primary w-full justify-center">Sign In</button>
+</div>
+<p class="text-[10px] text-gray-400 mt-4 text-center italic leading-relaxed">
+    🔓 <b>Viewer</b>: يقدر يدخل بـ Username/Password بس (بدون Token) — بشرط إن الريبو Public.<br>
+    🔐 <b>Admin</b>: لازم GitHub Token (repo scope) + Azure PAT.
+</p>
 
     <!-- Main App -->
     <div id="app-container" class="hidden">
