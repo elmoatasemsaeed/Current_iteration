@@ -19,6 +19,69 @@ const AZURE_CONFIG = {
     TIMEOUT: 120000
 };
 
+// =================================================================
+// PERMISSIONS — Tabs & Business Areas
+// =================================================================
+const BUSINESS_AREAS = [
+    'Client Custom Portals',
+    'Front and Financial',
+    'Home Visit',
+    'Integration',
+    'Internal lab',
+    'LDM Integration',
+    'MaterialManagement',
+    'MobileApp',
+    'Registration',
+    'SaaS',
+    'Web Results'
+];
+
+const ALL_TABS = [
+    { id: 'dashboard',        label: 'Dashboard' },
+    { id: 'active',           label: 'Current Status' },
+    { id: 'delivery',         label: 'Delivery' },
+    { id: 'workload',         label: 'Workload' },
+    { id: 'daily-activity',   label: 'Daily Activity' },
+    { id: 'inactive-stories', label: 'Inactive' },
+    { id: 'kanban',           label: 'Kanban Board' },
+    { id: 'pull-requests',    label: 'Pull Requests' },
+    { id: 'support-kanban',   label: 'Support Kanban' },
+    { id: 'auditor',          label: 'Auditor Checklist' },
+    { id: 'projects',         label: 'Projects' }
+];
+
+function normalizeArea(area) {
+    const normalized = (area || 'General').trim().toLowerCase();
+    if (normalized === 'integration') return 'ldm integration';
+    return normalized;
+}
+
+function canEdit() {
+    return !!(currentUser && currentUser.role === 'admin');
+}
+
+function isAreaAllowed(area) {
+    if (!currentUser) return true;
+    if (currentUser.role === 'admin') return true;
+    const allowed = currentUser.allowedAreas || [];
+    if (allowed.length === 0) return true;
+    const norm = normalizeArea(area);
+    return allowed.some(a => normalizeArea(a) === norm);
+}
+
+function filterByArea(stories) {
+    if (!currentUser || currentUser.role === 'admin') return stories;
+    if (!currentUser.allowedAreas || currentUser.allowedAreas.length === 0) return stories;
+    return stories.filter(s => isAreaAllowed(s.area || 'General'));
+}
+
+function isTabAllowed(tabId) {
+    if (!currentUser) return false;
+    if (currentUser.role === 'admin') return true;
+    if (tabId === 'settings') return false;
+    return (currentUser.allowedTabs || []).includes(tabId);
+}
+
 /**
  * Escapes HTML special characters to prevent XSS attacks.
  */
@@ -112,10 +175,11 @@ function pruneStandupComments() {
 }
 
 // =================================================================
-// HELPER FUNCTIONS (UPDATED WITH NEW CLASSES)
+// HELPER FUNCTIONS (UPDATED WITH PERMISSIONS)
 // =================================================================
 
 function renderTagDropdown(storyId, selectedTags = []) {
+    if (!canEdit()) return '';
     const customTagsList = db.customTags || [];
     if (customTagsList.length === 0) return '';
     return `
@@ -145,6 +209,7 @@ function renderTagDropdown(storyId, selectedTags = []) {
 }
 
 function renderProjectSelect(story) {
+    if (!canEdit()) return '';
     const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => 
         `<option value="${escapeHtml(p.id)}" ${story.linkedProjectId === p.id ? 'selected' : ''}>${escapeHtml(p.name)}</option>`
     ).join('');
@@ -179,7 +244,7 @@ function renderComments(story) {
 }
 
 /**
- * Unified story card generator (Updated with new classes)
+ * Unified story card generator
  */
 function createStoryCard(story, options = {}) {
     const {
@@ -198,7 +263,6 @@ function createStoryCard(story, options = {}) {
     const commentsCount = getStandupComments(story.id).length;
     const releaseDate = story.expectedRelease ? (story.expectedRelease instanceof Date ? story.expectedRelease.toLocaleDateString('en-GB') : new Date(story.expectedRelease).toLocaleDateString('en-GB')) : null;
 
-    // ----- التحقق من صحة Iteration Path -----
     const iterationPathValid = !!(story.iterationPath && /[\d\/]/.test(story.iterationPath));
     const iterationPathIndicator = (!isBacklog && !isSupport)
         ? `<span class="text-[10px] font-bold ${iterationPathValid ? 'text-green-600' : 'text-red-600'} ml-2 inline-flex items-center gap-1 min-w-0 max-w-[240px]" title="${escapeHtml(story.iterationPath || 'N/A')}">
@@ -218,7 +282,7 @@ function createStoryCard(story, options = {}) {
         statusHtml = `<span class="status-badge ${statusClass}">${escapeHtml(state)}</span>`;
     }
 
-    let projectSelectHtml = showProjectSelect && !isBacklog ? renderProjectSelect(story) : '';
+    let projectSelectHtml = (showProjectSelect && canEdit() && !isBacklog) ? renderProjectSelect(story) : '';
     let tagDropdownHtml = showTagDropdown ? renderTagDropdown(story.id, story.customTags || []) : '';
     let commentsHtml = showCommentsButton && !isBacklog ?
         `<button onclick="ui.openCommentsModal('${story.id}')" class="btn btn-outline text-indigo-600 border-indigo-300 hover:bg-indigo-50 text-xs py-1 px-2">💬 <span class="font-bold">${commentsCount}</span></button>` : '';
@@ -240,7 +304,6 @@ function createStoryCard(story, options = {}) {
             <div class="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">Area: ${escapeHtml(story.area || "General")} | Updated: ${story.changedDate ? new Date(story.changedDate).toLocaleDateString('en-GB') : 'N/A'}</div>
         `;
     } else {
-        // regular mode
         const devEst = story.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity'])).reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
         const testEst = story.tasks.filter(t => t['Activity'] === 'Testing').reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
         const totalBugs = story.bugs ? story.bugs.length : 0;
@@ -308,11 +371,13 @@ function createStoryCard(story, options = {}) {
         </div>
     `;
 }
+
 // =================================================================
 // ARCHIVER
 // =================================================================
 const archiver = {
     async runArchive() {
+        if (!canEdit()) return;
         const TenDaysAgo = Date.now() - (17 * 24 * 60 * 60 * 1000);
         const logsToArchive = db.deliveryLogs.filter(log => log.timestamp < TenDaysAgo);
         const logsToKeep = db.deliveryLogs.filter(log => log.timestamp >= TenDaysAgo);
@@ -342,6 +407,7 @@ const archiver = {
         this.archiveClosedProjects();
     },
     async archiveClosedProjects() {
+        if (!canEdit()) return;
         const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
         const closedProjects = db.projects.filter(p => p.status === 'closed' && new Date(p.closeDate).getTime() < sevenDaysAgo);
         if (closedProjects.length > 0) {
@@ -405,6 +471,13 @@ const auth = {
                 const metaData = await metaRes.json();
                 const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
                 if (userMatch) {
+                    // ✅ Migration: viewers old schema
+                    if (userMatch.role === 'viewer' && !userMatch.allowedTabs) {
+                        userMatch.allowedTabs = ALL_TABS.map(tab => tab.id);
+                    }
+                    if (userMatch.role === 'viewer' && !userMatch.allowedAreas) {
+                        userMatch.allowedAreas = [];
+                    }
                     db = remoteDb;
                     db.sha = metaData.sha;
                     if (!db.customTags) db.customTags = [];
@@ -422,7 +495,9 @@ const auth = {
                     sessionStorage.setItem('az_pat', azPat);
                     if (rem) localStorage.setItem('saved_creds', JSON.stringify({ u, p, t, azPat }));
                     currentUser = userMatch;
-                    archiver.runArchive();
+                    if (currentUser.role === 'admin') {
+                        archiver.runArchive();
+                    }
                     this.startApp();
                 } else {
                     alert("خطأ في اسم المستخدم أو كلمة المرور داخل ملف GitHub");
@@ -441,13 +516,37 @@ const auth = {
     startApp() {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('app-container').classList.remove('hidden');
+
         if (currentUser.role === 'viewer') {
+            // إخفاء أزرار التعديل الأساسية
             const uploadBtn = document.querySelector("button[onclick*='csv-input']");
             if (uploadBtn) uploadBtn.style.display = 'none';
+
+            const syncBtn = document.querySelector("button[onclick='azureDevOps.sync()']");
+            if (syncBtn) syncBtn.style.display = 'none';
+
+            // إخفاء Settings نهائياً
             const settingsNav = document.querySelector("button[onclick*='settings']");
             if (settingsNav) settingsNav.style.display = 'none';
+
+            // إخفاء التابات غير المسموحة
+            const allowedTabs = currentUser.allowedTabs || [];
+            document.querySelectorAll('nav .nav-btn').forEach(btn => {
+                const onclickAttr = btn.getAttribute('onclick') || '';
+                const match = onclickAttr.match(/switchTab\('([^']+)'\)/);
+                if (match) {
+                    const tabId = match[1];
+                    if (!allowedTabs.includes(tabId)) btn.style.display = 'none';
+                }
+            });
         }
-        ui.switchTab('dashboard');
+
+        let firstTab = 'dashboard';
+        if (currentUser.role === 'viewer') {
+            const allowed = currentUser.allowedTabs || [];
+            firstTab = allowed[0] || 'dashboard';
+        }
+        ui.switchTab(firstTab);
         dataProcessor.sync();
     },
     logout() {
@@ -470,7 +569,6 @@ const dataProcessor = {
     const token = sessionStorage.getItem('gh_token');
     if (!token) throw new Error('GitHub token missing');
 
-    // ✅ Guard: رفض الحفظ لو كل الجداول الأساسية فاضية (حماية من المسح)
     const hasContent =
         (db.currentStories?.length || 0) +
         (db.backlogStories?.length || 0) +
@@ -551,6 +649,20 @@ const dataProcessor = {
             const metaData = await metaRes.json();
             db.sha = metaData.sha;
 
+            // ✅ إعادة ربط currentUser بعد الـ sync (لضمان الصلاحيات المحدثة)
+            if (currentUser) {
+                const refreshed = (db.users || []).find(usr => usr.username === currentUser.username);
+                if (refreshed) {
+                    if (refreshed.role === 'viewer' && !refreshed.allowedTabs) {
+                        refreshed.allowedTabs = ALL_TABS.map(tab => tab.id);
+                    }
+                    if (refreshed.role === 'viewer' && !refreshed.allowedAreas) {
+                        refreshed.allowedAreas = [];
+                    }
+                    currentUser = refreshed;
+                }
+            }
+
             const convertDates = (story) => {
                 if (story.expectedRelease) story.expectedRelease = new Date(story.expectedRelease);
                 if (story.changedDate) story.changedDate = new Date(story.changedDate);
@@ -569,11 +681,9 @@ const dataProcessor = {
 
             ui.renderAll();
         } else if (response.status === 404) {
-            // ✅ فقط لو الملف مش موجود فعلاً
             console.log("File not found, creating new DB...");
             this.saveToGitHub();
         } else {
-            // ✅ أي خطأ تاني (500, 408, 401, 403...) → منكملش ولا نكتب داتا
             throw new Error(`GitHub API returned ${response.status} ${response.statusText}`);
         }
     } catch (e) {
@@ -582,6 +692,7 @@ const dataProcessor = {
     }
 },
     async handleCSV(event) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         const file = event.target.files[0];
         ui.showLoader();
         try {
@@ -603,7 +714,6 @@ const dataProcessor = {
         }
     },
     async processRows(rows) {
-    // ✅ Guard 1: منع التنفيذ لو الصفوف فاضية
     if (!Array.isArray(rows) || rows.length === 0) {
         console.warn('⚠️ processRows: لم يتم استلام أي صفوف. تم إلغاء العملية لحماية البيانات.');
         ui.showToast('⚠️ لم يتم استلام بيانات من Azure. تم إلغاء التحديث لحماية البيانات.', 'error');
@@ -674,7 +784,6 @@ const dataProcessor = {
         }
     });
 
-    // ✅ Guard 2: لو لم يتم بناء أي قصة بعد المعالجة
     if (newStories.length === 0) {
         console.warn('⚠️ processRows: لم يتم بناء أي قصة من الصفوف المستلمة. تم إلغاء التحديث.');
         ui.showToast('⚠️ لم يتم بناء أي قصة. تم إلغاء التحديث لحماية البيانات.', 'error');
@@ -688,7 +797,6 @@ const dataProcessor = {
     await this.saveToGitHub();
 },
     async processBacklogRows(rows) {
-    // ✅ Guard 1: منع التنفيذ لو الصفوف فاضية
     if (!Array.isArray(rows) || rows.length === 0) {
         console.warn('⚠️ processBacklogRows: لم يتم استلام أي صفوف. تم تخطي تحديث الـ Backlog.');
         return;
@@ -728,13 +836,11 @@ const dataProcessor = {
         };
     }).filter(s => s !== null);
 
-    // ✅ Guard 2: لو مفيش قصص مؤهلة بعد الفلترة، لا نكتب فوق الـ backlog الحالي
     if (backlogStories.length === 0) {
         console.warn('⚠️ processBacklogRows: لم يتم بناء أي قصة بعد الفلترة. تم إلغاء تحديث الـ Backlog.');
         return;
     }
 
-    // حافظ على customTags وlinkedProjectId وpullRequests الموجودة من قبل
     backlogStories.forEach(story => {
         const existing = (db.backlogStories || []).find(s => s.id == story.id);
         if (existing) {
@@ -887,6 +993,7 @@ const dateEngine = {
 // =================================================================
 const areaCommentManager = {
     addComment(area, text) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         if (!area || !text || !text.trim()) return;
         db.areaComments.push({
             area: area,
@@ -906,7 +1013,7 @@ const areaCommentManager = {
         const filterSelect = document.getElementById('kanban-ba-filter');
         let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
         if (selectedAreas.length === 0) {
-            const allStories = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
+            const allStories = filterByArea([...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories]);
             const areas = [...new Set(allStories.map(s => s.area || "General"))].sort();
             this.renderCommentsPopup(areas);
         } else {
@@ -944,10 +1051,11 @@ const areaCommentManager = {
                                     <p class="text-sm text-slate-700" style="direction: rtl; text-align: right;">${escapeHtml(c.text)}</p>
                                     <p class="text-[10px] text-gray-400 mt-1">${escapeHtml(c.timestamp)}</p>
                                 </div>
-                                <button onclick="areaCommentManager.deleteComment('${encodeURIComponent(area)}', ${index})" class="text-red-400 hover:text-red-600 text-sm font-bold ml-2" title="حذف التعليق">✕</button>
+                                ${canEdit() ? `<button onclick="areaCommentManager.deleteComment('${encodeURIComponent(area)}', ${index})" class="text-red-400 hover:text-red-600 text-sm font-bold ml-2" title="حذف التعليق">✕</button>` : ''}
                             </div>
                         `).join('')}
                     </div>
+                    ${canEdit() ? `
                     <div class="mt-3 flex gap-2">
                         <textarea id="area-comment-${area.replace(/\s/g, '')}" 
                                   placeholder="اكتب تعليق عام عن المنطقة..." 
@@ -959,23 +1067,26 @@ const areaCommentManager = {
                             إضافة
                         </button>
                     </div>
+                    ` : ''}
                 </div>
             `;
         });
         content.innerHTML = html;
     },
     addCommentFromPopup(area) {
-    const decodedArea = decodeURIComponent(area); // فك التشفير
+    if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+    const decodedArea = decodeURIComponent(area);
     const textarea = document.getElementById(`area-comment-${decodedArea.replace(/\s/g, '')}`);
     if (!textarea) return;
     const text = textarea.value.trim();
     if (!text) return;
-    this.addComment(decodedArea, text);   // استخدم النص المفكوك
+    this.addComment(decodedArea, text);
     textarea.value = '';
     this.openCommentsPopup();
 },
     deleteComment(area, index) {
-    const decodedArea = decodeURIComponent(area); // فك التشفير
+    if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+    const decodedArea = decodeURIComponent(area);
     if (!confirm('هل تريد حذف هذا التعليق؟')) return;
     const comments = db.areaComments.filter(c => c.area === decodedArea);
     if (comments[index]) {
@@ -1006,6 +1117,7 @@ const projectManager = {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
     },
     addProject() {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         const name = document.getElementById('project-name').value.trim();
         const team = document.getElementById('project-team').value.trim();
         const dueDate = document.getElementById('project-due-date').value;
@@ -1030,6 +1142,7 @@ const projectManager = {
         );
     },
     deleteProject(projectId) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         if (!confirm('Are you sure you want to delete this project?')) return;
         executeWithSave(
             () => {
@@ -1043,6 +1156,7 @@ const projectManager = {
         );
     },
     updateProjectDueDate(projectId, newDate) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         const project = this.getProjectById(projectId);
         if (!project) return;
         if (!newDate) return ui.showToast('الرجاء إدخال تاريخ صحيح', 'error');
@@ -1054,6 +1168,7 @@ const projectManager = {
         );
     },
     updateTaskDueDate(projectId, taskId, newDate) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         const project = this.getProjectById(projectId);
         if (!project) return;
         const task = project.tasks.find(t => t.id === taskId);
@@ -1070,6 +1185,7 @@ const projectManager = {
         return db.projects.find(p => p.id === id);
     },
     linkStoryToProject(storyId, projectId) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
         if (!story) story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
         if (!story) return;
@@ -1092,6 +1208,7 @@ const projectManager = {
         );
     },
     unlinkStoryFromProject(storyId) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
         if (!story) story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
         if (!story || !story.linkedProjectId) return;
@@ -1108,6 +1225,7 @@ const projectManager = {
         );
     },
     holdProject(projectId) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         const reason = prompt('Enter reason for holding the project:');
         if (reason === null) return;
         const endDate = prompt('Expected end date of hold (YYYY-MM-DD):');
@@ -1126,6 +1244,7 @@ const projectManager = {
         );
     },
     closeProject(projectId) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         if (!confirm('Are you sure you want to close this project? It will be archived after 7 days.')) return;
         const project = this.getProjectById(projectId);
         if (!project) return;
@@ -1140,6 +1259,7 @@ const projectManager = {
         );
     },
     addTask(projectId, title, dueDate) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         if (!title || !dueDate) return ui.showToast('Please fill task title and due date', 'error');
         const project = this.getProjectById(projectId);
         if (!project) return;
@@ -1158,6 +1278,7 @@ const projectManager = {
         );
     },
     deleteTask(projectId, taskId) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         if (!confirm('Delete this task?')) return;
         const project = this.getProjectById(projectId);
         if (!project) return;
@@ -1169,6 +1290,7 @@ const projectManager = {
         );
     },
     updateTaskStatus(projectId, taskId, newStatus) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         const project = this.getProjectById(projectId);
         if (!project) return;
         const task = project.tasks.find(t => t.id === taskId);
@@ -1181,6 +1303,7 @@ const projectManager = {
         );
     },
     addTaskComment(projectId, taskId, commentText) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         if (!commentText.trim()) return;
         const project = this.getProjectById(projectId);
         if (!project) return;
@@ -1194,6 +1317,7 @@ const projectManager = {
         );
     },
     deleteTaskComment(projectId, taskId, commentIndex) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         if (!confirm('Delete this comment?')) return;
         const project = this.getProjectById(projectId);
         if (!project) return;
@@ -1209,7 +1333,7 @@ const projectManager = {
 };
 
 // =================================================================
-// UI RENDERING (UPDATED WITH NEW CLASSES & LIGHT BACKGROUNDS)
+// UI RENDERING
 // =================================================================
 const ui = {
     showLoader() {
@@ -1242,8 +1366,21 @@ const ui = {
         setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
     },
     switchTab(tabId) {
+        // حماية: منع الفيو من الدخول على تابات غير مسموحة
+        if (currentUser && !isTabAllowed(tabId)) {
+            return ui.showToast('ليس لديك صلاحية للوصول لهذه الصفحة', 'error');
+        }
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.getElementById(`tab-${tabId}`).classList.add('active');
+        const targetTab = document.getElementById(`tab-${tabId}`);
+        if (!targetTab) return;
+        targetTab.classList.add('active');
+        // تحديث حالة أزرار التنقل
+        document.querySelectorAll('nav .nav-btn').forEach(btn => {
+            const onclickAttr = btn.getAttribute('onclick') || '';
+            const match = onclickAttr.match(/switchTab\('([^']+)'\)/);
+            if (match && match[1] === tabId) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
         this.renderAll();
         if (tabId === 'projects') this.renderProjectsTab();
     },
@@ -1277,15 +1414,21 @@ const ui = {
     // PULL REQUEST STATS HELPERS
     // =================================================================
     calculatePRStats() {
-        const prs = db.pullRequests || [];
+        let prs = db.pullRequests || [];
 
-        // ===== Completed PRs (بحساب الـ cycle time) =====
+        // فلترة الفيو حسب الإيرياز المسموحة
+        if (currentUser && currentUser.role === 'viewer' && (currentUser.allowedAreas || []).length > 0) {
+            const allowedAreasStats = this.calculatePRStatsByArea();
+            const allowedIds = new Set();
+            allowedAreasStats.forEach(a => a.prs.forEach(p => allowedIds.add(p.id)));
+            prs = prs.filter(pr => allowedIds.has(pr.id));
+        }
+
         const completedPRs = prs.filter(pr => pr.status === 'completed' && pr.cycleTimeHours != null);
         const avgCycleTime = completedPRs.length > 0
             ? completedPRs.reduce((s, pr) => s + pr.cycleTimeHours, 0) / completedPRs.length
             : 0;
 
-        // ===== Stalled PRs (> 3 أيام، active، من غير أي approval) =====
         const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
         const now = Date.now();
         const stalePRs = prs.filter(pr => {
@@ -1297,7 +1440,6 @@ const ui = {
             return !hasApproval;
         });
 
-        // ===== ✅ NEW: Approved but Not Completed =====
         const approvedNotCompletedPRs = prs.filter(pr => {
             if (pr.status !== 'active') return false;
             return (pr.reviewers || []).some(r => r.vote >= 5);
@@ -1396,9 +1538,6 @@ const ui = {
         `;
     },
 
-    // =================================================================
-    // PULL REQUEST ANALYTICS — NEW VIEW
-    // =================================================================
     calculatePRStatsByArea() {
         const prs = db.pullRequests || [];
         const storyMap = new Map();
@@ -1471,19 +1610,16 @@ const ui = {
             return area || (allowGeneral ? 'General' : null);
         };
 
-        // ✅ Helper to resolve area for ANY linked Work Item ID (including standalone Bugs/Tasks)
         const resolveAreaFromId = (id, visited = new Set()) => {
             if (!id) return null;
             id = id.toString();
             if (visited.has(id)) return null;
             visited.add(id);
 
-            // 1. Check storyMap (User Story/CR/Support log)
             if (storyMap.has(id)) {
                 return resolveAreaFromWorkItem(storyMap.get(id), { allowGeneral: false });
             }
 
-            // 2. Check childItemMap (Task/Bug/Test Case/Review attached to a story)
             if (childItemMap.has(id)) {
                 const child = childItemMap.get(id);
                 const childArea = resolveAreaFromWorkItem(child, { allowGeneral: false });
@@ -1495,7 +1631,6 @@ const ui = {
                 }
             }
 
-            // 3. Check db.workItemsMap (standalone items or not in current query)
             if (db.workItemsMap && db.workItemsMap[id]) {
                 const wi = db.workItemsMap[id];
                 const pseudoItem = {
@@ -1509,7 +1644,6 @@ const ui = {
                 const wiArea = resolveAreaFromWorkItem(pseudoItem, { allowGeneral: false });
                 if (wiArea) return wiArea;
 
-                // If no area/iteration path, check its parent (e.g. Epic/Feature)
                 if (wi.parentId) {
                     const parentArea = resolveAreaFromId(wi.parentId, visited);
                     if (parentArea) return parentArea;
@@ -1584,7 +1718,7 @@ const ui = {
             }
         });
 
-        return Object.values(areaMap).map(a => ({
+        return Object.values(areaMap).filter(a => isAreaAllowed(a.area)).map(a => ({
             ...a,
             avgCycleTime: a.cycleTimes.length > 0
                 ? a.cycleTimes.reduce((s, v) => s + v, 0) / a.cycleTimes.length
@@ -1600,7 +1734,6 @@ const ui = {
         const prStats = this.calculatePRStats();
         const areaStats = this.calculatePRStatsByArea();
 
-        // ===== 🔥 كروت كبيرة: Active + Approved Not Completed + شريط أرقام صغيرة =====
         const summaryHtml = `
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-6 rounded-2xl shadow-lg text-slate-800">
@@ -1667,7 +1800,6 @@ const ui = {
                         </div>
                     </div>
 
-                    <!-- 🔥 رقمين كبار: Active + Approved Not Completed -->
                     <div class="grid grid-cols-2 gap-3 mb-3">
                         <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 p-3 rounded-xl text-center">
                             <div class="text-[9px] text-blue-700 font-bold uppercase tracking-wider">Active</div>
@@ -1679,7 +1811,6 @@ const ui = {
                         </div>
                     </div>
 
-                    <!-- 📊 شريط أرقام صغيرة -->
                     <div class="flex justify-between gap-1 text-[10px] bg-slate-50 p-2 rounded-lg border border-slate-100">
                         <div class="flex flex-col items-center">
                             <span class="text-gray-400 uppercase font-bold text-[8px]">Total</span>
@@ -1821,7 +1952,8 @@ const ui = {
     renderDashboard() {
         const container = document.getElementById('dashboard-container');
         if (!container) return;
-        const activeStories = currentData.filter(s => s.state !== 'Tested' && s.state !== 'Closed' && !isBacklogStory(s) && isRegularStory(s));
+        const visibleData = filterByArea(currentData);
+        const activeStories = visibleData.filter(s => s.state !== 'Tested' && s.state !== 'Closed' && !isBacklogStory(s) && isRegularStory(s));
         const activeDevsSet = new Set();
         const activeTestersSet = new Set();
         activeStories.forEach(s => {
@@ -1830,7 +1962,6 @@ const ui = {
         });
         const freeDevs = this.getFreeStaff('dev');
         const freeTesters = this.getFreeStaff('tester');
-        // UPDATED: Light backgrounds with dark text
         const staffStatsHtml = `
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div onclick="ui.showStaffDetails('dev', 'active')" class="bg-gradient-to-br from-blue-100 to-blue-200 p-4 rounded-2xl shadow-lg text-slate-800 cursor-pointer hover:scale-105 transition-transform">
@@ -1855,7 +1986,6 @@ const ui = {
                 </div>
             </div>
         `;
-        // ✅ NEW: PR Stats
         const prStats = this.calculatePRStats();
         const prStatsHtml = `
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -1882,7 +2012,7 @@ const ui = {
             </div>
         `;
 
-        const nonBacklogData = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+        const nonBacklogData = visibleData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const areaStateMap = {};
         const allStates = new Set();
         nonBacklogData.forEach(s => {
@@ -1977,8 +2107,8 @@ const ui = {
         });
         customerStatsHtml += `</div><div class="mt-2 text-xs text-gray-400">Total Active Stories: ${activeNonBacklog.length}</div></div>`;
 
-        const regularCurrent = currentData.filter(isRegularStory);
-        const allStoriesForRoadmap = [...regularCurrent, ...db.backlogStories];
+        const regularCurrent = visibleData.filter(isRegularStory);
+        const allStoriesForRoadmap = [...regularCurrent, ...filterByArea(db.backlogStories)];
         const roadmapHtml = this.renderClientRoadmap(allStoriesForRoadmap);
 
         container.innerHTML = `
@@ -2054,7 +2184,7 @@ const ui = {
         return html;
     },
     getFreeStaff(role) {
-        const allStories = currentData.filter(s => !isBacklogStory(s));
+        const allStories = filterByArea(currentData.filter(s => !isBacklogStory(s)));
         const allStaff = new Set();
         allStories.forEach(s => {
             if (role === 'dev' && s.assignedTo && s.assignedTo !== "Unassigned") allStaff.add(s.assignedTo);
@@ -2098,7 +2228,7 @@ const ui = {
             body.innerHTML = `<div class="text-center py-10 text-gray-400">لا يوجد موظفون في هذه الفئة.</div>`;
         } else {
             let html = `<div class="space-y-3">`;
-            const regularNonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+            const regularNonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)));
             list.forEach(name => {
                 if (showStoryCount) {
                     let count = 0;
@@ -2129,7 +2259,7 @@ const ui = {
         document.body.style.overflow = 'hidden';
     },
     showStaffDetails(role, type) {
-        const regularNonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+        const regularNonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)));
         if (type === 'active') {
             const set = new Set();
             const activeStories = regularNonBacklog.filter(s => s.state !== 'Tested' && s.state !== 'Closed');
@@ -2150,7 +2280,7 @@ const ui = {
     const container = document.getElementById('active-cards-container');
     const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || "";
     const tagSearchTerm = document.getElementById('tag-search-input')?.value.toLowerCase() || "";
-    const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+    const nonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)));
     const activeStories = nonBacklog.filter(s => {
         const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
         const matchesSearch =
@@ -2281,7 +2411,7 @@ const ui = {
                             ${(s.customTags || []).map(tag => `
                                 <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
                                     ${escapeHtml(tag)}
-                                    <button onclick="tagManager.toggleTagInStory('${s.id}', '${encodeURIComponent(tag)}')" class="hover:text-purple-900 font-black ml-1">×</button>
+                                    ${canEdit() ? `<button onclick="tagManager.toggleTagInStory('${s.id}', '${encodeURIComponent(tag)}')" class="hover:text-purple-900 font-black ml-1">×</button>` : ''}
                                 </span>
                             `).join('')}
                             ${tagDropdownHtml}
@@ -2357,9 +2487,11 @@ const ui = {
                         </div>
                         <div class="mt-2 pt-4 border-t border-gray-50 bg-slate-50/30 -mx-5 px-5">
                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2 block">Standup Updates</label>
+                            ${canEdit() ? `
                             <div class="flex gap-2 mb-3">
                                 <input type="text" placeholder="Add comment and press Enter..." class="form-input form-input-sm flex-1" onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; }">
                             </div>
+                            ` : ''}
                             ${commentsHtml || '<p class="text-[10px] text-gray-400 italic py-1">No updates recorded yet.</p>'}
                         </div>
                     </div>
@@ -2399,7 +2531,10 @@ const ui = {
             return allTags.some(t => t.toLowerCase().includes(tagSearchTerm));
         };
 
-        const allStoriesForAreas = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
+        const allStoriesForAreas = filterByArea([
+            ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)),
+            ...db.backlogStories
+        ]);
         if (allStoriesForAreas.length === 0) {
             container.innerHTML = `<div class="text-center py-20 text-gray-400 col-span-full">لا توجد قصص لعرضها.</div>`;
             return;
@@ -2418,14 +2553,14 @@ const ui = {
         let selectedAreas = Array.from(filterSelect.selectedOptions).map(opt => opt.value);
         if (selectedAreas.length === 0) selectedAreas = areas;
 
-        const filteredRegular = currentData
+        const filteredRegular = filterByArea(currentData
             .filter(s => !isBacklogStory(s) && isRegularStory(s) && selectedAreas.includes(s.area || "General"))
-            .filter(s => matchesSearch(s) && matchesTag(s))
+            .filter(s => matchesSearch(s) && matchesTag(s)))
             .sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
-        const filteredBacklog = db.backlogStories
+        const filteredBacklog = filterByArea(db.backlogStories
             .filter(s => isRegularStory(s) && selectedAreas.includes(s.area || "General"))
-            .filter(s => matchesSearch(s) && matchesTag(s))
+            .filter(s => matchesSearch(s) && matchesTag(s)))
             .sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
         const states = ["Active", "Active - With Bugs", "Resolved", "Tested", "On-Hold"];
@@ -2465,7 +2600,7 @@ const ui = {
     renderSupportKanban() {
         const container = document.getElementById('support-kanban-container');
         const filterSelect = document.getElementById('support-kanban-ba-filter');
-        const supportLogs = currentData.filter(s => s.type === 'Support log');
+        const supportLogs = filterByArea(currentData.filter(s => s.type === 'Support log'));
         if (supportLogs.length === 0) {
             container.innerHTML = `<div class="text-center py-20 text-gray-400 col-span-full">No Support logs found.</div>`;
             return;
@@ -2506,8 +2641,8 @@ const ui = {
         const selectedOptions = Array.from(filterSelect.selectedOptions);
         let selectedAreas = selectedOptions.map(opt => opt.value);
         const allAreas = [...new Set([
-            ...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)).map(s => s.area || "General"),
-            ...db.backlogStories.map(s => s.area || "General")
+            ...filterByArea(currentData.filter(s => !isBacklogStory(s) && isRegularStory(s))).map(s => s.area || "General"),
+            ...filterByArea(db.backlogStories).map(s => s.area || "General")
         ])];
         if (selectedAreas.length === 0) selectedAreas = allAreas;
         const reportData = {};
@@ -2517,15 +2652,15 @@ const ui = {
         selectedAreas.forEach(area => {
             const areaData = { states: {}, backlog: [], tested: [], comments: [] };
             targetStates.forEach(state => {
-                areaData.states[state] = currentData.filter(s =>
+                areaData.states[state] = filterByArea(currentData.filter(s =>
                     !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area && s.state === state
-                );
+                ));
             });
-            areaData.backlog = db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s));
-            areaData.tested = currentData.filter(s =>
+            areaData.backlog = filterByArea(db.backlogStories.filter(s => (s.area || "General") === area && isRegularStory(s)));
+            areaData.tested = filterByArea(currentData.filter(s =>
                 !isBacklogStory(s) && isRegularStory(s) && (s.area || "General") === area &&
                 s.state === 'Tested' && s.changedDate && new Date(s.changedDate) >= fifteenDaysAgo
-            );
+            ));
             areaData.comments = db.areaComments.filter(c => c.area === area);
             reportData[area] = areaData;
         });
@@ -2703,7 +2838,7 @@ const ui = {
     renderDelivery() {
         const container = document.getElementById('delivery-grid');
         const searchTerm = document.getElementById('search-delivery-input')?.value.toLowerCase() || "";
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        const nonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s)));
         const regularStories = nonBacklog.filter(s => isRegularStory(s));
         const allTested = regularStories.filter(s => s.state === 'Tested' || s.state === 'Closed');
         const pendingStories = allTested.filter(s => {
@@ -2747,14 +2882,14 @@ const ui = {
                                 <b>المستلم:</b> ${escapeHtml(s.logData.to)}<br>
                                 <b>التاريخ:</b> ${escapeHtml(s.logData.date)}
                             </div>
-                            ${currentUser && currentUser.role === 'admin' ? `
+                            ${canEdit() ? `
                                 <button onclick="ui.editDelivery('${s.logData.storyId}')" class="absolute top-2 left-2 bg-white border border-google-green/30 shadow-sm text-gray-500 hover:text-google-blue hover:border-google-blue rounded-md p-1.5 text-[10px] transition-all z-10 flex items-center gap-1">
                                     <span>✏️</span>
                                     <span class="text-[9px] font-bold">تعديل</span>
                                 </button>
                             ` : ''}
                         </div>
-                    ` : (currentUser && currentUser.role === 'admin' ? `
+                    ` : (canEdit() ? `
                         <div class="flex gap-2 mt-auto">
                             <input id="to-${s.id}" placeholder="اسم المستلم..." class="form-input form-input-sm flex-1">
                             <button onclick="ui.markDelivered('${s.id}')" class="btn btn-primary text-xs">تأكيد</button>
@@ -2779,7 +2914,7 @@ const ui = {
         container.innerHTML = html;
     },
     markDelivered(id) {
-        if (currentUser.role !== 'admin') return ui.showToast("عذراً، لا تملك صلاحية تنفيذ هذا الإجراء.", "error");
+        if (!canEdit()) return ui.showToast("عذراً، لا تملك صلاحية تنفيذ هذا الإجراء.", "error");
         const to = document.getElementById(`to-${id}`).value;
         if (!to) return ui.showToast("اكتب المستلم", "error");
         db.deliveryLogs.push({ storyId: id, to, date: new Date().toLocaleDateString(), timestamp: Date.now() });
@@ -2787,7 +2922,7 @@ const ui = {
         this.renderDelivery();
     },
     editDelivery(id) {
-        if (currentUser.role !== 'admin') return;
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
         const confirmEdit = confirm("هل تريد إلغاء التسليم الحالي وتعديله؟");
         if (confirmEdit) {
             db.deliveryLogs = db.deliveryLogs.filter(log => log.storyId.toString() !== id.toString());
@@ -2803,7 +2938,7 @@ const ui = {
     renderWorkload() {
         const container = document.getElementById('workload-container');
         if (!container) return;
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s));
+        const nonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s)));
         const areaGroups = {};
         const MAX_HOURS = 65;
         const globalTaskWorkers = new Set();
@@ -2963,12 +3098,11 @@ const ui = {
     const entries = Object.entries(staffData);
     if (entries.length === 0) return `<div class="text-gray-300 text-sm italic">No active tasks</div>`;
 
-    // ✅ خريطة بأكواد الألوان المضمونة بدلاً من الكلاسات
     const colorMap = {
-        'google-blue': '#3b82f6',   // أزرق
-        'google-green': '#22c55e',  // أخضر
-        'google-yellow': '#eab308', // أصفر
-        'google-red': '#ef4444'     // أحمر
+        'google-blue': '#3b82f6',
+        'google-green': '#22c55e',
+        'google-yellow': '#eab308',
+        'google-red': '#ef4444'
     };
     const defaultColor = colorMap[color] || '#3b82f6';
 
@@ -2976,12 +3110,11 @@ const ui = {
         const perc = Math.min((hours / max) * 100, 100);
         const isOver = hours > max;
 
-        // تحديد اللون بناءً على النسبة والحمولة
         let barColor = defaultColor;
         if (isOver) {
-            barColor = '#ef4444'; // أحمر (حمولة زائدة)
+            barColor = '#ef4444';
         } else if (perc > 80) {
-            barColor = '#eab308'; // أصفر (حمولة عالية)
+            barColor = '#eab308';
         }
 
         const storyCount = storyCounts[name] || 0;
@@ -3029,6 +3162,7 @@ const ui = {
         modal.style.display = 'flex';
     },
     handleAreaDragStart(event, index) {
+        if (!canEdit()) { event.preventDefault(); return; }
         event.dataTransfer.setData('text/plain', index);
         setTimeout(() => event.target.classList.add('opacity-40'), 0);
     },
@@ -3037,6 +3171,7 @@ const ui = {
         event.dataTransfer.dropEffect = 'move';
     },
     handleAreaDrop(event, targetIndex) {
+        if (!canEdit()) return;
         event.preventDefault();
         const sourceIndex = parseInt(event.dataTransfer.getData('text/plain'));
         if (sourceIndex === targetIndex) return;
@@ -3056,6 +3191,8 @@ const ui = {
     openStoryModal(storyId) {
         const s = currentData.find(item => item.id.toString() === storyId.toString());
         if (!s) return;
+        // فحص صلاحية الإيريا للفيو
+        if (!isAreaAllowed(s.area || 'General')) return ui.showToast('ليس لديك صلاحية لعرض هذه القصة', 'error');
         const modal = document.getElementById('story-modal');
         const title = document.getElementById('modal-title');
         const body = document.getElementById('modal-body');
@@ -3139,6 +3276,7 @@ const ui = {
     openCommentsModal(storyId) {
         const s = currentData.find(item => item.id.toString() === storyId.toString());
         if (!s) return;
+        if (!isAreaAllowed(s.area || 'General')) return ui.showToast('ليس لديك صلاحية لعرض هذه القصة', 'error');
         const modal = document.getElementById('story-modal');
         const title = document.getElementById('modal-title');
         const body = document.getElementById('modal-body');
@@ -3146,9 +3284,11 @@ const ui = {
         const comments = getStandupComments(s.id);
         body.innerHTML = `
             <div class="bg-slate-50/30 px-2">
+                ${canEdit() ? `
                 <div class="flex gap-2 mb-4">
                     <input type="text" id="kanban-comment-input" placeholder="Add new update and press Enter..." class="form-input flex-1" onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; ui.openCommentsModal('${s.id}'); ui.renderKanban(); }">
                 </div>
+                ` : ''}
                 <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
                     ${comments.slice().reverse().map(c => `
                         <div class="bg-white p-3 rounded-xl border border-google-blue/20 shadow-sm">
@@ -3197,12 +3337,12 @@ const ui = {
         document.body.style.overflow = 'hidden';
     },
     showBranchModal(branch) {
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+        const nonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)));
         const activeStories = nonBacklog.filter(s => s.branch === branch && s.state !== 'Tested' && s.state !== 'Closed');
         this.showModalWithTitleAndStories(`Branch: ${escapeHtml(branch)} (${activeStories.length} active stories)`, activeStories);
     },
     showCustomerModal(customer) {
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+        const nonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)));
         const activeStories = nonBacklog.filter(s => s.customer === customer && s.state !== 'Tested' && s.state !== 'Closed');
         this.showModalWithTitleAndStories(`Customer: ${escapeHtml(customer)} (${activeStories.length} active stories)`, activeStories);
     },
@@ -3212,7 +3352,7 @@ const ui = {
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];
         const activities = [];
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+        const nonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)));
         nonBacklog.forEach(story => {
             let hasActivityToday = false;
             const storyDate = story.changedDate ? new Date(story.changedDate).toISOString().split('T')[0] : null;
@@ -3283,7 +3423,6 @@ const ui = {
             areaStatsMap[areaName] = (areaStatsMap[areaName] || 0) + 1;
         });
         const areaStats = Object.entries(areaStatsMap).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
-        // UPDATED: Light background for Total Daily Activities
         return `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-5 rounded-2xl shadow-lg text-slate-800">
@@ -3338,7 +3477,7 @@ const ui = {
     exportDailyActivityToExcel() {
         const todayStr = new Date().toISOString().split('T')[0];
         const activities = [];
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+        const nonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)));
         nonBacklog.forEach(story => {
             let hasActivityToday = false;
             const storyDate = story.changedDate ? new Date(story.changedDate).toISOString().split('T')[0] : null;
@@ -3403,7 +3542,7 @@ const ui = {
         if (!container) return;
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+        const nonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)));
         const inactive = nonBacklog.filter(s => {
             const isActive = s.state !== 'Tested' && s.state !== 'Closed';
             const lastChange = s.changedDate ? new Date(s.changedDate) : null;
@@ -3464,6 +3603,7 @@ const ui = {
         container.innerHTML = `<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">${html}</div>`;
     },
     renderSettings() {
+        settings.renderUserFormCheckboxes();
         const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
         const staff = [...new Set(nonBacklog.map(s => s.assignedTo).concat(nonBacklog.map(s => s.tester)))];
         const staffSelect = document.getElementById('staff-select');
@@ -3476,12 +3616,29 @@ const ui = {
         `).join('');
         const usersList = document.getElementById('users-list');
         if (usersList) {
-            usersList.innerHTML = db.users.map((u, i) => `
-                <div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
-                    <div><span class="font-bold text-slate-700">${escapeHtml(u.username)}</span><span class="text-[10px] ml-2 px-2 py-0.5 rounded-full ${u.role === 'admin' ? 'bg-google-red-light text-google-red' : 'bg-google-blue-light text-google-blue'}">${escapeHtml(u.role)}</span></div>
-                    <button onclick="settings.removeUser(${i})" class="text-google-red hover:text-red-700 font-bold text-xl">&times;</button>
-                </div>
-            `).join('');
+            usersList.innerHTML = db.users.map((u, i) => {
+                const permInfo = u.role === 'viewer' ? `
+                    <div class="text-[9px] text-gray-400 mt-1 leading-tight">
+                        <span class="font-bold">Tabs:</span> ${(u.allowedTabs || []).length || 'all'} ·
+                        <span class="font-bold">Areas:</span> ${(u.allowedAreas || []).length ? u.allowedAreas.length + ' selected' : 'all'}
+                    </div>
+                ` : '';
+                return `
+                    <div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-slate-700">${escapeHtml(u.username)}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full ${u.role === 'admin' ? 'bg-google-red-light text-google-red' : 'bg-google-blue-light text-google-blue'}">${escapeHtml(u.role)}</span>
+                            </div>
+                            ${permInfo}
+                        </div>
+                        <div class="flex gap-1 flex-shrink-0">
+                            <button onclick="settings.editUser(${i})" class="text-blue-500 hover:text-blue-700 px-2 py-1 text-sm" title="Edit">✏️</button>
+                            <button onclick="settings.removeUser(${i})" class="text-google-red hover:text-red-700 font-bold text-xl px-1" title="Delete">×</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
         tagManager.renderTagsSettings();
 
@@ -3505,7 +3662,7 @@ const ui = {
     const areaFilter = document.getElementById('auditor-area-filter')?.value || 'all';
     const stateFilter = document.getElementById('auditor-state-filter')?.value || 'all';
     const areaSelect = document.getElementById('auditor-area-filter');
-    const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+    const nonBacklog = filterByArea(currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)));
     if (areaSelect && areaSelect.options.length <= 1) {
         const areas = [...new Set(nonBacklog.map(s => s.area || "General"))];
         areaSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
@@ -3521,10 +3678,9 @@ const ui = {
         const criteria = this.evaluateStoryCompliance(story);
         const compliancePercent = Math.round((criteria.passedCount / criteria.totalCount) * 100);
         
-        // ✅ FIX: استخدام ألوان مضمونة عبر style بدلاً من الكلاسات غير المعرفة
-        let barColor = '#ef4444'; // أحمر افتراضي
-        if (compliancePercent >= 80) barColor = '#22c55e'; // أخضر
-        else if (compliancePercent >= 50) barColor = '#eab308'; // أصفر
+        let barColor = '#ef4444';
+        if (compliancePercent >= 80) barColor = '#22c55e';
+        else if (compliancePercent >= 50) barColor = '#eab308';
 
         return `
             <tr class="border-b hover:bg-gray-50 transition">
@@ -3712,7 +3868,7 @@ const ui = {
 
         let linkedStoriesHtml = '';
         const allStories = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
-        const linkedStories = allStories.filter(s => s.linkedProjectId === project.id);
+        const linkedStories = filterByArea(allStories).filter(s => s.linkedProjectId === project.id);
         if (linkedStories.length > 0) {
             linkedStoriesHtml = `
                 <div class="space-y-2">
@@ -3729,7 +3885,7 @@ const ui = {
             linkedStoriesHtml = `<div class="text-gray-400 text-sm italic">No stories linked to this project.</div>`;
         }
 
-        const projectDueHtml = `
+        const projectDueHtml = canEdit() ? `
             <div class="flex items-center gap-2 mt-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
                 <span class="text-sm font-bold text-gray-600">📅 Due Date:</span>
                 <input type="date" id="project-due-edit-${project.id}" value="${escapeHtml(project.dueDate || '')}" 
@@ -3737,28 +3893,40 @@ const ui = {
                 <button onclick="projectManager.updateProjectDueDate('${project.id}', document.getElementById('project-due-edit-${project.id}').value)" 
                         class="btn btn-primary text-sm">تحديث</button>
             </div>
-        `;
+        ` : `<div class="flex items-center gap-2 mt-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
+                <span class="text-sm font-bold text-gray-600">📅 Due Date:</span>
+                <span class="text-sm font-bold text-slate-700">${escapeHtml(project.dueDate || 'N/A')}</span>
+            </div>`;
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const tasksHtmlWithEdit = (project.tasks || []).map(t => {
             const isDueTodayOrPast = t.dueDate ? new Date(t.dueDate) <= today : false;
             const dueClass = isDueTodayOrPast ? 'bg-google-red-light border-google-red/30 text-google-red' : '';
+            const taskEditControls = canEdit() ? `
+                <div class="flex items-center gap-1">
+                    <input type="date" id="task-due-${t.id}" value="${escapeHtml(t.dueDate || '')}" class="form-input form-input-sm w-28">
+                    <button onclick="projectManager.updateTaskDueDate('${project.id}','${t.id}', document.getElementById('task-due-${t.id}').value)" 
+                            class="text-[10px] bg-purple-500 text-white px-2 py-0.5 rounded">تحديث</button>
+                </div>
+                <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','todo')" class="text-[10px] bg-gray-100 hover:bg-gray-200 px-1.5 py-0.5 rounded">To Do</button>
+                <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','active')" class="text-[10px] bg-google-blue-light hover:bg-google-blue/20 px-1.5 py-0.5 rounded">Active</button>
+                <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','done')" class="text-[10px] bg-google-green-light hover:bg-google-green/20 px-1.5 py-0.5 rounded">Done</button>
+                <button onclick="projectManager.deleteTask('${project.id}','${t.id}')" class="text-google-red hover:text-red-700 text-sm font-bold">×</button>
+            ` : '';
+            const taskCommentAddHtml = canEdit() ? `
+                <div class="flex gap-1 mt-1">
+                    <input type="text" id="comment-input-${t.id}" placeholder="Add comment..." class="form-input form-input-sm flex-1">
+                    <button onclick="projectManager.addTaskComment('${project.id}','${t.id}', document.getElementById('comment-input-${t.id}').value); document.getElementById('comment-input-${t.id}').value='';" class="bg-purple-600 text-white px-2 py-1 rounded text-xs">Add</button>
+                </div>
+            ` : '';
             return `
                 <div class="bg-white border rounded p-3 shadow-sm ${dueClass}">
                     <div class="flex justify-between items-center flex-wrap gap-2">
                         <span class="font-medium text-slate-700">${escapeHtml(t.title)}</span>
                         <div class="flex items-center gap-2 flex-wrap">
                             <span class="text-xs font-bold px-2 py-0.5 rounded ${t.status === 'done' ? 'bg-google-green-light text-google-green' : t.status === 'active' ? 'bg-google-blue-light text-google-blue' : 'bg-gray-200 text-gray-600'}">${escapeHtml(t.status)}</span>
-                            <div class="flex items-center gap-1">
-                                <input type="date" id="task-due-${t.id}" value="${escapeHtml(t.dueDate || '')}" class="form-input form-input-sm w-28">
-                                <button onclick="projectManager.updateTaskDueDate('${project.id}','${t.id}', document.getElementById('task-due-${t.id}').value)" 
-                                        class="text-[10px] bg-purple-500 text-white px-2 py-0.5 rounded">تحديث</button>
-                            </div>
-                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','todo')" class="text-[10px] bg-gray-100 hover:bg-gray-200 px-1.5 py-0.5 rounded">To Do</button>
-                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','active')" class="text-[10px] bg-google-blue-light hover:bg-google-blue/20 px-1.5 py-0.5 rounded">Active</button>
-                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','done')" class="text-[10px] bg-google-green-light hover:bg-google-green/20 px-1.5 py-0.5 rounded">Done</button>
-                            <button onclick="projectManager.deleteTask('${project.id}','${t.id}')" class="text-google-red hover:text-red-700 text-sm font-bold">×</button>
+                            ${taskEditControls}
                         </div>
                     </div>
                     ${isDueTodayOrPast ? `<div class="text-xs text-google-red font-bold mt-1">⚠️ مستحق اليوم أو مضى عليه</div>` : ''}
@@ -3769,37 +3937,45 @@ const ui = {
                                 <span class="text-sm">${escapeHtml(c.text)}</span>
                                 <div class="flex items-center gap-2">
                                     <span class="text-[9px] text-gray-400">${escapeHtml(c.timestamp)}</span>
-                                    <button onclick="projectManager.deleteTaskComment('${project.id}','${t.id}',${idx})" class="text-google-red hover:text-red-600 text-xs">✕</button>
+                                    ${canEdit() ? `<button onclick="projectManager.deleteTaskComment('${project.id}','${t.id}',${idx})" class="text-google-red hover:text-red-600 text-xs">✕</button>` : ''}
                                 </div>
                             </div>
                         `).join('')}
-                        <div class="flex gap-1 mt-1">
-                            <input type="text" id="comment-input-${t.id}" placeholder="Add comment..." class="form-input form-input-sm flex-1">
-                            <button onclick="projectManager.addTaskComment('${project.id}','${t.id}', document.getElementById('comment-input-${t.id}').value); document.getElementById('comment-input-${t.id}').value='';" class="bg-purple-600 text-white px-2 py-1 rounded text-xs">Add</button>
-                        </div>
+                        ${taskCommentAddHtml}
                     </div>
                 </div>
             `;
         }).join('');
 
         let controlsHtml = '';
-        if (project.status === 'active') {
-            controlsHtml = `
-                <div class="flex gap-3 mt-4">
-                    <button onclick="projectManager.holdProject('${project.id}')" class="btn btn-warning">⏸ Hold</button>
-                    <button onclick="projectManager.closeProject('${project.id}')" class="btn btn-danger">🔒 Close</button>
-                </div>
-            `;
-        } else if (project.status === 'hold') {
-            controlsHtml = `
-                <div class="flex gap-3 mt-4">
-                    <button onclick="projectManager.closeProject('${project.id}')" class="btn btn-danger">🔒 Close</button>
-                    <span class="text-sm text-amber-700 bg-google-yellow-light p-2 rounded">⏸ On Hold until ${escapeHtml(project.holdEndDate)}</span>
-                </div>
-            `;
-        } else {
+        if (canEdit()) {
+            if (project.status === 'active') {
+                controlsHtml = `
+                    <div class="flex gap-3 mt-4">
+                        <button onclick="projectManager.holdProject('${project.id}')" class="btn btn-warning">⏸ Hold</button>
+                        <button onclick="projectManager.closeProject('${project.id}')" class="btn btn-danger">🔒 Close</button>
+                    </div>
+                `;
+            } else if (project.status === 'hold') {
+                controlsHtml = `
+                    <div class="flex gap-3 mt-4">
+                        <button onclick="projectManager.closeProject('${project.id}')" class="btn btn-danger">🔒 Close</button>
+                        <span class="text-sm text-amber-700 bg-google-yellow-light p-2 rounded">⏸ On Hold until ${escapeHtml(project.holdEndDate)}</span>
+                    </div>
+                `;
+            }
+        }
+        if (project.status === 'closed') {
             controlsHtml = `<div class="mt-4 text-sm text-gray-500 bg-gray-100 p-2 rounded">This project is closed since ${escapeHtml(project.closeDate)}</div>`;
         }
+
+        const addTaskHtml = canEdit() ? `
+            <div class="mt-3 flex gap-2">
+                <input type="text" id="new-task-title-${project.id}" placeholder="Task title..." class="form-input flex-1 min-w-0">
+                <input type="date" id="new-task-due-${project.id}" class="form-input w-32 flex-shrink-0">
+                <button onclick="projectManager.addTask('${project.id}', document.getElementById('new-task-title-${project.id}').value, document.getElementById('new-task-due-${project.id}').value); document.getElementById('new-task-title-${project.id}').value=''; document.getElementById('new-task-due-${project.id}').value='';" class="btn btn-primary whitespace-nowrap">Add Task</button>
+            </div>
+        ` : '';
 
         body.innerHTML = `
             <div class="space-y-4">
@@ -3815,11 +3991,7 @@ const ui = {
                 <div class="border-t pt-4">
                     <h4 class="font-bold text-purple-700 text-sm border-b pb-1">📋 Project Tasks</h4>
                     <div class="space-y-2 mt-2">${tasksHtmlWithEdit || '<div class="text-gray-400 text-sm italic">No tasks added yet.</div>'}</div>
-                   <div class="mt-3 flex gap-2">
-    <input type="text" id="new-task-title-${project.id}" placeholder="Task title..." class="form-input flex-1 min-w-0">
-    <input type="date" id="new-task-due-${project.id}" class="form-input w-32 flex-shrink-0">
-    <button onclick="projectManager.addTask('${project.id}', document.getElementById('new-task-title-${project.id}').value, document.getElementById('new-task-due-${project.id}').value); document.getElementById('new-task-title-${project.id}').value=''; document.getElementById('new-task-due-${project.id}').value='';" class="btn btn-primary whitespace-nowrap">Add Task</button>
-</div>
+                    ${addTaskHtml}
                 </div>
             </div>
         `;
@@ -3832,471 +4004,103 @@ const ui = {
 };
 
 // =================================================================
-// SETTINGS, TAG MANAGER, COMMENT MANAGER, AZURE DEVOPS
+// SETTINGS (with User Permissions management)
 // =================================================================
 const settings = {
-    addUser() {
-        const username = document.getElementById('new-user-name').value;
+    _editingUserIndex: null,
+
+    toggleViewerPermissions() {
+        const role = document.getElementById('new-user-role').value;
+        const container = document.getElementById('viewer-permissions');
+        if (container) {
+            if (role === 'viewer') container.classList.remove('hidden');
+            else container.classList.add('hidden');
+        }
+    },
+
+    renderUserFormCheckboxes() {
+        const tabsContainer = document.getElementById('new-user-tabs');
+        if (tabsContainer && tabsContainer.children.length === 0) {
+            tabsContainer.innerHTML = ALL_TABS.map(t => `
+                <label class="flex items-center gap-2 text-xs cursor-pointer hover:bg-white p-1 rounded">
+                    <input type="checkbox" value="${t.id}" class="user-tab-checkbox w-3.5 h-3.5 accent-google-blue">
+                    <span>${t.label}</span>
+                </label>
+            `).join('');
+        }
+        const areasContainer = document.getElementById('new-user-areas');
+        if (areasContainer && areasContainer.children.length === 0) {
+            areasContainer.innerHTML = BUSINESS_AREAS.map(a => `
+                <label class="flex items-center gap-2 text-xs cursor-pointer hover:bg-white p-1 rounded">
+                    <input type="checkbox" value="${a}" class="user-area-checkbox w-3.5 h-3.5 accent-google-blue">
+                    <span>${a}</span>
+                </label>
+            `).join('');
+        }
+        // إظهار/إخفاء القسم بناءً على الدور الحالي
+        this.toggleViewerPermissions();
+    },
+
+    saveUser() {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        const username = document.getElementById('new-user-name').value.trim();
         const password = document.getElementById('new-user-pass').value;
         const role = document.getElementById('new-user-role').value;
         if (!username || !password) return alert("Please fill all fields");
-        if (db.users.some(u => u.username === username)) return alert("User already exists");
-        db.users.push({ username, password, role });
-        dataProcessor.saveToGitHub().then(() => { ui.showToast("User added successfully", "success"); ui.renderSettings(); });
-    },
-    removeUser(index) {
-        if (db.users[index].username === currentUser.username) return alert("Cannot delete yourself!");
-        db.users.splice(index, 1);
-        dataProcessor.saveToGitHub();
-        ui.renderSettings();
-    },
-    addVacation() {
-        const name = document.getElementById('staff-select').value;
-        const date = document.getElementById('vacation-date').value;
-        if (!date) return;
-        db.vacations.push({ name, date });
-        dataProcessor.saveToGitHub();
-        ui.renderSettings();
-    },
-    removeVacation(i) {
-        db.vacations.splice(i, 1);
-        dataProcessor.saveToGitHub();
-        ui.renderSettings();
-    },
-    addHoliday() {
-        const date = document.getElementById('holiday-date').value;
-        if (!date) return;
-        db.holidays.push(date);
-        dataProcessor.saveToGitHub();
-        ui.renderSettings();
-    }
-};
 
-const tagManager = {
-    addTag() {
-        const input = document.getElementById('new-tag-input');
-        const tagName = input.value.trim();
-        if (!tagName || db.customTags.includes(tagName)) return;
-        db.customTags.push(tagName);
-        input.value = '';
-        dataProcessor.saveToGitHub();
-        this.renderTagsSettings();
-        ui.renderAll();
-    },
-    removeTag(tagName) {
-        db.customTags = db.customTags.filter(t => t !== tagName);
-        db.currentStories.forEach(s => { if (s.customTag === tagName) delete s.customTag; });
-        dataProcessor.saveToGitHub();
-        this.renderTagsSettings();
-        ui.renderAll();
-    },
-    assignTagToStory(storyId, tagName) {
-        const story = db.currentStories.find(s => s.ID == storyId);
-        if (story) { story.customTag = tagName; dataProcessor.saveToGitHub(); }
-    },
-    renderTagsSettings() {
-        const container = document.getElementById('tags-list');
-        if (!container) return;
-        container.innerHTML = db.customTags.map(tag => `
-            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">${escapeHtml(tag)}<button onclick="tagManager.removeTag('${encodeURIComponent(tag)}')" class="text-google-red hover:text-red-700 font-bold">×</button></span>
-        `).join('');
-    },
-    toggleTagInStory(storyId, tagName) {
-        tagName = decodeURIComponent(tagName);
-        let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
-        if (!story) story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
-        if (story) {
-            if (!story.customTags) story.customTags = [];
-            const index = story.customTags.indexOf(tagName);
-            if (index > -1) story.customTags.splice(index, 1);
-            else story.customTags.push(tagName);
-            dataProcessor.saveToGitHub();
-            ui.renderKanban();
-        } else {
-            console.error("Story not found in database for ID:", storyId);
-        }
-    }
-};
+        const userData = { username, password, role };
 
-const commentManager = {
-    updateComment(storyId, text) {
-        if (!db.standupCommentsStore) db.standupCommentsStore = {};
-        if (!db.standupCommentsStore[storyId]) db.standupCommentsStore[storyId] = [];
-        db.standupCommentsStore[storyId].push({
-            text: text,
-            date: new Date().toLocaleString('en-GB'),
-            timestamp: Date.now()
-        });
-        dataProcessor.saveToGitHub();
-        ui.renderActiveCards();
-    }
-};
+        if (role === 'viewer') {
+            const allowedTabs = Array.from(document.querySelectorAll('.user-tab-checkbox:checked')).map(c => c.value);
+            const allowedAreas = Array.from(document.querySelectorAll('.user-area-checkbox:checked')).map(c => c.value);
 
-async function fetchWithTimeout(url, options = {}) {
-    const controller = new AbortController();
-    const timeoutMs = AZURE_CONFIG.TIMEOUT;
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            if (allowedTabs.length === 0) return alert("اختر تاب واحد على الأقل للفيو");
 
-    try {
-        const response = await fetch(url, {
-            ...options,
-            signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        return response;
-    } catch (error) {
-        clearTimeout(timeoutId);
-        if (error.name === 'AbortError') {
-            throw new Error(`انتهت مدة الانتظار (${(timeoutMs / 1000 / 60).toFixed(1)} دقيقة). السيرفر لم يستجب.`);
-        }
-        throw error;
-    }
-};
-const azureDevOps = {
-    async sync() {
-        const pat = sessionStorage.getItem('az_pat');
-        if (!pat) {
-            ui.showToast("Azure PAT مفقود. الرجاء تسجيل الدخول مجدداً.", "error");
-            return;
+            userData.allowedTabs = allowedTabs;
+            userData.allowedAreas = allowedAreas;
         }
 
-        const syncBtn = document.querySelector("button[onclick='azureDevOps.sync()']");
-        const originalText = syncBtn.innerHTML;
-        syncBtn.innerHTML = "⏳ جاري المزامنة...";
-        syncBtn.disabled = true;
-        ui.showLoader();
-
-        // ✅ Snapshot للبيانات الحالية لاسترجاعها لو حصلت مشكلة
-        const dbSnapshot = JSON.parse(JSON.stringify(db));
-
-        try {
-            const authHeader = 'Basic ' + btoa(':' + pat);
-
-            // ============ Main Query ============
-            const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
-            const mainRes = await fetchWithTimeout(mainQueryUrl, {
-                headers: { 'Authorization': authHeader }
-            });
-
-            if (!mainRes.ok) {
-                throw new Error(`فشل الاتصال بـ Azure Main Query (${mainRes.status} ${mainRes.statusText}). تم إلغاء العملية لحماية البيانات.`);
+        if (this._editingUserIndex !== null) {
+            const existing = db.users[this._editingUserIndex];
+            if (existing.username !== username && db.users.some(u => u.username === username)) {
+                return alert("Username already exists");
             }
-            const mainData = await mainRes.json();
-            if (!mainData || mainData.errorCode) {
-                throw new Error(`Azure Main Query رجع خطأ: ${mainData?.message || 'Unknown error'}`);
-            }
-            const mainRelations = mainData.workItemRelations || [];
-            const mainIds = [...new Set(mainRelations.map(r => r.target ? r.target.id : null).filter(id => id))];
-
-            // ============ Backlog Query ============
-            let backlogIds = [];
-            if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
-                const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
-                const backlogRes = await fetchWithTimeout(backlogQueryUrl, {
-                    headers: { 'Authorization': authHeader }
-                });
-
-                if (!backlogRes.ok) {
-                    throw new Error(`فشل الاتصال بـ Azure Backlog Query (${backlogRes.status}). تم إلغاء العملية.`);
-                }
-                const backlogData = await backlogRes.json();
-                if (backlogData.errorCode) {
-                    throw new Error(`Azure Backlog رجع خطأ: ${backlogData.message || 'Unknown'}`);
-                }
-                if (backlogData.workItemRelations && backlogData.workItemRelations.length > 0) {
-                    backlogIds = backlogData.workItemRelations.map(r => r.target ? r.target.id : null).filter(id => id);
-                } else if (backlogData.workItems && backlogData.workItems.length > 0) {
-                    backlogIds = backlogData.workItems.map(wi => wi.id).filter(id => id);
-                }
-                console.log(`✅ Backlog IDs extracted: ${backlogIds.length}`);
-            }
-
-            const allIds = [...new Set([...mainIds, ...backlogIds])];
-
-            if (allIds.length === 0) {
-                throw new Error("Azure رجّع 0 عناصر. تم إلغاء المزامنة لحماية البيانات الحالية.");
-            }
-
-            // ============ Batch Fetch ============
-            const chunkSize = 200;
-            let allDetails = [];
-            for (let i = 0; i < allIds.length; i += chunkSize) {
-                const chunk = allIds.slice(i, i + chunkSize);
-                const batchUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
-                const batchRes = await fetchWithTimeout(batchUrl, {
-                    method: 'POST',
-                    headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ids: chunk, fields: this.getRequiredFields() })
-                });
-
-                if (!batchRes.ok) {
-                    throw new Error(`فشل استرجاع تفاصيل الـ Work Items (${batchRes.status}). تم إلغاء العملية.`);
-                }
-                const batchData = await batchRes.json();
-                if (batchData.errorCode || !batchData.value) {
-                    throw new Error(`Azure Batch رجع خطأ: ${batchData.message || 'Invalid response'}`);
-                }
-                allDetails = allDetails.concat(batchData.value);
-                console.log(`✅ Batch ${Math.floor(i / chunkSize) + 1}: ${batchData.value.length} items loaded`);
-            }
-
-            if (allDetails.length === 0) {
-                throw new Error("لم يتم استلام أي تفاصيل من Azure. تم إلغاء المزامنة.");
-            }
-
-            // ✅ Build a lightweight map of ALL work items to resolve Areas for PRs
-            db.workItemsMap = {};
-            allDetails.forEach(d => {
-                const fields = d.fields || {};
-                db.workItemsMap[d.id] = {
-                    id: d.id.toString(),
-                    type: fields["System.WorkItemType"] || "",
-                    area: fields["MyCompany.MyProcess.BusinessArea"] || "",
-                    iterationPath: fields["System.IterationPath"] || "",
-                    parentId: fields["System.Parent"] ? fields["System.Parent"].toString() : null,
-                    title: fields["System.Title"] || ""
-                };
-            });
-
-            // ============ بناء الصفوف ============
-            const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
-            const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
-
-            if (mainRows.length === 0) {
-                throw new Error("mainRows فاضية. تم إلغاء المزامنة لحماية البيانات.");
-            }
-
-            await dataProcessor.processRows(mainRows);
-
-            // Backlog (اختياري)
-            if (backlogIds.length > 0) {
-                const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
-                const backlogRows = this.buildBacklogRows(backlogDetails);
-                if (backlogRows.length > 0) {
-                    await dataProcessor.processBacklogRows(backlogRows);
+            if (existing.username === currentUser.username) {
+                currentUser.role = role;
+                if (role === 'viewer') {
+                    currentUser.allowedTabs = userData.allowedTabs;
+                    currentUser.allowedAreas = userData.allowedAreas;
                 } else {
-                    console.warn('⚠️ backlogRows فاضية - تم تخطي تحديث الـ backlog.');
+                    delete currentUser.allowedTabs;
+                    delete currentUser.allowedAreas;
                 }
             }
-
-            // ============ Pull Requests (اختياري — لا يوقف المزامنة الأساسية) ============
-            let prCount = 0;
-            try {
-                const prs = await this.fetchPullRequests(authHeader);
-                db.pullRequests = prs;
-                prCount = prs.length;
-
-                // ربط PRs بالقصص عبر linkedStoryId
-                this.linkPullRequestsToStories();
-
-                // حفظ مرة أخرى لضمان تضمين PRs داخل db.json
-                await dataProcessor.saveToGitHub();
-                console.log(`✅ تم ربط ${prCount} PR بالقصص وحفظها.`);
-            } catch (prError) {
-                console.warn('⚠️ فشل تحميل الـ Pull Requests (المزامنة الأساسية تمت بنجاح):', prError);
-                ui.showToast("⚠️ المزامنة تمت، لكن فشل جلب الـ Pull Requests: " + prError.message, "error");
-            }
-
-            ui.showToast(`✅ تمت المزامنة بنجاح! (${prCount} PR محدّث)`, "success");
-
-        } catch (error) {
-            console.error("Azure Sync Error:", error);
-
-            // ✅ استرجاع البيانات من الـ snapshot لو حصل أي تلف
-            db = dbSnapshot;
-            ui.showToast("❌ فشل الاتصال بـ Azure: " + error.message, "error");
-        } finally {
-            ui.hideLoader();
-            syncBtn.innerHTML = originalText;
-            syncBtn.disabled = false;
-        }
-    },
-
-    // ============ Pull Requests Fetcher ============
-    async fetchPullRequests(authHeader) {
-        const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests?searchCriteria.status=all&$top=500&$expand=WorkItems&api-version=7.1`;
-        const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
-
-        if (!res.ok) {
-            throw new Error(`فشل جلب الـ Pull Requests (${res.status} ${res.statusText}).`);
-        }
-        const data = await res.json();
-        if (!data || !Array.isArray(data.value)) {
-            console.warn('⚠️ Azure لم يُرجع أي Pull Requests.');
-            return [];
+            db.users[this._editingUserIndex] = userData;
+            this._editingUserIndex = null;
+        } else {
+            if (db.users.some(u => u.username === username)) return alert("User already exists");
+            db.users.push(userData);
         }
 
-        console.log(`✅ تم استلام ${data.value.length} Pull Request من Azure.`);
-
-        return data.value.map(pr => {
-            const creationDate = pr.creationDate ? new Date(pr.creationDate) : null;
-            const closedDate = pr.closedDate ? new Date(pr.closedDate) : null;
-
-            let cycleTimeHours = null;
-            if (pr.status === 'completed' && creationDate && closedDate) {
-                cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
-            }
-
-            // ✅ استخراج الـ Work Item المرتبط (Parent) من Azure API بدلاً من العنوان
-            let linkedStoryId = null;
-            if (pr.workItemRefs && pr.workItemRefs.length > 0) {
-                linkedStoryId = pr.workItemRefs[0].id.toString();
-            } else {
-                // Fallback لو الـ API مارجعش WorkItems
-                const titleMatch = (pr.title || '').match(/#?(\d{4,6})/);
-                linkedStoryId = titleMatch ? titleMatch[1] : null;
-            }
-
-            return {
-                id: pr.pullRequestId,
-                title: pr.title || '',
-                status: pr.status || 'unknown',
-                createdBy: pr.createdBy?.displayName || 'Unknown',
-                repository: pr.repository?.name || 'N/A',
-                creationDate: creationDate ? creationDate.toISOString() : null,
-                closedDate: closedDate ? closedDate.toISOString() : null,
-                cycleTimeHours: cycleTimeHours,
-                linkedStoryId: linkedStoryId,
-                sourceRefName: pr.sourceRefName || '',
-                targetRefName: pr.targetRefName || '',
-                reviewers: (pr.reviewers || []).map(r => ({
-                    name: r.displayName || 'Unknown',
-                    vote: r.vote != null ? r.vote : 0
-                }))
-            };
+        this.resetUserForm();
+        dataProcessor.saveToGitHub().then(() => {
+            ui.showToast("User saved successfully", "success");
+            ui.renderSettings();
         });
     },
 
-    linkPullRequestsToStories() {
-        const linkFn = (stories) => {
-            (stories || []).forEach(story => {
-                story.pullRequests = (db.pullRequests || []).filter(pr =>
-                    pr.linkedStoryId && pr.linkedStoryId.toString() === story.id.toString()
-                );
-            });
-        };
-        linkFn(db.currentStories);
-        linkFn(db.backlogStories);
-    },
+    // alias للتوافق مع الـ HTML القديم
+    addUser() { this.saveUser(); },
 
-    buildRowsFromRelations(relations, detailsMap) {
-        const rows = [];
-        relations.forEach(rel => {
-            if (!rel.target) return;
-            const fields = detailsMap.get(rel.target.id);
-            if (!fields) return;
-            rows.push({
-                'ID': rel.target.id,
-                'Work Item Type': fields["System.WorkItemType"],
-                'Title': fields["System.Title"],
-                'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
-                'Activity': fields["Microsoft.VSTS.Common.Activity"] || "",
-                'Original Estimation': fields["NT.OriginalEstimation"] || 0,
-                'TimeSheet_DevActualTime': fields["Custom.TimeSheet_DevActualTime"] || 0,
-                'TimeSheet_TestingActualTime': fields["Custom.TimeSheet_TestingActualTime"] || 0,
-                'Activated Date': fields["Microsoft.VSTS.Common.ActivatedDate"],
-                'Business Area': fields["MyCompany.MyProcess.BusinessArea"],
-                'Iteration Path': fields["System.IterationPath"],
-                'CustomResolvedDate': fields["Custom.CustomResolvedDate"],
-                'Tested Date': fields["MyCompany.MyProcess.TestedDate"],
-                'Assigned To Tester': fields["MyCompany.MyProcess.Tester"]?.displayName || "Unassigned",
-                'Resolved Date': fields["Microsoft.VSTS.Common.ResolvedDate"],
-                'State': fields["System.State"],
-                'Release Expected Date': fields["MyCompany.MyProcess.Release"],
-                'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"],
-                'Tags': fields["System.Tags"],
-                'Changed Date': fields["System.ChangedDate"],
-                'Branch': fields["NT.Branch"],
-                'Customer': fields["Nt.Customer"]
-            });
-        });
-        return rows;
-    },
+    editUser(index) {
+        if (!canEdit()) return ui.showToast('ليس لديك صلاحية', 'error');
+        const user = db.users[index];
+        this._editingUserIndex = index;
 
-    getRequiredFields() {
-        return [
-            "System.Id", "System.WorkItemType", "System.Title", "System.AssignedTo",
-            "Microsoft.VSTS.Common.Activity", "NT.OriginalEstimation",
-            "Custom.TimeSheet_DevActualTime", "Custom.TimeSheet_TestingActualTime",
-            "Microsoft.VSTS.Common.ActivatedDate", "MyCompany.MyProcess.BusinessArea",
-            "System.IterationPath", "Custom.CustomResolvedDate", "MyCompany.MyProcess.TestedDate",
-            "MyCompany.MyProcess.Tester", "Microsoft.VSTS.Common.ResolvedDate",
-            "System.State", "MyCompany.MyProcess.Release", "MyCompany.MyProcess.BusinessPriority",
-            "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer",
-            "System.Parent" // ✅ Added to resolve parent of standalone Bugs/Tasks
-        ];
-    },
+        document.getElementById('new-user-name').value = user.username;
+        document.getElementById('new-user-pass').value = user.password;
+        document.getElementById('new-user-role').value = user.role;
+        this.toggleViewerPermissions();
 
-    buildBacklogRows(details) {
-        const rows = [];
-        details.forEach(d => {
-            const fields = d.fields || {};
-            const state = fields["System.State"] || "";
-            if (!["New", "Approved"].includes(state)) return;
-            let area = fields["MyCompany.MyProcess.BusinessArea"] || "";
-            if (area && area.trim().toLowerCase() === "integration") area = "LDM Integration";
-            if (!area || area.trim() === "") {
-                const path = fields["System.IterationPath"] || "";
-                area = path.includes('\\') ? path.split('\\')[0] : path;
-            }
-            rows.push({
-                'ID': d.id,
-                'Work Item Type': fields["System.WorkItemType"] || "User Story",
-                'Title': fields["System.Title"] || "Untitled",
-                'Assigned To': fields["System.AssignedTo"]?.displayName || "Unassigned",
-                'Business Area': area,
-                'State': state,
-                'Business Priority': fields["MyCompany.MyProcess.BusinessPriority"] || 999,
-                'Release Expected Date': fields["MyCompany.MyProcess.Release"] ? new Date(fields["MyCompany.MyProcess.Release"]) : null,
-                'Tags': fields["System.Tags"] || "",
-                'Iteration Path': fields["System.IterationPath"] || "",
-                'Changed Date': fields["System.ChangedDate"] ? new Date(fields["System.ChangedDate"]) : null
-            });
-        });
-        return rows;
-    },
-
-    saveSettings() {
-        const settings = {
-            org: document.getElementById('az-org').value,
-            project: document.getElementById('az-project').value,
-            queryId: document.getElementById('az-query-id').value,
-            backlogQueryId: document.getElementById('az-backlog-query-id').value
-        };
-        localStorage.setItem('az_settings', JSON.stringify(settings));
-        ui.showToast("تم حفظ إعدادات Azure بنجاح", "success");
-    }
-};
-function executeWithSave(action, successMsg = 'تم الحفظ بنجاح', errorMsg = 'فشل الحفظ', callback = null) {
-    ui.showLoader();
-    Promise.resolve(action())
-        .then(() => dataProcessor.saveToGitHub())
-        .then(() => {
-            ui.showToast(successMsg, 'success');
-            if (callback) callback();
-            else ui.renderAll();
-        })
-        .catch(err => {
-            console.error(err);
-            ui.showToast(`${errorMsg}: ${err.message}`, 'error');
-        })
-        .finally(() => ui.hideLoader());
-}
-
-window.onload = () => {
-    if (!db.areaComments) db.areaComments = [];
-    if (!db.projects) db.projects = [];
-    if (!db.archivedProjects) db.archivedProjects = [];
-    if (!db.standupCommentsStore) db.standupCommentsStore = {};
-    if (!db.pullRequests) db.pullRequests = [];
-    if (!db.workItemsMap) db.workItemsMap = {};
-    const saved = localStorage.getItem('saved_creds');
-    if (saved) {
-        const creds = JSON.parse(saved);
-        document.getElementById('username').value = creds.u;
-        document.getElementById('password').value = creds.p;
-        document.getElementById('gh-token').value = creds.t;
-        document.getElementById('az-pat').value = creds.azPat;
-        auth.handleLogin();
-    }
-};
+        document.querySelectorAll('.user-tab-checkbox').forEach(cb => {
+            cb.checked = (
