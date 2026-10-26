@@ -1390,7 +1390,7 @@ calculatePRStats() {
     // =================================================================
     // PULL REQUEST ANALYTICS — NEW VIEW
     // =================================================================
-           calculatePRStatsByArea() {
+            calculatePRStatsByArea() {
         const prs = db.pullRequests || [];
         const storyMap = new Map();
         const childItemMap = new Map();
@@ -1422,6 +1422,17 @@ calculatePRStats() {
         (db.currentStories || []).forEach(indexStory);
         (db.backlogStories || []).forEach(indexStory);
 
+        // =========================================================
+        // ✅ Team name → Area name mapping
+        // (يُستخدم لما الـ Iteration Path يرجع اسم فريق بدل اسم Area)
+        // =========================================================
+        const TEAM_NAME_TO_AREA = {
+            'registration team':  'Registration',
+            'internallab team':   'Internal lab',
+            'internal lab team':  'Internal lab',   // tolerate space variation
+            'front team':         'Front and Financial'
+        };
+
         const resolveAreaFromWorkItem = (item, { allowGeneral = true } = {}) => {
             if (!item) return allowGeneral ? 'General' : null;
 
@@ -1446,6 +1457,13 @@ calculatePRStats() {
                     if (area.toLowerCase() === 'integration') area = 'LDM Integration';
                 }
             }
+
+            // ✅ Map Team name → proper Area name (after all extraction logic)
+            if (area) {
+                const mapped = TEAM_NAME_TO_AREA[area.trim().toLowerCase()];
+                if (mapped) area = mapped;
+            }
+
             return area || (allowGeneral ? 'General' : null);
         };
 
@@ -1473,8 +1491,7 @@ calculatePRStats() {
             //   2) Title starts with "integration"                → "LDM Integration"
             //   3) Repo ≠ "LDM"                                   → repo name (Team Name)
             //   4) Repo = "LDM" + any linked work item
-            //      (User Story / CR / Support log / Bug / Task / TC / Review)
-            //      → same logic as Kanban User Stories (Business Area → Iteration Path)
+            //      → same logic as Kanban User Stories (Business Area → Iteration Path → Team→Area map)
             //   5) Otherwise                                      → "Unlinked"
             // =========================================================
             let area = 'Unlinked';
