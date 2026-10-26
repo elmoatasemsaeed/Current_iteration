@@ -41,7 +41,8 @@ let db = {
     projects: [],
     archivedProjects: [],
     standupCommentsStore: {},
-    pullRequests: []
+    pullRequests: [],
+    workItemsMap: {}
 };
 
 let currentData = [];
@@ -413,6 +414,7 @@ const auth = {
                     if (!db.archivedProjects) db.archivedProjects = [];
                     if (!db.standupCommentsStore) db.standupCommentsStore = {};
                     if (!db.pullRequests) db.pullRequests = [];
+                    if (!db.workItemsMap) db.workItemsMap = {};
                     
                     migrateStandupComments();
                     
@@ -541,6 +543,7 @@ const dataProcessor = {
             if (!db.archivedProjects) db.archivedProjects = [];
             if (!db.standupCommentsStore) db.standupCommentsStore = {};
             if (!db.pullRequests) db.pullRequests = [];
+            if (!db.workItemsMap) db.workItemsMap = {};
 
             const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                 headers: { 'Authorization': `token ${token}` }
@@ -1273,41 +1276,47 @@ const ui = {
     // =================================================================
     // PULL REQUEST STATS HELPERS
     // =================================================================
-calculatePRStats() {
-    const prs = db.pullRequests || [];
-    const completed = prs.filter(pr => pr.status === 'completed' && pr.cycleTimeHours != null);
-    const avgCycleTime = completed.length > 0
-        ? completed.reduce((s, pr) => s + pr.cycleTimeHours, 0) / completed.length
-        : 0;
+    calculatePRStats() {
+        const prs = db.pullRequests || [];
 
-    const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
-    const now = Date.now();
-    const stalePRs = prs.filter(pr => {
-        if (pr.status !== 'active') return false;
-        if (!pr.creationDate) return false;
-        const ageMs = now - new Date(pr.creationDate).getTime();
-        if (ageMs < threeDaysMs) return false;
-        const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
-        return !hasApproval;
-    });
+        // ===== Completed PRs (بحساب الـ cycle time) =====
+        const completedPRs = prs.filter(pr => pr.status === 'completed' && pr.cycleTimeHours != null);
+        const avgCycleTime = completedPRs.length > 0
+            ? completedPRs.reduce((s, pr) => s + pr.cycleTimeHours, 0) / completedPRs.length
+            : 0;
 
-    // ✅ NEW: PRs معتمدة لكن لسه active (مستنية merge)
-    const approvedNotCompletedPRs = prs.filter(pr => {
-        if (pr.status !== 'active') return false;
-        return (pr.reviewers || []).some(r => r.vote >= 5);
-    });
+        // ===== Stalled PRs (> 3 أيام، active، من غير أي approval) =====
+        const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+        const stalePRs = prs.filter(pr => {
+            if (pr.status !== 'active') return false;
+            if (!pr.creationDate) return false;
+            const ageMs = now - new Date(pr.creationDate).getTime();
+            if (ageMs < threeDaysMs) return false;
+            const hasApproval = (pr.reviewers || []).some(r => r.vote >= 5);
+            return !hasApproval;
+        });
 
-    return {
-        total: prs.length,
-        active: prs.filter(pr => pr.status === 'active').length,
-        completed: completed.length,
-        abandoned: prs.filter(pr => pr.status === 'abandoned').length,
-        avgCycleTime,
-        stalePRs,
-        approvedNotCompleted: approvedNotCompletedPRs.length,
-        approvedNotCompletedPRs
-    };
-},
+        // ===== ✅ NEW: Approved but Not Completed =====
+        const approvedNotCompletedPRs = prs.filter(pr => {
+            if (pr.status !== 'active') return false;
+            return (pr.reviewers || []).some(r => r.vote >= 5);
+        });
+
+        const activePRs    = prs.filter(pr => pr.status === 'active');
+        const abandonedPRs = prs.filter(pr => pr.status === 'abandoned');
+
+        return {
+            active: activePRs.length,
+            approvedNotCompleted: approvedNotCompletedPRs.length,
+            total: prs.length,
+            completed: completedPRs.length,
+            abandoned: abandonedPRs.length,
+            avgCycleTime: avgCycleTime,
+            stalePRs: stalePRs,
+            approvedNotCompletedPRs: approvedNotCompletedPRs
+        };
+    },
 
     showStalePRs() {
         const modal = document.getElementById('story-modal');
@@ -1390,7 +1399,7 @@ calculatePRStats() {
     // =================================================================
     // PULL REQUEST ANALYTICS — NEW VIEW
     // =================================================================
-            calculatePRStatsByArea() {
+    calculatePRStatsByArea() {
         const prs = db.pullRequests || [];
         const storyMap = new Map();
         const childItemMap = new Map();
@@ -1422,14 +1431,10 @@ calculatePRStats() {
         (db.currentStories || []).forEach(indexStory);
         (db.backlogStories || []).forEach(indexStory);
 
-        // =========================================================
-        // ✅ Team name → Area name mapping
-        // (يُستخدم لما الـ Iteration Path يرجع اسم فريق بدل اسم Area)
-        // =========================================================
         const TEAM_NAME_TO_AREA = {
             'registration team':  'Registration',
             'internallab team':   'Internal lab',
-            'internal lab team':  'Internal lab',   // tolerate space variation
+            'internal lab team':  'Internal lab',
             'front team':         'Front and Financial'
         };
 
@@ -1458,13 +1463,60 @@ calculatePRStats() {
                 }
             }
 
-            // ✅ Map Team name → proper Area name (after all extraction logic)
             if (area) {
                 const mapped = TEAM_NAME_TO_AREA[area.trim().toLowerCase()];
                 if (mapped) area = mapped;
             }
 
             return area || (allowGeneral ? 'General' : null);
+        };
+
+        // ✅ Helper to resolve area for ANY linked Work Item ID (including standalone Bugs/Tasks)
+        const resolveAreaFromId = (id, visited = new Set()) => {
+            if (!id) return null;
+            id = id.toString();
+            if (visited.has(id)) return null;
+            visited.add(id);
+
+            // 1. Check storyMap (User Story/CR/Support log)
+            if (storyMap.has(id)) {
+                return resolveAreaFromWorkItem(storyMap.get(id), { allowGeneral: false });
+            }
+
+            // 2. Check childItemMap (Task/Bug/Test Case/Review attached to a story)
+            if (childItemMap.has(id)) {
+                const child = childItemMap.get(id);
+                const childArea = resolveAreaFromWorkItem(child, { allowGeneral: false });
+                if (childArea) return childArea;
+
+                const parent = childToParent.get(id);
+                if (parent) {
+                    return resolveAreaFromWorkItem(parent, { allowGeneral: false });
+                }
+            }
+
+            // 3. Check db.workItemsMap (standalone items or not in current query)
+            if (db.workItemsMap && db.workItemsMap[id]) {
+                const wi = db.workItemsMap[id];
+                const pseudoItem = {
+                    id: wi.id,
+                    type: wi.type,
+                    area: wi.area,
+                    iterationPath: wi.iterationPath,
+                    'Business Area': wi.area,
+                    'Iteration Path': wi.iterationPath
+                };
+                const wiArea = resolveAreaFromWorkItem(pseudoItem, { allowGeneral: false });
+                if (wiArea) return wiArea;
+
+                // If no area/iteration path, check its parent (e.g. Epic/Feature)
+                if (wi.parentId) {
+                    const parentArea = resolveAreaFromId(wi.parentId, visited);
+                    if (parentArea) return parentArea;
+                }
+            }
+
+            return null;
         };
 
         const areaMap = {};
@@ -1485,15 +1537,6 @@ calculatePRStats() {
         };
 
         prs.forEach(pr => {
-            // =========================================================
-            // AREA RESOLUTION (priority order)
-            //   1) Title starts with "SL" / "SL_" / "Support log" → "Support Log"
-            //   2) Title starts with "integration"                → "LDM Integration"
-            //   3) Repo ≠ "LDM"                                   → repo name (Team Name)
-            //   4) Repo = "LDM" + any linked work item
-            //      → same logic as Kanban User Stories (Business Area → Iteration Path → Team→Area map)
-            //   5) Otherwise                                      → "Unlinked"
-            // =========================================================
             let area = 'Unlinked';
             const prTitle = (pr.title || '').trim();
             const prRepo  = (pr.repository || '').trim();
@@ -1508,20 +1551,9 @@ calculatePRStats() {
                 area = prRepo;
             }
             else if (pr.linkedStoryId) {
-                const id = pr.linkedStoryId.toString();
-                const linkedItem = storyMap.get(id) || childItemMap.get(id);
-
-                if (linkedItem) {
-                    area = resolveAreaFromWorkItem(linkedItem, { allowGeneral: true });
-
-                    // Test Cases / Reviews مابيخزنوش Area/IterationPath → نرجع للـ Parent
-                    if (area === 'General') {
-                        const parentStory = childToParent.get(id);
-                        if (parentStory) {
-                            const parentArea = resolveAreaFromWorkItem(parentStory, { allowGeneral: false });
-                            if (parentArea) area = parentArea;
-                        }
-                    }
+                const resolvedArea = resolveAreaFromId(pr.linkedStoryId);
+                if (resolvedArea) {
+                    area = resolvedArea;
                 }
             }
 
@@ -1561,7 +1593,7 @@ calculatePRStats() {
         })).sort((a, b) => b.total - a.total);
     },
     
-        renderPullRequestsTab() {
+    renderPullRequestsTab() {
         const container = document.getElementById('pr-container');
         if (!container) return;
 
@@ -1679,7 +1711,7 @@ calculatePRStats() {
         container.innerHTML = summaryHtml + `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">${cardsHtml}</div>`;
     },
 
-       showAreaPRDetails(encodedAreaName) {
+    showAreaPRDetails(encodedAreaName) {
         const areaName = decodeURIComponent(encodedAreaName);
         const stats = this.calculatePRStatsByArea();
         const areaStats = stats.find(a => a.area === areaName);
@@ -1708,9 +1740,7 @@ calculatePRStats() {
             const isApprovedPending = pr.status === 'active' && hasApproval;
             return { ...pr, hasApproval, ageDays, isStalled, isApprovedPending };
         }).sort((a, b) => {
-            // Stalled أولاً (الأخطر)
             if (a.isStalled !== b.isStalled) return a.isStalled ? -1 : 1;
-            // ثم Approved-Pending (جاهز للدمج)
             if (a.isApprovedPending !== b.isApprovedPending) return a.isApprovedPending ? -1 : 1;
             const sa = statusOrder[a.status] ?? 3;
             const sb = statusOrder[b.status] ?? 3;
@@ -1787,6 +1817,7 @@ calculatePRStats() {
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     },
+
     renderDashboard() {
         const container = document.getElementById('dashboard-container');
         if (!container) return;
@@ -4013,6 +4044,20 @@ const azureDevOps = {
                 throw new Error("لم يتم استلام أي تفاصيل من Azure. تم إلغاء المزامنة.");
             }
 
+            // ✅ Build a lightweight map of ALL work items to resolve Areas for PRs
+            db.workItemsMap = {};
+            allDetails.forEach(d => {
+                const fields = d.fields || {};
+                db.workItemsMap[d.id] = {
+                    id: d.id.toString(),
+                    type: fields["System.WorkItemType"] || "",
+                    area: fields["MyCompany.MyProcess.BusinessArea"] || "",
+                    iterationPath: fields["System.IterationPath"] || "",
+                    parentId: fields["System.Parent"] ? fields["System.Parent"].toString() : null,
+                    title: fields["System.Title"] || ""
+                };
+            });
+
             // ============ بناء الصفوف ============
             const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
             const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
@@ -4069,7 +4114,7 @@ const azureDevOps = {
 
     // ============ Pull Requests Fetcher ============
     async fetchPullRequests(authHeader) {
-        const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests?searchCriteria.status=all&$top=500&api-version=7.1`;
+        const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests?searchCriteria.status=all&$top=500&$expand=WorkItems&api-version=7.1`;
         const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
 
         if (!res.ok) {
@@ -4092,8 +4137,15 @@ const azureDevOps = {
                 cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
             }
 
-            const titleMatch = (pr.title || '').match(/#?(\d{4,6})/);
-            const linkedStoryId = titleMatch ? titleMatch[1] : null;
+            // ✅ استخراج الـ Work Item المرتبط (Parent) من Azure API بدلاً من العنوان
+            let linkedStoryId = null;
+            if (pr.workItemRefs && pr.workItemRefs.length > 0) {
+                linkedStoryId = pr.workItemRefs[0].id.toString();
+            } else {
+                // Fallback لو الـ API مارجعش WorkItems
+                const titleMatch = (pr.title || '').match(/#?(\d{4,6})/);
+                linkedStoryId = titleMatch ? titleMatch[1] : null;
+            }
 
             return {
                 id: pr.pullRequestId,
@@ -4170,7 +4222,8 @@ const azureDevOps = {
             "System.IterationPath", "Custom.CustomResolvedDate", "MyCompany.MyProcess.TestedDate",
             "MyCompany.MyProcess.Tester", "Microsoft.VSTS.Common.ResolvedDate",
             "System.State", "MyCompany.MyProcess.Release", "MyCompany.MyProcess.BusinessPriority",
-            "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer"
+            "System.Tags", "System.ChangedDate", "NT.Branch", "Nt.Customer",
+            "System.Parent" // ✅ Added to resolve parent of standalone Bugs/Tasks
         ];
     },
 
@@ -4236,6 +4289,7 @@ window.onload = () => {
     if (!db.archivedProjects) db.archivedProjects = [];
     if (!db.standupCommentsStore) db.standupCommentsStore = {};
     if (!db.pullRequests) db.pullRequests = [];
+    if (!db.workItemsMap) db.workItemsMap = {};
     const saved = localStorage.getItem('saved_creds');
     if (saved) {
         const creds = JSON.parse(saved);
