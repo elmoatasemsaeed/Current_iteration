@@ -39937,6 +39937,54 @@
       "pullRequests": []
     },
     {
+      "id": 194759,
+      "title": "alehssa >> Task to publish CR#173181 and 173182 to Production (#51615)",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Mohamed Hany",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Hasa Health Cluster_12",
+      "changedDate": "2026-10-27T06:23:50.820Z",
+      "tasks": [
+        {
+          "ID": 194792,
+          "Work Item Type": "Task",
+          "Title": "DB: Move Task 177832 to Production DB",
+          "Assigned To": "Mohamed Hany",
+          "Activity": "DB Modification",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-27T06:42:49.143Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
       "id": 194782,
       "title": "#AlFarabi KSA: We need to publish the latest version at production server",
       "type": "Support log",
@@ -39949,7 +39997,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-10-27T05:50:08.890Z",
+      "changedDate": "2026-10-27T06:35:10.383Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -39963,7 +40011,7 @@
       "customTags": [],
       "iterationPath": "LDM",
       "devActualTime": 26,
-      "testActualTime": 0,
+      "testActualTime": 13.5,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -87999,6 +88047,14 @@
       "parentId": null,
       "title": "TC_29 Verify Report Data for Different Claims"
     },
+    "194759": {
+      "id": "194759",
+      "type": "Support log",
+      "area": "Internal lab",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "parentId": null,
+      "title": "alehssa >> Task to publish CR#173181 and 173182 to Production (#51615)"
+    },
     "194760": {
       "id": "194760",
       "type": "Test Case",
@@ -88118,6 +88174,14 @@
       "iterationPath": "LDM",
       "parentId": null,
       "title": "When Edit Branch Auditing screen crashed."
+    },
+    "194792": {
+      "id": "194792",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "parentId": "194759",
+      "title": "DB: Move Task 177832 to Production DB"
     }
   }
 }
