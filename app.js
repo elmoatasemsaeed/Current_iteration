@@ -4114,141 +4114,70 @@ const azureDevOps = {
 
     // ============ Pull Requests Fetcher ============
     async fetchPullRequests(authHeader) {
-    // 1) جلب قائمة الـ PRs الأساسية (بدون expand)
-    const listUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests?searchCriteria.status=all&$top=500&api-version=7.1`;
-    const listRes = await fetchWithTimeout(listUrl, { headers: { 'Authorization': authHeader } });
-    if (!listRes.ok) throw new Error(`فشل جلب قائمة PRs (${listRes.status})`);
-    const listData = await listRes.json();
-    if (!Array.isArray(listData.value)) return [];
+        const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests?searchCriteria.status=all&$top=500&$expand=WorkItems&api-version=7.1`;
+        const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
 
-    const prs = [];
-    // 2) لكل PR، استدعاء Get Pull Request مع includeWorkItemRefs=true
-    // (يمكن تنفيذها بالتوازي بحد أقصى 5-10 طلبات متزامنة لتجنب البطء)
-    for (const prBasic of listData.value) {
-        const repoId = prBasic.repository?.id;
-        if (!repoId) continue;
+        if (!res.ok) {
+            throw new Error(`فشل جلب الـ Pull Requests (${res.status} ${res.statusText}).`);
+        }
+        const data = await res.json();
+        if (!data || !Array.isArray(data.value)) {
+            console.warn('⚠️ Azure لم يُرجع أي Pull Requests.');
+            return [];
+        }
 
-        const detailUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/repositories/${repoId}/pullrequests/${prBasic.pullRequestId}?includeWorkItemRefs=true&api-version=7.1`;
-        let workItemRefs = [];
-        try {
-            const detailRes = await fetchWithTimeout(detailUrl, { headers: { 'Authorization': authHeader } });
-            if (detailRes.ok) {
-                const detail = await detailRes.json();
-                workItemRefs = detail.workItemRefs || [];
+        console.log(`✅ تم استلام ${data.value.length} Pull Request من Azure.`);
+
+        return data.value.map(pr => {
+            const creationDate = pr.creationDate ? new Date(pr.creationDate) : null;
+            const closedDate = pr.closedDate ? new Date(pr.closedDate) : null;
+
+            let cycleTimeHours = null;
+            if (pr.status === 'completed' && creationDate && closedDate) {
+                cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
             }
-        } catch (e) {
-            console.warn(`فشل جلب workItemRefs للـ PR #${prBasic.pullRequestId}`, e);
-        }
 
-        // 3) استخراج معرّفات القصص (وليس مجرد أول عنصر)
-        const linkedStoryIds = await this.resolveStoryIdsFromWorkItemRefs(workItemRefs, authHeader);
+            // ✅ استخراج الـ Work Item المرتبط (Parent) من Azure API بدلاً من العنوان
+            let linkedStoryId = null;
+            if (pr.workItemRefs && pr.workItemRefs.length > 0) {
+                linkedStoryId = pr.workItemRefs[0].id.toString();
+            } else {
+                // Fallback لو الـ API مارجعش WorkItems
+                const titleMatch = (pr.title || '').match(/#?(\d{4,6})/);
+                linkedStoryId = titleMatch ? titleMatch[1] : null;
+            }
 
-        const creationDate = prBasic.creationDate ? new Date(prBasic.creationDate) : null;
-        const closedDate = prBasic.closedDate ? new Date(prBasic.closedDate) : null;
-        let cycleTimeHours = null;
-        if (prBasic.status === 'completed' && creationDate && closedDate) {
-            cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
-        }
-
-        // 4) الـ Regex fallback (الطريقة الثانية) يبقى كما هو
-        if (linkedStoryIds.length === 0) {
-            const titleMatch = (prBasic.title || '').match(/#?(\d{4,6})/);
-            if (titleMatch) linkedStoryIds.push(titleMatch[1]);
-        }
-
-        prs.push({
-            id: prBasic.pullRequestId,
-            title: prBasic.title || '',
-            status: prBasic.status || 'unknown',
-            createdBy: prBasic.createdBy?.displayName || 'Unknown',
-            repository: prBasic.repository?.name || 'N/A',
-            creationDate: creationDate ? creationDate.toISOString() : null,
-            closedDate: closedDate ? closedDate.toISOString() : null,
-            cycleTimeHours,
-            linkedStoryIds,          // ✅ مصفوفة بدلاً من linkedStoryId المفرد
-            linkedStoryId: linkedStoryIds[0] || null, // للتوافق الخلفي إن لزم
-            sourceRefName: prBasic.sourceRefName || '',
-            targetRefName: prBasic.targetRefName || '',
-            reviewers: (prBasic.reviewers || []).map(r => ({
-                name: r.displayName || 'Unknown',
-                vote: r.vote != null ? r.vote : 0
-            }))
+            return {
+                id: pr.pullRequestId,
+                title: pr.title || '',
+                status: pr.status || 'unknown',
+                createdBy: pr.createdBy?.displayName || 'Unknown',
+                repository: pr.repository?.name || 'N/A',
+                creationDate: creationDate ? creationDate.toISOString() : null,
+                closedDate: closedDate ? closedDate.toISOString() : null,
+                cycleTimeHours: cycleTimeHours,
+                linkedStoryId: linkedStoryId,
+                sourceRefName: pr.sourceRefName || '',
+                targetRefName: pr.targetRefName || '',
+                reviewers: (pr.reviewers || []).map(r => ({
+                    name: r.displayName || 'Unknown',
+                    vote: r.vote != null ? r.vote : 0
+                }))
+            };
         });
-    }
-    return prs;
-},
-    async resolveStoryIdsFromWorkItemRefs(workItemRefs, authHeader) {
-    const storyIds = new Set();
-    const STORY_TYPES = new Set(['User Story', 'CR', 'Support log', 'Requirement']);
-
-    for (const ref of workItemRefs) {
-        const workItemId = ref.id?.toString();
-        if (!workItemId) continue;
-
-        // جلب تفاصيل العنصر مع النوع والأب
-        try {
-            const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workItems/${workItemId}?$expand=relations&api-version=6.0`;
-            const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
-            if (!res.ok) continue;
-            const wi = await res.json();
-            const fields = wi.fields || {};
-            const type = fields['System.WorkItemType'] || '';
-
-            // (أ) إذا كان العنصر نفسه قصة رئيسية → أضفه مباشرة
-            if (STORY_TYPES.has(type)) {
-                storyIds.add(workItemId);
-                continue;
-            }
-
-            // (ب) إذا كان Task/Bug → ابحث عن الأب عبر System.Parent
-            const parentId = fields['System.Parent']?.toString();
-            if (parentId) {
-                // قد يكون الأب قصة أو Feature/Epic. نتحقق من نوعه أيضاً
-                const parentUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workItems/${parentId}?api-version=6.0`;
-                const parentRes = await fetchWithTimeout(parentUrl, { headers: { 'Authorization': authHeader } });
-                if (parentRes.ok) {
-                    const parentWi = await parentRes.json();
-                    const parentType = parentWi.fields?.['System.WorkItemType'] || '';
-                    if (STORY_TYPES.has(parentType)) {
-                        storyIds.add(parentId);
-                    } else {
-                        // إن كان الأب Feature/Epic، يمكن البحث عن أبنائه من نوع قصة (اختياري)
-                        // هنا نكتفي بعدم إضافة شيء لأن التطبيق يعرض قصصاً فقط.
-                    }
-                }
-            }
-
-            // (ج) كحل احتياطي إضافي: إذا كان للعنصر relation من نوع Hierarchy-Reverse
-            // (وهو ما يعادل System.Parent) يمكن استخدامه أيضاً
-            const parentRel = (wi.relations || []).find(r => r.rel === 'System.LinkTypes.Hierarchy-Reverse');
-            if (parentRel?.url) {
-                const match = parentRel.url.match(/\/workItems\/(\d+)/);
-                if (match) {
-                    const pid = match[1];
-                    // نتحقق من نوع الأب كما سبق (يمكن تجنب التكرار)
-                    // ...
-                }
-            }
-        } catch (e) {
-            console.warn(`فشل تحليل Work Item ${workItemId}`, e);
-        }
-    }
-    return Array.from(storyIds);
-},
+    },
 
     linkPullRequestsToStories() {
-    const linkFn = (stories) => {
-        (stories || []).forEach(story => {
-            story.pullRequests = (db.pullRequests || []).filter(pr => {
-                // ✅ فحص الاحتواء في المصفوفة بدلاً من المساواة بمعرّف واحد
-                const ids = pr.linkedStoryIds || (pr.linkedStoryId ? [pr.linkedStoryId] : []);
-                return ids.some(id => id?.toString() === story.id.toString());
+        const linkFn = (stories) => {
+            (stories || []).forEach(story => {
+                story.pullRequests = (db.pullRequests || []).filter(pr =>
+                    pr.linkedStoryId && pr.linkedStoryId.toString() === story.id.toString()
+                );
             });
-        });
-    };
-    linkFn(db.currentStories);
-    linkFn(db.backlogStories);
-},
+        };
+        linkFn(db.currentStories);
+        linkFn(db.backlogStories);
+    },
 
     buildRowsFromRelations(relations, detailsMap) {
         const rows = [];
