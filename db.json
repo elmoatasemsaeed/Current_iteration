@@ -4545,12 +4545,12 @@
         {
           "id": 8212,
           "title": "Develop CR 183571",
-          "status": "active",
+          "status": "completed",
           "createdBy": "Karim El-Saeed",
           "repository": "LDM",
           "creationDate": "2026-10-25T11:59:52.781Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-10-26T17:27:00.639Z",
+          "cycleTimeHours": 29.45218277777778,
           "linkedStoryId": "183571",
           "sourceRefName": "refs/heads/develop_CR_183571",
           "targetRefName": "refs/heads/develop",
@@ -4569,7 +4569,7 @@
             },
             {
               "name": "gamal kasem",
-              "vote": 0
+              "vote": 10
             },
             {
               "name": "Fatma Fayed",
@@ -14364,12 +14364,12 @@
         {
           "id": 8271,
           "title": "US: #188382, Bug: #194210",
-          "status": "active",
+          "status": "completed",
           "createdBy": "Ahmed Gamal",
           "repository": "LDM",
           "creationDate": "2026-10-26T15:59:16.625Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-10-26T16:00:55.362Z",
+          "cycleTimeHours": 0.027426944444444445,
           "linkedStoryId": "188382",
           "sourceRefName": "refs/heads/develop_US#188382",
           "targetRefName": "refs/heads/develop",
@@ -14392,7 +14392,7 @@
             },
             {
               "name": "Fatma Fayed",
-              "vote": 0
+              "vote": 10
             }
           ]
         },
@@ -33250,6 +33250,37 @@
       "linkedProjectId": null,
       "pullRequests": [
         {
+          "id": 8272,
+          "title": "Master PreProduction Refactor 188570",
+          "status": "active",
+          "createdBy": "Mahmoud Ahmed",
+          "repository": "LDM",
+          "creationDate": "2026-10-26T16:01:34.964Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "188570",
+          "sourceRefName": "refs/heads/Master_PreProduction_Refactor_188570",
+          "targetRefName": "refs/heads/Master_PreProduction",
+          "reviewers": [
+            {
+              "name": "Bardis Khamees",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        },
+        {
           "id": 8222,
           "title": "Refactor financial Data Service US #188570",
           "status": "completed",
@@ -43536,14 +43567,112 @@
   },
   "pullRequests": [
     {
+      "id": 8275,
+      "title": "Reset Farabi to Farabi stage",
+      "status": "completed",
+      "createdBy": "Moamen SalahElDeen",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-10-26T19:08:21.163Z",
+      "closedDate": "2026-10-26T19:12:06.565Z",
+      "cycleTimeHours": 0.06261166666666666,
+      "linkedStoryId": null,
+      "sourceRefName": "refs/heads/Reset_Farabi_to_Farabi_stage",
+      "targetRefName": "refs/heads/Farabi",
+      "reviewers": []
+    },
+    {
+      "id": 8274,
+      "title": "Bugs 194726/194715: MOZMEN_PKG font names DECODE in RPO_GETRGCGRSS7; SERVICEO...",
+      "status": "completed",
+      "createdBy": "Moamen SalahElDeen",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-10-26T16:36:50.091Z",
+      "closedDate": "2026-10-26T17:57:52.619Z",
+      "cycleTimeHours": 1.3507022222222222,
+      "linkedStoryId": "194726",
+      "sourceRefName": "refs/heads/Moamen_main",
+      "targetRefName": "refs/heads/main",
+      "reviewers": [
+        {
+          "name": "gamal kasem",
+          "vote": 10
+        },
+        {
+          "name": "[LDM]\\DB-Approvers",
+          "vote": 10
+        },
+        {
+          "name": "[LDM]\\APP-Approvers",
+          "vote": 10
+        },
+        {
+          "name": "Mohamed Qassem",
+          "vote": 10
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 10
+        },
+        {
+          "name": "Ahmed Attia",
+          "vote": 10
+        }
+      ]
+    },
+    {
+      "id": 8273,
+      "title": "Bugs 194726/194715: MOZMEN_PKG font names DECODE in RPO_GETRGCGRSS7; SERVICEO...",
+      "status": "completed",
+      "createdBy": "Moamen SalahElDeen",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-10-26T16:34:25.486Z",
+      "closedDate": "2026-10-26T16:43:51.551Z",
+      "cycleTimeHours": 0.15724027777777777,
+      "linkedStoryId": "194726",
+      "sourceRefName": "refs/heads/Fix_194726_194715_master",
+      "targetRefName": "refs/heads/master",
+      "reviewers": []
+    },
+    {
+      "id": 8272,
+      "title": "Master PreProduction Refactor 188570",
+      "status": "active",
+      "createdBy": "Mahmoud Ahmed",
+      "repository": "LDM",
+      "creationDate": "2026-10-26T16:01:34.964Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "188570",
+      "sourceRefName": "refs/heads/Master_PreProduction_Refactor_188570",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Khamees",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
       "id": 8271,
       "title": "US: #188382, Bug: #194210",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Ahmed Gamal",
       "repository": "LDM",
       "creationDate": "2026-10-26T15:59:16.625Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-10-26T16:00:55.362Z",
+      "cycleTimeHours": 0.027426944444444445,
       "linkedStoryId": "188382",
       "sourceRefName": "refs/heads/develop_US#188382",
       "targetRefName": "refs/heads/develop",
@@ -43566,19 +43695,19 @@
         },
         {
           "name": "Fatma Fayed",
-          "vote": 0
+          "vote": 10
         }
       ]
     },
     {
       "id": 8270,
       "title": "Revamp Money Transfer",
-      "status": "active",
+      "status": "completed",
       "createdBy": "mohamed.abdelghany",
       "repository": "LDM",
       "creationDate": "2026-10-26T15:44:28.252Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-10-26T19:21:02.973Z",
+      "cycleTimeHours": 3.6096447222222223,
       "linkedStoryId": null,
       "sourceRefName": "refs/heads/develop_CR_176700",
       "targetRefName": "refs/heads/develop",
@@ -43597,7 +43726,7 @@
         },
         {
           "name": "gamal kasem",
-          "vote": 0
+          "vote": 10
         },
         {
           "name": "Fatma Fayed",
@@ -43608,12 +43737,12 @@
     {
       "id": 8269,
       "title": "V1.0 Acculab ",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Mohamed Hany",
       "repository": "LDM",
       "creationDate": "2026-10-26T15:38:23.792Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-10-27T06:11:35.684Z",
+      "cycleTimeHours": 14.553303333333334,
       "linkedStoryId": null,
       "sourceRefName": "refs/heads/V1.0_Acculab_14_10_2019_191773",
       "targetRefName": "refs/heads/V1.0_Acculab_14_10_2019",
@@ -43966,11 +44095,11 @@
     {
       "id": 8254,
       "title": "V3.0 AlBorgUAE 16 09 2026 SL #194727",
-      "status": "active",
+      "status": "abandoned",
       "createdBy": "Hesham Elsayed",
       "repository": "LDM",
       "creationDate": "2026-10-26T12:54:43.770Z",
-      "closedDate": null,
+      "closedDate": "2026-10-26T17:12:34.713Z",
       "cycleTimeHours": null,
       "linkedStoryId": "2026",
       "sourceRefName": "refs/heads/V3.0_AlBorgUAE_16_09_2026_SL_194727",
@@ -44951,12 +45080,12 @@
     {
       "id": 8212,
       "title": "Develop CR 183571",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Karim El-Saeed",
       "repository": "LDM",
       "creationDate": "2026-10-25T11:59:52.781Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-10-26T17:27:00.639Z",
+      "cycleTimeHours": 29.45218277777778,
       "linkedStoryId": "183571",
       "sourceRefName": "refs/heads/develop_CR_183571",
       "targetRefName": "refs/heads/develop",
@@ -44975,7 +45104,7 @@
         },
         {
           "name": "gamal kasem",
-          "vote": 0
+          "vote": 10
         },
         {
           "name": "Fatma Fayed",
@@ -45957,12 +46086,12 @@
     {
       "id": 8173,
       "title": "Bug : #192822 Updated the behavior to delete the registration instead of canc...",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Mahmoud Essam",
       "repository": "LDM",
       "creationDate": "2026-10-22T08:23:42.842Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-10-26T18:07:46.476Z",
+      "cycleTimeHours": 105.73434277777778,
       "linkedStoryId": "192822",
       "sourceRefName": "refs/heads/Master_PreProduction_MBR",
       "targetRefName": "refs/heads/Master_PreProduction",
@@ -58087,130 +58216,6 @@
         {
           "name": "Mohamed Salah-Eddin",
           "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7689,
-      "title": "SL #189470 - Abha : Fix Search Report comments escape stray < and & and keep line breaks in HtmlTextBox",
-      "status": "completed",
-      "createdBy": "Mohamed Samy",
-      "repository": "LDM",
-      "creationDate": "2026-10-04T12:03:51.432Z",
-      "closedDate": "2026-10-04T13:12:22.315Z",
-      "cycleTimeHours": 1.1419119444444445,
-      "linkedStoryId": "189470",
-      "sourceRefName": "refs/heads/Master_PreProduction_SL#189470",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Khamees",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7688,
-      "title": "SL #190556 => Ansary - User can't change ref. doctor from Mobile browser (#49975)",
-      "status": "completed",
-      "createdBy": "Mahmoud Ahmed",
-      "repository": "LDM",
-      "creationDate": "2026-10-04T11:56:58.022Z",
-      "closedDate": "2026-10-04T14:57:16.401Z",
-      "cycleTimeHours": 3.0051052777777776,
-      "linkedStoryId": "190556",
-      "sourceRefName": "refs/heads/V2.0_Ansary_29_09_2026_SL#190556",
-      "targetRefName": "refs/heads/V2.0_Ansary_29_09_2026",
-      "reviewers": [
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "gamal kasem",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 10
-        }
-      ]
-    },
-    {
-      "id": 7687,
-      "title": "SL_ #184323 Task_ #190658 Delete (AnalyzerSettings + AnalyzerSetup) pages and...",
-      "status": "completed",
-      "createdBy": "Samir Mohamed",
-      "repository": "LDM",
-      "creationDate": "2026-10-04T11:46:21.183Z",
-      "closedDate": "2026-10-04T11:50:05.003Z",
-      "cycleTimeHours": 0.06217222222222222,
-      "linkedStoryId": "184323",
-      "sourceRefName": "refs/heads/Master_PreProduction_Task_190658",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Khamees",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7686,
-      "title": "Integration : bug #190195| Fix issue of integration menitor not returned any...",
-      "status": "completed",
-      "createdBy": "Mohamed Refaat",
-      "repository": "LDM",
-      "creationDate": "2026-10-04T11:27:35.972Z",
-      "closedDate": "2026-10-04T13:55:01.462Z",
-      "cycleTimeHours": 2.4570805555555557,
-      "linkedStoryId": "190195",
-      "sourceRefName": "refs/heads/Master_PreProduction_Integ_Hekma_Bugs",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Khamees",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 10
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
         },
         {
           "name": "Fatma Fayed",
