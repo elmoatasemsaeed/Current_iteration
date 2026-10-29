@@ -9581,11 +9581,13 @@
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 1,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-10-29T08:26:11.927Z",
+      "changedDate": "2026-10-29T14:46:33.080Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -15831,7 +15833,7 @@
       "id": 195226,
       "title": "Al Borg  KSA WhatsApp Integration - Bot Flow - Update [Validate Patient ID] to return patient visits in the last year instead of last 6 months",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Closed",
       "assignedTo": "Hebatullah Mohamed",
       "tester": "Unassigned",
       "area": "LDM Integration",
@@ -15840,7 +15842,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-10-29T10:06:29.750Z",
+      "changedDate": "2026-10-29T14:44:13.603Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -15854,7 +15856,7 @@
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 0,
-      "testActualTime": 0,
+      "testActualTime": 0.5,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -41800,8 +41802,9 @@
           "Activated Date": "2026-10-29T14:33:08.79Z",
           "Iteration Path": "MobileApp\\2026\\Mobile-November 1-30",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-10-29T14:34:13.017Z",
+          "Resolved Date": "2026-10-29T14:49:00.003Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-10-29T14:49:00.003Z",
           "Customer": "Accurate Lab_17"
         },
         {
@@ -41820,15 +41823,30 @@
           "State": "To Be Reviewed",
           "Changed Date": "2026-10-29T14:34:07.837Z",
           "Customer": "Accurate Lab_17"
+        },
+        {
+          "ID": 195492,
+          "Work Item Type": "Task",
+          "Title": "sepertes acurate connect  sample dsl",
+          "Assigned To": "Saleh Abdelrahem",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp\\2026\\Mobile-November 1-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-29T14:48:46.023Z",
+          "Customer": "Accurate Lab_17"
         }
       ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-10-28T08:00:00.000Z",
-        "testEnd": "2026-11-04T12:00:00.000Z",
-        "finalEnd": "2026-11-04T12:00:00.000Z"
+        "devEnd": "2026-10-27T15:38:44.210Z",
+        "testEnd": "2026-11-03T12:00:00.000Z",
+        "finalEnd": "2026-11-03T12:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\Mobile-November 1-30",
@@ -42766,8 +42784,8 @@
       "id": 195457,
       "title": "Borg KSA >> Extra Service take about 22 Second to added auto during registration in add service screen with new Patients only",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Ibrahim Ahmed",
+      "state": "Resolved",
+      "assignedTo": "Ammar Yasser",
       "tester": "Unassigned",
       "area": "Registration",
       "priority": 999,
@@ -42775,7 +42793,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-10-29T12:02:03.130Z",
+      "changedDate": "2026-10-29T14:41:53.350Z",
       "tasks": [
         {
           "ID": 195464,
@@ -42804,7 +42822,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
-      "devActualTime": 0,
+      "devActualTime": 2.65,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
@@ -91724,6 +91742,14 @@
       "iterationPath": "LDM",
       "parentId": null,
       "title": "local >> search result not open 2028"
+    },
+    "195492": {
+      "id": "195492",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "MobileApp\\2026\\Mobile-November 1-30",
+      "parentId": "194736",
+      "title": "sepertes acurate connect  sample dsl"
     }
   }
 }
