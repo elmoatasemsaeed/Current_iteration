@@ -16342,12 +16342,12 @@
         {
           "id": 8372,
           "title": "US #183373 : Fix design issue",
-          "status": "active",
+          "status": "completed",
           "createdBy": "Ola Gamal",
           "repository": "LDM",
           "creationDate": "2026-10-29T14:57:51.000Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-10-29T15:12:50.785Z",
+          "cycleTimeHours": 0.24994027777777778,
           "linkedStoryId": "183373",
           "sourceRefName": "refs/heads/develop_reportfix",
           "targetRefName": "refs/heads/develop",
@@ -16362,7 +16362,7 @@
             },
             {
               "name": "Mohamed Salah-Eddin",
-              "vote": 0
+              "vote": 10
             },
             {
               "name": "gamal kasem",
@@ -18254,12 +18254,12 @@
         {
           "id": 8370,
           "title": "Develop CR 181745",
-          "status": "active",
+          "status": "completed",
           "createdBy": "mohamed.abdelghany",
           "repository": "LDM",
           "creationDate": "2026-10-29T14:05:41.560Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-10-29T15:48:41.972Z",
+          "cycleTimeHours": 1.716781111111111,
           "linkedStoryId": "181745",
           "sourceRefName": "refs/heads/develop_CR_181745",
           "targetRefName": "refs/heads/develop",
@@ -18278,7 +18278,7 @@
             },
             {
               "name": "gamal kasem",
-              "vote": 0
+              "vote": 10
             },
             {
               "name": "Fatma Fayed",
@@ -42512,7 +42512,43 @@
       "testActualTime": 35.5,
       "isBacklog": false,
       "linkedProjectId": null,
-      "pullRequests": []
+      "pullRequests": [
+        {
+          "id": 8373,
+          "title": "SL #195221 - Wareed : Fix production errors from Wareed stage logs",
+          "status": "completed",
+          "createdBy": "Mohamed Samy",
+          "repository": "LDM",
+          "creationDate": "2026-10-29T15:13:58.996Z",
+          "closedDate": "2026-10-29T15:23:27.984Z",
+          "cycleTimeHours": 0.15805222222222223,
+          "linkedStoryId": "195221",
+          "sourceRefName": "refs/heads/Master_PreProduction_SL#195221",
+          "targetRefName": "refs/heads/Master_PreProduction",
+          "reviewers": [
+            {
+              "name": "Bardis Maher",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "gamal kasem",
+              "vote": 10
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": 195374,
@@ -43980,6 +44016,37 @@
       "isBacklog": true,
       "linkedProjectId": null,
       "pullRequests": [
+        {
+          "id": 8374,
+          "title": "Integration: CR #195425 - Changed the data type of excluded payers from list to array of strings",
+          "status": "active",
+          "createdBy": "Ahmed Tarek",
+          "repository": "LDM",
+          "creationDate": "2026-10-29T15:25:01.500Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "195425",
+          "sourceRefName": "refs/heads/Master_PreProduction_195425_update",
+          "targetRefName": "refs/heads/Master_PreProduction",
+          "reviewers": [
+            {
+              "name": "Bardis Maher",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        },
         {
           "id": 8371,
           "title": "Integration: CR #195425 Excluded Some Payers from sending Results and Invoices",
@@ -46485,14 +46552,80 @@
   },
   "pullRequests": [
     {
+      "id": 8374,
+      "title": "Integration: CR #195425 - Changed the data type of excluded payers from list to array of strings",
+      "status": "active",
+      "createdBy": "Ahmed Tarek",
+      "repository": "LDM",
+      "creationDate": "2026-10-29T15:25:01.500Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "195425",
+      "sourceRefName": "refs/heads/Master_PreProduction_195425_update",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Maher",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8373,
+      "title": "SL #195221 - Wareed : Fix production errors from Wareed stage logs",
+      "status": "completed",
+      "createdBy": "Mohamed Samy",
+      "repository": "LDM",
+      "creationDate": "2026-10-29T15:13:58.996Z",
+      "closedDate": "2026-10-29T15:23:27.984Z",
+      "cycleTimeHours": 0.15805222222222223,
+      "linkedStoryId": "195221",
+      "sourceRefName": "refs/heads/Master_PreProduction_SL#195221",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Maher",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "gamal kasem",
+          "vote": 10
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
       "id": 8372,
       "title": "US #183373 : Fix design issue",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Ola Gamal",
       "repository": "LDM",
       "creationDate": "2026-10-29T14:57:51.000Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-10-29T15:12:50.785Z",
+      "cycleTimeHours": 0.24994027777777778,
       "linkedStoryId": "183373",
       "sourceRefName": "refs/heads/develop_reportfix",
       "targetRefName": "refs/heads/develop",
@@ -46507,7 +46640,7 @@
         },
         {
           "name": "Mohamed Salah-Eddin",
-          "vote": 0
+          "vote": 10
         },
         {
           "name": "gamal kasem",
@@ -46553,12 +46686,12 @@
     {
       "id": 8370,
       "title": "Develop CR 181745",
-      "status": "active",
+      "status": "completed",
       "createdBy": "mohamed.abdelghany",
       "repository": "LDM",
       "creationDate": "2026-10-29T14:05:41.560Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-10-29T15:48:41.972Z",
+      "cycleTimeHours": 1.716781111111111,
       "linkedStoryId": "181745",
       "sourceRefName": "refs/heads/develop_CR_181745",
       "targetRefName": "refs/heads/develop",
@@ -46577,7 +46710,7 @@
         },
         {
           "name": "gamal kasem",
-          "vote": 0
+          "vote": 10
         },
         {
           "name": "Fatma Fayed",
@@ -46615,12 +46748,12 @@
     {
       "id": 8367,
       "title": "Develop Task#195447",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Ahmed Gamal",
       "repository": "LDM",
       "creationDate": "2026-10-29T12:41:07.798Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-10-29T15:15:48.186Z",
+      "cycleTimeHours": 2.5778855555555555,
       "linkedStoryId": "195447",
       "sourceRefName": "refs/heads/develop_Task#195447",
       "targetRefName": "refs/heads/develop",
@@ -46643,7 +46776,7 @@
         },
         {
           "name": "Fatma Fayed",
-          "vote": 0
+          "vote": 10
         }
       ]
     },
@@ -60859,68 +60992,6 @@
       "creationDate": "2026-10-07T12:04:03.730Z",
       "closedDate": "2026-10-07T12:05:41.420Z",
       "cycleTimeHours": 0.02713611111111111,
-      "linkedStoryId": "190673",
-      "sourceRefName": "refs/heads/Master_PreProduction_190673",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 10
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7789,
-      "title": "Master PreProduction Bug 191384",
-      "status": "completed",
-      "createdBy": "Samir Mohamed",
-      "repository": "LDM",
-      "creationDate": "2026-10-07T11:55:31.220Z",
-      "closedDate": "2026-10-07T14:30:17.065Z",
-      "cycleTimeHours": 2.579401388888889,
-      "linkedStoryId": "191384",
-      "sourceRefName": "refs/heads/Master_PreProduction_Bug_191384",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7787,
-      "title": "Master PreProduction 190673",
-      "status": "completed",
-      "createdBy": "Mostafa Taha",
-      "repository": "LDM",
-      "creationDate": "2026-10-07T11:27:14.138Z",
-      "closedDate": "2026-10-07T11:55:45.983Z",
-      "cycleTimeHours": 0.4755125,
       "linkedStoryId": "190673",
       "sourceRefName": "refs/heads/Master_PreProduction_190673",
       "targetRefName": "refs/heads/Master_PreProduction",
