@@ -772,7 +772,7 @@
           "Iteration Path": "Home Visit\\2025\\home_visit January 5-19",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-10-28T14:40:45.063Z",
+          "Changed Date": "2026-10-28T14:59:13.453Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -791,7 +791,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-28T14:35:56.753Z",
           "State": "Resolved",
-          "Changed Date": "2026-10-28T14:40:45.063Z",
+          "Changed Date": "2026-10-28T14:59:13.453Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -963,7 +963,7 @@
       "id": 170402,
       "title": "Dynamic Batch Registration: Implement Save action of Dynamic Batch Registration",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Tested",
       "assignedTo": "Samir Mohamed",
       "tester": "Mostafa Mamdouh",
       "area": "Registration",
@@ -975,7 +975,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-10-28T12:32:52.470Z",
+      "changedDate": "2026-10-28T20:05:08.057Z",
       "tasks": [
         {
           "ID": 185206,
@@ -2683,9 +2683,9 @@
       "id": 176700,
       "title": "Internal CR -  Money Transfer: Implement Patient Money Transfer action for single accession record",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "mohamed.abdelghany",
-      "tester": "Unassigned",
+      "tester": "Abdelrahman Salman",
       "area": "Front and Financial",
       "priority": 1,
       "tags": [
@@ -2696,7 +2696,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-27T07:15:53.383Z",
+      "changedDate": "2026-10-28T20:00:07.677Z",
       "tasks": [
         {
           "ID": 190646,
@@ -3187,8 +3187,9 @@
           "Activated Date": "2026-10-06T13:49:02.377Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-10-06T13:49:02.377Z",
+          "Resolved Date": "2026-10-28T17:47:25.447Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-10-28T17:47:25.447Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -3470,148 +3471,213 @@
           "Activity": "Testing",
           "Original Estimation": 6.5,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 3,
+          "TimeSheet_TestingActualTime": 9.5,
           "Activated Date": "2026-10-28T12:28:16.483Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-10-28T12:32:50.167Z",
+          "Changed Date": "2026-10-28T17:52:55.877Z",
           "Customer": "Internal CR_2000"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": 195220,
+          "Work Item Type": "Bug",
+          "Title": "In Contract Transfer, The system recalculates Cash Without Credit values according to the existing Contract Transfer rules.",
+          "Assigned To": "Abdelrahman Salman",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-28T18:11:58.54Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 195222,
+          "Work Item Type": "Bug",
+          "Title": "In Value Transfer, When insertion Max Credit amount, The system recalculates New Cash and New Credit values in last service only.",
+          "Assigned To": "Abdelrahman Salman",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-28T18:30:34.93Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 195224,
+          "Work Item Type": "Bug",
+          "Title": "In Update Service Price, issue in Ui design (New Cash) Column is not displayed Bold unlike New Cash VAT, New Credit, and Difference.",
+          "Assigned To": "Abdelrahman Salman",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-28T19:21:07.35Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 195225,
+          "Work Item Type": "Bug",
+          "Title": "In Contract Transfer, Wrong Redirection in View payer attachment link",
+          "Assigned To": "Abdelrahman Salman",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-28T19:33:40.817Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
       "testCases": [
         {
           "id": 190962,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190963,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190964,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190965,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190966,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190967,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190968,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190969,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190970,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190971,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190972,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190973,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190974,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190975,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190976,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190977,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190978,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190979,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190980,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190981,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190984,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190985,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190986,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 190989,
-          "state": "Ready"
+          "state": "Fail"
         },
         {
           "id": 190991,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 191026,
-          "state": "Ready"
+          "state": "Fail"
         },
         {
           "id": 191029,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 191032,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 191033,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 191034,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 191035,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 191036,
-          "state": "Ready"
+          "state": "Pass"
         },
         {
           "id": 191037,
-          "state": "Ready"
+          "state": "Pass"
+        },
+        {
+          "id": 195223,
+          "state": "Fail"
         }
       ],
       "reviews": [],
@@ -9263,7 +9329,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-10-27T16:35:49.883Z",
+      "changedDate": "2026-10-28T18:23:12.373Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -9280,7 +9346,7 @@
       ],
       "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 19,
-      "testActualTime": 18,
+      "testActualTime": 22,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": [
@@ -9457,7 +9523,7 @@
       "id": 191846,
       "title": "Al Shamel KSA - Betval WhatsApp Integration",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Closed",
       "assignedTo": "Mostafa Taha",
       "tester": "Unassigned",
       "area": "LDM Integration",
@@ -9466,7 +9532,7 @@
       "expectedRelease": "2026-10-28T21:00:00.000Z",
       "branch": "KSA",
       "customer": "Al Shamel Lab_624",
-      "changedDate": "2026-10-28T11:41:24.757Z",
+      "changedDate": "2026-10-28T21:29:28.280Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -9482,8 +9548,8 @@
         "LDM_Integration"
       ],
       "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 7,
-      "testActualTime": 0.5,
+      "devActualTime": 12,
+      "testActualTime": 7,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": [
@@ -9540,137 +9606,10 @@
       ]
     },
     {
-      "id": 192606,
-      "title": "Wareed Mobile app - when the mobile app open , display advertisement image at the home screen  with the ability to close it",
-      "type": "User Story",
-      "state": "Tested",
-      "assignedTo": "eslam anwar",
-      "tester": "Sara Yehia",
-      "area": "MobileApp",
-      "priority": 1,
-      "tags": [
-        "PMD"
-      ],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Wareed Lab_294",
-      "changedDate": "2026-10-25T06:44:43.087Z",
-      "tasks": [
-        {
-          "ID": 192668,
-          "Work Item Type": "Task",
-          "Title": "apply design of advertisement pop",
-          "Assigned To": "eslam anwar",
-          "Activity": "Development",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 1,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-18T12:26:39.563Z",
-          "Iteration Path": "MobileApp\\2026\\Mobile-October 1-29",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T12:55:52.167Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 192669,
-          "Work Item Type": "Task",
-          "Title": "integrate advertisment with configurations and images",
-          "Assigned To": "eslam anwar",
-          "Activity": "Development",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 2,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp\\2026\\Mobile-October 1-29",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T12:55:57.753Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 192670,
-          "Work Item Type": "Task",
-          "Title": "test this cr",
-          "Assigned To": "eslam anwar",
-          "Activity": "Development",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 1,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp\\2026\\Mobile-October 1-29",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T12:56:03.81Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 192952,
-          "Work Item Type": "Task",
-          "Title": "generate version include this cr and publish on internal testing",
-          "Assigned To": "eslam anwar",
-          "Activity": "Development",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 4,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "MobileApp\\2026\\Mobile-October 1-29",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Changed Date": "2026-10-21T13:16:00.37Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 194017,
-          "Work Item Type": "Task",
-          "Title": "Preparation",
-          "Assigned To": "Sara Yehia",
-          "Activity": "Testing",
-          "Original Estimation": 6,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 4,
-          "Activated Date": "2026-10-21T13:53:56.92Z",
-          "Iteration Path": "MobileApp\\2026\\Mobile-October 1-29",
-          "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-10-24T20:27:25.5Z",
-          "Customer": "Wareed Lab_294"
-        },
-        {
-          "ID": 194018,
-          "Work Item Type": "Task",
-          "Title": "Execution",
-          "Assigned To": "Sara Yehia",
-          "Activity": "Testing",
-          "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 2,
-          "Activated Date": "2026-10-21T13:56:26.233Z",
-          "Iteration Path": "MobileApp\\2026\\Mobile-October 1-29",
-          "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-10-24T20:29:55.963Z",
-          "Customer": "Wareed Lab_294"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-10-20T06:00:00.000Z",
-        "testEnd": "2026-10-22T13:00:00.000Z",
-        "finalEnd": "2026-10-22T13:00:00.000Z"
-      },
-      "customTags": [],
-      "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
-      "devActualTime": 0,
-      "testActualTime": 1.5,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 193066,
       "title": "Wareed Lab - Future Care Integration - Update Add registration to set All Registration to Static center",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Closed",
       "assignedTo": "Mostafa Taha",
       "tester": "Unassigned",
       "area": "LDM Integration",
@@ -9679,7 +9618,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-10-27T12:57:00.840Z",
+      "changedDate": "2026-10-28T20:25:24.910Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -9696,7 +9635,7 @@
       ],
       "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 0,
-      "testActualTime": 1,
+      "testActualTime": 2,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": [
@@ -9748,7 +9687,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wateen Lab_325",
-      "changedDate": "2026-10-25T14:13:11.040Z",
+      "changedDate": "2026-10-29T05:35:57.867Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -9856,7 +9795,7 @@
       "id": 194432,
       "title": "AppLink APIs - Update API [Log User Action] > Add \"appVersion\"",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Tested",
       "assignedTo": "Saleh Abdelrahem",
       "tester": "Abdulrahman Elbetar",
       "area": "MobileApp",
@@ -9865,7 +9804,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-26T06:47:00.627Z",
+      "changedDate": "2026-10-28T15:05:28.887Z",
       "tasks": [
         {
           "ID": 194439,
@@ -10865,8 +10804,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-02-16T07:00:00.000Z",
-        "testEnd": "2026-10-26T10:00:00.000Z",
-        "finalEnd": "2026-10-26T10:00:00.000Z"
+        "testEnd": "2026-02-18T12:00:00.000Z",
+        "finalEnd": "2026-02-18T12:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
@@ -10889,7 +10828,7 @@
       "expectedRelease": null,
       "branch": "UAE",
       "customer": "Al Borg UAE_531",
-      "changedDate": "2026-10-28T09:10:01.870Z",
+      "changedDate": "2026-10-28T18:43:22.970Z",
       "tasks": [
         {
           "ID": 183613,
@@ -10915,14 +10854,14 @@
           "Assigned To": "Fatma Fayed",
           "Activity": "Development",
           "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 2,
+          "TimeSheet_DevActualTime": 3.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-22T13:03:39.19Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
           "Tags": "Complex",
-          "Changed Date": "2026-10-27T08:01:33.097Z",
+          "Changed Date": "2026-10-28T16:40:25.097Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -11180,7 +11119,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-25T13:41:52.417Z",
           "State": "Closed",
-          "Changed Date": "2026-10-28T09:59:46.723Z",
+          "Changed Date": "2026-10-28T18:43:22.97Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -13996,14 +13935,14 @@
       "type": "User Story",
       "state": "Resolved",
       "assignedTo": "Karim El-Saeed",
-      "tester": "Unassigned",
+      "tester": "Abdelrahman Salman",
       "area": "Front and Financial",
       "priority": 2,
       "tags": [],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-28T12:05:25.497Z",
+      "changedDate": "2026-10-28T22:08:36.540Z",
       "tasks": [
         {
           "ID": 194601,
@@ -14055,15 +13994,551 @@
           "State": "Active",
           "Changed Date": "2026-10-28T10:30:18.177Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 195357,
+          "Work Item Type": "Task",
+          "Title": "Preparation Task For CR 186505",
+          "Assigned To": "Abdelrahman Salman",
+          "Activity": "Testing",
+          "Original Estimation": 3,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 2,
+          "Activated Date": "2026-10-28T23:15:06.153Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-10-29T03:49:00.043Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 195358,
+          "Work Item Type": "Task",
+          "Title": "Execution Task For CR 186505",
+          "Assigned To": "Abdelrahman Salman",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-October 4-24",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-28T23:04:19.027Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 195228,
+          "state": "Ready"
+        },
+        {
+          "id": 195229,
+          "state": "Ready"
+        },
+        {
+          "id": 195230,
+          "state": "Ready"
+        },
+        {
+          "id": 195231,
+          "state": "Ready"
+        },
+        {
+          "id": 195235,
+          "state": "Ready"
+        },
+        {
+          "id": 195236,
+          "state": "Ready"
+        },
+        {
+          "id": 195237,
+          "state": "Ready"
+        },
+        {
+          "id": 195238,
+          "state": "Ready"
+        },
+        {
+          "id": 195239,
+          "state": "Ready"
+        },
+        {
+          "id": 195240,
+          "state": "Ready"
+        },
+        {
+          "id": 195241,
+          "state": "Ready"
+        },
+        {
+          "id": 195242,
+          "state": "Ready"
+        },
+        {
+          "id": 195243,
+          "state": "Ready"
+        },
+        {
+          "id": 195244,
+          "state": "Ready"
+        },
+        {
+          "id": 195245,
+          "state": "Ready"
+        },
+        {
+          "id": 195246,
+          "state": "Ready"
+        },
+        {
+          "id": 195247,
+          "state": "Ready"
+        },
+        {
+          "id": 195248,
+          "state": "Ready"
+        },
+        {
+          "id": 195249,
+          "state": "Ready"
+        },
+        {
+          "id": 195250,
+          "state": "Ready"
+        },
+        {
+          "id": 195251,
+          "state": "Ready"
+        },
+        {
+          "id": 195252,
+          "state": "Ready"
+        },
+        {
+          "id": 195253,
+          "state": "Ready"
+        },
+        {
+          "id": 195254,
+          "state": "Ready"
+        },
+        {
+          "id": 195255,
+          "state": "Ready"
+        },
+        {
+          "id": 195256,
+          "state": "Ready"
+        },
+        {
+          "id": 195257,
+          "state": "Ready"
+        },
+        {
+          "id": 195258,
+          "state": "Ready"
+        },
+        {
+          "id": 195259,
+          "state": "Ready"
+        },
+        {
+          "id": 195260,
+          "state": "Ready"
+        },
+        {
+          "id": 195261,
+          "state": "Ready"
+        },
+        {
+          "id": 195262,
+          "state": "Ready"
+        },
+        {
+          "id": 195263,
+          "state": "Ready"
+        },
+        {
+          "id": 195264,
+          "state": "Ready"
+        },
+        {
+          "id": 195265,
+          "state": "Ready"
+        },
+        {
+          "id": 195266,
+          "state": "Ready"
+        },
+        {
+          "id": 195267,
+          "state": "Ready"
+        },
+        {
+          "id": 195268,
+          "state": "Ready"
+        },
+        {
+          "id": 195269,
+          "state": "Ready"
+        },
+        {
+          "id": 195270,
+          "state": "Ready"
+        },
+        {
+          "id": 195271,
+          "state": "Ready"
+        },
+        {
+          "id": 195272,
+          "state": "Ready"
+        },
+        {
+          "id": 195273,
+          "state": "Ready"
+        },
+        {
+          "id": 195274,
+          "state": "Ready"
+        },
+        {
+          "id": 195275,
+          "state": "Ready"
+        },
+        {
+          "id": 195276,
+          "state": "Ready"
+        },
+        {
+          "id": 195277,
+          "state": "Ready"
+        },
+        {
+          "id": 195278,
+          "state": "Ready"
+        },
+        {
+          "id": 195279,
+          "state": "Ready"
+        },
+        {
+          "id": 195280,
+          "state": "Ready"
+        },
+        {
+          "id": 195281,
+          "state": "Ready"
+        },
+        {
+          "id": 195282,
+          "state": "Ready"
+        },
+        {
+          "id": 195283,
+          "state": "Ready"
+        },
+        {
+          "id": 195284,
+          "state": "Ready"
+        },
+        {
+          "id": 195285,
+          "state": "Ready"
+        },
+        {
+          "id": 195286,
+          "state": "Ready"
+        },
+        {
+          "id": 195287,
+          "state": "Ready"
+        },
+        {
+          "id": 195288,
+          "state": "Ready"
+        },
+        {
+          "id": 195289,
+          "state": "Ready"
+        },
+        {
+          "id": 195290,
+          "state": "Ready"
+        },
+        {
+          "id": 195291,
+          "state": "Ready"
+        },
+        {
+          "id": 195292,
+          "state": "Ready"
+        },
+        {
+          "id": 195293,
+          "state": "Ready"
+        },
+        {
+          "id": 195294,
+          "state": "Ready"
+        },
+        {
+          "id": 195295,
+          "state": "Ready"
+        },
+        {
+          "id": 195296,
+          "state": "Ready"
+        },
+        {
+          "id": 195297,
+          "state": "Ready"
+        },
+        {
+          "id": 195298,
+          "state": "Ready"
+        },
+        {
+          "id": 195299,
+          "state": "Ready"
+        },
+        {
+          "id": 195300,
+          "state": "Ready"
+        },
+        {
+          "id": 195301,
+          "state": "Ready"
+        },
+        {
+          "id": 195302,
+          "state": "Ready"
+        },
+        {
+          "id": 195303,
+          "state": "Ready"
+        },
+        {
+          "id": 195304,
+          "state": "Ready"
+        },
+        {
+          "id": 195305,
+          "state": "Ready"
+        },
+        {
+          "id": 195306,
+          "state": "Ready"
+        },
+        {
+          "id": 195307,
+          "state": "Ready"
+        },
+        {
+          "id": 195308,
+          "state": "Ready"
+        },
+        {
+          "id": 195309,
+          "state": "Ready"
+        },
+        {
+          "id": 195310,
+          "state": "Ready"
+        },
+        {
+          "id": 195311,
+          "state": "Ready"
+        },
+        {
+          "id": 195312,
+          "state": "Ready"
+        },
+        {
+          "id": 195313,
+          "state": "Ready"
+        },
+        {
+          "id": 195314,
+          "state": "Ready"
+        },
+        {
+          "id": 195315,
+          "state": "Ready"
+        },
+        {
+          "id": 195316,
+          "state": "Ready"
+        },
+        {
+          "id": 195317,
+          "state": "Ready"
+        },
+        {
+          "id": 195318,
+          "state": "Ready"
+        },
+        {
+          "id": 195319,
+          "state": "Ready"
+        },
+        {
+          "id": 195320,
+          "state": "Ready"
+        },
+        {
+          "id": 195321,
+          "state": "Ready"
+        },
+        {
+          "id": 195322,
+          "state": "Ready"
+        },
+        {
+          "id": 195323,
+          "state": "Ready"
+        },
+        {
+          "id": 195324,
+          "state": "Ready"
+        },
+        {
+          "id": 195325,
+          "state": "Ready"
+        },
+        {
+          "id": 195326,
+          "state": "Ready"
+        },
+        {
+          "id": 195327,
+          "state": "Ready"
+        },
+        {
+          "id": 195328,
+          "state": "Ready"
+        },
+        {
+          "id": 195329,
+          "state": "Ready"
+        },
+        {
+          "id": 195330,
+          "state": "Ready"
+        },
+        {
+          "id": 195331,
+          "state": "Ready"
+        },
+        {
+          "id": 195332,
+          "state": "Ready"
+        },
+        {
+          "id": 195333,
+          "state": "Ready"
+        },
+        {
+          "id": 195334,
+          "state": "Ready"
+        },
+        {
+          "id": 195335,
+          "state": "Ready"
+        },
+        {
+          "id": 195336,
+          "state": "Ready"
+        },
+        {
+          "id": 195337,
+          "state": "Ready"
+        },
+        {
+          "id": 195338,
+          "state": "Ready"
+        },
+        {
+          "id": 195339,
+          "state": "Ready"
+        },
+        {
+          "id": 195340,
+          "state": "Ready"
+        },
+        {
+          "id": 195341,
+          "state": "Ready"
+        },
+        {
+          "id": 195342,
+          "state": "Ready"
+        },
+        {
+          "id": 195343,
+          "state": "Ready"
+        },
+        {
+          "id": 195344,
+          "state": "Ready"
+        },
+        {
+          "id": 195345,
+          "state": "Ready"
+        },
+        {
+          "id": 195346,
+          "state": "Ready"
+        },
+        {
+          "id": 195347,
+          "state": "Ready"
+        },
+        {
+          "id": 195348,
+          "state": "Ready"
+        },
+        {
+          "id": 195349,
+          "state": "Ready"
+        },
+        {
+          "id": 195350,
+          "state": "Ready"
+        },
+        {
+          "id": 195351,
+          "state": "Ready"
+        },
+        {
+          "id": 195352,
+          "state": "Ready"
+        },
+        {
+          "id": 195353,
+          "state": "Ready"
+        },
+        {
+          "id": 195354,
+          "state": "Ready"
+        },
+        {
+          "id": 195355,
+          "state": "Ready"
+        },
+        {
+          "id": 195356,
+          "state": "Ready"
+        }
+      ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-10-26T08:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
+        "testEnd": "2026-10-27T11:00:00.000Z",
+        "finalEnd": "2026-10-27T11:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
@@ -14725,7 +15200,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-27T11:08:34.573Z",
+      "changedDate": "2026-10-29T05:35:57.867Z",
       "tasks": [
         {
           "ID": 190481,
@@ -16107,7 +16582,7 @@
       "id": 192812,
       "title": "Al Borg Bahrain WhatsApp Integration - Bot Flow - Update All Service Link to Include Attachments",
       "type": "User Story",
-      "state": "Active",
+      "state": "Resolved",
       "assignedTo": "Mohamed Ayman",
       "tester": "Unassigned",
       "area": "LDM Integration",
@@ -16116,7 +16591,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-10-27T10:51:04.037Z",
+      "changedDate": "2026-10-28T15:45:43.690Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -17520,708 +17995,6 @@
       "pullRequests": []
     },
     {
-      "id": 186655,
-      "title": "Assiut University - The Impact of Default Patient Class on Registration Templates",
-      "type": "User Story",
-      "state": "Tested",
-      "assignedTo": "Ahmed Gamal",
-      "tester": "Ahmed Mohamed",
-      "area": "Registration",
-      "priority": 4,
-      "tags": [
-        "PMD"
-      ],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Assuit University Hospitals_412",
-      "changedDate": "2026-10-22T13:24:56.530Z",
-      "tasks": [
-        {
-          "ID": 192116,
-          "Work Item Type": "Task",
-          "Title": "BD005 | Return all branch locations from GetBranchLocation when Patient Class is ignored",
-          "Assigned To": "Ahmed Gamal",
-          "Activity": "Development",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-13T14:59:46.14Z",
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-14T15:15:21.76Z",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T18:52:06.867Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 192117,
-          "Work Item Type": "Task",
-          "Title": "BD009 | Apply Location-Patient Class validation on single registration save",
-          "Assigned To": "Ahmed Gamal",
-          "Activity": "Development",
-          "Original Estimation": 1.25,
-          "TimeSheet_DevActualTime": 0.15,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-14T15:15:09.153Z",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T18:52:16.64Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 192119,
-          "Work Item Type": "Task",
-          "Title": "BD009 | Apply Location-Patient Class validation on batch registration save",
-          "Assigned To": "Ahmed Gamal",
-          "Activity": "Development",
-          "Original Estimation": 1.5,
-          "TimeSheet_DevActualTime": 0.25,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-14T15:15:29.06Z",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T18:52:11.73Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 192120,
-          "Work Item Type": "Task",
-          "Title": "FD009 | Add Location does not belong to Patient Class message resources",
-          "Assigned To": "Ahmed Gamal",
-          "Activity": "Development",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.17,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-14T15:15:52.47Z",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T18:53:24.82Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 192121,
-          "Work Item Type": "Task",
-          "Title": "FD003 | Apply template Patient Class default (Select or configured class) on single and batch registration",
-          "Assigned To": "Ahmed Gamal",
-          "Activity": "Development",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-14T15:15:34.553Z",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T18:53:13.86Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 192123,
-          "Work Item Type": "Task",
-          "Title": "FD003 | Save empty Patient Class as null instead of Outpatient (single and batch registration)",
-          "Assigned To": "Ahmed Gamal",
-          "Activity": "Development",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-14T15:15:40.73Z",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T18:53:19.707Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 192124,
-          "Work Item Type": "Task",
-          "Title": "FD010 | Load Locations by template Patient Class option on load and Patient Class change",
-          "Assigned To": "Ahmed Gamal",
-          "Activity": "Development",
-          "Original Estimation": 3.25,
-          "TimeSheet_DevActualTime": 1,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-14T15:15:47.177Z",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T18:53:29.623Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 192127,
-          "Work Item Type": "Task",
-          "Title": "FD010 | Reload Locations by Patient Class option in edit, reservation and reset flows",
-          "Assigned To": "Ahmed Gamal",
-          "Activity": "Development",
-          "Original Estimation": 3.25,
-          "TimeSheet_DevActualTime": 1,
-          "TimeSheet_TestingActualTime": 0,
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-14T15:16:00.693Z",
-          "State": "Closed",
-          "Changed Date": "2026-10-19T18:53:39.6Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 192267,
-          "Work Item Type": "Task",
-          "Title": "BD016 | Review on US 186655",
-          "Assigned To": "Fatma Fayed",
-          "Activity": "Development",
-          "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 0.67,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-14T13:14:13.817Z",
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Tags": "Complex",
-          "Changed Date": "2026-10-19T18:52:23.863Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 192268,
-          "Work Item Type": "Task",
-          "Title": "FD011 | Review on US 186655",
-          "Assigned To": "Fatma Fayed",
-          "Activity": "Development",
-          "Original Estimation": 1.75,
-          "TimeSheet_DevActualTime": 0.41,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-14T13:14:51.963Z",
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Tags": "Complex",
-          "Changed Date": "2026-10-19T18:53:49.157Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 192678,
-          "Work Item Type": "Task",
-          "Title": "Execution Task",
-          "Assigned To": "Ahmed Mohamed",
-          "Activity": "Testing",
-          "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 2,
-          "Activated Date": "2026-10-19T13:50:22.3Z",
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-20T07:23:14.603Z",
-          "State": "Closed",
-          "Changed Date": "2026-10-21T07:06:43.687Z",
-          "Customer": "Assuit University Hospitals_412"
-        },
-        {
-          "ID": 193833,
-          "Work Item Type": "Task",
-          "Title": "Review Task",
-          "Assigned To": "Mostafa Mohamed",
-          "Activity": "Testing",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0.5,
-          "Activated Date": "2026-10-21T07:08:31.673Z",
-          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Changed Date": "2026-10-21T07:13:36.587Z",
-          "Customer": "Assuit University Hospitals_412"
-        }
-      ],
-      "bugs": [],
-      "testCases": [
-        {
-          "id": 192681,
-          "state": "Pass"
-        },
-        {
-          "id": 192682,
-          "state": "Pass"
-        },
-        {
-          "id": 192683,
-          "state": "Pass"
-        },
-        {
-          "id": 192684,
-          "state": "Pass"
-        },
-        {
-          "id": 192685,
-          "state": "Pass"
-        },
-        {
-          "id": 192686,
-          "state": "Pass"
-        },
-        {
-          "id": 192687,
-          "state": "Pass"
-        },
-        {
-          "id": 192688,
-          "state": "Pass"
-        },
-        {
-          "id": 192689,
-          "state": "Pass"
-        },
-        {
-          "id": 192690,
-          "state": "Pass"
-        },
-        {
-          "id": 192691,
-          "state": "Pass"
-        },
-        {
-          "id": 192692,
-          "state": "Pass"
-        },
-        {
-          "id": 192693,
-          "state": "Pass"
-        },
-        {
-          "id": 192694,
-          "state": "Pass"
-        },
-        {
-          "id": 192695,
-          "state": "Pass"
-        },
-        {
-          "id": 192696,
-          "state": "Pass"
-        },
-        {
-          "id": 192697,
-          "state": "Pass"
-        },
-        {
-          "id": 192698,
-          "state": "Pass"
-        },
-        {
-          "id": 192699,
-          "state": "Pass"
-        },
-        {
-          "id": 192700,
-          "state": "Pass"
-        },
-        {
-          "id": 192701,
-          "state": "Pass"
-        },
-        {
-          "id": 192702,
-          "state": "Pass"
-        },
-        {
-          "id": 192703,
-          "state": "Pass"
-        },
-        {
-          "id": 192704,
-          "state": "Pass"
-        },
-        {
-          "id": 192705,
-          "state": "Pass"
-        },
-        {
-          "id": 192706,
-          "state": "Pass"
-        },
-        {
-          "id": 192707,
-          "state": "Pass"
-        },
-        {
-          "id": 192708,
-          "state": "Pass"
-        },
-        {
-          "id": 192709,
-          "state": "Pass"
-        },
-        {
-          "id": 192710,
-          "state": "Pass"
-        },
-        {
-          "id": 192711,
-          "state": "Pass"
-        },
-        {
-          "id": 192712,
-          "state": "Pass"
-        },
-        {
-          "id": 192713,
-          "state": "Pass"
-        },
-        {
-          "id": 192714,
-          "state": "Pass"
-        },
-        {
-          "id": 192715,
-          "state": "Pass"
-        },
-        {
-          "id": 192716,
-          "state": "Pass"
-        },
-        {
-          "id": 192717,
-          "state": "Pass"
-        },
-        {
-          "id": 192718,
-          "state": "Pass"
-        },
-        {
-          "id": 192719,
-          "state": "Pass"
-        },
-        {
-          "id": 192720,
-          "state": "Pass"
-        },
-        {
-          "id": 192721,
-          "state": "Pass"
-        },
-        {
-          "id": 192722,
-          "state": "Pass"
-        },
-        {
-          "id": 192723,
-          "state": "Pass"
-        },
-        {
-          "id": 192724,
-          "state": "Pass"
-        },
-        {
-          "id": 192725,
-          "state": "Pass"
-        },
-        {
-          "id": 192726,
-          "state": "Pass"
-        },
-        {
-          "id": 192727,
-          "state": "Pass"
-        },
-        {
-          "id": 192728,
-          "state": "Pass"
-        },
-        {
-          "id": 192729,
-          "state": "Pass"
-        },
-        {
-          "id": 192730,
-          "state": "Pass"
-        },
-        {
-          "id": 192731,
-          "state": "Pass"
-        },
-        {
-          "id": 192732,
-          "state": "Pass"
-        },
-        {
-          "id": 192733,
-          "state": "Pass"
-        },
-        {
-          "id": 192734,
-          "state": "Pass"
-        },
-        {
-          "id": 192735,
-          "state": "Pass"
-        },
-        {
-          "id": 192736,
-          "state": "Pass"
-        },
-        {
-          "id": 192737,
-          "state": "Pass"
-        },
-        {
-          "id": 192738,
-          "state": "Pass"
-        },
-        {
-          "id": 192739,
-          "state": "Pass"
-        },
-        {
-          "id": 192740,
-          "state": "Pass"
-        },
-        {
-          "id": 192741,
-          "state": "Pass"
-        },
-        {
-          "id": 192742,
-          "state": "Pass"
-        },
-        {
-          "id": 192743,
-          "state": "Pass"
-        },
-        {
-          "id": 192744,
-          "state": "Pass"
-        },
-        {
-          "id": 192745,
-          "state": "Pass"
-        },
-        {
-          "id": 192746,
-          "state": "Pass"
-        },
-        {
-          "id": 192747,
-          "state": "Pass"
-        },
-        {
-          "id": 192748,
-          "state": "Pass"
-        },
-        {
-          "id": 192749,
-          "state": "Pass"
-        },
-        {
-          "id": 192750,
-          "state": "Pass"
-        },
-        {
-          "id": 192751,
-          "state": "Pass"
-        },
-        {
-          "id": 192752,
-          "state": "Pass"
-        },
-        {
-          "id": 192753,
-          "state": "Pass"
-        },
-        {
-          "id": 192754,
-          "state": "Pass"
-        },
-        {
-          "id": 192755,
-          "state": "Pass"
-        },
-        {
-          "id": 192756,
-          "state": "Pass"
-        },
-        {
-          "id": 192757,
-          "state": "Pass"
-        },
-        {
-          "id": 192758,
-          "state": "Pass"
-        },
-        {
-          "id": 192759,
-          "state": "Pass"
-        },
-        {
-          "id": 192760,
-          "state": "Pass"
-        },
-        {
-          "id": 192761,
-          "state": "Pass"
-        },
-        {
-          "id": 192762,
-          "state": "Pass"
-        },
-        {
-          "id": 192763,
-          "state": "Pass"
-        },
-        {
-          "id": 192764,
-          "state": "Pass"
-        },
-        {
-          "id": 192765,
-          "state": "Pass"
-        },
-        {
-          "id": 192766,
-          "state": "Pass"
-        },
-        {
-          "id": 192767,
-          "state": "Pass"
-        },
-        {
-          "id": 192768,
-          "state": "Pass"
-        },
-        {
-          "id": 192769,
-          "state": "Pass"
-        },
-        {
-          "id": 192770,
-          "state": "Pass"
-        },
-        {
-          "id": 192771,
-          "state": "Pass"
-        },
-        {
-          "id": 192772,
-          "state": "Pass"
-        },
-        {
-          "id": 192773,
-          "state": "Pass"
-        },
-        {
-          "id": 192774,
-          "state": "Pass"
-        },
-        {
-          "id": 192775,
-          "state": "Pass"
-        },
-        {
-          "id": 192776,
-          "state": "Pass"
-        },
-        {
-          "id": 192777,
-          "state": "Pass"
-        },
-        {
-          "id": 192778,
-          "state": "Pass"
-        },
-        {
-          "id": 192779,
-          "state": "Pass"
-        },
-        {
-          "id": 192780,
-          "state": "Pass"
-        },
-        {
-          "id": 192781,
-          "state": "Pass"
-        },
-        {
-          "id": 192782,
-          "state": "Pass"
-        },
-        {
-          "id": 192783,
-          "state": "Pass"
-        },
-        {
-          "id": 192784,
-          "state": "Pass"
-        },
-        {
-          "id": 192785,
-          "state": "Pass"
-        },
-        {
-          "id": 192786,
-          "state": "Pass"
-        },
-        {
-          "id": 192787,
-          "state": "Pass"
-        },
-        {
-          "id": 192788,
-          "state": "Pass"
-        },
-        {
-          "id": 192789,
-          "state": "Pass"
-        },
-        {
-          "id": 192790,
-          "state": "Pass"
-        },
-        {
-          "id": 192791,
-          "state": "Pass"
-        },
-        {
-          "id": 192792,
-          "state": "Pass"
-        },
-        {
-          "id": 192793,
-          "state": "Pass"
-        }
-      ],
-      "reviews": [
-        {
-          "id": 192279,
-          "title": "US 186655 | Review Points Edit loads the whole templat",
-          "state": "Closed",
-          "assignedTo": "Fatma Fayed"
-        },
-        {
-          "id": 192280,
-          "title": "US 186655 | Review",
-          "state": "Closed",
-          "assignedTo": "Fatma Fayed"
-        },
-        {
-          "id": 192281,
-          "title": "US 186655 | Review front",
-          "state": "Closed",
-          "assignedTo": "Fatma Fayed"
-        }
-      ],
-      "calc": {
-        "devEnd": "2026-11-15T11:00:00.000Z",
-        "testEnd": "2026-11-16T11:00:00.000Z",
-        "finalEnd": "2026-11-16T11:00:00.000Z"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 189646,
       "title": "Neuro Hospital - DMS HIS Integration (Copy From SKUH)",
       "type": "User Story",
@@ -18236,7 +18009,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Neuro Hospital_0021",
-      "changedDate": "2026-10-28T11:30:02.293Z",
+      "changedDate": "2026-10-28T15:44:56.930Z",
       "tasks": [
         {
           "ID": 191440,
@@ -18339,7 +18112,7 @@
       ],
       "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 2,
-      "testActualTime": 39.25,
+      "testActualTime": 40.25,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": [
@@ -18840,9 +18613,9 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-19T11:00:00.000Z",
-        "testEnd": "2026-11-23T07:00:00.000Z",
-        "finalEnd": "2026-11-23T07:00:00.000Z"
+        "devEnd": "2026-11-16T07:00:00.000Z",
+        "testEnd": "2026-11-18T07:00:00.000Z",
+        "finalEnd": "2026-11-18T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
@@ -19346,7 +19119,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-10-28T12:41:17.453Z",
+      "changedDate": "2026-10-28T17:37:57.787Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -19360,7 +19133,7 @@
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 0,
-      "testActualTime": 0,
+      "testActualTime": 1,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -19380,7 +19153,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-28T13:11:04.563Z",
+      "changedDate": "2026-10-28T15:50:04.277Z",
       "tasks": [
         {
           "ID": 187988,
@@ -19471,7 +19244,7 @@
           "Assigned To": "Moamen SalahElDeen",
           "Activity": "DB Modification",
           "Original Estimation": 5,
-          "TimeSheet_DevActualTime": 9,
+          "TimeSheet_DevActualTime": 9.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-20T12:15:51.67Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
@@ -19479,7 +19252,7 @@
           "Resolved Date": "2026-10-20T13:02:53.7Z",
           "State": "Closed",
           "Tags": "liquibase; V4.3.0",
-          "Changed Date": "2026-10-27T18:19:54.007Z",
+          "Changed Date": "2026-10-28T14:47:53.307Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -19958,7 +19731,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-22T07:04:41.203Z",
           "State": "Closed",
-          "Changed Date": "2026-10-28T12:58:46.79Z",
+          "Changed Date": "2026-10-28T15:50:04.277Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -19967,13 +19740,16 @@
           "Title": "report not exchanged to the system default currency amount added at Administration -> Financial -> Currencies.",
           "Assigned To": "Mohamed Abdelhady",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-28T18:00:41.767Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-20T10:44:12.987Z"
+          "Resolved Date": "2026-10-28T18:00:41.767Z",
+          "State": "Resolved",
+          "Changed Date": "2026-10-28T18:00:43.03Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "testCases": [
@@ -21276,8 +21052,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-06-02T13:00:00.000Z",
-        "testEnd": "2026-10-26T10:00:00.000Z",
-        "finalEnd": "2026-10-26T10:00:00.000Z"
+        "testEnd": "2026-06-03T06:00:00.000Z",
+        "finalEnd": "2026-06-03T06:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
@@ -21311,12 +21087,12 @@
           "Assigned To": "Ammar Allam",
           "Activity": "Development",
           "Original Estimation": 4.5,
-          "TimeSheet_DevActualTime": 7.5,
+          "TimeSheet_DevActualTime": 9.5,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-10-28T10:47:35.453Z",
+          "Changed Date": "2026-10-28T21:45:31.037Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -22324,7 +22100,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Mozmen Labs_1494",
-      "changedDate": "2026-10-21T07:37:07.963Z",
+      "changedDate": "2026-10-28T18:35:51.427Z",
       "tasks": [
         {
           "ID": 192846,
@@ -22443,7 +22219,7 @@
           "Resolved Date": "2026-10-19T11:52:15.11Z",
           "State": "Closed",
           "Tags": "liquibase; V.4.4.0; Wait .Net review",
-          "Changed Date": "2026-10-26T19:12:07.167Z",
+          "Changed Date": "2026-10-28T17:25:03.563Z",
           "Customer": "Mozmen Labs_1494"
         },
         {
@@ -22874,15 +22650,17 @@
           "ID": 173863,
           "Work Item Type": "Bug",
           "Title": "Error message is displayed when clicking \"details button\"  and popup not displayed",
-          "Assigned To": "Mohamed Refaat",
+          "Assigned To": "MOHAMED SAYED",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 1.5,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-28T22:07:55.31Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-06-01T09:44:25.47Z",
+          "Resolved Date": "2026-10-28T22:08:23.967Z",
+          "State": "Resolved",
+          "Changed Date": "2026-10-28T22:08:23.967Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -22956,7 +22734,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-10-06T11:00:00.000Z",
+        "devEnd": "2026-11-01T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -24588,6 +24366,21 @@
           "State": "Active",
           "Changed Date": "2026-10-17T23:15:05.213Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 195212,
+          "Work Item Type": "Task",
+          "Title": "Internal CR - NT App Assist Mobile - Convert ZPL To CPCL",
+          "Assigned To": "Eslam Hanafy",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 11,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp\\2026\\Mobile-October 1-29",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-28T14:55:23.96Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [
@@ -24627,8 +24420,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-07-28T08:00:00.000Z",
-        "testEnd": "2026-10-29T09:00:00.000Z",
-        "finalEnd": "2026-10-29T09:00:00.000Z"
+        "testEnd": "2026-08-02T13:00:00.000Z",
+        "finalEnd": "2026-10-27T11:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
@@ -28574,9 +28367,9 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-11T14:00:00.000Z",
-        "testEnd": "2026-11-18T07:00:00.000Z",
-        "finalEnd": "2026-11-18T07:00:00.000Z"
+        "devEnd": "2026-10-26T12:00:00.000Z",
+        "testEnd": "2026-11-02T07:00:00.000Z",
+        "finalEnd": "2026-11-02T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
@@ -28591,7 +28384,7 @@
       "title": "Accurate Lab - Collect Mobile Application",
       "type": "User Story",
       "state": "Active",
-      "assignedTo": "Unassigned",
+      "assignedTo": "Eslam Hanafy",
       "tester": "Unassigned",
       "area": "MobileApp",
       "priority": 999,
@@ -28599,8 +28392,24 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Accurate Lab_17",
-      "changedDate": "2026-10-13T11:54:56.457Z",
-      "tasks": [],
+      "changedDate": "2026-10-28T14:54:39.330Z",
+      "tasks": [
+        {
+          "ID": 195213,
+          "Work Item Type": "Task",
+          "Title": "Accurate Lab - Collect Mobile Application - Initial App Setup And Splash Screen",
+          "Assigned To": "Eslam Hanafy",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 3.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp\\2026\\Mobile-October 1-29",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-28T14:57:53.37Z",
+          "Customer": "Accurate Lab_17"
+        }
+      ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
@@ -32468,12 +32277,12 @@
           "Assigned To": "Eslam Hanafy",
           "Activity": "Development",
           "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 10,
+          "TimeSheet_DevActualTime": 17,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "MobileApp\\2026\\Mobile-October 1-29",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-10-24T18:39:53.973Z",
+          "Changed Date": "2026-10-28T14:50:24.03Z",
           "Customer": "Al Farabi Lab KSA_283"
         },
         {
@@ -33699,7 +33508,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-07T16:01:01.287Z",
           "State": "Closed",
-          "Changed Date": "2026-10-26T19:12:07.167Z",
+          "Changed Date": "2026-10-28T17:25:03.563Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -33830,13 +33639,15 @@
       "area": "Internal lab",
       "priority": 999,
       "tags": [
-        "V1.0_Alameda_27_12_2025_191777",
+        "Backup => D:\\LDM_PreProduction\\Backups\\28-10-2026\\Old",
+        " Published Pre Production",
+        " V1.0_Alameda_27_12_2025_PreProduction",
         " waiting dowentime"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-10-28T12:08:00.967Z",
+      "changedDate": "2026-10-28T15:38:14.880Z",
       "tasks": [
         {
           "ID": 191820,
@@ -34168,7 +33979,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-10-28T13:29:24.913Z",
+      "changedDate": "2026-10-28T16:01:43.347Z",
       "tasks": [
         {
           "ID": 192825,
@@ -34382,6 +34193,26 @@
           "Customer": "Wareed Lab_294"
         },
         {
+          "ID": 192487,
+          "Work Item Type": "Bug",
+          "Title": "iNTEGRATION | CHECK THIS NOTES",
+          "Assigned To": "MOHAMED SAYED",
+          "Activity": "",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0.02,
+          "TimeSheet_TestingActualTime": 1,
+          "Activated Date": "2026-10-22T15:03:51.24Z",
+          "Business Area": "Integration",
+          "Iteration Path": "LDM",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-10-22T15:03:51.24Z",
+          "State": "Closed",
+          "Tags": "Al Borg - KSA; MSM_INtegration",
+          "Changed Date": "2026-10-28T18:20:30.79Z",
+          "Branch": "KSA",
+          "Customer": "Abha Private Hospital_14"
+        },
+        {
           "ID": 192613,
           "Work Item Type": "Bug",
           "Title": "Quality control>>Westgard rules are not saved successfully.",
@@ -34440,15 +34271,17 @@
           "ID": 192845,
           "Work Item Type": "Bug",
           "Title": "INTEGRATION | INTEGRATION MONITOR | Patient No. and Patient Name Are Missing for Reservation Messages in Integration Monitor",
-          "Assigned To": "Mohamed Refaat",
+          "Assigned To": "MOHAMED SAYED",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-28T22:06:29.183Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-18T19:49:32.137Z",
+          "Resolved Date": "2026-10-28T22:06:29.183Z",
+          "State": "Resolved",
+          "Changed Date": "2026-10-28T22:06:29.183Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -34593,18 +34426,19 @@
           "ID": 192948,
           "Work Item Type": "Bug",
           "Title": "Integration | sehaty | issue in print alone service when released messages ",
-          "Assigned To": "Mohamed Refaat",
+          "Assigned To": "MOHAMED SAYED",
           "Activity": "",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_DevActualTime": 2.5,
+          "TimeSheet_TestingActualTime": 1,
           "Activated Date": "2026-10-22T13:07:17.2Z",
           "Business Area": "Integration",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-10-28T18:03:44.587Z",
+          "State": "Closed",
           "Tags": "MSM_INtegration; obx.8=ie was work but now not displaye in messaged; solved",
-          "Changed Date": "2026-10-28T12:09:10.32Z",
+          "Changed Date": "2026-10-28T18:15:49.607Z",
           "Branch": "KSA",
           "Customer": "Wareed Lab_294"
         },
@@ -34658,9 +34492,10 @@
           "Business Area": "Integration",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-10-28T18:14:32.193Z",
+          "State": "Closed",
           "Tags": "MSM_INtegration; solved in wareed and tested; Solved with Farabi release",
-          "Changed Date": "2026-10-28T01:34:11.537Z",
+          "Changed Date": "2026-10-28T18:14:32.193Z",
           "Branch": "KSA",
           "Customer": "Wareed Lab_294"
         },
@@ -34704,18 +34539,19 @@
           "ID": 194037,
           "Work Item Type": "Bug",
           "Title": "Integration | future care | homeNumber length must be obey the setup in country and application setup  and patientReferenceNo if null stop registartion (not required )",
-          "Assigned To": "Mohamed Refaat",
+          "Assigned To": "MOHAMED SAYED",
           "Activity": "",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_DevActualTime": 2,
+          "TimeSheet_TestingActualTime": 1,
           "Activated Date": "2026-10-22T13:19:07.523Z",
           "Business Area": "Integration",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-10-28T18:05:50.423Z",
+          "State": "Closed",
           "Tags": "MSM_INtegration; solved",
-          "Changed Date": "2026-10-28T12:21:34.73Z",
+          "Changed Date": "2026-10-28T18:16:55.02Z",
           "Branch": "KSA",
           "Customer": "Wareed Lab_294"
         },
@@ -34727,15 +34563,15 @@
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 1.02,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 1,
           "Activated Date": "2026-10-25T10:22:12.377Z",
           "Business Area": "Integration",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-25T14:00:39.36Z",
-          "State": "Resolved",
+          "State": "Closed",
           "Tags": "LDM; MSM_INtegration; triger issue resolved but still not fired",
-          "Changed Date": "2026-10-28T01:43:37.387Z",
+          "Changed Date": "2026-10-28T18:18:16.357Z",
           "Branch": "KSA",
           "Customer": "Wareed Lab_294"
         },
@@ -34778,18 +34614,19 @@
           "ID": 194586,
           "Work Item Type": "Bug",
           "Title": "integration | general Apis | check this notes ",
-          "Assigned To": "Mohamed Refaat",
+          "Assigned To": "MOHAMED SAYED",
           "Activity": "",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 2,
           "Activated Date": "2026-10-25T12:41:14.22Z",
           "Business Area": "Integration",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-10-28T18:06:24.223Z",
+          "State": "Closed",
           "Tags": "check impact from point 4; check the impact of no 4; MSM_INtegration; solved",
-          "Changed Date": "2026-10-28T01:18:12.563Z",
+          "Changed Date": "2026-10-28T18:15:40.51Z",
           "Branch": "KSA",
           "Customer": "Wareed Lab_294"
         },
@@ -34817,15 +34654,17 @@
           "ID": 194642,
           "Work Item Type": "Bug",
           "Title": "Integration| GetResultData | cancelled accession  must be displayed by enum cancelled",
-          "Assigned To": "Mohamed Refaat",
+          "Assigned To": "MOHAMED SAYED",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 3,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-10-28T22:02:14.2Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-10-25T19:12:48.357Z",
+          "Resolved Date": "2026-10-28T22:02:14.2Z",
+          "State": "Resolved",
+          "Changed Date": "2026-10-28T22:02:14.2Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -34872,34 +34711,36 @@
           "ID": 194831,
           "Work Item Type": "Bug",
           "Title": "Claim Discount Calculation Is Incorrect – VAT Is Calculated Before Applying the Discount",
-          "Assigned To": "Samir Mohamed",
+          "Assigned To": "Mohamed Abd-Elalim",
           "Activity": "",
           "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-27T13:11:35.62Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-10-28T15:55:47.763Z",
+          "State": "Resolved",
           "Tags": "waiting oddo fixes to resolved",
-          "Changed Date": "2026-10-27T15:19:32.84Z",
+          "Changed Date": "2026-10-28T15:55:47.763Z",
           "Customer": "Wareed Lab_294"
         },
         {
           "ID": 194981,
           "Work Item Type": "Bug",
           "Title": "Integration | integration monitoring | check this notes",
-          "Assigned To": "Mohamed Refaat",
+          "Assigned To": "MOHAMED SAYED",
           "Activity": "",
           "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 4.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-28T12:26:34.453Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-10-28T21:49:03.013Z",
+          "State": "Resolved",
           "Tags": "solved",
-          "Changed Date": "2026-10-28T12:51:46.56Z",
+          "Changed Date": "2026-10-28T21:49:03.013Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -34909,13 +34750,13 @@
           "Assigned To": "Mohamed Samy",
           "Activity": "",
           "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 2,
           "Activated Date": "2026-10-28T13:54:29.47Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-10-28T14:00:22.853Z",
+          "Changed Date": "2026-10-28T15:25:23.543Z",
           "Customer": "Wareed Lab_294"
         }
       ],
@@ -34936,7 +34777,7 @@
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 22,
-      "testActualTime": 127,
+      "testActualTime": 129.5,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": [
@@ -40143,7 +39984,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-12T14:00:00.000Z",
+        "devEnd": "2026-11-01T10:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -40194,19 +40035,21 @@
       "id": 192924,
       "title": "Alameda >> publish this S.L (191874) to pre-production server",
       "type": "Support log",
-      "state": "Reactive",
+      "state": "On-Hold",
       "assignedTo": "Mohamed Ragab",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
       "tags": [
-        "published at Server 161 port PreProduction => 1999",
-        " V1.0_Alameda_27_12_2025_192924"
+        "Backup => D:\\LDM_PreProduction\\Backups\\28-10-2026\\Old",
+        " published at Server 161 port PreProduction => 1999",
+        " Published Pre Production",
+        " V1.0_Alameda_27_12_2025_PreProduction"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-10-28T11:50:57.547Z",
+      "changedDate": "2026-10-28T15:41:51.970Z",
       "tasks": [
         {
           "ID": 194904,
@@ -40229,16 +40072,18 @@
           "ID": 195124,
           "Work Item Type": "Bug",
           "Title": "Reviewed Service Barcodes Printed Without Required Privilege When Using Full Accession Number",
-          "Assigned To": "Hesham Elsayed",
+          "Assigned To": "Mohamed Abd-Elalim",
           "Activity": "",
           "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-28T12:01:13.373Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-10-28T12:01:13.373Z",
+          "Resolved Date": "2026-10-28T15:42:59.24Z",
+          "State": "Resolved",
+          "Tags": "Republished dlls",
+          "Changed Date": "2026-10-28T15:42:59.24Z",
           "Customer": "Alameda_0062"
         }
       ],
@@ -40259,38 +40104,6 @@
       "pullRequests": []
     },
     {
-      "id": 192954,
-      "title": "UAHP - Client Portal and Integration - Allow Registration with unregistered owner",
-      "type": "User Story",
-      "state": "Tested",
-      "assignedTo": "Gomaa Sayed",
-      "tester": "Unassigned",
-      "area": "Client Custom Portals",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Internal NT",
-      "customer": "Internal CR_2000",
-      "changedDate": "2026-10-22T10:21:34.217Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "Client Custom Portals",
-      "devActualTime": 0,
-      "testActualTime": 2.5,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 193084,
       "title": "AlBorg - Add the Result Status column to the Results Grid",
       "type": "User Story",
@@ -40303,7 +40116,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-10-28T13:59:50.760Z",
+      "changedDate": "2026-10-28T14:57:15.790Z",
       "tasks": [
         {
           "ID": 194941,
@@ -40312,14 +40125,14 @@
           "Assigned To": "Ahmed Farag",
           "Activity": "Development",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 5.5,
+          "TimeSheet_DevActualTime": 6,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-28T07:50:21.733Z",
           "Iteration Path": "Web Results",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-28T13:01:47.29Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-28T13:01:47.29Z",
+          "Changed Date": "2026-10-28T15:05:26.687Z",
           "Customer": "Al Borg KSA_530"
         }
       ],
@@ -40475,101 +40288,6 @@
       "pullRequests": []
     },
     {
-      "id": 193742,
-      "title": "Integration | BUBA | Outsourced Services Must Have a Different Barcode from Non-Outsourced Services with the Same Sample Type , Condition and Clinical Group",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "MOHAMED SAYED",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Bupa KSA_121",
-      "changedDate": "2026-10-26T09:34:19.740Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 7,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": [
-        {
-          "id": 8158,
-          "title": "Integration #193742",
-          "status": "completed",
-          "createdBy": "Mostafa Taha",
-          "repository": "LDM",
-          "creationDate": "2026-10-21T15:30:32.645Z",
-          "closedDate": "2026-10-21T16:50:44.961Z",
-          "cycleTimeHours": 1.3367544444444444,
-          "linkedStoryId": "193742",
-          "sourceRefName": "refs/heads/Master_PreProduction_193742",
-          "targetRefName": "refs/heads/Master_PreProduction",
-          "reviewers": [
-            {
-              "name": "Bardis Maher",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 10
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 0
-            }
-          ]
-        },
-        {
-          "id": 8152,
-          "title": "Integration #193742",
-          "status": "completed",
-          "createdBy": "Mostafa Taha",
-          "repository": "LDM",
-          "creationDate": "2026-10-21T13:53:07.722Z",
-          "closedDate": "2026-10-26T09:34:19.922Z",
-          "cycleTimeHours": 115.68672222222222,
-          "linkedStoryId": "193742",
-          "sourceRefName": "refs/heads/V2.0_Bupa_21_07_2026_193742",
-          "targetRefName": "refs/heads/V2.0_Bupa_21_07_2026",
-          "reviewers": [
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 10
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 0
-            },
-            {
-              "name": "gamal kasem",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 0
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": 193836,
       "title": "Alfayrouz Local : Need to Publish latest version from release at Local Env.",
       "type": "Support log",
@@ -40655,7 +40373,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-10-29T11:00:00.000Z",
+        "devEnd": "2026-11-01T08:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -40764,54 +40482,6 @@
       "pullRequests": []
     },
     {
-      "id": 194180,
-      "title": "[API]EPHI #Apraham : Error after review when results generated",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hassan Hussein",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Ethiopia",
-      "customer": "EPHI - Ethiopian Public Health Institute_535",
-      "changedDate": "2026-10-27T09:42:02.680Z",
-      "tasks": [
-        {
-          "ID": 194427,
-          "Work Item Type": "Task",
-          "Title": "SP returns no data EPHI Live",
-          "Assigned To": "Ahmed Attia",
-          "Activity": "DB Modification",
-          "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0.75,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-25T10:44:36.06Z",
-          "Iteration Path": "LDM\\Candidate CRs",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Changed Date": "2026-10-25T11:41:36.283Z",
-          "Customer": "EPHI - Ethiopian Public Health Institute_535"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-10-25T12:44:36.060Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 4.25,
-      "testActualTime": 1.5,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 194217,
       "title": "Wareed Mobile App - Update Add visit API (backend)",
       "type": "User Story",
@@ -40826,7 +40496,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-28T14:40:45.063Z",
+      "changedDate": "2026-10-28T14:59:13.453Z",
       "tasks": [
         {
           "ID": 192656,
@@ -41270,101 +40940,6 @@
       "pullRequests": []
     },
     {
-      "id": 194426,
-      "title": "Hasa Production > #careware display test mapping code at NTE (test comment )",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hebatullah Mohamed",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-10-28T13:39:58.723Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
-      "devActualTime": 3.5,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": [
-        {
-          "id": 8320,
-          "title": "Integration: SL #194426  Display Test Mapping Code in NTE Segment Instead of Service Mapping Code",
-          "status": "active",
-          "createdBy": "Mohamed Ayman",
-          "repository": "LDM",
-          "creationDate": "2026-10-28T13:39:58.086Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
-          "linkedStoryId": "194426",
-          "sourceRefName": "refs/heads/Master_PreProduction_SL_Hassa",
-          "targetRefName": "refs/heads/Master_PreProduction",
-          "reviewers": [
-            {
-              "name": "Bardis Maher",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 0
-            }
-          ]
-        },
-        {
-          "id": 8292,
-          "title": "Integration: SL #194426  display test mapping code at NTE.4 @ Hassa CareWare Result",
-          "status": "completed",
-          "createdBy": "Mohamed Ayman",
-          "repository": "LDM",
-          "creationDate": "2026-10-27T12:58:05.482Z",
-          "closedDate": "2026-10-27T14:51:33.944Z",
-          "cycleTimeHours": 1.8912394444444445,
-          "linkedStoryId": "194426",
-          "sourceRefName": "refs/heads/Master_PreProduction_SL_194426",
-          "targetRefName": "refs/heads/Master_PreProduction",
-          "reviewers": [
-            {
-              "name": "Bardis Maher",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 10
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 0
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": 194449,
       "title": "#Alameda: Result Log shows username/code instead of the user’s full name",
       "type": "Support log",
@@ -41500,19 +41075,21 @@
       ]
     },
     {
-      "id": 194640,
-      "title": "[HL7]Alameda #IMTHOM : Release cumulative BASE 64  by tab",
+      "id": 194457,
+      "title": "[API] Waten #Website :Move CR 193923 To live",
       "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hassan Hussein",
+      "state": "Active",
+      "assignedTo": "Hamza Ashry",
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "Ready and waiting to publish"
+      ],
       "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Alameda_0062",
-      "changedDate": "2026-10-27T10:55:08.127Z",
+      "branch": "KSA",
+      "customer": "Wateen Lab_325",
+      "changedDate": "2026-10-29T05:39:02.677Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -41525,8 +41102,40 @@
       },
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 2,
+      "devActualTime": 0,
       "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 194640,
+      "title": "[HL7]Alameda #IMTHOM : Release cumulative BASE 64  by tab",
+      "type": "Support log",
+      "state": "Resolved",
+      "assignedTo": "Hassan Hussein",
+      "tester": "Unassigned",
+      "area": "LDM Integration",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Alameda_0062",
+      "changedDate": "2026-10-28T15:45:43.690Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 4.65,
+      "testActualTime": 2,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -41649,8 +41258,8 @@
       "id": 194711,
       "title": "BorgKSA #Trackcare > display error when add reg with new patient",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Mostafa Taha",
+      "state": "Resolved",
+      "assignedTo": "Hebatullah Mohamed",
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 999,
@@ -41658,7 +41267,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-10-28T14:14:14.560Z",
+      "changedDate": "2026-10-28T18:26:00.167Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -41671,8 +41280,8 @@
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
-      "devActualTime": 0,
-      "testActualTime": 2,
+      "devActualTime": 2,
+      "testActualTime": 5.5,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": [
@@ -41708,59 +41317,6 @@
           ]
         }
       ]
-    },
-    {
-      "id": 194727,
-      "title": "Borg UAEA >> Need to Publish S.L (194602) on Production Server",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hesham Elsayed",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 999,
-      "tags": [
-        "Backup => D:\\LDM_NewRelease2026\\Backups\\26-10-2026\\Old",
-        " Published Live"
-      ],
-      "expectedRelease": null,
-      "branch": "UAE",
-      "customer": "Al Borg UAE_531",
-      "changedDate": "2026-10-27T13:34:47.583Z",
-      "tasks": [
-        {
-          "ID": 194897,
-          "Work Item Type": "Task",
-          "Title": "DB Modification : move task #191716 to Live db",
-          "Assigned To": "Ahmed Farag",
-          "Activity": "DB Modification",
-          "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0.5,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-27T12:47:22.98Z",
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-27T14:00:35.69Z",
-          "State": "To Be Reviewed",
-          "Tags": "production publish",
-          "Changed Date": "2026-10-27T14:00:35.69Z",
-          "Customer": "Al Borg UAE_531"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-10-27T12:47:22.980Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 6.5,
-      "testActualTime": 4,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
     },
     {
       "id": 194736,
@@ -41867,6 +41423,21 @@
           "State": "New",
           "Changed Date": "2026-10-28T13:41:54.067Z",
           "Customer": "Accurate Lab_17"
+        },
+        {
+          "ID": 195234,
+          "Work Item Type": "Task",
+          "Title": "sepertes acurate connect  batch dsl",
+          "Assigned To": "Saleh Abdelrahem",
+          "Activity": "Development",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp\\2026\\Mobile-November 1-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-10-28T22:46:10.663Z",
+          "Customer": "Accurate Lab_17"
         }
       ],
       "bugs": [],
@@ -41884,78 +41455,6 @@
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
-    },
-    {
-      "id": 194747,
-      "title": "#Ekthar Lab: Notification>>SMS not sent to patient",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mahmoud Mohamed",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Ekthar Lab_276",
-      "changedDate": "2026-10-27T15:04:51.920Z",
-      "tasks": [
-        {
-          "ID": 194776,
-          "Work Item Type": "Task",
-          "Title": "SL 194747 | Review sms and ldm prs",
-          "Assigned To": "Fatma Fayed",
-          "Activity": "Development",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.25,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-26T15:49:49.923Z",
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Changed Date": "2026-10-26T15:50:25.47Z",
-          "Customer": "Ekthar Lab_276"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-10-27T08:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 4.33,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": [
-        {
-          "id": 8276,
-          "title": "SL #194747 Fix logging incorrect report urls",
-          "status": "completed",
-          "createdBy": "Ibrahim Ahmed",
-          "repository": "SMSModule",
-          "creationDate": "2026-10-27T07:24:49.308Z",
-          "closedDate": "2026-10-27T07:32:15.303Z",
-          "cycleTimeHours": 0.1238875,
-          "linkedStoryId": "194747",
-          "sourceRefName": "refs/heads/V1.0_Ekthar_12_08_2024_194747",
-          "targetRefName": "refs/heads/V1.0_Ekthar_12_08_2024",
-          "reviewers": [
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 10
-            }
-          ]
-        }
-      ]
     },
     {
       "id": 194748,
@@ -42004,7 +41503,7 @@
       "expectedRelease": null,
       "branch": "Ethiopia",
       "customer": "EPHI - Ethiopian Public Health Institute_535",
-      "changedDate": "2026-10-28T11:20:55.053Z",
+      "changedDate": "2026-10-28T15:32:53.357Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -42017,7 +41516,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0.75,
+      "devActualTime": 3.25,
       "testActualTime": 3,
       "isBacklog": false,
       "linkedProjectId": null,
@@ -42113,7 +41612,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-10-28T06:00:00.000Z",
+        "devEnd": "2026-10-27T10:42:00.390Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -42124,136 +41623,6 @@
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
-    },
-    {
-      "id": 194782,
-      "title": "#AlFarabi KSA: We need to publish the latest version at production server",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mahmoud Mohamed",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-10-28T14:02:51.687Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 33,
-      "testActualTime": 43.5,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": [
-        {
-          "id": 8310,
-          "title": "SL #194782 - Release : Fix FormattedTextResultLog parse error after converting \"Modify by\" to GridTemplateColumn",
-          "status": "completed",
-          "createdBy": "Mohamed Samy",
-          "repository": "LDM",
-          "creationDate": "2026-10-28T11:06:06.039Z",
-          "closedDate": "2026-10-28T12:08:47.099Z",
-          "cycleTimeHours": 1.0447388888888889,
-          "linkedStoryId": "194782",
-          "sourceRefName": "refs/heads/Master_PreProduction_SL194782",
-          "targetRefName": "refs/heads/Master_PreProduction",
-          "reviewers": [
-            {
-              "name": "Bardis Maher",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 10
-            }
-          ]
-        },
-        {
-          "id": 8307,
-          "title": "SL #194782 - Farabi : Fix FormattedTextResultLog parse error after converting \"Modify by\" to GridTemplateColumn",
-          "status": "completed",
-          "createdBy": "Mohamed Samy",
-          "repository": "LDM",
-          "creationDate": "2026-10-28T09:49:01.380Z",
-          "closedDate": "2026-10-28T12:08:35.475Z",
-          "cycleTimeHours": 2.3261375,
-          "linkedStoryId": "194782",
-          "sourceRefName": "refs/heads/V3.0_Al_Farabi_27_10_2026_SL#194782",
-          "targetRefName": "refs/heads/V3.0_Al_Farabi_27_10_2026",
-          "reviewers": [
-            {
-              "name": "Bardis Maher",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 0
-            },
-            {
-              "name": "gamal kasem",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 10
-            }
-          ]
-        },
-        {
-          "id": 8305,
-          "title": "Master PreProduction 194782",
-          "status": "completed",
-          "createdBy": "Ibrahim Ahmed",
-          "repository": "LDM",
-          "creationDate": "2026-10-28T08:50:58.267Z",
-          "closedDate": "2026-10-28T08:52:31.861Z",
-          "cycleTimeHours": 0.02599833333333333,
-          "linkedStoryId": "194782",
-          "sourceRefName": "refs/heads/Master_PreProduction_194782",
-          "targetRefName": "refs/heads/Master_PreProduction",
-          "reviewers": [
-            {
-              "name": "Bardis Maher",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 10
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 0
-            }
-          ]
-        }
-      ]
     },
     {
       "id": 194893,
@@ -42322,38 +41691,6 @@
       "pullRequests": []
     },
     {
-      "id": 194939,
-      "title": "Wareed live : backup zatca outbox table in different table and delete records before today",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hassan Hussein",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Wareed Lab_294",
-      "changedDate": "2026-10-27T17:28:28.883Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0.5,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 195015,
       "title": "# al faribe >> issue in report  Patient Remaining",
       "type": "Support log",
@@ -42378,13 +41715,15 @@
           "Assigned To": "Ahmed Farag",
           "Activity": "DB Modification",
           "Original Estimation": 3,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 3.25,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-28T12:21:49.923Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-10-28T14:38:11.297Z",
+          "Resolved Date": "2026-10-28T15:39:26.417Z",
+          "State": "To Be Reviewed",
+          "Tags": "liquibase; V4.4.0",
+          "Changed Date": "2026-10-28T15:39:26.417Z",
           "Customer": "Al Farabi Lab KSA_283"
         }
       ],
@@ -42392,7 +41731,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-10-29T09:00:00.000Z",
+        "devEnd": "2026-10-28T12:21:49.923Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -42474,13 +41813,12 @@
       "area": "Internal lab",
       "priority": 999,
       "tags": [
-        "Read Comment",
-        " waiting Tester"
+        "Read Comment"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Assuit University Hospitals_412",
-      "changedDate": "2026-10-28T14:30:21.797Z",
+      "changedDate": "2026-10-28T14:51:03.400Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -42500,106 +41838,11 @@
       "pullRequests": []
     },
     {
-      "id": 195119,
-      "title": "Al-Borg KSA >>> Prevent Duplicate Registration Creation on Multiple Save Actions",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Ammar Yasser",
-      "tester": "Unassigned",
-      "area": "Registration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Al Borg KSA_530",
-      "changedDate": "2026-10-28T13:52:13.590Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 2.5,
-      "testActualTime": 3,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": [
-        {
-          "id": 8321,
-          "title": "SL #195119 | Dynamic registration: prevent duplicate registrations when Next/...",
-          "status": "completed",
-          "createdBy": "Ibrahim Ahmed",
-          "repository": "LDM",
-          "creationDate": "2026-10-28T13:48:20.874Z",
-          "closedDate": "2026-10-28T13:51:40.511Z",
-          "cycleTimeHours": 0.055454722222222225,
-          "linkedStoryId": "195119",
-          "sourceRefName": "refs/heads/Master_PreProduction_195119",
-          "targetRefName": "refs/heads/Master_PreProduction",
-          "reviewers": [
-            {
-              "name": "Bardis Maher",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 10
-            }
-          ]
-        },
-        {
-          "id": 8313,
-          "title": "SL #195119 | Dynamic registration: prevent duplicate registrations when Next/...",
-          "status": "completed",
-          "createdBy": "Ibrahim Ahmed",
-          "repository": "LDM",
-          "creationDate": "2026-10-28T12:47:55.886Z",
-          "closedDate": "2026-10-28T13:50:46.700Z",
-          "cycleTimeHours": 1.0474483333333333,
-          "linkedStoryId": "195119",
-          "sourceRefName": "refs/heads/V4.0_AlBorgKSA_12_05_2026_195119",
-          "targetRefName": "refs/heads/V4.0_AlBorgKSA_12_05_2026",
-          "reviewers": [
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 0
-            },
-            {
-              "name": "gamal kasem",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 10
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": 195122,
       "title": "Al Farabi KSA: Remove HL7 duplicate-code validation when saving Service Setup, so setup changes are not blocked when the same HL7 code exists for multiple clients or tests",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "mohamed.abdelghany",
+      "state": "Resolved",
+      "assignedTo": "Mahmoud Mohamed",
       "tester": "Unassigned",
       "area": "Internal lab",
       "priority": 999,
@@ -42607,7 +41850,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-10-28T14:04:26.440Z",
+      "changedDate": "2026-10-28T17:38:55.717Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -42620,7 +41863,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
-      "devActualTime": 0,
+      "devActualTime": 3,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
@@ -42630,16 +41873,18 @@
       "id": 195125,
       "title": "#51097_ Saja Lab >> Export Data Files for Enhanced Reports",
       "type": "Support log",
-      "state": "Active",
+      "state": "On-Hold",
       "assignedTo": "Moamen SalahElDeen",
       "tester": "Unassigned",
       "area": "Internal lab",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "On Hold"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Saja Lab_576",
-      "changedDate": "2026-10-28T14:05:31.717Z",
+      "changedDate": "2026-10-29T05:19:01.593Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -42652,39 +41897,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
-      "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
-      "id": 195193,
-      "title": "Wateen lab >> an error message display at the result report",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Mohamed Ragab",
-      "tester": "Unassigned",
-      "area": "Internal lab",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Wateen Lab_325",
-      "changedDate": "2026-10-28T14:15:21.920Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
-      "devActualTime": 0.42,
+      "devActualTime": 1,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
@@ -42703,7 +41916,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Hasa Health Cluster_12",
-      "changedDate": "2026-10-28T13:51:06.143Z",
+      "changedDate": "2026-10-28T20:35:29.410Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -42717,7 +41930,39 @@
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
       "devActualTime": 0,
-      "testActualTime": 0,
+      "testActualTime": 1.5,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 195221,
+      "title": "#Wareed KSA: We need to publish the latest version at production server",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Samir Mohamed",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Wareed Lab_294",
+      "changedDate": "2026-10-29T05:31:31.950Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 53.5,
+      "testActualTime": 32.5,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -67080,14 +66325,6 @@
       "parentId": null,
       "title": "issue at culture report at web result and LDM report"
     },
-    "186655": {
-      "id": "186655",
-      "type": "User Story",
-      "area": "Registration",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "Assiut University - The Impact of Default Patient Class on Registration Templates"
-    },
     "186684": {
       "id": "186684",
       "type": "Task",
@@ -73752,22 +72989,6 @@
       "parentId": null,
       "title": "007.\tCheck that patient report can printed from (web result)."
     },
-    "192116": {
-      "id": "192116",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "186655",
-      "title": "BD005 | Return all branch locations from GetBranchLocation when Patient Class is ignored"
-    },
-    "192117": {
-      "id": "192117",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "186655",
-      "title": "BD009 | Apply Location-Patient Class validation on single registration save"
-    },
     "192118": {
       "id": "192118",
       "type": "Test Case",
@@ -73775,30 +72996,6 @@
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
       "parentId": null,
       "title": "008.\tVerify the system displays (Header & footer) from center set up first."
-    },
-    "192119": {
-      "id": "192119",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "186655",
-      "title": "BD009 | Apply Location-Patient Class validation on batch registration save"
-    },
-    "192120": {
-      "id": "192120",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "186655",
-      "title": "FD009 | Add Location does not belong to Patient Class message resources"
-    },
-    "192121": {
-      "id": "192121",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "186655",
-      "title": "FD003 | Apply template Patient Class default (Select or configured class) on single and batch registration"
     },
     "192122": {
       "id": "192122",
@@ -73808,22 +73005,6 @@
       "parentId": null,
       "title": "009.\tVerify the system displays (Header & footer) from payer second."
     },
-    "192123": {
-      "id": "192123",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "186655",
-      "title": "FD003 | Save empty Patient Class as null instead of Outpatient (single and batch registration)"
-    },
-    "192124": {
-      "id": "192124",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "186655",
-      "title": "FD010 | Load Locations by template Patient Class option on load and Patient Class change"
-    },
     "192126": {
       "id": "192126",
       "type": "Test Case",
@@ -73831,14 +73012,6 @@
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
       "parentId": null,
       "title": "010.\tVerify the system displays (Header & footer) from branch."
-    },
-    "192127": {
-      "id": "192127",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "186655",
-      "title": "FD010 | Reload Locations by Patient Class option in edit, reservation and reset flows"
     },
     "192128": {
       "id": "192128",
@@ -74224,22 +73397,6 @@
       "parentId": null,
       "title": "\"Outreach worklist\" Label is displayed in the screen"
     },
-    "192267": {
-      "id": "192267",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "186655",
-      "title": "BD016 | Review on US 186655"
-    },
-    "192268": {
-      "id": "192268",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "186655",
-      "title": "FD011 | Review on US 186655"
-    },
     "192270": {
       "id": "192270",
       "type": "Bug",
@@ -74247,30 +73404,6 @@
       "iterationPath": "LDM\\Candidate CRs",
       "parentId": null,
       "title": "Error displays in invoice Report"
-    },
-    "192279": {
-      "id": "192279",
-      "type": "Review",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "192267",
-      "title": "US 186655 | Review Points Edit loads the whole templat"
-    },
-    "192280": {
-      "id": "192280",
-      "type": "Review",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "192267",
-      "title": "US 186655 | Review"
-    },
-    "192281": {
-      "id": "192281",
-      "type": "Review",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": "192268",
-      "title": "US 186655 | Review front"
     },
     "192282": {
       "id": "192282",
@@ -74584,6 +73717,14 @@
       "parentId": "183092",
       "title": "reviewing the entire app and making sure it matches the design and checking each feature to make sure it works fine"
     },
+    "192487": {
+      "id": "192487",
+      "type": "Bug",
+      "area": "Integration",
+      "iterationPath": "LDM",
+      "parentId": "192253",
+      "title": "iNTEGRATION | CHECK THIS NOTES"
+    },
     "192488": {
       "id": "192488",
       "type": "Task",
@@ -74727,14 +73868,6 @@
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
       "parentId": null,
       "title": "if search to select second (registration branch, processing branch or service) second item delete first item"
-    },
-    "192606": {
-      "id": "192606",
-      "type": "User Story",
-      "area": "",
-      "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
-      "parentId": null,
-      "title": "Wareed Mobile app - when the mobile app open , display advertisement image at the home screen  with the ability to close it"
     },
     "192608": {
       "id": "192608",
@@ -74896,30 +74029,6 @@
       "parentId": null,
       "title": "PEOPLE & COMPETENCE > Competency - Record need to refresh status filter to displayed @ grid"
     },
-    "192668": {
-      "id": "192668",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
-      "parentId": "192606",
-      "title": "apply design of advertisement pop"
-    },
-    "192669": {
-      "id": "192669",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
-      "parentId": "192606",
-      "title": "integrate advertisment with configurations and images"
-    },
-    "192670": {
-      "id": "192670",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
-      "parentId": "192606",
-      "title": "test this cr"
-    },
     "192671": {
       "id": "192671",
       "type": "User Story",
@@ -74943,918 +74052,6 @@
       "iterationPath": "SaaS",
       "parentId": null,
       "title": "PEOPLE & COMPETENCE - Competency- Assessments display ID"
-    },
-    "192678": {
-      "id": "192678",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "Execution Task"
-    },
-    "192681": {
-      "id": "192681",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Navigation to Patient Registration 4-Step Wizard"
-    },
-    "192682": {
-      "id": "192682",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Access to Change Price and Contract Transfer Modal"
-    },
-    "192683": {
-      "id": "192683",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Patient Data Panel Fields and MRN Lookup"
-    },
-    "192684": {
-      "id": "192684",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Services Panel and Mandatory Service Field"
-    },
-    "192685": {
-      "id": "192685",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Co-payment Field Disabling Rule per Contract"
-    },
-    "192686": {
-      "id": "192686",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Request Date Business Rule - Current Day Requirement"
-    },
-    "192687": {
-      "id": "192687",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Center Selection Dependency Business Rule"
-    },
-    "192688": {
-      "id": "192688",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Arabic Receipt Generation Business Rule"
-    },
-    "192689": {
-      "id": "192689",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify STAT Urgent Marking Rule for Services"
-    },
-    "192690": {
-      "id": "192690",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Service Mandatory Rule in Registration Wizard"
-    },
-    "192691": {
-      "id": "192691",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Preparation Screen and Question Logic"
-    },
-    "192692": {
-      "id": "192692",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Template Type Selection"
-    },
-    "192693": {
-      "id": "192693",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Payment Screen and Financial Calculations"
-    },
-    "192694": {
-      "id": "192694",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Result Date Calculation and Editability Rule"
-    },
-    "192695": {
-      "id": "192695",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Reserved Service Holding Business Rule"
-    },
-    "192696": {
-      "id": "192696",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Template Title in Registration Templates"
-    },
-    "192697": {
-      "id": "192697",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Dynamic Fields Selection"
-    },
-    "192698": {
-      "id": "192698",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Defined Panel Selection"
-    },
-    "192699": {
-      "id": "192699",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Auto Expand Setting"
-    },
-    "192700": {
-      "id": "192700",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Panel Title in Template Configuration"
-    },
-    "192701": {
-      "id": "192701",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Panel Display Order"
-    },
-    "192702": {
-      "id": "192702",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Field Internal Name"
-    },
-    "192703": {
-      "id": "192703",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Panel Fields Selection (Patient Class)"
-    },
-    "192704": {
-      "id": "192704",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of 'Do Not Filter by Location' Patient Class Setting"
-    },
-    "192705": {
-      "id": "192705",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Unauthorized Role: Deny Access to Registration for Restricted Roles"
-    },
-    "192706": {
-      "id": "192706",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Authorized Role: Cashier Access to Single Patient Registration"
-    },
-    "192707": {
-      "id": "192707",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Batch Data Selection"
-    },
-    "192708": {
-      "id": "192708",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Authorized Role: Administrator Configuration of Registration Templates"
-    },
-    "192709": {
-      "id": "192709",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Field Required Flag"
-    },
-    "192710": {
-      "id": "192710",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of 'Filter by Location' Patient Class Setting"
-    },
-    "192711": {
-      "id": "192711",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Field Size Setting"
-    },
-    "192712": {
-      "id": "192712",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Authorized Role: Financial User Access to Payment Step"
-    },
-    "192713": {
-      "id": "192713",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Unauthorized Role: Deny Payment Processing to Standard Users"
-    },
-    "192714": {
-      "id": "192714",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Verify Persistence of Field Display Name"
-    },
-    "192715": {
-      "id": "192715",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_State Transition: Service STAT Flagging"
-    },
-    "192716": {
-      "id": "192716",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_State Transition: Step 1 Patient Data Demographics"
-    },
-    "192717": {
-      "id": "192717",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Unauthorized Role: Restriction on Modifying Referring Doctor"
-    },
-    "192718": {
-      "id": "192718",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Unauthorized Role: Deny Template Configuration to Non-Admin Roles"
-    },
-    "192719": {
-      "id": "192719",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_State Transition: Invalid Jump from Step 1 to Step 4"
-    },
-    "192720": {
-      "id": "192720",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_State Transition: Complete Payment Transaction Sequence"
-    },
-    "192721": {
-      "id": "192721",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_State Transition: Registration Template Activation Lifecycle"
-    },
-    "192722": {
-      "id": "192722",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Data Integrity: Active Patient Classes Population"
-    },
-    "192723": {
-      "id": "192723",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_UI: Dynamic Dropdown Enabling based on Radio Selection"
-    },
-    "192724": {
-      "id": "192724",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_State Transition: Terminal State Immutability"
-    },
-    "192725": {
-      "id": "192725",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_UI Verification: Patient Class Settings Pop-up (Batch Registration)"
-    },
-    "192726": {
-      "id": "192726",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_UI Verification: Patient Class Settings Pop-up (Single Registration)"
-    },
-    "192727": {
-      "id": "192727",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Validation: Mandatory Default Patient Class Selection"
-    },
-    "192728": {
-      "id": "192728",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Negative: Dropdown Validation for Inactive Patient Classes"
-    },
-    "192729": {
-      "id": "192729",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_UI: Placeholder Display for Filter by Location Mode"
-    },
-    "192730": {
-      "id": "192730",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Usability: Cancel/Close Patient Class Settings Pop-up"
-    },
-    "192731": {
-      "id": "192731",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Functional: Dynamic Filtering of Patient Class by Location"
-    },
-    "192732": {
-      "id": "192732",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Functional: Mutual Exclusivity of Patient Class Settings"
-    },
-    "192733": {
-      "id": "192733",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Negative: No Accidental Filtering in Do Not Filter Mode"
-    },
-    "192734": {
-      "id": "192734",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Persistence: Saving Configuration Options in Template"
-    },
-    "192735": {
-      "id": "192735",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Functional: Fixed Pre-selection of Default Patient Class"
-    },
-    "192736": {
-      "id": "192736",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_State Transition: Batch Registration Workflow Payer to Patients"
-    },
-    "192737": {
-      "id": "192737",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Functional: Patient Class Update on Location Change"
-    },
-    "192738": {
-      "id": "192738",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Persistence: Database Integrity for Single and Batch Registrations"
-    },
-    "192739": {
-      "id": "192739",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Registration - Require Service in Step 2"
-    },
-    "192740": {
-      "id": "192740",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Payment - Co-payment Disabled for Cash Payer"
-    },
-    "192741": {
-      "id": "192741",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Registration - Reject Past Request Date"
-    },
-    "192742": {
-      "id": "192742",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Registration - Individual Service STAT Logic"
-    },
-    "192743": {
-      "id": "192743",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Registration - Result Date Logical Validation"
-    },
-    "192744": {
-      "id": "192744",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Integration - Verify General Demographics in Registration"
-    },
-    "192745": {
-      "id": "192745",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Registration - Arabic Receipt Rejection Without Data"
-    },
-    "192746": {
-      "id": "192746",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Registration - Reserved Status Negative Path"
-    },
-    "192747": {
-      "id": "192747",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Integration - Verify ServiceSetup Data in Registration"
-    },
-    "192748": {
-      "id": "192748",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Integration - Verify Finance Data in Registration Payment"
-    },
-    "192749": {
-      "id": "192749",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Authorized Role: Doctor Selection in Registration Step 1"
-    },
-    "192750": {
-      "id": "192750",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Integration - Verify Test Preparation Questions in Step 3"
-    },
-    "192751": {
-      "id": "192751",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Integration - Verify Sample Details in Registration"
-    },
-    "192752": {
-      "id": "192752",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Audit - Update Patient Class Settings Audit Log"
-    },
-    "192753": {
-      "id": "192753",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Functional: Patient Class Availability (Do Not Filter Mode)"
-    },
-    "192754": {
-      "id": "192754",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Audit - Create Registration Template Audit Log"
-    },
-    "192755": {
-      "id": "192755",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Security - Direct URL Access Redirects to Login"
-    },
-    "192756": {
-      "id": "192756",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Security - Role-Based Access Restriction for Templates"
-    },
-    "192757": {
-      "id": "192757",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Data Integrity - Orphaned Patient Class Handling"
-    },
-    "192758": {
-      "id": "192758",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Audit - Delete Template Audit Log with Reason"
-    },
-    "192759": {
-      "id": "192759",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Template Title Security Injection"
-    },
-    "192760": {
-      "id": "192760",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_E2E: Patient Class Configuration Impact on Batch Registration"
-    },
-    "192761": {
-      "id": "192761",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Template Type Validation"
-    },
-    "192762": {
-      "id": "192762",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Panel Title Required Validation"
-    },
-    "192763": {
-      "id": "192763",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Data Integrity - Arabic UTF-8 Support in Template Titles"
-    },
-    "192764": {
-      "id": "192764",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Defined Panel Radio Validation"
-    },
-    "192765": {
-      "id": "192765",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Registration Templates - Regression: Special Chars in Panel Title"
-    },
-    "192766": {
-      "id": "192766",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Registration - Center Contract Selection Dependency"
-    },
-    "192767": {
-      "id": "192767",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Order Negative Value Validation"
-    },
-    "192768": {
-      "id": "192768",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Auto Expand Checkbox Validation"
-    },
-    "192769": {
-      "id": "192769",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Order Numeric Format Validation"
-    },
-    "192770": {
-      "id": "192770",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Panel Title Security Injection"
-    },
-    "192771": {
-      "id": "192771",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Panel Field Code EP Validation"
-    },
-    "192772": {
-      "id": "192772",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Panel Field Code Security Injection"
-    },
-    "192773": {
-      "id": "192773",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Order Boundary Value Analysis"
-    },
-    "192774": {
-      "id": "192774",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Batch Data Radio Validation"
-    },
-    "192775": {
-      "id": "192775",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Panel Fields Selection Validation"
-    },
-    "192776": {
-      "id": "192776",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Display Name EP Validation"
-    },
-    "192777": {
-      "id": "192777",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Template Type Security Injection"
-    },
-    "192778": {
-      "id": "192778",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Display Name Security Injection"
-    },
-    "192779": {
-      "id": "192779",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Field Size Validation"
-    },
-    "192780": {
-      "id": "192780",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Patient Class Radio EP Validation"
-    },
-    "192781": {
-      "id": "192781",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Patient Class Settings Required Selection"
-    },
-    "192782": {
-      "id": "192782",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Panel Title EP Validation"
-    },
-    "192783": {
-      "id": "192783",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Field Size Security Injection"
-    },
-    "192784": {
-      "id": "192784",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Outbound Integration: Persistence of Demographic and Location Data from Registration"
-    },
-    "192785": {
-      "id": "192785",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Dynamic Fields Radio Validation"
-    },
-    "192786": {
-      "id": "192786",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Panel Required Checkbox Validation"
-    },
-    "192787": {
-      "id": "192787",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Registration Lifecycle with Location-Based Patient Class Filtering"
-    },
-    "192788": {
-      "id": "192788",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Inbound Integration: Financial Contract Availability based on Patient Class"
-    },
-    "192789": {
-      "id": "192789",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Do Not Filter by Location Required Check"
-    },
-    "192790": {
-      "id": "192790",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Admin Configuration of Patient Class Filtering in Registration Templates"
-    },
-    "192791": {
-      "id": "192791",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Inbound Integration: Consumption of General Module Entities in Template Setup"
-    },
-    "192792": {
-      "id": "192792",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Field - Do Not Filter Radio EP Validation"
-    },
-    "192793": {
-      "id": "192793",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "CR_186655_Outbound Integration: Treasury Transaction Persistence from Registration"
     },
     "192794": {
       "id": "192794",
@@ -76503,22 +74700,6 @@
       "iterationPath": "Home Visit\\2026\\home_visit September 13-26",
       "parentId": "192880",
       "title": "generate stage version of app and test it with testers"
-    },
-    "192952": {
-      "id": "192952",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
-      "parentId": "192606",
-      "title": "generate version include this cr and publish on internal testing"
-    },
-    "192954": {
-      "id": "192954",
-      "type": "User Story",
-      "area": "",
-      "iterationPath": "Client Custom Portals",
-      "parentId": null,
-      "title": "UAHP - Client Portal and Integration - Allow Registration with unregistered owner"
     },
     "192964": {
       "id": "192964",
@@ -82048,14 +80229,6 @@
       "parentId": null,
       "title": "Client admin -dispatch list - error is displayed after trying to receive and excluding a san from the dispatch list"
     },
-    "193742": {
-      "id": "193742",
-      "type": "Support log",
-      "area": "Integration",
-      "iterationPath": "LDM",
-      "parentId": null,
-      "title": "Integration | BUBA | Outsourced Services Must Have a Different Barcode from Non-Outsourced Services with the Same Sample Type , Condition and Clinical Group"
-    },
     "193745": {
       "id": "193745",
       "type": "Task",
@@ -82503,14 +80676,6 @@
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
       "parentId": null,
       "title": "previous result label display in  hb electrophoresis report  and print alone report"
-    },
-    "193833": {
-      "id": "193833",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Registration Team\\2026\\Registration-October 4-24",
-      "parentId": null,
-      "title": "Review Task"
     },
     "193836": {
       "id": "193836",
@@ -83656,22 +81821,6 @@
       "parentId": null,
       "title": "016.\tVerify Reference range remains unchanged when selecting an analyzer with no reference range configured in test setup in result screen\" Safari\"."
     },
-    "194017": {
-      "id": "194017",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
-      "parentId": null,
-      "title": "Preparation"
-    },
-    "194018": {
-      "id": "194018",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
-      "parentId": null,
-      "title": "Execution"
-    },
     "194021": {
       "id": "194021",
       "type": "Test Case",
@@ -84663,14 +82812,6 @@
       "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
       "parentId": "187732",
       "title": "working on branches"
-    },
-    "194180": {
-      "id": "194180",
-      "type": "Support log",
-      "area": "Integration",
-      "iterationPath": "LDM\\Candidate CRs",
-      "parentId": null,
-      "title": "[API]EPHI #Apraham : Error after review when results generated"
     },
     "194182": {
       "id": "194182",
@@ -85936,22 +84077,6 @@
       "parentId": null,
       "title": "CR-191581- Execution"
     },
-    "194426": {
-      "id": "194426",
-      "type": "Support log",
-      "area": "Integration",
-      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
-      "parentId": null,
-      "title": "Hasa Production > #careware display test mapping code at NTE (test comment )"
-    },
-    "194427": {
-      "id": "194427",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM\\Candidate CRs",
-      "parentId": null,
-      "title": "SP returns no data EPHI Live"
-    },
     "194431": {
       "id": "194431",
       "type": "Bug",
@@ -86111,6 +84236,14 @@
       "iterationPath": "LDM\\Candidate CRs",
       "parentId": null,
       "title": "[Hl7]Alameda #IMTHOM : Consider Service Priority from TQ.9.1"
+    },
+    "194457": {
+      "id": "194457",
+      "type": "Support log",
+      "area": "Integration",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "[API] Waten #Website :Move CR 193923 To live"
     },
     "194459": {
       "id": "194459",
@@ -87976,14 +86109,6 @@
       "parentId": "188570",
       "title": "Move region Price List Contracting from FinancialDataService"
     },
-    "194727": {
-      "id": "194727",
-      "type": "Support log",
-      "area": "Front and Financial",
-      "iterationPath": "LDM",
-      "parentId": null,
-      "title": "Borg UAEA >> Need to Publish S.L (194602) on Production Server"
-    },
     "194729": {
       "id": "194729",
       "type": "Task",
@@ -88103,14 +86228,6 @@
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
       "parentId": null,
       "title": "Need to Remove attached data"
-    },
-    "194747": {
-      "id": "194747",
-      "type": "Support log",
-      "area": "Internal lab",
-      "iterationPath": "LDM",
-      "parentId": null,
-      "title": "#Ekthar Lab: Notification>>SMS not sent to patient"
     },
     "194748": {
       "id": "194748",
@@ -88271,22 +86388,6 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
       "parentId": "188570",
       "title": "Move SubmitMoneyTransfer Work from FinancialDataService to SubmitMoneyTransferDSL"
-    },
-    "194776": {
-      "id": "194776",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM",
-      "parentId": "194747",
-      "title": "SL 194747 | Review sms and ldm prs"
-    },
-    "194782": {
-      "id": "194782",
-      "type": "Support log",
-      "area": "Internal lab",
-      "iterationPath": "LDM",
-      "parentId": null,
-      "title": "#AlFarabi KSA: We need to publish the latest version at production server"
     },
     "194788": {
       "id": "194788",
@@ -88912,14 +87013,6 @@
       "parentId": null,
       "title": "Improve Naming and Clarity of Impartiality / COI Page Labels"
     },
-    "194897": {
-      "id": "194897",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM",
-      "parentId": "194727",
-      "title": "DB Modification : move task #191716 to Live db"
-    },
     "194899": {
       "id": "194899",
       "type": "Bug",
@@ -89159,14 +87252,6 @@
       "iterationPath": "MobileApp\\2026\\Mobile-November 1-30",
       "parentId": "194736",
       "title": "Collect  add routing for accuret lab"
-    },
-    "194939": {
-      "id": "194939",
-      "type": "Support log",
-      "area": "Integration",
-      "iterationPath": "LDM\\Candidate CRs",
-      "parentId": null,
-      "title": "Wareed live : backup zatca outbox table in different table and delete records before today"
     },
     "194940": {
       "id": "194940",
@@ -90472,14 +88557,6 @@
       "parentId": null,
       "title": "Assiut >>  Women Health | Issue in hormones report (#51686)"
     },
-    "195119": {
-      "id": "195119",
-      "type": "Support log",
-      "area": "Registration",
-      "iterationPath": "LDM",
-      "parentId": null,
-      "title": "Al-Borg KSA >>> Prevent Duplicate Registration Creation on Multiple Save Actions"
-    },
     "195120": {
       "id": "195120",
       "type": "Bug",
@@ -91040,14 +89117,6 @@
       "parentId": null,
       "title": "CR_186739_Verify audit trail capture for updating 'Hide from Web Results' flag"
     },
-    "195193": {
-      "id": "195193",
-      "type": "Support log",
-      "area": "Internal lab",
-      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
-      "parentId": null,
-      "title": "Wateen lab >> an error message display at the result report"
-    },
     "195194": {
       "id": "195194",
       "type": "Review",
@@ -91119,6 +89188,1118 @@
       "iterationPath": "LDM\\Candidate CRs",
       "parentId": null,
       "title": "Wareed Labs - Qitaf - Auto reverse & earn at Action center"
+    },
+    "195212": {
+      "id": "195212",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
+      "parentId": "157179",
+      "title": "Internal CR - NT App Assist Mobile - Convert ZPL To CPCL"
+    },
+    "195213": {
+      "id": "195213",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "MobileApp\\2026\\Mobile-October 1-29",
+      "parentId": "183093",
+      "title": "Accurate Lab - Collect Mobile Application - Initial App Setup And Splash Screen"
+    },
+    "195220": {
+      "id": "195220",
+      "type": "Bug",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "In Contract Transfer, The system recalculates Cash Without Credit values according to the existing Contract Transfer rules."
+    },
+    "195221": {
+      "id": "195221",
+      "type": "Support log",
+      "area": "Internal lab",
+      "iterationPath": "LDM",
+      "parentId": null,
+      "title": "#Wareed KSA: We need to publish the latest version at production server"
+    },
+    "195222": {
+      "id": "195222",
+      "type": "Bug",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "In Value Transfer, When insertion Max Credit amount, The system recalculates New Cash and New Credit values in last service only."
+    },
+    "195223": {
+      "id": "195223",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "Verify Applying a Valid Maximum Credit Amount."
+    },
+    "195224": {
+      "id": "195224",
+      "type": "Bug",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "In Update Service Price, issue in Ui design (New Cash) Column is not displayed Bold unlike New Cash VAT, New Credit, and Difference."
+    },
+    "195225": {
+      "id": "195225",
+      "type": "Bug",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "In Contract Transfer, Wrong Redirection in View payer attachment link"
+    },
+    "195226": {
+      "id": "195226",
+      "type": "User Story",
+      "area": "Integration",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": "182611",
+      "title": "Al Borg  KSA WhatsApp Integration - Bot Flow - Update [Validate Patient ID] to return patient visits in the last year instead of last 6 months"
+    },
+    "195227": {
+      "id": "195227",
+      "type": "User Story",
+      "area": "Integration",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": "176349",
+      "title": "Al Farabi - Aster Mobile App - Add New API [Get Registration Service In Add Mode]"
+    },
+    "195228": {
+      "id": "195228",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Finance/Payment User can apply loyalty points or coupons during Search Payment"
+    },
+    "195229": {
+      "id": "195229",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify only one loyalty benefit type can be applied per transaction"
+    },
+    "195230": {
+      "id": "195230",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Access Valid From field on Loyalty Program screen"
+    },
+    "195231": {
+      "id": "195231",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Access Loyalty Earn History from Reports menu"
+    },
+    "195234": {
+      "id": "195234",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "MobileApp\\2026\\Mobile-November 1-30",
+      "parentId": "194736",
+      "title": "sepertes acurate connect  batch dsl"
+    },
+    "195235": {
+      "id": "195235",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify VAT Recalculation after Applying Loyalty Coupon"
+    },
+    "195236": {
+      "id": "195236",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Loyalty Points Rejection of Fractional Values"
+    },
+    "195237": {
+      "id": "195237",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Navigation to Loyalty Redeem History Report"
+    },
+    "195238": {
+      "id": "195238",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Section Disabling Logic for Applied Loyalty Benefits"
+    },
+    "195239": {
+      "id": "195239",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Navigation to Loyalty Coupons Screen"
+    },
+    "195240": {
+      "id": "195240",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify VAT Recalculation after Applying Loyalty Points"
+    },
+    "195241": {
+      "id": "195241",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Persistence of Branch Filter Selection"
+    },
+    "195242": {
+      "id": "195242",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Loyalty Settings Database Configuration Access"
+    },
+    "195243": {
+      "id": "195243",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Persistence of Contract Filter Selection"
+    },
+    "195244": {
+      "id": "195244",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Minimum Redeem Points Threshold Enforcement"
+    },
+    "195245": {
+      "id": "195245",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Navigation to Loyalty Earn History Report"
+    },
+    "195246": {
+      "id": "195246",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Persistence of Reg. Date From Filter"
+    },
+    "195247": {
+      "id": "195247",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Earned Points cannot be Redeemed until Activated"
+    },
+    "195248": {
+      "id": "195248",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Mutual Exclusivity of Loyalty Points and Coupons"
+    },
+    "195249": {
+      "id": "195249",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Access to Loyalty Section in Search Payment"
+    },
+    "195250": {
+      "id": "195250",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Navigation to Loyalty Program Screen"
+    },
+    "195251": {
+      "id": "195251",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Unauthorized Role cannot apply Loyalty Points"
+    },
+    "195252": {
+      "id": "195252",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Persistence of Reg. Date To Filter"
+    },
+    "195253": {
+      "id": "195253",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Persistence of Loyalty Programs Filter"
+    },
+    "195254": {
+      "id": "195254",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Mobile Number Persistence in Earn History"
+    },
+    "195255": {
+      "id": "195255",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Access Privilege for Loyalty Earn History"
+    },
+    "195256": {
+      "id": "195256",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Persistence of Country Filter Selection"
+    },
+    "195257": {
+      "id": "195257",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Loyalty Program Name Column Persistence"
+    },
+    "195258": {
+      "id": "195258",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Removal of Total Loyalty Balance from Excel"
+    },
+    "195259": {
+      "id": "195259",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Earn Type Persistence and Display Accuracy"
+    },
+    "195260": {
+      "id": "195260",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Invalid State: Simultaneous Points and Coupon Usage"
+    },
+    "195261": {
+      "id": "195261",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Access to Loyalty Earn History Screen"
+    },
+    "195262": {
+      "id": "195262",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Terminal State: Redeemed Points"
+    },
+    "195263": {
+      "id": "195263",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Accession Number Column Persistence"
+    },
+    "195264": {
+      "id": "195264",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Earn Type Column Addition to Grid"
+    },
+    "195265": {
+      "id": "195265",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify non-Admin Role cannot access Loyalty Program Setup"
+    },
+    "195266": {
+      "id": "195266",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Loyalty Points Lifecycle - Earned State"
+    },
+    "195267": {
+      "id": "195267",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Patient Name Persistence in Results Grid"
+    },
+    "195268": {
+      "id": "195268",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify absence of UI screen for Database-only Loyalty Settings"
+    },
+    "195269": {
+      "id": "195269",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Paid Amount Persistence and Manual Points Rule"
+    },
+    "195270": {
+      "id": "195270",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Unauthorized Role cannot view Loyalty Reports"
+    },
+    "195271": {
+      "id": "195271",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Download of Excel Report with Valid Criteria"
+    },
+    "195272": {
+      "id": "195272",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Multi Use Coupon Promo Code State"
+    },
+    "195273": {
+      "id": "195273",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Manual Points Expiry Date Calculation"
+    },
+    "195274": {
+      "id": "195274",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Report Data for Patients without Registrations"
+    },
+    "195275": {
+      "id": "195275",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Excel Splitting into Three Specific Sheets"
+    },
+    "195276": {
+      "id": "195276",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Points Earned Calculation for Manual Points"
+    },
+    "195277": {
+      "id": "195277",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Persistence of Payer Filter Selection"
+    },
+    "195278": {
+      "id": "195278",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Coupon Header and Detail Transition"
+    },
+    "195279": {
+      "id": "195279",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Earned Points Validation and State Transition"
+    },
+    "195280": {
+      "id": "195280",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Persistence of Patient Number Search Filter"
+    },
+    "195281": {
+      "id": "195281",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Report Column Structure for Registration and Opening Balance"
+    },
+    "195282": {
+      "id": "195282",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Verify VAT is not recalculated incorrectly if loyalty is removed"
+    },
+    "195283": {
+      "id": "195283",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Search Validation for Missing Required Criteria"
+    },
+    "195284": {
+      "id": "195284",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Verify VAT recalc failure if logic is bypassed"
+    },
+    "195285": {
+      "id": "195285",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Reg. Date Column Data in Earn History Grid"
+    },
+    "195286": {
+      "id": "195286",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Paid Value for Manual Points is Always Zero"
+    },
+    "195287": {
+      "id": "195287",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Current Balance in the Downloaded Report"
+    },
+    "195288": {
+      "id": "195288",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Consistency of Earn Type and Points Earned Data"
+    },
+    "195289": {
+      "id": "195289",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Formula Rejection for Negative Required Cash"
+    },
+    "195290": {
+      "id": "195290",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Report User can access Loyalty Earn History Report"
+    },
+    "195291": {
+      "id": "195291",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Enforce Minimum Redeem Points threshold"
+    },
+    "195292": {
+      "id": "195292",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Reject applying Coupons when Points are already applied"
+    },
+    "195293": {
+      "id": "195293",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Manual Points Filtering by Patient Number"
+    },
+    "195294": {
+      "id": "195294",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Integration: Verify DB configuration for Expiry Days is respected"
+    },
+    "195295": {
+      "id": "195295",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Reject fractional points entry"
+    },
+    "195296": {
+      "id": "195296",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Data Integrity: Verify Arabic character support in search and export"
+    },
+    "195297": {
+      "id": "195297",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Audit: Verify creation trail for Manual Points"
+    },
+    "195298": {
+      "id": "195298",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Total Required Cash Formula Logic"
+    },
+    "195299": {
+      "id": "195299",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Audit: Verify audit trail for Loyalty Program deactivation"
+    },
+    "195300": {
+      "id": "195300",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Admin/Setup User can manage Loyalty Programs"
+    },
+    "195301": {
+      "id": "195301",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Data Integrity: Handle NULL Branch/Payer/Contract for mobile patients"
+    },
+    "195302": {
+      "id": "195302",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Integration: Verify Discount application impacts Net Required Cash"
+    },
+    "195303": {
+      "id": "195303",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Reject Reg. Date To earlier than From"
+    },
+    "195304": {
+      "id": "195304",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Date Filtering for Registration and Opening Balance Sheets"
+    },
+    "195305": {
+      "id": "195305",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Security: Neutralize script injection in Patient Number"
+    },
+    "195306": {
+      "id": "195306",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Regression: Verify column alignment in Loyalty Earn History report"
+    },
+    "195307": {
+      "id": "195307",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Loyalty Programs filter with no programs assigned"
+    },
+    "195308": {
+      "id": "195308",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Reject redemption of Earned Points not yet Actual"
+    },
+    "195309": {
+      "id": "195309",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Audit: Verify audit trail for Loyalty Program modification"
+    },
+    "195310": {
+      "id": "195310",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Integration: Verify Redeemed points appear in Finance summary"
+    },
+    "195311": {
+      "id": "195311",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Supported Earn Type Values"
+    },
+    "195312": {
+      "id": "195312",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Manual Points Sheet Data and Columns in Excel"
+    },
+    "195313": {
+      "id": "195313",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Integration: Verify Patient creation triggers Opening Balance points"
+    },
+    "195314": {
+      "id": "195314",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Reject invalid Reg. Date From"
+    },
+    "195315": {
+      "id": "195315",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Verify Country dropdown defaults to 'All'"
+    },
+    "195316": {
+      "id": "195316",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Verify latest Registration Date in grid"
+    },
+    "195317": {
+      "id": "195317",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Reg. Date column format in grid"
+    },
+    "195318": {
+      "id": "195318",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Patient Name length handling in grid"
+    },
+    "195319": {
+      "id": "195319",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Branch dropdown selection and data display"
+    },
+    "195320": {
+      "id": "195320",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Program name integrity in report grid"
+    },
+    "195321": {
+      "id": "195321",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Accession Number accuracy in report"
+    },
+    "195322": {
+      "id": "195322",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Finance/Payment User can apply Loyalty Points during Payment"
+    },
+    "195323": {
+      "id": "195323",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Mobile Number format consistency in grid"
+    },
+    "195324": {
+      "id": "195324",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Database Admin Configuration impacts Loyalty Earn History"
+    },
+    "195325": {
+      "id": "195325",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Paid column number format"
+    },
+    "195326": {
+      "id": "195326",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Security: Program name column sanitization"
+    },
+    "195327": {
+      "id": "195327",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Payer filter validation"
+    },
+    "195328": {
+      "id": "195328",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Supported Earn Type values in grid"
+    },
+    "195329": {
+      "id": "195329",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Reg. Date integrity in report grid"
+    },
+    "195330": {
+      "id": "195330",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Finance User E2E: Verify Manual Points Visibility and Data Integrity in Earn History Report"
+    },
+    "195331": {
+      "id": "195331",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Reject malformed Reg. Date From format"
+    },
+    "195332": {
+      "id": "195332",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Admin E2E: Manage Loyalty Program and Validate Categorization in Earn History"
+    },
+    "195333": {
+      "id": "195333",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Verify Points section is disabled when Coupon is applied"
+    },
+    "195334": {
+      "id": "195334",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Contract filter validation"
+    },
+    "195335": {
+      "id": "195335",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Mobile Number display accuracy"
+    },
+    "195336": {
+      "id": "195336",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Outbound Integration: Verify Mobile Patient Data Mapping in Loyalty History"
+    },
+    "195337": {
+      "id": "195337",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Reject malformed Reg. Date To format"
+    },
+    "195338": {
+      "id": "195338",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Integration: Verify Action Center activates Earned Points"
+    },
+    "195339": {
+      "id": "195339",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Security: Mobile Number column sanitization"
+    },
+    "195340": {
+      "id": "195340",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Boundary check for Reg. Date To"
+    },
+    "195341": {
+      "id": "195341",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Security: Accession Number grid sanitization"
+    },
+    "195342": {
+      "id": "195342",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Security: Direct URL access to Earn History report without login"
+    },
+    "195343": {
+      "id": "195343",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Inbound Integration: Verify Patient Creation Triggers Opening Balance Entry"
+    },
+    "195344": {
+      "id": "195344",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Search with non-existent Patient Number"
+    },
+    "195345": {
+      "id": "195345",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Boundary check for Paid amount in grid"
+    },
+    "195346": {
+      "id": "195346",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Opening Balance Sheet Data and Columns in Excel"
+    },
+    "195347": {
+      "id": "195347",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Security: Patient Name column sanitization"
+    },
+    "195348": {
+      "id": "195348",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Inbound Integration: Verify Payment Flow Updates Earn History with Registration Type"
+    },
+    "195349": {
+      "id": "195349",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Multi Use Coupon Lifecycle and Usage Tracking"
+    },
+    "195350": {
+      "id": "195350",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Outbound Integration: Verify Excel Report Export Structure and Data Exclusion"
+    },
+    "195351": {
+      "id": "195351",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Registration Sheet Data and Columns in Excel"
+    },
+    "195352": {
+      "id": "195352",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Single Use Coupon Lifecycle"
+    },
+    "195353": {
+      "id": "195353",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Paid value must be 0 for Manual Points"
+    },
+    "195354": {
+      "id": "195354",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Security: Access denied for user without Report User role"
+    },
+    "195355": {
+      "id": "195355",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Verify Report Column Structure for Manual Points"
+    },
+    "195356": {
+      "id": "195356",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "CR_186505_Loyalty - Field Validation: Boundary check for Reg. Date From"
+    },
+    "195357": {
+      "id": "195357",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "Preparation Task For CR 186505"
+    },
+    "195358": {
+      "id": "195358",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-October 4-24",
+      "parentId": null,
+      "title": "Execution Task For CR 186505"
     }
   }
 }
