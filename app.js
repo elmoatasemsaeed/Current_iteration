@@ -3196,16 +3196,33 @@ const ui = {
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     },
-    showBranchModal(branch) {
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
-        const activeStories = nonBacklog.filter(s => s.branch === branch && s.state !== 'Tested' && s.state !== 'Closed');
-        this.showModalWithTitleAndStories(`Branch: ${escapeHtml(branch)} (${activeStories.length} active stories)`, activeStories);
-    },
-    showCustomerModal(customer) {
-        const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
-        const activeStories = nonBacklog.filter(s => s.customer === customer && s.state !== 'Tested' && s.state !== 'Closed');
-        this.showModalWithTitleAndStories(`Customer: ${escapeHtml(customer)} (${activeStories.length} active stories)`, activeStories);
-    },
+    showBranchModal(encodedBranch) {
+    const branch = decodeURIComponent(encodedBranch);
+    const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+    const activeStories = nonBacklog.filter(s =>
+        (s.branch || 'N/A') === branch &&
+        s.state !== 'Tested' &&
+        s.state !== 'Closed'
+    );
+    this.showModalWithTitleAndStories(
+        `Branch: ${escapeHtml(branch)} (${activeStories.length} active stories)`,
+        activeStories
+    );
+},
+
+showCustomerModal(encodedCustomer) {
+    const customer = decodeURIComponent(encodedCustomer);
+    const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
+    const activeStories = nonBacklog.filter(s =>
+        (s.customer || 'General') === customer &&
+        s.state !== 'Tested' &&
+        s.state !== 'Closed'
+    );
+    this.showModalWithTitleAndStories(
+        `Customer: ${escapeHtml(customer)} (${activeStories.length} active stories)`,
+        activeStories
+    );
+},
     renderDailyActivity() {
         const container = document.getElementById('daily-activity-container');
         if (!container) return;
