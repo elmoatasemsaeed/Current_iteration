@@ -42,7 +42,8 @@ let db = {
     archivedProjects: [],
     standupCommentsStore: {},
     pullRequests: [],
-    workItemsMap: {}
+    workItemsMap: {},
+    workItemHistory: {}
 };
 
 let currentData = [];
@@ -415,6 +416,7 @@ const auth = {
                     if (!db.standupCommentsStore) db.standupCommentsStore = {};
                     if (!db.pullRequests) db.pullRequests = [];
                     if (!db.workItemsMap) db.workItemsMap = {};
+                    if (!db.workItemHistory) db.workItemHistory = {};
                     
                     migrateStandupComments();
                     
@@ -544,6 +546,7 @@ const dataProcessor = {
             if (!db.standupCommentsStore) db.standupCommentsStore = {};
             if (!db.pullRequests) db.pullRequests = [];
             if (!db.workItemsMap) db.workItemsMap = {};
+            if (!db.workItemHistory) db.workItemHistory = {};
 
             const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
                 headers: { 'Authorization': `token ${token}` }
@@ -1205,6 +1208,291 @@ const projectManager = {
             'فشل حذف التعليق',
             () => ui.renderProjectDetailsModal(projectId)
         );
+    }
+};
+
+// =================================================================
+// TIMELINE MANAGER — Story Timeline (State History + PRs + Bug phases)
+// =================================================================
+const timelineManager = {
+
+    // ---- Fetch state history lazily and persist ----
+    async ensureHistory(storyId) {
+        if (!db.workItemHistory) db.workItemHistory = {};
+        if (db.workItemHistory[storyId]) return db.workItemHistory[storyId];
+
+        const pat = sessionStorage.getItem('az_pat');
+        if (!pat) {
+            console.warn('⚠️ No Azure PAT — cannot fetch state history.');
+            return null;
+        }
+
+        try {
+            const authHeader = 'Basic ' + btoa(':' + pat);
+            const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/workItems/${storyId}/updates?api-version=6.0`;
+            const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const data = await res.json();
+            const stateChanges = [];
+            (data.value || []).forEach(update => {
+                const fields = update.fields || {};
+                if (fields['System.State']) {
+                    const oldVal = fields['System.State'].oldValue;
+                    const newVal = fields['System.State'].newValue;
+                    if (oldVal !== newVal && newVal) {
+                        stateChanges.push({
+                            oldState: oldVal || 'New',
+                            newState: newVal,
+                            changedDate: update.revisedDate,
+                            changedBy: update.revisedBy?.displayName || 'Unknown'
+                        });
+                    }
+                }
+            });
+
+            db.workItemHistory[storyId] = stateChanges;
+
+            // Persist in background (don't await)
+            if (currentUser && currentUser.role !== 'viewer') {
+                dataProcessor.saveToGitHub().catch(e => console.warn('Failed to save history:', e));
+            }
+
+            return stateChanges;
+        } catch (e) {
+            console.error(`Failed to fetch history for #${storyId}:`, e);
+            return null;
+        }
+    },
+
+    // ---- Build timeline segments (pure logic) ----
+    buildSegments(story) {
+        const history = db.workItemHistory?.[story.id] || [];
+        const prs = (db.pullRequests || [])
+            .filter(pr => pr.linkedStoryId && pr.linkedStoryId.toString() === story.id.toString() && pr.creationDate)
+            .map(pr => ({
+                ...pr,
+                created: new Date(pr.creationDate),
+                closed: pr.closedDate ? new Date(pr.closedDate) : new Date()
+            }))
+            .sort((a, b) => a.created - b.created);
+
+        const sortedHistory = [...history]
+            .filter(h => h.changedDate)
+            .sort((a, b) => new Date(a.changedDate) - new Date(b.changedDate));
+
+        if (sortedHistory.length === 0) return [];
+
+        const now = new Date();
+        const rawSegments = [];
+        for (let i = 0; i < sortedHistory.length; i++) {
+            const change = sortedHistory[i];
+            const start = new Date(change.changedDate);
+            const end = i + 1 < sortedHistory.length ? new Date(sortedHistory[i + 1].changedDate) : now;
+            if (end <= start) continue;
+            rawSegments.push({ state: change.newState, start, end, changedBy: change.changedBy });
+        }
+
+        // Phase classification
+        let hitFirstResolved = false;
+        const classified = [];
+        rawSegments.forEach(seg => {
+            let phase = null;
+            if (seg.state === 'Active' && !hitFirstResolved) {
+                phase = 'development';
+            } else if (seg.state === 'Resolved') {
+                hitFirstResolved = true;
+                phase = 'testing';
+            } else if (seg.state === 'Active - With Bugs') {
+                phase = 'bugfix';
+            } else if (seg.state === 'Active' && hitFirstResolved) {
+                phase = 'bugfix'; // reopened after testing
+            } else if (seg.state === 'Tested' || seg.state === 'Closed') {
+                phase = 'done';
+            } else if (seg.state === 'On-Hold') {
+                phase = 'onhold';
+            }
+            if (phase) classified.push({ ...seg, phase });
+        });
+
+        // Split dev & bugfix phases by PRs (review overlays)
+        const finalSegments = [];
+        classified.forEach(seg => {
+            if (seg.phase !== 'development' && seg.phase !== 'bugfix') {
+                finalSegments.push(seg);
+                return;
+            }
+
+            const prsInPhase = prs.filter(pr => pr.created >= seg.start && pr.created < seg.end);
+            if (prsInPhase.length === 0) {
+                finalSegments.push(seg);
+                return;
+            }
+
+            let cursor = seg.start;
+            prsInPhase.forEach(pr => {
+                const prStart = pr.created > cursor ? pr.created : cursor;
+                if (prStart > cursor) {
+                    finalSegments.push({
+                        phase: seg.phase,
+                        subtype: seg.phase === 'development' ? 'development' : 'bugfix',
+                        start: cursor,
+                        end: prStart
+                    });
+                }
+                const prEnd = pr.closed < seg.end ? pr.closed : seg.end;
+                finalSegments.push({
+                    phase: seg.phase,
+                    subtype: 'review',
+                    start: prStart,
+                    end: prEnd,
+                    pr
+                });
+                cursor = prEnd;
+            });
+            if (cursor < seg.end) {
+                finalSegments.push({
+                    phase: seg.phase,
+                    subtype: seg.phase === 'development' ? 'development' : 'bugfix',
+                    start: cursor,
+                    end: seg.end
+                });
+            }
+        });
+
+        return finalSegments;
+    },
+
+    // ---- Render timeline HTML ----
+    render(story, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const segments = this.buildSegments(story);
+        if (!segments || segments.length === 0) {
+            container.innerHTML = `<div class="text-center text-gray-400 text-sm py-4 italic">No state history available for this story yet.</div>`;
+            return;
+        }
+
+        const colorMap = {
+            development: '#3b82f6',
+            review:      '#f59e0b',
+            testing:     '#22c55e',
+            bugfix:      '#ef4444',
+            bugreview:   '#f97316',
+            onhold:      '#94a3b8',
+            done:        '#10b981'
+        };
+        const labelMap = {
+            development: 'Development',
+            review:      'Code Review',
+            testing:     'Testing',
+            bugfix:      'Bug Fixing',
+            bugreview:   'Bug Review',
+            onhold:      'On Hold',
+            done:        'Done'
+        };
+        const keyOf = (seg) => {
+            if (seg.phase === 'development') return seg.subtype === 'review' ? 'review' : 'development';
+            if (seg.phase === 'bugfix') return seg.subtype === 'review' ? 'bugreview' : 'bugfix';
+            return seg.phase;
+        };
+
+        const minDate = Math.min(...segments.map(s => s.start.getTime()));
+        const maxDate = Math.max(...segments.map(s => s.end.getTime()));
+        const totalDuration = maxDate - minDate || 1;
+
+        // Bars
+        let barsHtml = segments.map(seg => {
+            const startMs = seg.start.getTime();
+            const endMs = seg.end.getTime();
+            const leftPct = ((startMs - minDate) / totalDuration) * 100;
+            const widthPct = ((endMs - startMs) / totalDuration) * 100;
+            const key = keyOf(seg);
+            const color = colorMap[key] || '#94a3b8';
+            const days = ((endMs - startMs) / (1000 * 60 * 60 * 24)).toFixed(1);
+            const title = `${labelMap[key]} — ${seg.start.toLocaleDateString('en-GB')} → ${seg.end.toLocaleDateString('en-GB')} (${days}d)`;
+            return `<div class="absolute top-0 h-10 flex items-center justify-center text-white text-[9px] font-bold overflow-hidden border-r border-white/40"
+                        style="left:${leftPct}%; width:${widthPct}%; background-color:${color};"
+                        title="${escapeHtml(title)}">
+                        ${widthPct > 9 ? escapeHtml(labelMap[key]) : ''}
+                    </div>`;
+        }).join('');
+
+        // Date markers
+        const startDate = new Date(minDate);
+        const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
+        const step = Math.max(1, Math.ceil(totalDays / 8));
+        const dateMarkers = [];
+        for (let i = 0; i <= totalDays; i += step) {
+            const d = new Date(startDate);
+            d.setDate(d.getDate() + i);
+            const leftPct = ((d.getTime() - minDate) / totalDuration) * 100;
+            dateMarkers.push(`<div class="absolute top-12 text-[8px] text-gray-400 transform -translate-x-1/2 whitespace-nowrap" style="left:${leftPct}%">
+                ${d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+            </div>`);
+        }
+
+        // Legend
+        const uniqueKeys = [...new Set(segments.map(keyOf))];
+        const legendHtml = uniqueKeys.map(k => `
+            <div class="flex items-center gap-1 text-[10px] font-bold text-slate-600">
+                <div class="w-3 h-3 rounded-sm" style="background-color:${colorMap[k]}"></div>
+                <span>${escapeHtml(labelMap[k])}</span>
+            </div>
+        `).join('');
+
+        // Detail list
+        const detailList = segments.map(seg => {
+            const key = keyOf(seg);
+            const days = ((seg.end - seg.start) / (1000 * 60 * 60 * 24)).toFixed(1);
+            const pr = seg.pr;
+            return `<div class="flex justify-between items-center bg-slate-50 rounded-md px-2 py-1 text-[10px] border border-slate-100">
+                <span class="flex items-center gap-2">
+                    <span class="inline-block w-2.5 h-2.5 rounded-sm" style="background-color:${colorMap[key]}"></span>
+                    <span class="font-bold text-slate-700">${escapeHtml(labelMap[key])}</span>
+                    ${pr ? `<span class="text-[9px] text-indigo-600 font-mono">#${pr.id}</span>` : ''}
+                </span>
+                <span class="font-mono text-gray-500">${seg.start.toLocaleDateString('en-GB')} → ${seg.end.toLocaleDateString('en-GB')} <span class="text-slate-700 font-bold">(${days}d)</span></span>
+            </div>`;
+        }).join('');
+
+        const totalSpan = ((maxDate - minDate) / (1000 * 60 * 60 * 24)).toFixed(1);
+
+        container.innerHTML = `
+            <div class="mb-3 flex flex-wrap gap-3 items-center justify-between">
+                <div class="flex flex-wrap gap-3">${legendHtml}</div>
+                <div class="text-[10px] text-slate-500 font-bold">Total: ${totalSpan} days</div>
+            </div>
+            <div class="relative bg-slate-50 rounded-lg p-2 pt-2" style="height:72px;">
+                <div class="relative h-10 rounded overflow-hidden">${barsHtml}</div>
+                ${dateMarkers.join('')}
+            </div>
+            <div class="mt-3 space-y-1">${detailList}</div>
+        `;
+    },
+
+    // ---- Public API: load + render ----
+    async loadAndRender(story, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (db.workItemHistory?.[story.id] !== undefined) {
+            this.render(story, containerId);
+            return;
+        }
+
+        container.innerHTML = `<div class="text-center text-gray-400 text-sm py-4">
+            <div class="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+            Loading state history from Azure...
+        </div>`;
+
+        const history = await this.ensureHistory(story.id);
+        if (history === null) {
+            container.innerHTML = `<div class="text-center text-amber-600 text-sm py-4">⚠️ Could not load history (no Azure PAT or network issue).</div>`;
+            return;
+        }
+        this.render(story, containerId);
     }
 };
 
@@ -3053,85 +3341,104 @@ const ui = {
         currentData = [...reorderedData, ...backlogStories];
         this.renderWorkload();
     },
-    openStoryModal(storyId) {
-        const s = currentData.find(item => item.id.toString() === storyId.toString());
-        if (!s) return;
-        const modal = document.getElementById('story-modal');
-        const title = document.getElementById('modal-title');
-        const body = document.getElementById('modal-body');
-        title.innerText = `[#${s.id}] ${s.title}`;
-        if (isBacklogStory(s)) {
-            body.innerHTML = `
-                <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Business Area</p><p class="font-semibold text-slate-700">${escapeHtml(s.area)}</p></div>
-                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Priority</p><p class="font-semibold text-slate-700">P${escapeHtml(s.priority)}</p></div>
-                </div>
-                <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
-                    <div class="flex items-center gap-2 text-purple-700"><span class="text-lg">📋</span><span class="font-bold">This story is in the Backlog</span></div>
-                    <p class="text-sm text-slate-600 mt-2">State: ${escapeHtml(s.state)}</p>
-                    ${s.expectedRelease ? `<p class="text-sm text-slate-600">Expected Release: ${escapeHtml(s.expectedRelease.toLocaleDateString('en-GB'))}</p>` : ''}
-                    ${s.assignedTo ? `<p class="text-sm text-slate-600">Assigned To: ${escapeHtml(s.assignedTo)}</p>` : ''}
-                </div>
-                <div class="mt-6 p-4 bg-google-blue-light rounded-xl border border-google-blue/30">
-                    <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? escapeHtml(s.expectedRelease.toLocaleDateString()) : 'Not Scheduled'}</span></div>
-                </div>
-            `;
-        } else {
-            const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
-            body.innerHTML = `
-                <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Business Area</p><p class="font-semibold text-slate-700">${escapeHtml(s.area)}</p></div>
-                    <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Priority</p><p class="font-semibold text-slate-700">P${escapeHtml(s.priority)}</p></div>
-                </div>
-                <div class="space-y-4">
-                    <h4 class="font-bold text-google-blue border-b pb-1">🛠 Development Details</h4>
-                    <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Assigned To:</b> ${escapeHtml(s.assignedTo)}</p><p><b>Dev End:</b> ${s.calc.devEnd instanceof Date ? escapeHtml(s.calc.devEnd.toLocaleString()) : 'TBD'}</p></div>
-                    <div class="space-y-1">${nonTestTasks.map(t => `
-                        <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
-                            <span class="flex items-start gap-2"><span class="font-mono text-google-blue font-bold bg-google-blue-light px-1 rounded">#${escapeHtml(t['ID'])}</span><span>${escapeHtml(t['Title'])}</span></span>
-                            <span class="px-2 rounded h-fit ${t['State'] === 'Closed' ? 'bg-google-green-light text-google-green' : 'bg-google-yellow-light text-amber-700'}">${escapeHtml(t['State'])}</span>
-                        </div>
-                    `).join('')}</div>
-                </div>
-                ${this.renderPullRequestsForStory(s)}
-                <div class="space-y-4">
-                    <h4 class="font-bold text-purple-700 border-b pb-1">🔍 QA & Testing</h4>
-                    <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Tester:</b> ${escapeHtml(s.tester)}</p><p><b>Test End:</b> ${s.calc.testEnd instanceof Date ? escapeHtml(s.calc.testEnd.toLocaleString()) : 'Waiting'}</p></div>
-                    <div class="space-y-1">${s.testCases && s.testCases.length > 0 ? s.testCases.map(tc => `
-                        <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
-                            <span>TC #${escapeHtml(tc.id)}</span>
-                            <span class="font-bold ${tc.state === 'Pass' ? 'text-google-green' : 'text-google-red'}">${escapeHtml(tc.state)}</span>
-                        </div>
-                    `).join('') : '<p class="text-xs text-gray-400 italic">No test cases linked yet.</p>'}</div>
-                </div>
-                ${s.bugs && s.bugs.length > 0 ? `
-<div class="space-y-2">
-    <h4 class="font-bold text-google-red border-b pb-1">🐞 Bugs (${s.bugs.length})</h4>
-    ${s.bugs.map(b => `
-        <div class="text-[11px] border-l-2 border-google-red pl-2 py-1">
-            <div class="flex justify-between items-start gap-2">
-                <p class="font-bold flex-1">
-                    <span class="font-mono text-google-red bg-google-red-light px-1.5 py-0.5 rounded text-[10px] mr-1">#${escapeHtml(b['ID'])}</span>
-                    ${escapeHtml(b['Title'])}
-                </p>
-            </div>
-            <p class="text-gray-500 mt-0.5">
-                <span class="font-bold">State:</span> ${escapeHtml(b['State'])} |
-                <span class="font-bold">Estimation:</span> ${escapeHtml(b['Original Estimation'])}h |
-                <span class="font-bold">Assigned To:</span> ${escapeHtml(b['Assigned To'] || 'Unassigned')}
-            </p>
+   openStoryModal(storyId) {
+    const s = currentData.find(item => item.id.toString() === storyId.toString());
+    if (!s) return;
+    const modal = document.getElementById('story-modal');
+    const title = document.getElementById('modal-title');
+    const body = document.getElementById('modal-body');
+    title.innerText = `[#${s.id}] ${s.title}`;
+
+    const timelineContainerId = `story-timeline-container-${s.id}`;
+    const timelineBlockHtml = `
+        <div class="mt-6 border-t-2 border-dashed border-indigo-200 pt-4">
+            <h4 class="font-bold text-slate-700 text-sm mb-3 flex items-center gap-2">
+                📅 Story Timeline
+                <span class="text-[10px] font-normal text-gray-400">(state history + PR overlays)</span>
+            </h4>
+            <div id="${timelineContainerId}"></div>
         </div>
-    `).join('')}
-</div>` : ''}
-                <div class="mt-6 p-4 bg-google-blue-light rounded-xl border border-google-blue/30">
-                    <div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-google-blue uppercase">Internal Delivery Target</span><span class="text-sm font-bold text-google-blue">${s.calc.finalEnd instanceof Date ? escapeHtml(s.calc.finalEnd.toLocaleString()) : 'Calculating...'}</span></div>
-                    <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? escapeHtml(s.expectedRelease.toLocaleDateString()) : 'Not Scheduled'}</span></div>
+    `;
+
+    if (isBacklogStory(s)) {
+        body.innerHTML = `
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Business Area</p><p class="font-semibold text-slate-700">${escapeHtml(s.area)}</p></div>
+                <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Priority</p><p class="font-semibold text-slate-700">P${escapeHtml(s.priority)}</p></div>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                <div class="flex items-center gap-2 text-purple-700"><span class="text-lg">📋</span><span class="font-bold">This story is in the Backlog</span></div>
+                <p class="text-sm text-slate-600 mt-2">State: ${escapeHtml(s.state)}</p>
+                ${s.expectedRelease ? `<p class="text-sm text-slate-600">Expected Release: ${escapeHtml(s.expectedRelease.toLocaleDateString('en-GB'))}</p>` : ''}
+                ${s.assignedTo ? `<p class="text-sm text-slate-600">Assigned To: ${escapeHtml(s.assignedTo)}</p>` : ''}
+            </div>
+            <div class="mt-6 p-4 bg-google-blue-light rounded-xl border border-google-blue/30">
+                <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? escapeHtml(s.expectedRelease.toLocaleDateString()) : 'Not Scheduled'}</span></div>
+            </div>
+        `;
+    } else {
+        const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
+        body.innerHTML = `
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Business Area</p><p class="font-semibold text-slate-700">${escapeHtml(s.area)}</p></div>
+                <div class="bg-slate-50 p-3 rounded-lg"><p class="text-gray-500 text-xs font-bold uppercase">Priority</p><p class="font-semibold text-slate-700">P${escapeHtml(s.priority)}</p></div>
+            </div>
+            <div class="space-y-4">
+                <h4 class="font-bold text-google-blue border-b pb-1">🛠 Development Details</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Assigned To:</b> ${escapeHtml(s.assignedTo)}</p><p><b>Dev End:</b> ${s.calc.devEnd instanceof Date ? escapeHtml(s.calc.devEnd.toLocaleString()) : 'TBD'}</p></div>
+                <div class="space-y-1">${nonTestTasks.map(t => `
+                    <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
+                        <span class="flex items-start gap-2"><span class="font-mono text-google-blue font-bold bg-google-blue-light px-1 rounded">#${escapeHtml(t['ID'])}</span><span>${escapeHtml(t['Title'])}</span></span>
+                        <span class="px-2 rounded h-fit ${t['State'] === 'Closed' ? 'bg-google-green-light text-google-green' : 'bg-google-yellow-light text-amber-700'}">${escapeHtml(t['State'])}</span>
+                    </div>
+                `).join('')}</div>
+            </div>
+            ${this.renderPullRequestsForStory(s)}
+            <div class="space-y-4">
+                <h4 class="font-bold text-purple-700 border-b pb-1">🔍 QA & Testing</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs"><p><b>Tester:</b> ${escapeHtml(s.tester)}</p><p><b>Test End:</b> ${s.calc.testEnd instanceof Date ? escapeHtml(s.calc.testEnd.toLocaleString()) : 'Waiting'}</p></div>
+                <div class="space-y-1">${s.testCases && s.testCases.length > 0 ? s.testCases.map(tc => `
+                    <div class="flex justify-between text-[11px] bg-white border p-2 rounded shadow-sm">
+                        <span>TC #${escapeHtml(tc.id)}</span>
+                        <span class="font-bold ${tc.state === 'Pass' ? 'text-google-green' : 'text-google-red'}">${escapeHtml(tc.state)}</span>
+                    </div>
+                `).join('') : '<p class="text-xs text-gray-400 italic">No test cases linked yet.</p>'}</div>
+            </div>
+            ${s.bugs && s.bugs.length > 0 ? `
+                <div class="space-y-2">
+                    <h4 class="font-bold text-google-red border-b pb-1">🐞 Bugs (${s.bugs.length})</h4>
+                    ${s.bugs.map(b => `
+                        <div class="text-[11px] border-l-2 border-google-red pl-2 py-1">
+                            <div class="flex justify-between items-start gap-2">
+                                <p class="font-bold flex-1">
+                                    <span class="font-mono text-google-red bg-google-red-light px-1.5 py-0.5 rounded text-[10px] mr-1">#${escapeHtml(b['ID'])}</span>
+                                    ${escapeHtml(b['Title'])}
+                                </p>
+                            </div>
+                            <p class="text-gray-500 mt-0.5">
+                                <span class="font-bold">State:</span> ${escapeHtml(b['State'])} |
+                                <span class="font-bold">Estimation:</span> ${escapeHtml(b['Original Estimation'])}h |
+                                <span class="font-bold">Assigned To:</span> ${escapeHtml(b['Assigned To'] || 'Unassigned')}
+                            </p>
+                        </div>
+                    `).join('')}
                 </div>
-            `;
-        }
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    },
+            ` : ''}
+            <div class="mt-6 p-4 bg-google-blue-light rounded-xl border border-google-blue/30">
+                <div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-google-blue uppercase">Internal Delivery Target</span><span class="text-sm font-bold text-google-blue">${s.calc.finalEnd instanceof Date ? escapeHtml(s.calc.finalEnd.toLocaleString()) : 'Calculating...'}</span></div>
+                <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-500 uppercase">Client Release Date</span><span class="text-sm font-bold text-slate-700">${s.expectedRelease instanceof Date ? escapeHtml(s.expectedRelease.toLocaleDateString()) : 'Not Scheduled'}</span></div>
+            </div>
+            ${timelineBlockHtml}
+        `;
+    }
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // ✅ Load timeline lazily (async, after modal is shown)
+    if (!isBacklogStory(s) && isRegularStory(s)) {
+        timelineManager.loadAndRender(s, timelineContainerId);
+    }
+},
     closeModal() {
         document.getElementById('story-modal').classList.add('hidden');
         document.body.style.overflow = 'auto';
@@ -4131,71 +4438,104 @@ const azureDevOps = {
 
     // ============ Pull Requests Fetcher ============
     async fetchPullRequests(authHeader) {
-        const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests?searchCriteria.status=all&$top=500&$expand=WorkItems&api-version=7.1`;
-        const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
+    const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests?searchCriteria.status=all&$top=500&$expand=WorkItems&api-version=7.1`;
+    const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
 
-        if (!res.ok) {
-            throw new Error(`فشل جلب الـ Pull Requests (${res.status} ${res.statusText}).`);
+    if (!res.ok) {
+        throw new Error(`فشل جلب الـ Pull Requests (${res.status} ${res.statusText}).`);
+    }
+    const data = await res.json();
+    if (!data || !Array.isArray(data.value)) {
+        console.warn('⚠️ Azure لم يُرجع أي Pull Requests.');
+        return [];
+    }
+
+    console.log(`✅ تم استلام ${data.value.length} Pull Request من Azure.`);
+
+    return data.value.map(pr => {
+        const creationDate = pr.creationDate ? new Date(pr.creationDate) : null;
+        const closedDate = pr.closedDate ? new Date(pr.closedDate) : null;
+
+        let cycleTimeHours = null;
+        if (pr.status === 'completed' && creationDate && closedDate) {
+            cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
         }
-        const data = await res.json();
-        if (!data || !Array.isArray(data.value)) {
-            console.warn('⚠️ Azure لم يُرجع أي Pull Requests.');
-            return [];
+
+        // ✅ NEW: نحتفظ بكل الـ Work Item Refs عشان نقدر نعمل parent resolution
+        const linkedWorkItemIds = (pr.workItemRefs || []).map(w => w.id.toString());
+        let linkedStoryId = linkedWorkItemIds.length > 0 ? linkedWorkItemIds[0] : null;
+
+        // Fallback لو الـ API مارجعش WorkItems
+        if (!linkedStoryId) {
+            const titleMatch = (pr.title || '').match(/#?(\d{4,6})/);
+            linkedStoryId = titleMatch ? titleMatch[1] : null;
         }
 
-        console.log(`✅ تم استلام ${data.value.length} Pull Request من Azure.`);
-
-        return data.value.map(pr => {
-            const creationDate = pr.creationDate ? new Date(pr.creationDate) : null;
-            const closedDate = pr.closedDate ? new Date(pr.closedDate) : null;
-
-            let cycleTimeHours = null;
-            if (pr.status === 'completed' && creationDate && closedDate) {
-                cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
-            }
-
-            // ✅ استخراج الـ Work Item المرتبط (Parent) من Azure API بدلاً من العنوان
-            let linkedStoryId = null;
-            if (pr.workItemRefs && pr.workItemRefs.length > 0) {
-                linkedStoryId = pr.workItemRefs[0].id.toString();
-            } else {
-                // Fallback لو الـ API مارجعش WorkItems
-                const titleMatch = (pr.title || '').match(/#?(\d{4,6})/);
-                linkedStoryId = titleMatch ? titleMatch[1] : null;
-            }
-
-            return {
-                id: pr.pullRequestId,
-                title: pr.title || '',
-                status: pr.status || 'unknown',
-                createdBy: pr.createdBy?.displayName || 'Unknown',
-                repository: pr.repository?.name || 'N/A',
-                creationDate: creationDate ? creationDate.toISOString() : null,
-                closedDate: closedDate ? closedDate.toISOString() : null,
-                cycleTimeHours: cycleTimeHours,
-                linkedStoryId: linkedStoryId,
-                sourceRefName: pr.sourceRefName || '',
-                targetRefName: pr.targetRefName || '',
-                reviewers: (pr.reviewers || []).map(r => ({
-                    name: r.displayName || 'Unknown',
-                    vote: r.vote != null ? r.vote : 0
-                }))
-            };
-        });
-    },
-
-    linkPullRequestsToStories() {
-        const linkFn = (stories) => {
-            (stories || []).forEach(story => {
-                story.pullRequests = (db.pullRequests || []).filter(pr =>
-                    pr.linkedStoryId && pr.linkedStoryId.toString() === story.id.toString()
-                );
-            });
+        return {
+            id: pr.pullRequestId,
+            title: pr.title || '',
+            status: pr.status || 'unknown',
+            createdBy: pr.createdBy?.displayName || 'Unknown',
+            repository: pr.repository?.name || 'N/A',
+            creationDate: creationDate ? creationDate.toISOString() : null,
+            closedDate: closedDate ? closedDate.toISOString() : null,
+            cycleTimeHours: cycleTimeHours,
+            linkedStoryId: linkedStoryId,
+            linkedWorkItemIds: linkedWorkItemIds,
+            sourceRefName: pr.sourceRefName || '',
+            targetRefName: pr.targetRefName || '',
+            reviewers: (pr.reviewers || []).map(r => ({
+                name: r.displayName || 'Unknown',
+                vote: r.vote != null ? r.vote : 0
+            }))
         };
-        linkFn(db.currentStories);
-        linkFn(db.backlogStories);
-    },
+    });
+},
 
+linkPullRequestsToStories() {
+    const allStories = [...(db.currentStories || []), ...(db.backlogStories || [])];
+    const storyIdSet = new Map();
+    allStories.forEach(s => storyIdSet.set(s.id.toString(), s));
+
+    const findStoryForPR = (pr) => {
+        // 1) Direct match
+        if (pr.linkedStoryId && storyIdSet.has(pr.linkedStoryId.toString())) {
+            return storyIdSet.get(pr.linkedStoryId.toString());
+        }
+
+        // 2) Resolve via workItemsMap (parent chain)
+        const ids = pr.linkedWorkItemIds || (pr.linkedStoryId ? [pr.linkedStoryId] : []);
+        for (const wid of ids) {
+            let current = db.workItemsMap?.[wid];
+            let depth = 0;
+            while (current && depth < 5) {
+                if (storyIdSet.has(current.id.toString())) {
+                    return storyIdSet.get(current.id.toString());
+                }
+                if (current.parentId && db.workItemsMap?.[current.parentId]) {
+                    current = db.workItemsMap[current.parentId];
+                } else {
+                    break;
+                }
+                depth++;
+            }
+        }
+        return null;
+    };
+
+    // Reset
+    allStories.forEach(story => { story.pullRequests = []; });
+
+    (db.pullRequests || []).forEach(pr => {
+        const story = findStoryForPR(pr);
+        if (story) {
+            if (!story.pullRequests) story.pullRequests = [];
+            story.pullRequests.push(pr);
+        }
+    });
+
+    console.log(`✅ Linked ${db.pullRequests.length} PRs to stories.`);
+},
     buildRowsFromRelations(relations, detailsMap) {
         const rows = [];
         relations.forEach(rel => {
@@ -4307,6 +4647,7 @@ window.onload = () => {
     if (!db.standupCommentsStore) db.standupCommentsStore = {};
     if (!db.pullRequests) db.pullRequests = [];
     if (!db.workItemsMap) db.workItemsMap = {};
+    if (!db.workItemHistory) db.workItemHistory = {};
     const saved = localStorage.getItem('saved_creds');
     if (saved) {
         const creds = JSON.parse(saved);
@@ -4315,5 +4656,6 @@ window.onload = () => {
         document.getElementById('gh-token').value = creds.t;
         document.getElementById('az-pat').value = creds.azPat;
         auth.handleLogin();
+        
     }
 };
