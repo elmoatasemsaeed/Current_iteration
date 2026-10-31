@@ -1236,20 +1236,27 @@ const timelineManager = {
             const data = await res.json();
             const stateChanges = [];
             (data.value || []).forEach(update => {
-                const fields = update.fields || {};
-                if (fields['System.State']) {
-                    const oldVal = fields['System.State'].oldValue;
-                    const newVal = fields['System.State'].newValue;
-                    if (oldVal !== newVal && newVal) {
-                        stateChanges.push({
-                            oldState: oldVal || 'New',
-                            newState: newVal,
-                            changedDate: update.revisedDate,
-                            changedBy: update.revisedBy?.displayName || 'Unknown'
-                        });
-                    }
-                }
+    const fields = update.fields || {};
+    if (fields['System.State']) {
+        const oldVal = fields['System.State'].oldValue;
+        const newVal = fields['System.State'].newValue;
+        if (oldVal !== newVal && newVal) {
+            
+            // ✅ Fix: تنظيف التاريخ الوهمي
+            let revDate = update.revisedDate;
+            if (!revDate || revDate.toString().startsWith('9999')) {
+                revDate = fields['System.ChangedDate']?.newValue || new Date().toISOString();
+            }
+
+            stateChanges.push({
+                oldState: oldVal || 'New',
+                newState: newVal,
+                changedDate: revDate,
+                changedBy: update.revisedBy?.displayName || 'Unknown'
             });
+        }
+    }
+});
 
             db.workItemHistory[storyId] = stateChanges;
 
@@ -1267,6 +1274,27 @@ const timelineManager = {
 
     // ---- Build timeline segments (pure logic) ----
     buildSegments(story) {
+    // ✅ Fix: فلترة أي تواريخ 9999 قديمة موجودة في الداتابيز
+    const history = (db.workItemHistory?.[story.id] || [])
+        .filter(h => h.changedDate && !h.changedDate.toString().startsWith('9999'));
+
+    const prs = (db.pullRequests || [])
+        .filter(pr => pr.linkedStoryId && pr.linkedStoryId.toString() === story.id.toString() && pr.creationDate)
+        .map(pr => ({
+            ...pr,
+            created: new Date(pr.creationDate),
+            // ✅ Fix: تنظيف الـ PRs لو كانت محفوظة بـ 9999
+            closed: (pr.closedDate && !pr.closedDate.toString().startsWith('9999')) 
+                ? new Date(pr.closedDate) 
+                : new Date()
+        }))
+        .sort((a, b) => a.created - b.created);
+
+    const sortedHistory = [...history]
+        .filter(h => h.changedDate)
+        .sort((a, b) => new Date(a.changedDate) - new Date(b.changedDate));
+
+    if (sortedHistory.length === 0) return [];
         const history = db.workItemHistory?.[story.id] || [];
         const prs = (db.pullRequests || [])
             .filter(pr => pr.linkedStoryId && pr.linkedStoryId.toString() === story.id.toString() && pr.creationDate)
@@ -4454,8 +4482,9 @@ const azureDevOps = {
 
     return data.value.map(pr => {
         const creationDate = pr.creationDate ? new Date(pr.creationDate) : null;
-        const closedDate = pr.closedDate ? new Date(pr.closedDate) : null;
-
+        const closedDate = (pr.closedDate && !pr.closedDate.toString().startsWith('9999')) 
+    ? new Date(pr.closedDate) 
+    : null;
         let cycleTimeHours = null;
         if (pr.status === 'completed' && creationDate && closedDate) {
             cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
