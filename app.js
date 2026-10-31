@@ -1317,7 +1317,7 @@ const timelineManager = {
             } else if (seg.state === 'Active' && hitFirstResolved) {
                 phase = 'bugfix'; // reopened after testing
             } else if (seg.state === 'Tested' || seg.state === 'Closed') {
-                phase = 'done';
+                phase = 'Tested';
             } else if (seg.state === 'On-Hold') {
                 phase = 'onhold';
             }
@@ -1390,7 +1390,7 @@ const timelineManager = {
             bugfix:      '#ef4444',
             bugreview:   '#f97316',
             onhold:      '#94a3b8',
-            done:        '#10b981'
+            Tested:        '#10b981'
         };
         const labelMap = {
             development: 'Development',
@@ -1399,7 +1399,7 @@ const timelineManager = {
             bugfix:      'Bug Fixing',
             bugreview:   'Bug Review',
             onhold:      'On Hold',
-            done:        'Done'
+            Tested:      'Tested since'
         };
         const keyOf = (seg) => {
             if (seg.phase === 'development') return seg.subtype === 'review' ? 'review' : 'development';
