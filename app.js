@@ -1273,29 +1273,9 @@ const timelineManager = {
     },
 
     // ---- Build timeline segments (pure logic) ----
-    buildSegments(story) {
-    // ✅ Fix: فلترة أي تواريخ 9999 قديمة موجودة في الداتابيز
-    const history = (db.workItemHistory?.[story.id] || [])
-        .filter(h => h.changedDate && !h.changedDate.toString().startsWith('9999'));
-
-    const prs = (db.pullRequests || [])
-        .filter(pr => pr.linkedStoryId && pr.linkedStoryId.toString() === story.id.toString() && pr.creationDate)
-        .map(pr => ({
-            ...pr,
-            created: new Date(pr.creationDate),
-            // ✅ Fix: تنظيف الـ PRs لو كانت محفوظة بـ 9999
-            closed: (pr.closedDate && !pr.closedDate.toString().startsWith('9999')) 
-                ? new Date(pr.closedDate) 
-                : new Date()
-        }))
-        .sort((a, b) => a.created - b.created);
-
-    const sortedHistory = [...history]
-        .filter(h => h.changedDate)
-        .sort((a, b) => new Date(a.changedDate) - new Date(b.changedDate));
-
-    if (sortedHistory.length === 0) return [];
-        const history = db.workItemHistory?.[story.id] || [];
+        buildSegments(story) {
+        // ✅ تم تغيير اسم المتغير من history إلى storyHistory لتجنب التعارض مع window.history
+        const storyHistory = db.workItemHistory?.[story.id] || [];
         const prs = (db.pullRequests || [])
             .filter(pr => pr.linkedStoryId && pr.linkedStoryId.toString() === story.id.toString() && pr.creationDate)
             .map(pr => ({
@@ -1305,7 +1285,8 @@ const timelineManager = {
             }))
             .sort((a, b) => a.created - b.created);
 
-        const sortedHistory = [...history]
+        // ✅ التعديل هنا كمان
+        const sortedHistory = [...storyHistory]
             .filter(h => h.changedDate)
             .sort((a, b) => new Date(a.changedDate) - new Date(b.changedDate));
 
