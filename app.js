@@ -1615,7 +1615,7 @@ renderMini(story) {
         </div>
         <div class="relative h-2 rounded-full overflow-hidden bg-gray-100 cursor-help">${barsHtml}</div>
     </div>`;
-},
+};
 
 // =================================================================
 // UI RENDERING (UPDATED WITH NEW CLASSES & LIGHT BACKGROUNDS)
