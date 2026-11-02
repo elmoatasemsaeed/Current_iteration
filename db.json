@@ -3997,12 +3997,12 @@
         {
           "id": 8471,
           "title": "Merge CR 180594 to main",
-          "status": "active",
+          "status": "completed",
           "createdBy": "Ahmed Farag",
           "repository": "WebLDM-Liquibase",
           "creationDate": "2026-11-02T13:41:08.795Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-11-02T14:57:01.745Z",
+          "cycleTimeHours": 1.2647083333333333,
           "linkedStoryId": "180594",
           "linkedWorkItemIds": [],
           "sourceRefName": "refs/heads/Farag",
@@ -4010,11 +4010,19 @@
           "reviewers": [
             {
               "name": "[LDM]\\DB-Approvers",
-              "vote": 0
+              "vote": 10
             },
             {
               "name": "[LDM]\\APP-Approvers",
-              "vote": 0
+              "vote": 10
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 10
+            },
+            {
+              "name": "Ahmed Attia",
+              "vote": 10
             }
           ]
         },
@@ -13628,42 +13636,6 @@
           "linkedStoryId": "180055",
           "linkedWorkItemIds": [],
           "sourceRefName": "refs/heads/develop_US187576",
-          "targetRefName": "refs/heads/develop",
-          "reviewers": [
-            {
-              "name": "Bardis Maher",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Fawzy",
-              "vote": 0
-            },
-            {
-              "name": "Mohamed Salah-Eddin",
-              "vote": 10
-            },
-            {
-              "name": "gamal kasem",
-              "vote": 0
-            },
-            {
-              "name": "Fatma Fayed",
-              "vote": 0
-            }
-          ]
-        },
-        {
-          "id": 7902,
-          "title": "US #180055 : Fix design issues",
-          "status": "completed",
-          "createdBy": "Ola Gamal",
-          "repository": "LDM",
-          "creationDate": "2026-10-13T14:22:53.562Z",
-          "closedDate": "2026-10-13T14:23:47.388Z",
-          "cycleTimeHours": 0.014951666666666667,
-          "linkedStoryId": "180055",
-          "linkedWorkItemIds": [],
-          "sourceRefName": "refs/heads/develop_kh+",
           "targetRefName": "refs/heads/develop",
           "reviewers": [
             {
@@ -45153,7 +45125,40 @@
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
-      "pullRequests": []
+      "pullRequests": [
+        {
+          "id": 8482,
+          "title": "Integration: SL #195997 Unified all dates (registration, review, perform, col...",
+          "status": "abandoned",
+          "createdBy": "Hamza Ashry",
+          "repository": "LDM",
+          "creationDate": "2026-11-02T14:24:21.824Z",
+          "closedDate": "2026-11-02T14:26:28.220Z",
+          "cycleTimeHours": null,
+          "linkedStoryId": "195997",
+          "linkedWorkItemIds": [],
+          "sourceRefName": "refs/heads/Master_PreProduction_Integraion_SL_195997",
+          "targetRefName": "refs/heads/Master_PreProduction",
+          "reviewers": [
+            {
+              "name": "Bardis Maher",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": -10
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": 196003,
@@ -48131,6 +48136,70 @@
       "linkedProjectId": null,
       "pullRequests": [
         {
+          "id": 8484,
+          "title": "SL #195910 Bug #196056 Qality Control : stale open connections ",
+          "status": "active",
+          "createdBy": "Mahmoud Ahmed",
+          "repository": "LDM",
+          "creationDate": "2026-11-02T14:55:07.056Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "195910",
+          "linkedWorkItemIds": [],
+          "sourceRefName": "refs/heads/Master_PreProduction_195991",
+          "targetRefName": "refs/heads/Master_PreProduction",
+          "reviewers": [
+            {
+              "name": "Bardis Maher",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        },
+        {
+          "id": 8475,
+          "title": "US #195910 Bug #196014",
+          "status": "completed",
+          "createdBy": "Ibrahim Ahmed",
+          "repository": "LDM",
+          "creationDate": "2026-11-02T14:13:38.773Z",
+          "closedDate": "2026-11-02T15:23:51.685Z",
+          "cycleTimeHours": 1.1702533333333334,
+          "linkedStoryId": "195910",
+          "linkedWorkItemIds": [],
+          "sourceRefName": "refs/heads/Master_PreProduction_195984",
+          "targetRefName": "refs/heads/Master_PreProduction",
+          "reviewers": [
+            {
+              "name": "Bardis Maher",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 10
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        },
+        {
           "id": 8473,
           "title": "SL #195910 Bug #196036 - Release : Manage Services fix grid stuck on loading spinner after browser Back from Service Details by using the shared mngControlsRequestStarted handler (Common.js) on the RadAjaxManager, which disables AJAX for EditButton and InitInsertButton as well as the export buttons, so they do a normal postback",
           "status": "active",
@@ -48814,6 +48883,211 @@
   },
   "pullRequests": [
     {
+      "id": 8488,
+      "title": "Fix report issues",
+      "status": "completed",
+      "createdBy": "Ola Gamal",
+      "repository": "LDM",
+      "creationDate": "2026-11-02T15:14:23.456Z",
+      "closedDate": "2026-11-02T15:22:26.764Z",
+      "cycleTimeHours": 0.13425222222222222,
+      "linkedStoryId": null,
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Master_187576",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Maher",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 10
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8484,
+      "title": "SL #195910 Bug #196056 Qality Control : stale open connections ",
+      "status": "active",
+      "createdBy": "Mahmoud Ahmed",
+      "repository": "LDM",
+      "creationDate": "2026-11-02T14:55:07.056Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "195910",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Master_PreProduction_195991",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Maher",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8482,
+      "title": "Integration: SL #195997 Unified all dates (registration, review, perform, col...",
+      "status": "abandoned",
+      "createdBy": "Hamza Ashry",
+      "repository": "LDM",
+      "creationDate": "2026-11-02T14:24:21.824Z",
+      "closedDate": "2026-11-02T14:26:28.220Z",
+      "cycleTimeHours": null,
+      "linkedStoryId": "195997",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Master_PreProduction_Integraion_SL_195997",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Maher",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": -10
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8481,
+      "title": "SAJA_REPORTS_PKG header: RegistrationDate TO_DATE format DD-MM-YYYY HH24:MI (...",
+      "status": "completed",
+      "createdBy": "Moamen SalahElDeen",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-11-02T14:20:41.758Z",
+      "closedDate": "2026-11-02T14:55:55.718Z",
+      "cycleTimeHours": 0.5872111111111111,
+      "linkedStoryId": null,
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Saja_regdate_fix_main",
+      "targetRefName": "refs/heads/main",
+      "reviewers": [
+        {
+          "name": "[LDM]\\DB-Approvers",
+          "vote": 10
+        },
+        {
+          "name": "[LDM]\\APP-Approvers",
+          "vote": 10
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 10
+        },
+        {
+          "name": "Ahmed Attia",
+          "vote": 10
+        }
+      ]
+    },
+    {
+      "id": 8480,
+      "title": "SAJA_REPORTS_PKG header: RegistrationDate TO_DATE format DD-MM-YYYY HH24:MI (...",
+      "status": "completed",
+      "createdBy": "Moamen SalahElDeen",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-11-02T14:19:48.317Z",
+      "closedDate": "2026-11-02T14:20:02.506Z",
+      "cycleTimeHours": 0.003941388888888889,
+      "linkedStoryId": null,
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Saja_regdate_fix_master",
+      "targetRefName": "refs/heads/master",
+      "reviewers": []
+    },
+    {
+      "id": 8479,
+      "title": "SAJA_REPORTS_PKG header: RegistrationDate TO_DATE format DD-MM-YYYY HH24:MI (...",
+      "status": "completed",
+      "createdBy": "Moamen SalahElDeen",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-11-02T14:19:02.298Z",
+      "closedDate": "2026-11-02T14:19:10.191Z",
+      "cycleTimeHours": 0.0021925,
+      "linkedStoryId": null,
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Saja_regdate_fix_Saja_stage",
+      "targetRefName": "refs/heads/Saja_stage",
+      "reviewers": []
+    },
+    {
+      "id": 8475,
+      "title": "US #195910 Bug #196014",
+      "status": "completed",
+      "createdBy": "Ibrahim Ahmed",
+      "repository": "LDM",
+      "creationDate": "2026-11-02T14:13:38.773Z",
+      "closedDate": "2026-11-02T15:23:51.685Z",
+      "cycleTimeHours": 1.1702533333333334,
+      "linkedStoryId": "195910",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Master_PreProduction_195984",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Maher",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 10
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8474,
+      "title": "Saja alnum barcode Saja stage",
+      "status": "completed",
+      "createdBy": "Moamen SalahElDeen",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-11-02T14:08:02.478Z",
+      "closedDate": "2026-11-02T14:08:09.305Z",
+      "cycleTimeHours": 0.0018963888888888889,
+      "linkedStoryId": null,
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Saja_alnum_barcode_Saja_stage",
+      "targetRefName": "refs/heads/Saja_stage",
+      "reviewers": []
+    },
+    {
       "id": 8473,
       "title": "SL #195910 Bug #196036 - Release : Manage Services fix grid stuck on loading spinner after browser Back from Service Details by using the shared mngControlsRequestStarted handler (Common.js) on the RadAjaxManager, which disables AJAX for EditButton and InitInsertButton as well as the export buttons, so they do a normal postback",
       "status": "active",
@@ -48848,12 +49122,12 @@
     {
       "id": 8471,
       "title": "Merge CR 180594 to main",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Ahmed Farag",
       "repository": "WebLDM-Liquibase",
       "creationDate": "2026-11-02T13:41:08.795Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-02T14:57:01.745Z",
+      "cycleTimeHours": 1.2647083333333333,
       "linkedStoryId": "180594",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/Farag",
@@ -48861,11 +49135,19 @@
       "reviewers": [
         {
           "name": "[LDM]\\DB-Approvers",
-          "vote": 0
+          "vote": 10
         },
         {
           "name": "[LDM]\\APP-Approvers",
-          "vote": 0
+          "vote": 10
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 10
+        },
+        {
+          "name": "Ahmed Attia",
+          "vote": 10
         }
       ]
     },
@@ -49006,12 +49288,12 @@
     {
       "id": 8463,
       "title": "V2.0 Hassa 05 12 2025 SL 195875",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Ahmed Gamal",
       "repository": "LDM",
       "creationDate": "2026-11-02T12:41:42.300Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-02T14:24:58.230Z",
+      "cycleTimeHours": 1.7210916666666667,
       "linkedStoryId": "2025",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/V2.0_Hassa_05_12_2025_SL_195875",
@@ -63391,215 +63673,6 @@
         },
         {
           "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7904,
-      "title": "Merg Master into Release_unified_stage_branch to v4.3.0",
-      "status": "completed",
-      "createdBy": "Ahmed Attia",
-      "repository": "WebLDM-Liquibase",
-      "creationDate": "2026-10-13T14:29:11.164Z",
-      "closedDate": "2026-10-13T14:29:42.612Z",
-      "cycleTimeHours": 0.008735555555555555,
-      "linkedStoryId": null,
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/master",
-      "targetRefName": "refs/heads/Release_unified_stage_branch",
-      "reviewers": []
-    },
-    {
-      "id": 7903,
-      "title": "SL #191931",
-      "status": "completed",
-      "createdBy": "Ibrahim Ahmed",
-      "repository": "LDM",
-      "creationDate": "2026-10-13T14:24:52.906Z",
-      "closedDate": "2026-10-13T14:39:06.656Z",
-      "cycleTimeHours": 0.23715277777777777,
-      "linkedStoryId": "191931",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Masrter_PreProduction_191931",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 10
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7902,
-      "title": "US #180055 : Fix design issues",
-      "status": "completed",
-      "createdBy": "Ola Gamal",
-      "repository": "LDM",
-      "creationDate": "2026-10-13T14:22:53.562Z",
-      "closedDate": "2026-10-13T14:23:47.388Z",
-      "cycleTimeHours": 0.014951666666666667,
-      "linkedStoryId": "180055",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/develop_kh+",
-      "targetRefName": "refs/heads/develop",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "gamal kasem",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7899,
-      "title": "Merg Master into FARABI_stage to v4.3.0",
-      "status": "completed",
-      "createdBy": "Ahmed Attia",
-      "repository": "WebLDM-Liquibase",
-      "creationDate": "2026-10-13T14:18:29.025Z",
-      "closedDate": "2026-10-13T14:19:01.903Z",
-      "cycleTimeHours": 0.009132777777777778,
-      "linkedStoryId": null,
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/master",
-      "targetRefName": "refs/heads/Farabi_stage",
-      "reviewers": []
-    },
-    {
-      "id": 7898,
-      "title": "Merg Master into wareed_strage to v4.3.0",
-      "status": "completed",
-      "createdBy": "Ahmed Attia",
-      "repository": "WebLDM-Liquibase",
-      "creationDate": "2026-10-13T14:15:58.492Z",
-      "closedDate": "2026-10-13T14:17:18.423Z",
-      "cycleTimeHours": 0.022203055555555556,
-      "linkedStoryId": null,
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/master",
-      "targetRefName": "refs/heads/Wareed_stage",
-      "reviewers": []
-    },
-    {
-      "id": 7897,
-      "title": "CR #186731 - Saja Reports : Fix bugs",
-      "status": "completed",
-      "createdBy": "Mohamed Samy",
-      "repository": "LDM",
-      "creationDate": "2026-10-13T13:35:41.889Z",
-      "closedDate": "2026-10-13T13:36:24.651Z",
-      "cycleTimeHours": 0.011878333333333333,
-      "linkedStoryId": "186731",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Master_PreProduction_Bug#184323",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7896,
-      "title": "Enhanced Reports",
-      "status": "completed",
-      "createdBy": "Esraa Abd El Salam",
-      "repository": "LDM",
-      "creationDate": "2026-10-13T13:30:03.680Z",
-      "closedDate": "2026-10-14T10:43:43.742Z",
-      "cycleTimeHours": 21.227795,
-      "linkedStoryId": null,
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Master_PreProduction_EnhancedReports",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7895,
-      "title": "SL #191931",
-      "status": "completed",
-      "createdBy": "Ibrahim Ahmed",
-      "repository": "LDM",
-      "creationDate": "2026-10-13T13:26:26.305Z",
-      "closedDate": "2026-10-13T14:38:30.009Z",
-      "cycleTimeHours": 1.201028888888889,
-      "linkedStoryId": "191931",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/V3.0_AlBorgUAE_16-09_2025_191931",
-      "targetRefName": "refs/heads/V3.0_AlBorgUAE_16_09_2026",
-      "reviewers": [
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 10
-        },
-        {
-          "name": "gamal kasem",
-          "vote": 0
-        },
-        {
-          "name": "Dev Team",
-          "vote": 0
-        },
-        {
-          "name": "Mahmoud Salah",
           "vote": 0
         }
       ]
