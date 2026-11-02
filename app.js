@@ -306,7 +306,6 @@ function createStoryCard(story, options = {}) {
             <div onclick="ui.openStoryModal('${story.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-google-blue transition">${escapeHtml(story.title)}</div>
             ${projectSelectHtml}
             ${extraFields}
-            ${mode === 'regular' ? timelineManager.renderMini(story) : ''} 
         </div>
     `;
 }
@@ -1483,7 +1482,7 @@ const timelineManager = {
     },
 
     // ---- Public API: load + render ----
-       async loadAndRender(story, containerId) {
+    async loadAndRender(story, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
@@ -1503,117 +1502,9 @@ const timelineManager = {
             return;
         }
         this.render(story, containerId);
-    },
-    // ===== Mini timeline on Kanban cards =====
-    _pendingLoads: new Set(),
-    _attemptedLoads: new Set(),
-    _loadQueue: [],
-    _loadingCount: 0,
-    MAX_CONCURRENT: 3,
-
-    _queueLoad(storyId) {
-        const id = storyId.toString();
-        if (this._pendingLoads.has(id)) return;
-        if (this._attemptedLoads.has(id)) return;
-        if (db.workItemHistory?.[storyId] !== undefined) return;
-        this._pendingLoads.add(id);
-        this._attemptedLoads.add(id);
-        this._loadQueue.push(id);
-        this._processQueue();
-    },
-
-    async _processQueue() {
-        while (this._loadQueue.length > 0 && this._loadingCount < this.MAX_CONCURRENT) {
-            const storyId = this._loadQueue.shift();
-            this._loadingCount++;
-            try {
-                await this.ensureHistory(storyId);
-            } catch (e) {
-                console.warn(`Timeline load failed for #${storyId}:`, e);
-            } finally {
-                this._loadingCount--;
-                this._pendingLoads.delete(storyId);
-                this._refreshMiniTimeline(storyId);
-                this._processQueue();
-            }
-        }
-    },
-
-    _refreshMiniTimeline(storyId) {
-        const els = document.querySelectorAll(`.mini-timeline-container[data-story-id="${storyId}"]`);
-        if (els.length === 0) return;
-        const story = currentData.find(s => s.id.toString() === storyId.toString())
-                   || (db.backlogStories || []).find(s => s.id.toString() === storyId.toString());
-        if (!story) return;
-        els.forEach(el => {
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = this.renderMini(story);
-            const newEl = wrapper.firstElementChild;
-            if (newEl) el.replaceWith(newEl);
-            else el.remove();
-        });
-    },
-
-    renderMini(story) {
-        const id = story.id.toString();
-
-        if (db.workItemHistory?.[story.id] === undefined && !this._attemptedLoads.has(id)) {
-            this._queueLoad(story.id);
-            return `<div class="mini-timeline-container mt-3" data-story-id="${story.id}">
-                <div class="flex justify-between items-center mb-1">
-                    <span class="text-[8px] font-bold text-gray-300 uppercase tracking-wider">📅 Timeline</span>
-                    <span class="text-[8px] text-gray-300 font-mono">…</span>
-                </div>
-                <div class="h-2 rounded-full overflow-hidden bg-gray-100">
-                    <div class="h-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" style="width:100%"></div>
-                </div>
-            </div>`;
-        }
-
-        const segments = this.buildSegments(story);
-        if (!segments || segments.length === 0) return '';
-
-        const colorMap = {
-            development: '#3b82f6',
-            review:      '#f59e0b',
-            testing:     '#22c55e',
-            bugfix:      '#ef4444',
-            bugreview:   '#f97316',
-            onhold:      '#94a3b8',
-            Tested:      '#10b981'
-        };
-        const keyOf = (seg) => {
-            if (seg.phase === 'development') return seg.subtype === 'review' ? 'review' : 'development';
-            if (seg.phase === 'bugfix')      return seg.subtype === 'review' ? 'bugreview' : 'bugfix';
-            return seg.phase;
-        };
-
-        const minDate = Math.min(...segments.map(s => s.start.getTime()));
-        const maxDate = Math.max(...segments.map(s => s.end.getTime()));
-        const totalDuration = maxDate - minDate || 1;
-        const totalDays = ((maxDate - minDate) / (1000 * 60 * 60 * 24)).toFixed(1);
-
-        const barsHtml = segments.map(seg => {
-            const leftPct  = ((seg.start.getTime() - minDate) / totalDuration) * 100;
-            const widthPct = ((seg.end.getTime() - seg.start.getTime()) / totalDuration) * 100;
-            const key = keyOf(seg);
-            const color = colorMap[key] || '#94a3b8';
-            const days = ((seg.end - seg.start) / (1000 * 60 * 60 * 24)).toFixed(1);
-            const title = `${key} — ${seg.start.toLocaleDateString('en-GB')} → ${seg.end.toLocaleDateString('en-GB')} (${days}d)`;
-            return `<div class="absolute top-0 h-full border-r border-white/30 last:border-r-0"
-                         style="left:${leftPct}%; width:${widthPct}%; background-color:${color};"
-                         title="${escapeHtml(title)}"></div>`;
-        }).join('');
-
-        return `<div class="mini-timeline-container mt-3" data-story-id="${story.id}">
-            <div class="flex justify-between items-center mb-1">
-                <span class="text-[8px] font-bold text-gray-400 uppercase tracking-wider">📅 Timeline</span>
-                <span class="text-[8px] text-gray-500 font-mono font-bold">${totalDays}d</span>
-            </div>
-            <div class="relative h-2 rounded-full overflow-hidden bg-gray-100 cursor-help">${barsHtml}</div>
-        </div>`;
     }
 };
+
 // =================================================================
 // UI RENDERING (UPDATED WITH NEW CLASSES & LIGHT BACKGROUNDS)
 // =================================================================
