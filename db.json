@@ -6648,7 +6648,7 @@
       "id": 188171,
       "title": "Metra Labs - At Doctor Income report display doctor specialty next to each doctor (based on setup).",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "mohamed.abdelghany",
       "tester": "Unassigned",
       "area": "Front and Financial",
@@ -6660,7 +6660,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Metra Labs_468",
-      "changedDate": "2026-11-02T14:11:47.597Z",
+      "changedDate": "2026-11-02T15:26:55.397Z",
       "tasks": [
         {
           "ID": 194408,
@@ -6919,7 +6919,7 @@
           "ID": 196121,
           "Work Item Type": "Bug",
           "Title": "In Doctor Income Report, data in last week search dose not retrieve",
-          "Assigned To": "Abdelrahman Salman",
+          "Assigned To": "mohamed.abdelghany",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -6927,7 +6927,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-02T15:24:02.147Z",
+          "Changed Date": "2026-11-02T15:26:40.86Z",
           "Customer": "Metra Labs_468"
         }
       ],
@@ -10555,11 +10555,13 @@
       "tester": "Unassigned",
       "area": "LDM Integration",
       "priority": 1,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-11-02T10:55:51.540Z",
+      "changedDate": "2026-11-02T15:27:01.817Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -17458,11 +17460,13 @@
       "tester": "Hebatullah Mohamed",
       "area": "LDM Integration",
       "priority": 3,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-11-02T15:02:02.673Z",
+      "changedDate": "2026-11-02T15:26:11.953Z",
       "tasks": [],
       "bugs": [
         {
@@ -23270,12 +23274,13 @@
       "area": "Internal lab",
       "priority": 100,
       "tags": [
-        "enhanced report"
+        "enhanced report",
+        " PMD"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alfa Lab Egypt_424",
-      "changedDate": "2026-11-02T13:28:51.220Z",
+      "changedDate": "2026-11-02T15:26:38.880Z",
       "tasks": [
         {
           "ID": 194003,
@@ -45018,7 +45023,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-11-02T14:00:17.360Z",
+      "changedDate": "2026-11-02T15:26:50.510Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -45032,7 +45037,7 @@
       "customTags": [],
       "iterationPath": "LDM",
       "devActualTime": 2.5,
-      "testActualTime": 0,
+      "testActualTime": 5,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -45211,7 +45216,7 @@
       "expectedRelease": null,
       "branch": "Qatar",
       "customer": "Qatar MOI_96",
-      "changedDate": "2026-11-02T15:21:43.050Z",
+      "changedDate": "2026-11-02T15:27:13.070Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -45258,6 +45263,38 @@
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
       "devActualTime": 0.25,
       "testActualTime": 1,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 196115,
+      "title": "#Borg uae - issue in save result when patient name is too long",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Ahmed Attia",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "UAE",
+      "customer": "UAE",
+      "changedDate": "2026-11-02T15:24:59.780Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 0,
+      "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -96397,12 +96434,20 @@
       "parentId": null,
       "title": "Execution Task for CR 188171"
     },
+    "196115": {
+      "id": "196115",
+      "type": "Support log",
+      "area": "Internal lab",
+      "iterationPath": "LDM",
+      "parentId": null,
+      "title": "#Borg uae - issue in save result when patient name is too long"
+    },
     "196121": {
       "id": "196121",
       "type": "Bug",
       "area": "",
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": "188171",
+      "parentId": null,
       "title": "In Doctor Income Report, data in last week search dose not retrieve"
     }
   },
