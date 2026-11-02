@@ -837,6 +837,36 @@
           "State": "Active",
           "Changed Date": "2026-11-01T20:05:58.68Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 196037,
+          "Work Item Type": "Task",
+          "Title": "Review preparation",
+          "Assigned To": "Bothyna Mostafa",
+          "Activity": "Testing",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Home Visit\\2026\\home_visit October 22-05",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-02T12:56:13.55Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 196038,
+          "Work Item Type": "Task",
+          "Title": "Review execution",
+          "Assigned To": "Bothyna Mostafa",
+          "Activity": "Testing",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "Home Visit\\2026\\home_visit October 22-05",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-02T12:56:33.967Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [
@@ -1008,10 +1038,17 @@
           "state": "Pass"
         }
       ],
-      "reviews": [],
+      "reviews": [
+        {
+          "id": 196040,
+          "title": "Review preparation",
+          "state": "New",
+          "assignedTo": "Bothyna Mostafa"
+        }
+      ],
       "calc": {
         "devEnd": "2026-06-01T08:15:48.087Z",
-        "testEnd": "2026-06-02T06:00:00.000Z",
+        "testEnd": "2026-06-02T08:00:00.000Z",
         "finalEnd": "2026-10-28T11:59:59.497Z"
       },
       "customTags": [],
@@ -3876,12 +3913,13 @@
       "area": "Front and Financial",
       "priority": 1,
       "tags": [
-        "Money Transfer"
+        "Money Transfer",
+        " waiting review"
       ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Metra Labs_468",
-      "changedDate": "2026-11-02T12:41:36.890Z",
+      "changedDate": "2026-11-02T13:19:35.390Z",
       "tasks": [
         {
           "ID": 196004,
@@ -3890,13 +3928,14 @@
           "Assigned To": "Ahmed Farag",
           "Activity": "DB Modification",
           "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.75,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-11-02T12:35:55.777Z",
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-11-02T12:35:55.777Z",
+          "Tags": "liquibase; v4.5.0; Wait .Net review",
+          "Changed Date": "2026-11-02T13:41:10.377Z",
           "Customer": "Metra Labs_468"
         },
         {
@@ -3906,12 +3945,13 @@
           "Assigned To": "Hesham Elsayed",
           "Activity": "Development",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-02T12:17:08.167Z",
+          "Resolved Date": "2026-11-02T12:59:49.323Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-11-02T13:00:47.177Z",
           "Customer": "Metra Labs_468"
         },
         {
@@ -3921,12 +3961,13 @@
           "Assigned To": "Hesham Elsayed",
           "Activity": "Development",
           "Original Estimation": 0.5,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-02T12:17:08.97Z",
+          "Resolved Date": "2026-11-02T12:59:48.883Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-11-02T13:00:47.177Z",
           "Customer": "Metra Labs_468"
         }
       ],
@@ -3934,7 +3975,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-03T08:00:00.000Z",
+        "devEnd": "2026-11-02T13:35:55.777Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -3950,7 +3991,7 @@
       "id": 183571,
       "title": "Wareed Lab - Payment - Qitaf STC: Activate Qitaf STC at the Payment screen",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Karim El-Saeed",
       "tester": "Mohamed Bahaa",
       "area": "Front and Financial",
@@ -3959,7 +4000,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-11-02T12:40:26.663Z",
+      "changedDate": "2026-11-02T13:31:20.200Z",
       "tasks": [
         {
           "ID": 191396,
@@ -4720,11 +4761,43 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-28T14:12:36.18Z",
           "State": "Closed",
-          "Changed Date": "2026-11-02T12:40:26.663Z",
+          "Changed Date": "2026-11-02T12:44:20.917Z",
           "Customer": "Wareed Lab_294"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": 196043,
+          "Work Item Type": "Bug",
+          "Title": "After Apply copayment the Cash required in Qitaf not correct",
+          "Assigned To": "Mohamed Bahaa",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-02T13:31:49.077Z",
+          "Customer": "Wareed Lab_294"
+        },
+        {
+          "ID": 196050,
+          "Work Item Type": "Bug",
+          "Title": "After Apply copayment the Cash required in Qitaf not correct",
+          "Assigned To": "Karim El-Saeed",
+          "Activity": "",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-02T13:53:06.76Z",
+          "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-11-02T13:53:06.76Z",
+          "Customer": "Wareed Lab_294"
+        }
+      ],
       "testCases": [
         {
           "id": 192992,
@@ -4959,7 +5032,7 @@
       "calc": {
         "devEnd": "2026-10-21T07:00:00.000Z",
         "testEnd": "2026-11-02T07:00:00.000Z",
-        "finalEnd": "2026-11-02T07:00:00.000Z"
+        "finalEnd": "2026-11-03T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
@@ -7161,7 +7234,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-10-29T06:11:33.400Z",
+      "changedDate": "2026-11-02T13:30:01.013Z",
       "tasks": [
         {
           "ID": 189637,
@@ -7498,7 +7571,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-04T01:57:13.497Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-22T06:27:58.73Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -7514,7 +7587,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-01T17:40:19.37Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-22T06:27:58.73Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -7740,7 +7813,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-22T11:19:48.813Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-22T11:19:48.813Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -8342,7 +8415,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-22T15:03:48.633Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-22T15:03:48.633Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -8358,7 +8431,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-25T10:29:57.033Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-25T10:29:57.033Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -8439,7 +8512,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-25T12:32:02.693Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-25T12:32:02.693Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -8455,7 +8528,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-26T09:43:48.137Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-26T09:43:48.137Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -8489,7 +8562,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-27T20:41:23.333Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-27T20:41:23.333Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -8554,6 +8627,22 @@
           "Assigned To Tester": "Unassigned",
           "State": "Active",
           "Changed Date": "2026-11-01T20:05:58.68Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 196067,
+          "Work Item Type": "Task",
+          "Title": "Update at aAdmin Create/Update Client",
+          "Assigned To": "reem.abdulmuttalib",
+          "Activity": "Development",
+          "Original Estimation": 0.33,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-02T13:59:36.787Z",
+          "Iteration Path": "Home Visit\\2025\\home_visit January 5-19",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-11-02T13:59:46.547Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -8680,7 +8769,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-09-30T09:00:00.000Z",
+        "devEnd": "2026-09-30T10:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -9717,7 +9806,32 @@
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 196059,
+          "state": "Design"
+        },
+        {
+          "id": 196060,
+          "state": "Design"
+        },
+        {
+          "id": 196061,
+          "state": "Design"
+        },
+        {
+          "id": 196062,
+          "state": "Design"
+        },
+        {
+          "id": 196063,
+          "state": "Design"
+        },
+        {
+          "id": 196064,
+          "state": "Design"
+        }
+      ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-11-02T09:00:00.000Z",
@@ -10246,6 +10360,329 @@
       ]
     },
     {
+      "id": 155124,
+      "title": "Metra Labs - batch Money transfer (New screen)",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Hesham Elsayed",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 2,
+      "tags": [
+        "Money Transfer"
+      ],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Metra Labs_468",
+      "changedDate": "2026-11-02T13:38:06.440Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [
+        {
+          "id": 164206,
+          "state": "Ready"
+        },
+        {
+          "id": 164207,
+          "state": "Ready"
+        },
+        {
+          "id": 164208,
+          "state": "Ready"
+        },
+        {
+          "id": 164209,
+          "state": "Ready"
+        },
+        {
+          "id": 164210,
+          "state": "Ready"
+        },
+        {
+          "id": 164211,
+          "state": "Ready"
+        },
+        {
+          "id": 164212,
+          "state": "Ready"
+        },
+        {
+          "id": 164213,
+          "state": "Ready"
+        },
+        {
+          "id": 164214,
+          "state": "Ready"
+        },
+        {
+          "id": 164215,
+          "state": "Ready"
+        },
+        {
+          "id": 164216,
+          "state": "Ready"
+        },
+        {
+          "id": 164217,
+          "state": "Ready"
+        },
+        {
+          "id": 164218,
+          "state": "Ready"
+        },
+        {
+          "id": 164219,
+          "state": "Ready"
+        },
+        {
+          "id": 164220,
+          "state": "Ready"
+        },
+        {
+          "id": 164223,
+          "state": "Ready"
+        },
+        {
+          "id": 164224,
+          "state": "Ready"
+        },
+        {
+          "id": 164225,
+          "state": "Ready"
+        },
+        {
+          "id": 164226,
+          "state": "Ready"
+        },
+        {
+          "id": 176959,
+          "state": "Design"
+        },
+        {
+          "id": 176960,
+          "state": "Design"
+        },
+        {
+          "id": 176961,
+          "state": "Design"
+        },
+        {
+          "id": 176962,
+          "state": "Design"
+        },
+        {
+          "id": 176963,
+          "state": "Design"
+        },
+        {
+          "id": 176964,
+          "state": "Design"
+        },
+        {
+          "id": 176965,
+          "state": "Design"
+        },
+        {
+          "id": 176966,
+          "state": "Design"
+        },
+        {
+          "id": 176967,
+          "state": "Design"
+        },
+        {
+          "id": 176968,
+          "state": "Design"
+        },
+        {
+          "id": 176969,
+          "state": "Design"
+        },
+        {
+          "id": 176970,
+          "state": "Design"
+        },
+        {
+          "id": 176976,
+          "state": "Design"
+        },
+        {
+          "id": 176977,
+          "state": "Design"
+        },
+        {
+          "id": 176978,
+          "state": "Design"
+        },
+        {
+          "id": 176979,
+          "state": "Design"
+        },
+        {
+          "id": 176980,
+          "state": "Design"
+        },
+        {
+          "id": 176981,
+          "state": "Design"
+        },
+        {
+          "id": 176982,
+          "state": "Design"
+        },
+        {
+          "id": 176983,
+          "state": "Design"
+        },
+        {
+          "id": 176984,
+          "state": "Design"
+        },
+        {
+          "id": 177125,
+          "state": "Design"
+        },
+        {
+          "id": 177126,
+          "state": "Design"
+        },
+        {
+          "id": 177127,
+          "state": "Design"
+        },
+        {
+          "id": 177128,
+          "state": "Design"
+        },
+        {
+          "id": 177129,
+          "state": "Design"
+        },
+        {
+          "id": 177130,
+          "state": "Design"
+        },
+        {
+          "id": 177131,
+          "state": "Design"
+        },
+        {
+          "id": 177132,
+          "state": "Design"
+        },
+        {
+          "id": 177133,
+          "state": "Design"
+        },
+        {
+          "id": 177134,
+          "state": "Design"
+        },
+        {
+          "id": 177135,
+          "state": "Design"
+        },
+        {
+          "id": 177136,
+          "state": "Design"
+        },
+        {
+          "id": 177137,
+          "state": "Design"
+        },
+        {
+          "id": 177138,
+          "state": "Design"
+        },
+        {
+          "id": 177139,
+          "state": "Design"
+        },
+        {
+          "id": 177140,
+          "state": "Design"
+        },
+        {
+          "id": 177141,
+          "state": "Design"
+        },
+        {
+          "id": 177142,
+          "state": "Design"
+        },
+        {
+          "id": 177143,
+          "state": "Design"
+        },
+        {
+          "id": 177144,
+          "state": "Design"
+        },
+        {
+          "id": 177145,
+          "state": "Design"
+        },
+        {
+          "id": 177146,
+          "state": "Design"
+        },
+        {
+          "id": 177147,
+          "state": "Design"
+        },
+        {
+          "id": 177148,
+          "state": "Design"
+        },
+        {
+          "id": 177149,
+          "state": "Design"
+        },
+        {
+          "id": 177150,
+          "state": "Design"
+        },
+        {
+          "id": 177151,
+          "state": "Design"
+        },
+        {
+          "id": 177152,
+          "state": "Design"
+        },
+        {
+          "id": 177153,
+          "state": "Design"
+        },
+        {
+          "id": 177154,
+          "state": "Design"
+        },
+        {
+          "id": 177155,
+          "state": "Design"
+        },
+        {
+          "id": 177156,
+          "state": "Design"
+        }
+      ],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
       "id": 157358,
       "title": "Internal CR - update \"create Proforma no screen \" to Add a new tab for Batch Performa creation",
       "type": "User Story",
@@ -10732,9 +11169,9 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-10-26T10:00:00.000Z",
-        "testEnd": "2026-10-27T06:00:00.000Z",
-        "finalEnd": "2026-10-27T06:00:00.000Z"
+        "devEnd": "2026-11-08T10:00:00.000Z",
+        "testEnd": "2026-11-09T07:00:00.000Z",
+        "finalEnd": "2026-11-09T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
@@ -12955,7 +13392,7 @@
       "id": 186505,
       "title": "Internal CR - Update Loyalty earn History - impact manual points",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "Karim El-Saeed",
       "tester": "Abdelrahman Salman",
       "area": "Front and Financial",
@@ -12964,7 +13401,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-01T22:32:04.407Z",
+      "changedDate": "2026-11-02T12:55:11.113Z",
       "tasks": [
         {
           "ID": 194601,
@@ -12981,7 +13418,7 @@
           "Resolved Date": "2026-10-28T11:41:12.603Z",
           "State": "Closed",
           "Tags": "liquibase; V4.4.0; Wait .Net review",
-          "Changed Date": "2026-11-02T12:41:15.86Z",
+          "Changed Date": "2026-11-02T12:42:11.65Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -13089,7 +13526,7 @@
           "ID": 195816,
           "Work Item Type": "Bug",
           "Title": "In Opening Balance Sheet, Program Column appears Empty",
-          "Assigned To": "Karim El-Saeed",
+          "Assigned To": "Abdelrahman Salman",
           "Activity": "",
           "Original Estimation": 0.5,
           "TimeSheet_DevActualTime": 0.5,
@@ -13097,9 +13534,10 @@
           "Activated Date": "2026-11-01T12:54:55.007Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-11-02T12:54:35.903Z",
+          "State": "Resolved",
           "Tags": "DB",
-          "Changed Date": "2026-11-02T12:28:34.117Z",
+          "Changed Date": "2026-11-02T12:54:35.903Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -13615,9 +14053,9 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-10-27T10:00:00.000Z",
-        "testEnd": "2026-11-09T13:00:00.000Z",
-        "finalEnd": "2026-11-09T13:00:00.000Z"
+        "devEnd": "2026-11-09T10:00:00.000Z",
+        "testEnd": "2026-11-10T14:00:00.000Z",
+        "finalEnd": "2026-11-10T14:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
@@ -14938,11 +15376,13 @@
       "tester": "Mostafa Mamdouh",
       "area": "Registration",
       "priority": 3,
-      "tags": [],
+      "tags": [
+        "waiting sms provider data"
+      ],
       "expectedRelease": null,
       "branch": "UAE",
       "customer": "Al Borg UAE_531",
-      "changedDate": "2026-11-02T12:41:37.933Z",
+      "changedDate": "2026-11-02T14:01:43.757Z",
       "tasks": [
         {
           "ID": 195903,
@@ -14987,7 +15427,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-11-02T11:57:15.55Z",
+          "Changed Date": "2026-11-02T14:01:43.757Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -14999,10 +15439,11 @@
           "Original Estimation": 1.75,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-02T13:25:02.907Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-02T09:06:16.263Z",
+          "State": "Active",
+          "Changed Date": "2026-11-02T14:01:43.757Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -15048,7 +15489,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-02T09:06:17.517Z",
+          "Changed Date": "2026-11-02T14:01:43.757Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -15109,7 +15550,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-02T09:06:19.913Z",
+          "Changed Date": "2026-11-02T14:01:43.757Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -15136,10 +15577,11 @@
           "Original Estimation": 1.25,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-02T13:54:43.417Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-02T09:06:20.78Z",
+          "State": "Active",
+          "Changed Date": "2026-11-02T14:01:43.757Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -15154,7 +15596,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-02T09:06:21.283Z",
+          "Changed Date": "2026-11-02T14:01:43.757Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -15169,7 +15611,7 @@
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-02T09:06:21.997Z",
+          "Changed Date": "2026-11-02T14:01:43.757Z",
           "Customer": "Al Borg UAE_531"
         },
         {
@@ -15634,14 +16076,14 @@
           "Activity": "",
           "Original Estimation": 2.5,
           "TimeSheet_DevActualTime": 4,
-          "TimeSheet_TestingActualTime": 1,
+          "TimeSheet_TestingActualTime": 1.5,
           "Activated Date": "2026-10-29T13:02:22.997Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-11-01T08:10:13.4Z",
-          "State": "Resolved",
+          "State": "Closed",
           "Tags": "Comments",
-          "Changed Date": "2026-11-01T08:12:56.743Z",
+          "Changed Date": "2026-11-02T13:01:11.857Z",
           "Customer": "Al Borg KSA_530"
         }
       ],
@@ -15772,6 +16214,10 @@
         },
         {
           "id": 193799,
+          "state": "Pass"
+        },
+        {
+          "id": 196041,
           "state": "Inprogress"
         }
       ],
@@ -15888,7 +16334,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-01T23:34:00.137Z",
+      "changedDate": "2026-11-02T13:01:07.077Z",
       "tasks": [
         {
           "ID": 194635,
@@ -15963,14 +16409,14 @@
           "Title": "Preparation Task for CR 187572",
           "Assigned To": "Abdelrahman Salman",
           "Activity": "Testing",
-          "Original Estimation": 1,
+          "Original Estimation": 2.3,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 2.28,
           "Activated Date": "2026-11-02T08:45:23.677Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-11-02T08:45:23.677Z",
+          "Changed Date": "2026-11-02T13:05:29.383Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -15979,82 +16425,22 @@
           "Title": "Execution Task for CR 187572",
           "Assigned To": "Abdelrahman Salman",
           "Activity": "Testing",
-          "Original Estimation": 1,
+          "Original Estimation": 3.6,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 3.5,
           "Activated Date": "2026-11-02T08:45:35.52Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-11-02T08:45:35.52Z",
+          "Changed Date": "2026-11-02T13:05:29.767Z",
           "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
       "testCases": [
         {
-          "id": 195601,
-          "state": "Design"
-        },
-        {
-          "id": 195602,
-          "state": "Design"
-        },
-        {
-          "id": 195603,
-          "state": "Design"
-        },
-        {
-          "id": 195604,
-          "state": "Design"
-        },
-        {
-          "id": 195605,
-          "state": "Design"
-        },
-        {
-          "id": 195606,
-          "state": "Design"
-        },
-        {
-          "id": 195607,
-          "state": "Design"
-        },
-        {
-          "id": 195608,
-          "state": "Design"
-        },
-        {
-          "id": 195609,
-          "state": "Design"
-        },
-        {
-          "id": 195610,
-          "state": "Design"
-        },
-        {
-          "id": 195611,
-          "state": "Design"
-        },
-        {
-          "id": 195612,
-          "state": "Design"
-        },
-        {
           "id": 195613,
           "state": "Pass"
-        },
-        {
-          "id": 195614,
-          "state": "Design"
-        },
-        {
-          "id": 195615,
-          "state": "Design"
-        },
-        {
-          "id": 195616,
-          "state": "Design"
         },
         {
           "id": 195617,
@@ -16065,28 +16451,8 @@
           "state": "Pass"
         },
         {
-          "id": 195619,
-          "state": "Design"
-        },
-        {
-          "id": 195620,
-          "state": "Design"
-        },
-        {
-          "id": 195621,
-          "state": "Design"
-        },
-        {
-          "id": 195622,
-          "state": "Design"
-        },
-        {
           "id": 195623,
           "state": "Pass"
-        },
-        {
-          "id": 195624,
-          "state": "Design"
         },
         {
           "id": 195625,
@@ -16095,10 +16461,6 @@
         {
           "id": 195626,
           "state": "Pass"
-        },
-        {
-          "id": 195627,
-          "state": "Design"
         },
         {
           "id": 195628,
@@ -16115,10 +16477,6 @@
         {
           "id": 195631,
           "state": "Pass"
-        },
-        {
-          "id": 195632,
-          "state": "Design"
         },
         {
           "id": 195633,
@@ -16189,24 +16547,12 @@
           "state": "Pass"
         },
         {
-          "id": 195650,
-          "state": "Design"
-        },
-        {
-          "id": 195651,
-          "state": "Design"
-        },
-        {
           "id": 195652,
           "state": "Pass"
         },
         {
           "id": 195653,
           "state": "Not Applicable"
-        },
-        {
-          "id": 195654,
-          "state": "Design"
         },
         {
           "id": 195655,
@@ -16249,10 +16595,6 @@
           "state": "Pass"
         },
         {
-          "id": 195665,
-          "state": "Design"
-        },
-        {
           "id": 195666,
           "state": "Pass"
         },
@@ -16263,10 +16605,6 @@
         {
           "id": 195668,
           "state": "Pass"
-        },
-        {
-          "id": 195669,
-          "state": "Design"
         },
         {
           "id": 195670,
@@ -16305,14 +16643,6 @@
           "state": "Pass"
         },
         {
-          "id": 195679,
-          "state": "Design"
-        },
-        {
-          "id": 195680,
-          "state": "Design"
-        },
-        {
           "id": 195681,
           "state": "Pass"
         },
@@ -16349,10 +16679,6 @@
           "state": "Pass"
         },
         {
-          "id": 195690,
-          "state": "Design"
-        },
-        {
           "id": 195691,
           "state": "Pass"
         },
@@ -16363,18 +16689,6 @@
         {
           "id": 195693,
           "state": "Pass"
-        },
-        {
-          "id": 195694,
-          "state": "Design"
-        },
-        {
-          "id": 195695,
-          "state": "Design"
-        },
-        {
-          "id": 195696,
-          "state": "Design"
         },
         {
           "id": 195697,
@@ -16393,55 +16707,71 @@
           "state": "Pass"
         },
         {
-          "id": 195701,
-          "state": "Design"
-        },
-        {
           "id": 196020,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 196021,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 196022,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 196023,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 196024,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 196025,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 196026,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 196027,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 196028,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 196029,
+          "state": "Pass"
+        },
+        {
+          "id": 196045,
+          "state": "Design"
+        },
+        {
+          "id": 196046,
+          "state": "Design"
+        },
+        {
+          "id": 196047,
+          "state": "Design"
+        },
+        {
+          "id": 196048,
+          "state": "Design"
+        },
+        {
+          "id": 196049,
           "state": "Design"
         }
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-02T09:00:00.000Z",
-        "testEnd": "2026-11-10T07:00:00.000Z",
-        "finalEnd": "2026-11-10T07:00:00.000Z"
+        "devEnd": "2026-11-09T14:00:00.000Z",
+        "testEnd": "2026-11-11T12:00:00.000Z",
+        "finalEnd": "2026-11-11T12:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
@@ -17835,7 +18165,7 @@
         {
           "id": 195123,
           "title": "Review preparation_missed test cases",
-          "state": "Active",
+          "state": "Resolved",
           "assignedTo": "Bothyna Mostafa"
         }
       ],
@@ -19535,7 +19865,7 @@
       "id": 189648,
       "title": "EBGH - NT BBM Integration - update Integration to send DOB and Gender to BBM",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Mostafa Taha",
       "tester": "Abdullah Nasser",
       "area": "LDM Integration",
@@ -19544,7 +19874,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "EBGH_62",
-      "changedDate": "2026-11-01T13:15:35.000Z",
+      "changedDate": "2026-11-02T13:17:25.360Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -20052,7 +20382,7 @@
           "Assigned To": "Moamen SalahElDeen",
           "Activity": "DB Modification",
           "Original Estimation": 5,
-          "TimeSheet_DevActualTime": 10,
+          "TimeSheet_DevActualTime": 10.75,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-10-20T12:15:51.67Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
@@ -20060,7 +20390,7 @@
           "Resolved Date": "2026-10-20T13:02:53.7Z",
           "State": "Closed",
           "Tags": "liquibase; V4.3.0",
-          "Changed Date": "2026-11-01T14:59:44.613Z",
+          "Changed Date": "2026-11-02T12:58:09.663Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -22113,8 +22443,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2025-09-21T09:00:00.000Z",
-        "testEnd": "2026-10-27T06:00:00.000Z",
-        "finalEnd": "2026-10-27T06:00:00.000Z"
+        "testEnd": "2026-11-09T07:00:00.000Z",
+        "finalEnd": "2026-11-09T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "MobileApp\\2026\\Mobile-November 1-30",
@@ -22652,7 +22982,7 @@
       "id": 182278,
       "title": "Alfa Labs - Patient Reports: Publish Enhanced result reports  for Alfa Labs and it shall respect LDM leveling of Print Customized Reports Header and Footer",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Tested",
       "assignedTo": "Esraa Abd El Salam",
       "tester": "Yasmine Fouad",
       "area": "Internal lab",
@@ -22663,7 +22993,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alfa Lab Egypt_424",
-      "changedDate": "2026-11-01T14:45:18.403Z",
+      "changedDate": "2026-11-02T13:28:51.220Z",
       "tasks": [
         {
           "ID": 194003,
@@ -22809,12 +23139,12 @@
           "Activity": "Testing",
           "Original Estimation": 5,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 1.5,
           "Activated Date": "2026-10-30T20:06:27.903Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-11-01T06:46:48.057Z",
+          "State": "Closed",
+          "Changed Date": "2026-11-02T13:23:56.61Z",
           "Customer": "Alfa Lab Egypt_424"
         },
         {
@@ -22825,12 +23155,12 @@
           "Activity": "Testing",
           "Original Estimation": 10,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 2,
           "Activated Date": "2026-10-30T21:10:22.14Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-11-01T06:46:48.057Z",
+          "State": "Closed",
+          "Changed Date": "2026-11-02T13:27:59.073Z",
           "Customer": "Alfa Lab Egypt_424"
         }
       ],
@@ -23848,7 +24178,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-02T13:00:00.000Z",
+        "devEnd": "2026-11-10T10:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -25662,7 +25992,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-02T08:14:02.680Z",
+      "changedDate": "2026-11-02T13:30:01.013Z",
       "tasks": [
         {
           "ID": 169708,
@@ -26166,7 +26496,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-26T12:50:51.61Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-28T05:09:41.227Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -26183,7 +26513,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-11-01T00:03:49.92Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-11-01T00:03:49.92Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -26200,7 +26530,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-29T09:39:16.263Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-29T09:39:16.263Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -26217,7 +26547,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-29T12:14:52.577Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-29T12:14:52.577Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -26234,7 +26564,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-11-01T00:00:13.9Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-11-01T00:00:13.9Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -26251,7 +26581,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-11-01T00:07:36.35Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-11-01T00:07:36.35Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -26268,7 +26598,7 @@
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-10-29T16:15:23.2Z",
           "State": "To Be Reviewed",
-          "Changed Date": "2026-10-29T16:15:23.2Z",
+          "Changed Date": "2026-11-02T13:30:01.013Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -32164,8 +32494,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-08-30T08:00:00.000Z",
-        "testEnd": "2026-10-27T11:00:00.000Z",
-        "finalEnd": "2026-10-27T11:00:00.000Z"
+        "testEnd": "2026-11-09T12:00:00.000Z",
+        "finalEnd": "2026-11-09T12:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM",
@@ -32550,18 +32880,18 @@
           "ID": 193747,
           "Work Item Type": "Task",
           "Title": "DB: Fix value in SAJA_REPORTS_PKG.SP_REPORTING_PATIENTHEADER",
-          "Assigned To": "Ahmed Attia",
+          "Assigned To": "Moamen SalahElDeen",
           "Activity": "DB Modification",
           "Original Estimation": 0.5,
           "TimeSheet_DevActualTime": 1.5,
           "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-10-20T13:11:09.37Z",
+          "Activated Date": "2026-11-02T13:28:16.233Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "Resolved Date": "2026-10-20T13:39:22.627Z",
-          "State": "Closed",
+          "Resolved Date": "2026-11-02T13:43:15.747Z",
+          "State": "To Be Reviewed",
           "Tags": "liquibase; v4.3",
-          "Changed Date": "2026-11-01T14:59:44.613Z",
+          "Changed Date": "2026-11-02T13:43:15.747Z",
           "Customer": "Saja Lab_576"
         },
         {
@@ -32705,12 +33035,12 @@
           "Activity": "Testing",
           "Original Estimation": 10,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 3,
           "Activated Date": "2026-10-29T18:50:37.673Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-10-29T18:50:37.673Z",
+          "State": "Closed",
+          "Changed Date": "2026-11-02T13:22:13.817Z",
           "Customer": "Saja Lab_576"
         }
       ],
@@ -32863,7 +33193,7 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-01T11:44:33.763Z",
+        "devEnd": "2026-11-01T10:44:33.763Z",
         "testEnd": "2026-11-04T07:00:00.000Z",
         "finalEnd": "2026-11-04T07:00:00.000Z"
       },
@@ -36671,6 +37001,21 @@
           "Assigned To Tester": "Unassigned",
           "State": "New",
           "Changed Date": "2026-10-29T18:39:17.507Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 196031,
+          "Work Item Type": "Task",
+          "Title": "DB Modification : Add Completion Evidence & Audit Fields to Table: qams.capa_action",
+          "Assigned To": "Mohamed Qassem",
+          "Activity": "DB Modification",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "SaaS",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-02T12:48:46.21Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -43382,7 +43727,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-11-02T12:18:31.510Z",
+      "changedDate": "2026-11-02T13:58:14.777Z",
       "tasks": [
         {
           "ID": 195972,
@@ -43397,7 +43742,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-11-02T12:19:30.217Z",
+          "Changed Date": "2026-11-02T13:13:15.827Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -43409,10 +43754,11 @@
           "Original Estimation": 1.25,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-02T12:55:44.557Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-02T10:36:09.14Z",
+          "State": "Active",
+          "Changed Date": "2026-11-02T13:13:15.827Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -43424,10 +43770,11 @@
           "Original Estimation": 1.5,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-02T13:22:20.537Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-02T10:36:08.937Z",
+          "State": "Active",
+          "Changed Date": "2026-11-02T13:44:28.35Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -43442,7 +43789,7 @@
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-02T10:36:09.31Z",
+          "Changed Date": "2026-11-02T13:44:28.35Z",
           "Customer": "Wareed Lab_294"
         },
         {
@@ -43525,12 +43872,12 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-08T09:00:00.000Z",
+        "devEnd": "2026-11-15T14:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
       "customTags": [],
-      "iterationPath": "LDM\\Candidate CRs",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": false,
@@ -43948,38 +44295,6 @@
       "pullRequests": []
     },
     {
-      "id": 195585,
-      "title": "Alshamel stage #whatsapp >fire receipt not invoice after registration",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hebatullah Mohamed",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Al Shamel Lab_624",
-      "changedDate": "2026-11-01T22:10:42.790Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
-      "devActualTime": 4,
-      "testActualTime": 2,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 195586,
       "title": "EPHI > No Message fire to Main branch",
       "type": "Support log",
@@ -43993,7 +44308,23 @@
       "branch": "Ethiopia",
       "customer": "EPHI - Ethiopian Public Health Institute_535",
       "changedDate": "2026-11-01T08:31:52.177Z",
-      "tasks": [],
+      "tasks": [
+        {
+          "ID": 196055,
+          "Work Item Type": "Task",
+          "Title": "Move DB works to EPHI live",
+          "Assigned To": "Mohamed Qassem",
+          "Activity": "DB Modification",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-02T13:33:04.05Z",
+          "Customer": "EPHI - Ethiopian Public Health Institute_535"
+        }
+      ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
@@ -44026,7 +44357,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Saja Lab_576",
-      "changedDate": "2026-11-02T11:15:52.077Z",
+      "changedDate": "2026-11-02T13:05:32.453Z",
       "tasks": [
         {
           "ID": 195828,
@@ -44056,7 +44387,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
-      "devActualTime": 0,
+      "devActualTime": 4.5,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
@@ -44168,13 +44499,13 @@
           "Assigned To": "Fatma Fayed",
           "Activity": "Development",
           "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.17,
+          "TimeSheet_DevActualTime": 0.67,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-11-01T14:00:38.593Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-11-01T14:02:20.633Z",
+          "Changed Date": "2026-11-02T13:34:18.567Z",
           "Customer": "Alameda_0062"
         }
       ],
@@ -44182,7 +44513,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-03T10:00:00.000Z",
+        "devEnd": "2026-11-03T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -44304,7 +44635,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "EBGH_62",
-      "changedDate": "2026-11-02T11:53:16.180Z",
+      "changedDate": "2026-11-02T12:51:03.160Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -44317,7 +44648,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
-      "devActualTime": 0.75,
+      "devActualTime": 1.25,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
@@ -44550,7 +44881,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Jeddah MOH Cluster_171",
-      "changedDate": "2026-11-02T10:00:06.073Z",
+      "changedDate": "2026-11-02T13:34:18.017Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -44564,7 +44895,7 @@
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 1,
-      "testActualTime": 0,
+      "testActualTime": 1,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -44607,8 +44938,8 @@
       "id": 195961,
       "title": "Borg KSA >> Need to Export data",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Ahmed Attia",
+      "state": "Resolved",
+      "assignedTo": "Ammar Yasser",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
@@ -44616,7 +44947,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-11-02T09:44:07.967Z",
+      "changedDate": "2026-11-02T14:00:17.360Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -44629,7 +44960,7 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
-      "devActualTime": 0,
+      "devActualTime": 2.5,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
@@ -44671,8 +45002,8 @@
       "id": 195992,
       "title": "ebgh >> TAT page error (#52077)",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Ahmed Farag",
+      "state": "Resolved",
+      "assignedTo": "Saddam Raees",
       "tester": "Unassigned",
       "area": "Internal lab",
       "priority": 999,
@@ -44680,7 +45011,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "EBGH_62",
-      "changedDate": "2026-11-02T12:13:52.570Z",
+      "changedDate": "2026-11-02T12:59:23.397Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -44693,6 +45024,70 @@
       },
       "customTags": [],
       "iterationPath": "LDM",
+      "devActualTime": 0.75,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 195997,
+      "title": "EBGH production #Cobas  > use ORC.9 for Review date",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Hamza Ashry",
+      "tester": "Unassigned",
+      "area": "LDM Integration",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "EBGH_62",
+      "changedDate": "2026-11-02T13:59:09.733Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 196054,
+      "title": "Elaraby >> Export Microbiology Statistics from Database (#52105)",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Ahmed Farag",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Alaraby Hospital_367",
+      "changedDate": "2026-11-02T13:59:49.390Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": false,
@@ -64014,6 +64409,158 @@
       "parentId": "157179",
       "title": "Research for flutter printing packages , native packages, and test them"
     },
+    "164206": {
+      "id": "164206",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Validate Registration Date search criteria - 3 months interval limit"
+    },
+    "164207": {
+      "id": "164207",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify 'From Date' is less than 'To Date' validation"
+    },
+    "164208": {
+      "id": "164208",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Validate Center and Payer/Contract dependency filtering"
+    },
+    "164209": {
+      "id": "164209",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify user access to Batch Money Transfer based on Money Transfer privilege"
+    },
+    "164210": {
+      "id": "164210",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Excel download upon transfer failure handling"
+    },
+    "164211": {
+      "id": "164211",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Validate mandatory fields for General Search Criteria"
+    },
+    "164212": {
+      "id": "164212",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Transfer failure for accessions already in a claim"
+    },
+    "164213": {
+      "id": "164213",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify 'Contract Transfer Requirements' dynamic popup fields"
+    },
+    "164214": {
+      "id": "164214",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Transfer failure for accessions with copayment/patient share"
+    },
+    "164215": {
+      "id": "164215",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify UI behavior: Manual Payer/Contract selection vs Bulk Checkbox"
+    },
+    "164216": {
+      "id": "164216",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify 'Prevent Transfer' privilege at User/Role level"
+    },
+    "164217": {
+      "id": "164217",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify 'Apply Price Updates' for selected services"
+    },
+    "164218": {
+      "id": "164218",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify recalculation of totals when selecting New Payer/Contract in Bulk section"
+    },
+    "164219": {
+      "id": "164219",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify 'Batch No.' unique search functionality"
+    },
+    "164220": {
+      "id": "164220",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify 'Price List Update' grid - Expansion and Service Level pricing"
+    },
+    "164223": {
+      "id": "164223",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify blocking of accession transfer for records with existing copayments or patient shares"
+    },
+    "164224": {
+      "id": "164224",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify blocking of accession transfer for records included in claims/e-claims"
+    },
+    "164225": {
+      "id": "164225",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify blocking of accession transfer exceeding the configured 'Prevent Transfer' threshold"
+    },
+    "164226": {
+      "id": "164226",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify UI mutual exclusivity between Manual Payer selection and Bulk Transfer checkbox"
+    },
     "164584": {
       "id": "164584",
       "type": "Task",
@@ -65978,7 +66525,7 @@
       "id": "174880",
       "type": "User Story",
       "area": "Registration",
-      "iterationPath": "LDM\\Candidate CRs",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
       "parentId": null,
       "title": "Alborg - Login - MFA: In case of authenticator is selected as Authenticator App"
     },
@@ -66077,6 +66624,430 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "Internal CR -  Money Transfer: Implement Patient Money Transfer action for single accession record"
+    },
+    "176959": {
+      "id": "176959",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Registration Date Interval Business Rule"
+    },
+    "176960": {
+      "id": "176960",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Blocked Transfer Error for Accession in Claim"
+    },
+    "176961": {
+      "id": "176961",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Generated Test Case"
+    },
+    "176962": {
+      "id": "176962",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Navigation to Batch Money Transfer Screen"
+    },
+    "176963": {
+      "id": "176963",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Bulk Payer/Contract Selection and Recalculation"
+    },
+    "176964": {
+      "id": "176964",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Dynamic Validation Popup for Payer Requirements"
+    },
+    "176965": {
+      "id": "176965",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Excel Export on Transfer Failure"
+    },
+    "176966": {
+      "id": "176966",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_E2E: Role-Based Batch Money Transfer Lifecycle with Dynamic Payer Requirements"
+    },
+    "176967": {
+      "id": "176967",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_E2E: Alternative Path - Update According to New Price List Workflow"
+    },
+    "176968": {
+      "id": "176968",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Toggle Behavior for Price List Update"
+    },
+    "176969": {
+      "id": "176969",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_E2E: Cross-Module Financial Data Integrity - Batch Transfer to Reporting"
+    },
+    "176970": {
+      "id": "176970",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_E2E: Batch Money Transfer Validation and Automated Failure Reporting"
+    },
+    "176976": {
+      "id": "176976",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Bulk Transfer Recalculation and Mutual Exclusivity"
+    },
+    "176977": {
+      "id": "176977",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Transfer Reason is Mandatory for Batch Transfer"
+    },
+    "176978": {
+      "id": "176978",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Screen Access Path for Batch Money Transfer"
+    },
+    "176979": {
+      "id": "176979",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Registration Date From and To Validation Rules"
+    },
+    "176980": {
+      "id": "176980",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Center, Payer, and Contract Cascading Filter Behavior"
+    },
+    "176981": {
+      "id": "176981",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Update According to New Price List Logic"
+    },
+    "176982": {
+      "id": "176982",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Transfer Validation Popup for Payer Requirements"
+    },
+    "176983": {
+      "id": "176983",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Transfer Action Block Rules for Restricted Accessions"
+    },
+    "176984": {
+      "id": "176984",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "CR_155124_Verify Failure Handling and Excel Export for Batch Transfer"
+    },
+    "177125": {
+      "id": "177125",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Access Batch Money Transfer screen from Finance menu"
+    },
+    "177126": {
+      "id": "177126",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Validate mandatory fields in General Search Criteria"
+    },
+    "177127": {
+      "id": "177127",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Validate Registration Date From must be earlier than To"
+    },
+    "177128": {
+      "id": "177128",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Enforce Registration Date 3-month interval limit"
+    },
+    "177129": {
+      "id": "177129",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Search accessions by unique Batch No."
+    },
+    "177130": {
+      "id": "177130",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Verify Center, Payer and Contract cascading filters"
+    },
+    "177131": {
+      "id": "177131",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Verify results grid columns after search"
+    },
+    "177132": {
+      "id": "177132",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Bulk Transfer: select New Payer/Contract recalculates totals"
+    },
+    "177133": {
+      "id": "177133",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Manual per-accession Payer/Contract selection recalculates amount"
+    },
+    "177134": {
+      "id": "177134",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Mutual exclusivity between Manual selection and Bulk checkbox"
+    },
+    "177135": {
+      "id": "177135",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Transfer Reason is mandatory before executing batch transfer"
+    },
+    "177136": {
+      "id": "177136",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Verify Update According to New Price List toggle behavior"
+    },
+    "177137": {
+      "id": "177137",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "E2E: Successful batch money transfer for multiple accessions"
+    },
+    "177138": {
+      "id": "177138",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Money Transfer privilege required to access screen"
+    },
+    "177139": {
+      "id": "177139",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Prevent Transfer privilege enforced at user/role level"
+    },
+    "177140": {
+      "id": "177140",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Unauthorized role denied access to Batch Money Transfer"
+    },
+    "177141": {
+      "id": "177141",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Dynamic Payer Requirements popup fields appear on transfer"
+    },
+    "177142": {
+      "id": "177142",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Dynamic Contract Transfer Requirements popup fields"
+    },
+    "177143": {
+      "id": "177143",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Block transfer for accession already included in a claim/e-claim"
+    },
+    "177144": {
+      "id": "177144",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Block transfer for accession with copayment or patient share"
+    },
+    "177145": {
+      "id": "177145",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Block transfer exceeding configured Prevent Transfer threshold"
+    },
+    "177146": {
+      "id": "177146",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Block transfer for restricted/locked accessions"
+    },
+    "177147": {
+      "id": "177147",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "E2E: Partial batch with mixed eligible and blocked accessions"
+    },
+    "177148": {
+      "id": "177148",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Excel export of failed accessions on transfer failure"
+    },
+    "177149": {
+      "id": "177149",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Negative: special characters and SQL injection in search fields"
+    },
+    "177150": {
+      "id": "177150",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Audit trail recorded for batch money transfer"
+    },
+    "177151": {
+      "id": "177151",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Security: direct URL access without login redirects to login"
+    },
+    "177152": {
+      "id": "177152",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Performance: large batch (500+ accessions) transfer within threshold"
+    },
+    "177153": {
+      "id": "177153",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Usability: mandatory fields marked and confirmation before transfer"
+    },
+    "177154": {
+      "id": "177154",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Cancel mid-transfer preserves original payer/contract"
+    },
+    "177155": {
+      "id": "177155",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Downstream: transferred accession reflects new payer in claims/reporting"
+    },
+    "177156": {
+      "id": "177156",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "Select-all and deselect behavior in results grid"
     },
     "177257": {
       "id": "177257",
@@ -90234,7 +91205,7 @@
       "id": "195208",
       "type": "User Story",
       "area": "",
-      "iterationPath": "LDM\\Candidate CRs",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "Wareed Labs - Qitaf - Auto reverse & earn at Action center"
     },
@@ -92310,14 +93281,6 @@
       "parentId": null,
       "title": "Execution"
     },
-    "195585": {
-      "id": "195585",
-      "type": "Support log",
-      "area": "Integration",
-      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
-      "parentId": null,
-      "title": "Alshamel stage #whatsapp >fire receipt not invoice after registration"
-    },
     "195586": {
       "id": "195586",
       "type": "Support log",
@@ -92382,102 +93345,6 @@
       "parentId": null,
       "title": "Incorrect (UOM & Numeric ref. range & Comment) displayed when select analyzer has no( UOM& Numeric ref. range & Comment) configured for the selected test."
     },
-    "195601": {
-      "id": "195601",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify access to Contract Classification screen"
-    },
-    "195602": {
-      "id": "195602",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify access to Branch Classification screen"
-    },
-    "195603": {
-      "id": "195603",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Co-payment Percentage and Maximum Ceiling logic"
-    },
-    "195604": {
-      "id": "195604",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Payer field persistence in Dynamic Batch Registration"
-    },
-    "195605": {
-      "id": "195605",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify access to Card Types screen"
-    },
-    "195606": {
-      "id": "195606",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Excluded Services set as Free logic"
-    },
-    "195607": {
-      "id": "195607",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Branch Classification Code auto-generation"
-    },
-    "195608": {
-      "id": "195608",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Age (Days) field persistence"
-    },
-    "195609": {
-      "id": "195609",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Cash and Credit Ratio split definition"
-    },
-    "195610": {
-      "id": "195610",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Marital Status field persistence"
-    },
-    "195611": {
-      "id": "195611",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Age (Months) field persistence"
-    },
-    "195612": {
-      "id": "195612",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Unauthorized Access: Non-Admin Denied Access to Financial Setup (Discount Rules)"
-    },
     "195613": {
       "id": "195613",
       "type": "Test Case",
@@ -92485,30 +93352,6 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "CR_187572_Cashier Authorization: Process Payment and Verify Discount Card"
-    },
-    "195614": {
-      "id": "195614",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Viewer Authorization: Read-Only Access to Contract Price Lists"
-    },
-    "195615": {
-      "id": "195615",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Unauthorized Access: Non-Financial User Denied Financial Claim Access"
-    },
-    "195616": {
-      "id": "195616",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Patient Ref. No. field persistence"
     },
     "195617": {
       "id": "195617",
@@ -92526,38 +93369,6 @@
       "parentId": null,
       "title": "CR_187572_Financial User Authorization: Access Payment Summary and Discount Breakdown"
     },
-    "195619": {
-      "id": "195619",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Unauthorized Access: Restricted Role Denied View of Price Lists"
-    },
-    "195620": {
-      "id": "195620",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Center field persistence in Dynamic Batch Registration"
-    },
-    "195621": {
-      "id": "195621",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify access to Contract Price List (View Only) screen"
-    },
-    "195622": {
-      "id": "195622",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Unauthorized Access: Non-Cashier Denied POS and Payment Processing"
-    },
     "195623": {
       "id": "195623",
       "type": "Test Case",
@@ -92565,14 +93376,6 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "CR_187572_Admin Authorization: Access Dynamic Batch Registration and Verify Discount Summary Card"
-    },
-    "195624": {
-      "id": "195624",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Sample Collected Outside checkbox persistence"
     },
     "195625": {
       "id": "195625",
@@ -92589,14 +93392,6 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "CR_187572_Invalid State Transition: Reject Saving Card Type without Payer"
-    },
-    "195627": {
-      "id": "195627",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Apply Equations button state logic"
     },
     "195628": {
       "id": "195628",
@@ -92629,14 +93424,6 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "CR_187572_Finance - Verify Excluded Services cannot have both Free flag and custom price"
-    },
-    "195632": {
-      "id": "195632",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Require Pre-approval alert service logic"
     },
     "195633": {
       "id": "195633",
@@ -92774,22 +93561,6 @@
       "parentId": null,
       "title": "CR_187572_Field Validation - Verify Date of birth rejects future dates"
     },
-    "195650": {
-      "id": "195650",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify access to Contract Price List Settings screen"
-    },
-    "195651": {
-      "id": "195651",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Card Type linkage to Payer and Contract"
-    },
     "195652": {
       "id": "195652",
       "type": "Test Case",
@@ -92805,14 +93576,6 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "CR_187572_Outbound Integration: Batch Discount Impact on Branch Treasury POS"
-    },
-    "195654": {
-      "id": "195654",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Patient Title persistence"
     },
     "195655": {
       "id": "195655",
@@ -92894,14 +93657,6 @@
       "parentId": null,
       "title": "CR_187572_Admin: Configure Discount Rule and Verify Summary Card in Dynamic Batch Registration"
     },
-    "195665": {
-      "id": "195665",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify access to Discount Rules screen"
-    },
     "195666": {
       "id": "195666",
       "type": "Test Case",
@@ -92925,14 +93680,6 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "CR_187572_Field Validation - Verify Gender is required"
-    },
-    "195669": {
-      "id": "195669",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Gender field persistence"
     },
     "195670": {
       "id": "195670",
@@ -93006,22 +93753,6 @@
       "parentId": null,
       "title": "CR_187572_Field Validation - Verify Patient Name length restriction"
     },
-    "195679": {
-      "id": "195679",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Age (Years) field persistence"
-    },
-    "195680": {
-      "id": "195680",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Patient No persistence in Patients Data step"
-    },
     "195681": {
       "id": "195681",
       "type": "Test Case",
@@ -93094,14 +93825,6 @@
       "parentId": null,
       "title": "CR_187572_Field Validation - Verify Age (M) rejects values > 11"
     },
-    "195690": {
-      "id": "195690",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Price List upload requirements workflow"
-    },
     "195691": {
       "id": "195691",
       "type": "Test Case",
@@ -93125,30 +93848,6 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "CR_187572_Field Validation - Verify Payer selection restricts invalid options"
-    },
-    "195694": {
-      "id": "195694",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Translated Name field persistence"
-    },
-    "195695": {
-      "id": "195695",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Patient Name field persistence"
-    },
-    "195696": {
-      "id": "195696",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Contract field persistence in Dynamic Batch Registration"
     },
     "195697": {
       "id": "195697",
@@ -93181,14 +93880,6 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "CR_187572_Field Validation - Verify malformed Date of birth is rejected"
-    },
-    "195701": {
-      "id": "195701",
-      "type": "Test Case",
-      "area": "",
-      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
-      "parentId": null,
-      "title": "CR_187572_Verify Date of Birth field persistence"
     },
     "195702": {
       "id": "195702",
@@ -94894,6 +95585,14 @@
       "parentId": null,
       "title": "CR_188171_E2E: Doctor specialty column appears next to doctor with specialty and empty for doctor without specialty in View Report"
     },
+    "195997": {
+      "id": "195997",
+      "type": "Support log",
+      "area": "Integration",
+      "iterationPath": "LDM\\Candidate CRs",
+      "parentId": null,
+      "title": "EBGH production #Cobas  > use ORC.9 for Review date"
+    },
     "196001": {
       "id": "196001",
       "type": "Bug",
@@ -95021,6 +95720,174 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "CR_187572_Verify Total Discount Calculation for Multiple Patients and Services"
+    },
+    "196031": {
+      "id": "196031",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "SaaS",
+      "parentId": "192671",
+      "title": "DB Modification : Add Completion Evidence & Audit Fields to Table: qams.capa_action"
+    },
+    "196037": {
+      "id": "196037",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "Home Visit\\2026\\home_visit October 22-05",
+      "parentId": null,
+      "title": "Review preparation"
+    },
+    "196038": {
+      "id": "196038",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "Home Visit\\2026\\home_visit October 22-05",
+      "parentId": null,
+      "title": "Review execution"
+    },
+    "196040": {
+      "id": "196040",
+      "type": "Review",
+      "area": "",
+      "iterationPath": "Home Visit\\2026\\home_visit October 22-05",
+      "parentId": null,
+      "title": "Review preparation"
+    },
+    "196041": {
+      "id": "196041",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "030. Verify the QR code in the footer is readable and redirect to the cumulative report successfully."
+    },
+    "196043": {
+      "id": "196043",
+      "type": "Bug",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
+      "parentId": null,
+      "title": "After Apply copayment the Cash required in Qitaf not correct"
+    },
+    "196045": {
+      "id": "196045",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
+      "parentId": null,
+      "title": "CR_187572_Role without User rights is denied Dynamic Batch Registration access with no partial data"
+    },
+    "196046": {
+      "id": "196046",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
+      "parentId": null,
+      "title": "CR_187572_Authorized User can access Dynamic Batch Registration and view Discount card"
+    },
+    "196047": {
+      "id": "196047",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
+      "parentId": null,
+      "title": "CR_187572_SCR-apply-equation: Open Apply Equation screen from Price List"
+    },
+    "196048": {
+      "id": "196048",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
+      "parentId": null,
+      "title": "CR_187572_SCR-batch-payment: Open Batch Payment after valid Dynamic Batch Registration flow"
+    },
+    "196049": {
+      "id": "196049",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
+      "parentId": null,
+      "title": "CR_187572_SCR-dynamic-batch-registration: Open Dynamic Batch Registration from Registration menu"
+    },
+    "196050": {
+      "id": "196050",
+      "type": "Bug",
+      "area": "",
+      "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
+      "parentId": null,
+      "title": "After Apply copayment the Cash required in Qitaf not correct"
+    },
+    "196054": {
+      "id": "196054",
+      "type": "Support log",
+      "area": "Internal lab",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "parentId": null,
+      "title": "Elaraby >> Export Microbiology Statistics from Database (#52105)"
+    },
+    "196055": {
+      "id": "196055",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "parentId": "195586",
+      "title": "Move DB works to EPHI live"
+    },
+    "196059": {
+      "id": "196059",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "CR_194212_Verify print is rejected when user lacks results permission for the report type"
+    },
+    "196060": {
+      "id": "196060",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "CR_194212_Verify User role can print patient results from Search Results"
+    },
+    "196061": {
+      "id": "196061",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "CR_194212_Verify role without User print rights is denied printing patient results"
+    },
+    "196062": {
+      "id": "196062",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "CR_194212_Verify unauthenticated user cannot access Search Results or print"
+    },
+    "196063": {
+      "id": "196063",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "CR_194212_Verify Search Results screen opens from Results menu"
+    },
+    "196064": {
+      "id": "196064",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "CR_194212_Verify Results report Test column does not fall back to Report Name when Invoice name is blank"
+    },
+    "196067": {
+      "id": "196067",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "Home Visit\\2025\\home_visit January 5-19",
+      "parentId": "189631",
+      "title": "Update at aAdmin Create/Update Client"
     }
   },
   "workItemHistory": {
