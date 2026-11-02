@@ -3985,7 +3985,68 @@
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
-      "pullRequests": []
+      "pullRequests": [
+        {
+          "id": 8471,
+          "title": "Merge CR 180594 to main",
+          "status": "active",
+          "createdBy": "Ahmed Farag",
+          "repository": "WebLDM-Liquibase",
+          "creationDate": "2026-11-02T13:41:08.795Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "180594",
+          "linkedWorkItemIds": [],
+          "sourceRefName": "refs/heads/Farag",
+          "targetRefName": "refs/heads/main",
+          "reviewers": [
+            {
+              "name": "[LDM]\\DB-Approvers",
+              "vote": 0
+            },
+            {
+              "name": "[LDM]\\APP-Approvers",
+              "vote": 0
+            }
+          ]
+        },
+        {
+          "id": 8466,
+          "title": "Develop CR #180594",
+          "status": "active",
+          "createdBy": "Hesham Elsayed",
+          "repository": "LDM",
+          "creationDate": "2026-11-02T13:00:45.852Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "180594",
+          "linkedWorkItemIds": [],
+          "sourceRefName": "refs/heads/develop_CR_180594",
+          "targetRefName": "refs/heads/develop",
+          "reviewers": [
+            {
+              "name": "Bardis Maher",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "gamal kasem",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": 183571,
@@ -5044,12 +5105,12 @@
         {
           "id": 8464,
           "title": "Front End : CR #183571 Show Qitaf disabled with the reason instead of hiding...",
-          "status": "active",
+          "status": "completed",
           "createdBy": "Adel Salah",
           "repository": "LDM",
           "creationDate": "2026-11-02T12:42:31.263Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-11-02T12:44:21.452Z",
+          "cycleTimeHours": 0.030608055555555555,
           "linkedStoryId": "183571",
           "linkedWorkItemIds": [],
           "sourceRefName": "refs/heads/preprod_Qitaf",
@@ -5066,6 +5127,10 @@
             {
               "name": "Mohamed Salah-Eddin",
               "vote": 0
+            },
+            {
+              "name": "gamal kasem",
+              "vote": 10
             },
             {
               "name": "Fatma Fayed",
@@ -48001,14 +48066,46 @@
       "linkedProjectId": null,
       "pullRequests": [
         {
+          "id": 8473,
+          "title": "SL #195910 Bug #196036 - Release : Manage Services fix grid stuck on loading spinner after browser Back from Service Details by using the shared mngControlsRequestStarted handler (Common.js) on the RadAjaxManager, which disables AJAX for EditButton and InitInsertButton as well as the export buttons, so they do a normal postback",
+          "status": "active",
+          "createdBy": "Mohamed Samy",
+          "repository": "LDM",
+          "creationDate": "2026-11-02T13:55:09.742Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "195910",
+          "linkedWorkItemIds": [],
+          "sourceRefName": "refs/heads/Master_PreProduction_Outreach_Refactor",
+          "targetRefName": "refs/heads/Master_PreProduction",
+          "reviewers": [
+            {
+              "name": "Bardis Maher",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        },
+        {
           "id": 8460,
           "title": "SL #195910 Bug #195991 : fix Unable to cast object of type 'Telerik.Reporting...",
-          "status": "active",
+          "status": "completed",
           "createdBy": "Mahmoud Ahmed",
           "repository": "LDM",
           "creationDate": "2026-11-02T12:38:42.900Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-11-02T13:14:02.425Z",
+          "cycleTimeHours": 0.5887569444444445,
           "linkedStoryId": "195910",
           "linkedWorkItemIds": [],
           "sourceRefName": "refs/heads/Master_PreProduction_195991",
@@ -48024,7 +48121,7 @@
             },
             {
               "name": "Mohamed Salah-Eddin",
-              "vote": 0
+              "vote": 10
             },
             {
               "name": "Fatma Fayed",
@@ -48598,14 +48695,168 @@
   },
   "pullRequests": [
     {
+      "id": 8473,
+      "title": "SL #195910 Bug #196036 - Release : Manage Services fix grid stuck on loading spinner after browser Back from Service Details by using the shared mngControlsRequestStarted handler (Common.js) on the RadAjaxManager, which disables AJAX for EditButton and InitInsertButton as well as the export buttons, so they do a normal postback",
+      "status": "active",
+      "createdBy": "Mohamed Samy",
+      "repository": "LDM",
+      "creationDate": "2026-11-02T13:55:09.742Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "195910",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Master_PreProduction_Outreach_Refactor",
+      "targetRefName": "refs/heads/Master_PreProduction",
+      "reviewers": [
+        {
+          "name": "Bardis Maher",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8471,
+      "title": "Merge CR 180594 to main",
+      "status": "active",
+      "createdBy": "Ahmed Farag",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-11-02T13:41:08.795Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "180594",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Farag",
+      "targetRefName": "refs/heads/main",
+      "reviewers": [
+        {
+          "name": "[LDM]\\DB-Approvers",
+          "vote": 0
+        },
+        {
+          "name": "[LDM]\\APP-Approvers",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8469,
+      "title": "SAJA_REPORTS_PKG header: support alphanumeric barcodes (ORA-06502 in SAMEHGET...",
+      "status": "completed",
+      "createdBy": "Moamen SalahElDeen",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-11-02T13:29:51.869Z",
+      "closedDate": "2026-11-02T13:30:01.022Z",
+      "cycleTimeHours": 0.0025425,
+      "linkedStoryId": "06502",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Saja_alnum_barcode_master",
+      "targetRefName": "refs/heads/master",
+      "reviewers": []
+    },
+    {
+      "id": 8468,
+      "title": "SAJA_REPORTS_PKG header: support alphanumeric barcodes (ORA-06502 in SAMEHGET...",
+      "status": "completed",
+      "createdBy": "Moamen SalahElDeen",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-11-02T13:28:52.152Z",
+      "closedDate": "2026-11-02T13:43:15.547Z",
+      "cycleTimeHours": 0.23983194444444444,
+      "linkedStoryId": "06502",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Saja_alnum_barcode_main",
+      "targetRefName": "refs/heads/main",
+      "reviewers": [
+        {
+          "name": "[LDM]\\DB-Approvers",
+          "vote": 10
+        },
+        {
+          "name": "[LDM]\\APP-Approvers",
+          "vote": 10
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 10
+        },
+        {
+          "name": "Ahmed Attia",
+          "vote": 10
+        }
+      ]
+    },
+    {
+      "id": 8467,
+      "title": "[LDM Recorder] Bug #196050 — After Apply copayment the Cash required in Qitaf not correct",
+      "status": "active",
+      "createdBy": "Mohamed Bahaa",
+      "repository": "AutomatedTesting",
+      "creationDate": "2026-11-02T13:23:54.447Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "196050",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/auto/Bahaa/mohamed-ibrahim/Bug-196050",
+      "targetRefName": "refs/heads/LDMRecorder_Dev2021",
+      "reviewers": []
+    },
+    {
+      "id": 8466,
+      "title": "Develop CR #180594",
+      "status": "active",
+      "createdBy": "Hesham Elsayed",
+      "repository": "LDM",
+      "creationDate": "2026-11-02T13:00:45.852Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "180594",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/develop_CR_180594",
+      "targetRefName": "refs/heads/develop",
+      "reviewers": [
+        {
+          "name": "Bardis Maher",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "gamal kasem",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
       "id": 8464,
       "title": "Front End : CR #183571 Show Qitaf disabled with the reason instead of hiding...",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Adel Salah",
       "repository": "LDM",
       "creationDate": "2026-11-02T12:42:31.263Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-02T12:44:21.452Z",
+      "cycleTimeHours": 0.030608055555555555,
       "linkedStoryId": "183571",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/preprod_Qitaf",
@@ -48622,6 +48873,10 @@
         {
           "name": "Mohamed Salah-Eddin",
           "vote": 0
+        },
+        {
+          "name": "gamal kasem",
+          "vote": 10
         },
         {
           "name": "Fatma Fayed",
@@ -48657,19 +48912,19 @@
         },
         {
           "name": "Fatma Fayed",
-          "vote": 0
+          "vote": 10
         }
       ]
     },
     {
       "id": 8462,
       "title": "SL #195496 : handle case-insensitive \"Other\" rejection reason at RejectSample...",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Ahmed Gamal",
       "repository": "LDM",
       "creationDate": "2026-11-02T12:41:36.362Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-02T12:46:16.233Z",
+      "cycleTimeHours": 0.07774194444444445,
       "linkedStoryId": "195496",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/Preproduction_PR",
@@ -48689,7 +48944,7 @@
         },
         {
           "name": "Fatma Fayed",
-          "vote": 0
+          "vote": 10
         }
       ]
     },
@@ -48732,12 +48987,12 @@
     {
       "id": 8460,
       "title": "SL #195910 Bug #195991 : fix Unable to cast object of type 'Telerik.Reporting...",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Mahmoud Ahmed",
       "repository": "LDM",
       "creationDate": "2026-11-02T12:38:42.900Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-02T13:14:02.425Z",
+      "cycleTimeHours": 0.5887569444444445,
       "linkedStoryId": "195910",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/Master_PreProduction_195991",
@@ -48753,7 +49008,7 @@
         },
         {
           "name": "Mohamed Salah-Eddin",
-          "vote": 0
+          "vote": 10
         },
         {
           "name": "Fatma Fayed",
@@ -48851,7 +49106,7 @@
         },
         {
           "name": "Fatma Fayed",
-          "vote": 0
+          "vote": 10
         }
       ]
     },
@@ -63226,186 +63481,6 @@
         },
         {
           "name": "Mahmoud Salah",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7894,
-      "title": "SL #191451 Bug #191794 : Create custom AlfaKSA_ArabicForm from Arabic_Form",
-      "status": "completed",
-      "createdBy": "Mahmoud Ahmed",
-      "repository": "LDM",
-      "creationDate": "2026-10-13T13:22:01.131Z",
-      "closedDate": "2026-10-13T13:49:14.908Z",
-      "cycleTimeHours": 0.45382694444444444,
-      "linkedStoryId": "191451",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Master_PreProduction_192090",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 10
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7893,
-      "title": "PR for tasks 187986,189703",
-      "status": "completed",
-      "createdBy": "Mostafa Mahmoud",
-      "repository": "WebLDM-Liquibase",
-      "creationDate": "2026-10-13T13:15:51.230Z",
-      "closedDate": "2026-10-13T14:33:38.187Z",
-      "cycleTimeHours": 1.2963769444444444,
-      "linkedStoryId": "187986",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/mostafa",
-      "targetRefName": "refs/heads/main",
-      "reviewers": [
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "[LDM]\\DB-Approvers",
-          "vote": 10
-        },
-        {
-          "name": "[LDM]\\APP-Approvers",
-          "vote": 10
-        },
-        {
-          "name": "Moamen SalahElDeen",
-          "vote": 10
-        }
-      ]
-    },
-    {
-      "id": 7891,
-      "title": "Merge Support 191451 to master",
-      "status": "completed",
-      "createdBy": "Ahmed Farag",
-      "repository": "WebLDM-Liquibase",
-      "creationDate": "2026-10-13T13:05:53.552Z",
-      "closedDate": "2026-10-14T06:10:51.077Z",
-      "cycleTimeHours": 17.082645833333334,
-      "linkedStoryId": "191451",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Farag_Master",
-      "targetRefName": "refs/heads/master",
-      "reviewers": [
-        {
-          "name": "Moamen SalahElDeen",
-          "vote": 10
-        }
-      ]
-    },
-    {
-      "id": 7890,
-      "title": "Master PreProduction Integration Bugs",
-      "status": "completed",
-      "createdBy": "Mohamed Refaat",
-      "repository": "LDM",
-      "creationDate": "2026-10-13T12:54:03.968Z",
-      "closedDate": "2026-10-13T13:02:58.122Z",
-      "cycleTimeHours": 0.1483761111111111,
-      "linkedStoryId": null,
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Master_PreProduction_Integration_Bugs",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 10
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7889,
-      "title": "SL #191451 Bug #191794 : Create custom AlfaKSA_ArabicForm from Arabic_Form",
-      "status": "completed",
-      "createdBy": "Mahmoud Ahmed",
-      "repository": "LDM",
-      "creationDate": "2026-10-13T12:44:42.150Z",
-      "closedDate": "2026-10-13T13:49:50.149Z",
-      "cycleTimeHours": 1.0855552777777777,
-      "linkedStoryId": "191451",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/V2.0_AlfaKSA_21_09_2026_TempBaseLine",
-      "targetRefName": "refs/heads/V2.0_AlfaKSA_21_09_2026",
-      "reviewers": [
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 10
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "gamal kasem",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 7886,
-      "title": "Master PreProduction CR 190472",
-      "status": "completed",
-      "createdBy": "Mohamed Ayman",
-      "repository": "LDM",
-      "creationDate": "2026-10-13T11:36:23.540Z",
-      "closedDate": "2026-10-13T12:03:46.265Z",
-      "cycleTimeHours": 0.4563125,
-      "linkedStoryId": "190472",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Master_PreProduction_CR_190472",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 10
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
           "vote": 0
         }
       ]
