@@ -13242,12 +13242,12 @@
         {
           "id": 8586,
           "title": "Integration: CR #188862 Add new property to service setup sync home visit res...",
-          "status": "active",
+          "status": "completed",
           "createdBy": "Hamza Ashry",
           "repository": "LDM",
           "creationDate": "2026-11-05T10:11:09.443Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-11-05T12:00:49.833Z",
+          "cycleTimeHours": 1.827886111111111,
           "linkedStoryId": "188862",
           "linkedWorkItemIds": [],
           "sourceRefName": "refs/heads/Master_PreProduction_Integration_CR_188862",
@@ -13259,7 +13259,7 @@
             },
             {
               "name": "Mohamed Fawzy",
-              "vote": 0
+              "vote": 10
             },
             {
               "name": "Mohamed Salah-Eddin",
@@ -18756,7 +18756,44 @@
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
-      "pullRequests": []
+      "pullRequests": [
+        {
+          "id": 8596,
+          "title": "Develop cr 183446",
+          "status": "active",
+          "createdBy": "Samir Mohamed",
+          "repository": "LDM",
+          "creationDate": "2026-11-05T11:55:34.694Z",
+          "closedDate": null,
+          "cycleTimeHours": null,
+          "linkedStoryId": "183446",
+          "linkedWorkItemIds": [],
+          "sourceRefName": "refs/heads/develop_cr_183446",
+          "targetRefName": "refs/heads/develop",
+          "reviewers": [
+            {
+              "name": "Bardis Maher",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Fawzy",
+              "vote": 0
+            },
+            {
+              "name": "Mohamed Salah-Eddin",
+              "vote": 0
+            },
+            {
+              "name": "gamal kasem",
+              "vote": 0
+            },
+            {
+              "name": "Fatma Fayed",
+              "vote": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": 182218,
@@ -23631,12 +23668,12 @@
         {
           "id": 8590,
           "title": "Preprod cr #196357",
-          "status": "active",
+          "status": "completed",
           "createdBy": "Adel Salah",
           "repository": "LDM",
           "creationDate": "2026-11-05T10:21:23.089Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-11-05T11:54:42.105Z",
+          "cycleTimeHours": 1.5552822222222222,
           "linkedStoryId": "196357",
           "linkedWorkItemIds": [],
           "sourceRefName": "refs/heads/preprod_cr_#196357",
@@ -23656,7 +23693,7 @@
             },
             {
               "name": "Fatma Fayed",
-              "vote": 0
+              "vote": 10
             }
           ]
         }
@@ -24141,12 +24178,12 @@
         {
           "id": 8588,
           "title": "Preprod cr #196359",
-          "status": "active",
+          "status": "completed",
           "createdBy": "Adel Salah",
           "repository": "LDM",
           "creationDate": "2026-11-05T10:14:27.650Z",
-          "closedDate": null,
-          "cycleTimeHours": null,
+          "closedDate": "2026-11-05T11:54:21.586Z",
+          "cycleTimeHours": 1.6649822222222221,
           "linkedStoryId": "196359",
           "linkedWorkItemIds": [],
           "sourceRefName": "refs/heads/preprod_cr_#196359",
@@ -24166,7 +24203,7 @@
             },
             {
               "name": "Fatma Fayed",
-              "vote": 0
+              "vote": 10
             }
           ]
         }
@@ -50139,17 +50176,17 @@
   },
   "pullRequests": [
     {
-      "id": 8594,
-      "title": "174107-11: index RESULT.COLORCODE (RES_COLORCODE_IDX) before 174107-3 deletes...",
+      "id": 8599,
+      "title": "PR for task 195839",
       "status": "active",
-      "createdBy": "Moamen SalahElDeen",
+      "createdBy": "Mostafa Mahmoud",
       "repository": "WebLDM-Liquibase",
-      "creationDate": "2026-11-05T10:54:22.475Z",
+      "creationDate": "2026-11-05T12:49:18.372Z",
       "closedDate": null,
       "cycleTimeHours": null,
-      "linkedStoryId": "174107",
+      "linkedStoryId": "195839",
       "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Fix_result_colorcode_idx_main",
+      "sourceRefName": "refs/heads/mostafa",
       "targetRefName": "refs/heads/main",
       "reviewers": [
         {
@@ -50159,6 +50196,142 @@
         {
           "name": "[LDM]\\APP-Approvers",
           "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8598,
+      "title": "Add WebResultConnectionString to Reports Solution",
+      "status": "abandoned",
+      "createdBy": "Mohamed Hany",
+      "repository": "LDM",
+      "creationDate": "2026-11-05T12:26:40.149Z",
+      "closedDate": "2026-11-05T12:28:52.739Z",
+      "cycleTimeHours": null,
+      "linkedStoryId": null,
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/develop_195925",
+      "targetRefName": "refs/heads/develop",
+      "reviewers": [
+        {
+          "name": "Bardis Maher",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "gamal kasem",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8597,
+      "title": "Merge Fix of bug 196831 to main",
+      "status": "active",
+      "createdBy": "Ahmed Farag",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-11-05T12:26:36.550Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "196831",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Farag",
+      "targetRefName": "refs/heads/main",
+      "reviewers": [
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 10
+        },
+        {
+          "name": "[LDM]\\DB-Approvers",
+          "vote": 0
+        },
+        {
+          "name": "[LDM]\\APP-Approvers",
+          "vote": 10
+        }
+      ]
+    },
+    {
+      "id": 8596,
+      "title": "Develop cr 183446",
+      "status": "active",
+      "createdBy": "Samir Mohamed",
+      "repository": "LDM",
+      "creationDate": "2026-11-05T11:55:34.694Z",
+      "closedDate": null,
+      "cycleTimeHours": null,
+      "linkedStoryId": "183446",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/develop_cr_183446",
+      "targetRefName": "refs/heads/develop",
+      "reviewers": [
+        {
+          "name": "Bardis Maher",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Fawzy",
+          "vote": 0
+        },
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 0
+        },
+        {
+          "name": "gamal kasem",
+          "vote": 0
+        },
+        {
+          "name": "Fatma Fayed",
+          "vote": 0
+        }
+      ]
+    },
+    {
+      "id": 8594,
+      "title": "174107-11: index RESULT.COLORCODE (RES_COLORCODE_IDX) before 174107-3 deletes...",
+      "status": "completed",
+      "createdBy": "Moamen SalahElDeen",
+      "repository": "WebLDM-Liquibase",
+      "creationDate": "2026-11-05T10:54:22.475Z",
+      "closedDate": "2026-11-05T12:37:40.331Z",
+      "cycleTimeHours": 1.7216266666666666,
+      "linkedStoryId": "174107",
+      "linkedWorkItemIds": [],
+      "sourceRefName": "refs/heads/Fix_result_colorcode_idx_main",
+      "targetRefName": "refs/heads/main",
+      "reviewers": [
+        {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 10
+        },
+        {
+          "name": "[LDM]\\DB-Approvers",
+          "vote": 10
+        },
+        {
+          "name": "[LDM]\\APP-Approvers",
+          "vote": 10
+        },
+        {
+          "name": "Mohamed Qassem",
+          "vote": 10
+        },
+        {
+          "name": "Moamen SalahElDeen",
+          "vote": 10
         }
       ]
     },
@@ -50180,36 +50353,44 @@
     {
       "id": 8592,
       "title": "Task 188091 CR 105859: task 6 status/cancel rules as SP_OUTSOURCESERVICEDATA;...",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Moamen SalahElDeen",
       "repository": "WebLDM-Liquibase",
       "creationDate": "2026-11-05T10:53:02.124Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-05T12:39:43.102Z",
+      "cycleTimeHours": 1.7780494444444443,
       "linkedStoryId": "188091",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/Task_188091_t6_7_main",
       "targetRefName": "refs/heads/main",
       "reviewers": [
         {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 10
+        },
+        {
           "name": "[LDM]\\DB-Approvers",
-          "vote": 0
+          "vote": 10
         },
         {
           "name": "[LDM]\\APP-Approvers",
-          "vote": 0
+          "vote": 10
+        },
+        {
+          "name": "Mohamed Qassem",
+          "vote": 10
         }
       ]
     },
     {
       "id": 8590,
       "title": "Preprod cr #196357",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Adel Salah",
       "repository": "LDM",
       "creationDate": "2026-11-05T10:21:23.089Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-05T11:54:42.105Z",
+      "cycleTimeHours": 1.5552822222222222,
       "linkedStoryId": "196357",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/preprod_cr_#196357",
@@ -50229,19 +50410,19 @@
         },
         {
           "name": "Fatma Fayed",
-          "vote": 0
+          "vote": 10
         }
       ]
     },
     {
       "id": 8588,
       "title": "Preprod cr #196359",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Adel Salah",
       "repository": "LDM",
       "creationDate": "2026-11-05T10:14:27.650Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-05T11:54:21.586Z",
+      "cycleTimeHours": 1.6649822222222221,
       "linkedStoryId": "196359",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/preprod_cr_#196359",
@@ -50261,43 +50442,51 @@
         },
         {
           "name": "Fatma Fayed",
-          "vote": 0
+          "vote": 10
         }
       ]
     },
     {
       "id": 8587,
       "title": "190035-2: MARK_RAN when a PK/UQ on (TRANSACTIONTYPE, TRANSACTIONID, CLIENTID)...",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Moamen SalahElDeen",
       "repository": "WebLDM-Liquibase",
       "creationDate": "2026-11-05T10:13:52.257Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-05T12:32:42.125Z",
+      "cycleTimeHours": 2.313852222222222,
       "linkedStoryId": "190035",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/Fix_190035_2_main",
       "targetRefName": "refs/heads/main",
       "reviewers": [
         {
+          "name": "Mohamed Salah-Eddin",
+          "vote": 10
+        },
+        {
           "name": "[LDM]\\DB-Approvers",
-          "vote": 0
+          "vote": 10
         },
         {
           "name": "[LDM]\\APP-Approvers",
-          "vote": 0
+          "vote": 10
+        },
+        {
+          "name": "Mohamed Qassem",
+          "vote": 10
         }
       ]
     },
     {
       "id": 8586,
       "title": "Integration: CR #188862 Add new property to service setup sync home visit res...",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Hamza Ashry",
       "repository": "LDM",
       "creationDate": "2026-11-05T10:11:09.443Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-05T12:00:49.833Z",
+      "cycleTimeHours": 1.827886111111111,
       "linkedStoryId": "188862",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/Master_PreProduction_Integration_CR_188862",
@@ -50309,7 +50498,7 @@
         },
         {
           "name": "Mohamed Fawzy",
-          "vote": 0
+          "vote": 10
         },
         {
           "name": "Mohamed Salah-Eddin",
@@ -50403,12 +50592,12 @@
     {
       "id": 8582,
       "title": "V4.0 BorgOman 12 05 2026 Integ TempBaseLine",
-      "status": "active",
+      "status": "completed",
       "createdBy": "Mohamed Refaat",
       "repository": "LDM",
       "creationDate": "2026-11-05T09:08:36.517Z",
-      "closedDate": null,
-      "cycleTimeHours": null,
+      "closedDate": "2026-11-05T12:00:13.579Z",
+      "cycleTimeHours": 2.860295,
       "linkedStoryId": "2026",
       "linkedWorkItemIds": [],
       "sourceRefName": "refs/heads/V4.0_BorgOman_12_05_2026_Integ_TempBaseLine",
@@ -64798,134 +64987,6 @@
         },
         {
           "name": "gamal kasem",
-          "vote": 0
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 10
-        }
-      ]
-    },
-    {
-      "id": 8020,
-      "title": "PR for task 187986",
-      "status": "completed",
-      "createdBy": "Mostafa Mahmoud",
-      "repository": "WebLDM-Liquibase",
-      "creationDate": "2026-10-18T14:25:46.271Z",
-      "closedDate": "2026-10-18T14:58:19.682Z",
-      "cycleTimeHours": 0.5426141666666666,
-      "linkedStoryId": "187986",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/mostafa",
-      "targetRefName": "refs/heads/main",
-      "reviewers": [
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "[LDM]\\DB-Approvers",
-          "vote": 10
-        },
-        {
-          "name": "[LDM]\\APP-Approvers",
-          "vote": 10
-        },
-        {
-          "name": "Moamen SalahElDeen",
-          "vote": 10
-        }
-      ]
-    },
-    {
-      "id": 8019,
-      "title": "SL #192255 Bug #192679 - Release : Custom Reports | AlFarabi | Replace the AlBorg class in the AlFarabi claim reports (Form1)",
-      "status": "completed",
-      "createdBy": "Mohamed Samy",
-      "repository": "LDM",
-      "creationDate": "2026-10-18T14:24:26.334Z",
-      "closedDate": "2026-10-18T15:00:07.685Z",
-      "cycleTimeHours": 0.5948197222222222,
-      "linkedStoryId": "192255",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Master_PreProduction_SL#192253",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 8018,
-      "title": "SL_ #192255 Bug_ #192799 fix KeepingTogether in claim forms",
-      "status": "completed",
-      "createdBy": "Samir Mohamed",
-      "repository": "LDM",
-      "creationDate": "2026-10-18T14:04:16.027Z",
-      "closedDate": "2026-10-18T14:07:28.473Z",
-      "cycleTimeHours": 0.053457222222222225,
-      "linkedStoryId": "192255",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Master_PreProduction_Bug_192799",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
-          "vote": 10
-        },
-        {
-          "name": "Fatma Fayed",
-          "vote": 0
-        }
-      ]
-    },
-    {
-      "id": 8017,
-      "title": "Master PreProduction 192580",
-      "status": "completed",
-      "createdBy": "Ibrahim Ahmed",
-      "repository": "LDM",
-      "creationDate": "2026-10-18T13:55:51.145Z",
-      "closedDate": "2026-10-18T13:58:52.450Z",
-      "cycleTimeHours": 0.0503625,
-      "linkedStoryId": "192580",
-      "linkedWorkItemIds": [],
-      "sourceRefName": "refs/heads/Master_PreProduction_192580",
-      "targetRefName": "refs/heads/Master_PreProduction",
-      "reviewers": [
-        {
-          "name": "Bardis Maher",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Fawzy",
-          "vote": 0
-        },
-        {
-          "name": "Mohamed Salah-Eddin",
           "vote": 0
         },
         {
