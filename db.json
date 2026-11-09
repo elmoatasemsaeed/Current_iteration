@@ -11007,7 +11007,7 @@
       "expectedRelease": null,
       "branch": "Ethiopia",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T14:05:46.637Z",
+      "changedDate": "2026-11-09T14:57:29.213Z",
       "tasks": [
         {
           "ID": 196998,
@@ -11050,14 +11050,14 @@
           "Assigned To": "Samir Mohamed",
           "Activity": "Development",
           "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 1.5,
+          "TimeSheet_DevActualTime": 2.5,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-11-05T14:38:28.417Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-11-05T14:39:38.367Z",
           "State": "Closed",
-          "Changed Date": "2026-11-08T17:16:30.493Z",
+          "Changed Date": "2026-11-09T15:11:06.747Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -11596,7 +11596,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wateen Lab_325",
-      "changedDate": "2026-11-09T13:33:07.710Z",
+      "changedDate": "2026-11-09T15:29:04.237Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -11610,7 +11610,7 @@
       "customTags": [],
       "iterationPath": "LDM",
       "devActualTime": 2,
-      "testActualTime": 0,
+      "testActualTime": 1,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": [
@@ -11661,7 +11661,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-11-09T09:04:34.853Z",
+      "changedDate": "2026-11-09T15:04:58.193Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -12838,6 +12838,36 @@
           "State": "Active",
           "Changed Date": "2026-11-04T15:57:46.45Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197860,
+          "Work Item Type": "Task",
+          "Title": "CR_174161 >> Preparation",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:28:07.62Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197861,
+          "Work Item Type": "Task",
+          "Title": "CR_174161 >> Execution",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:28:30.343Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
@@ -12970,8 +13000,8 @@
       "reviews": [],
       "calc": {
         "devEnd": "2026-11-10T12:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
+        "testEnd": "2026-11-15T07:00:00.000Z",
+        "finalEnd": "2026-11-15T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
@@ -14440,6 +14470,34 @@
         {
           "id": 197852,
           "state": "Design"
+        },
+        {
+          "id": 197854,
+          "state": "Design"
+        },
+        {
+          "id": 197855,
+          "state": "Design"
+        },
+        {
+          "id": 197856,
+          "state": "Design"
+        },
+        {
+          "id": 197857,
+          "state": "Design"
+        },
+        {
+          "id": 197858,
+          "state": "Design"
+        },
+        {
+          "id": 197859,
+          "state": "Design"
+        },
+        {
+          "id": 197968,
+          "state": "Design"
         }
       ],
       "reviews": [],
@@ -15218,7 +15276,7 @@
       "id": 196576,
       "title": "App Link - Admin Portal - Show \"Mobile App Information\" Screen on  Admin Portal",
       "type": "User Story",
-      "state": "Resolved",
+      "state": "Active - With Bugs",
       "assignedTo": "Gomaa Sayed",
       "tester": "Abdulrahman Elbetar",
       "area": "MobileApp",
@@ -15227,7 +15285,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T13:44:59.833Z",
+      "changedDate": "2026-11-09T16:03:53.573Z",
       "tasks": [
         {
           "ID": 197302,
@@ -15374,7 +15432,23 @@
           "Customer": "Internal CR_2000"
         }
       ],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": 198037,
+          "Work Item Type": "Bug",
+          "Title": "Super Admin – Edit Client – Mobile App Information section style does not match Super Admin design and CR wireframe",
+          "Assigned To": "Gomaa Sayed",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "MobileApp\\2026\\AppLink-November 1-30",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T16:07:03.457Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
       "testCases": [
         {
           "id": 197829,
@@ -15406,15 +15480,15 @@
         },
         {
           "id": 197837,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197838,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197839,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197840,
@@ -15426,7 +15500,7 @@
         },
         {
           "id": 197842,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197843,
@@ -15438,19 +15512,19 @@
         },
         {
           "id": 197845,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197846,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 197847,
-          "state": "Design"
+          "state": "Not Applicable"
         },
         {
           "id": 197848,
-          "state": "Design"
+          "state": "Not Applicable"
         }
       ],
       "reviews": [],
@@ -15523,14 +15597,14 @@
           "Assigned To": "Samir Mohamed",
           "Activity": "Development",
           "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.25,
+          "TimeSheet_DevActualTime": 0.92,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-11-05T14:46:44.58Z",
           "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-11-05T14:47:32.977Z",
           "State": "Closed",
-          "Changed Date": "2026-11-08T13:04:07.003Z",
+          "Changed Date": "2026-11-09T15:13:04.893Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -16437,7 +16511,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T12:49:47.687Z",
+      "changedDate": "2026-11-09T15:30:40.497Z",
       "tasks": [
         {
           "ID": 196882,
@@ -16566,15 +16640,154 @@
           "State": "Active",
           "Changed Date": "2026-11-08T13:49:51.04Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197862,
+          "Work Item Type": "Task",
+          "Title": "CR_174929 >> Preparation",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:31:35.993Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197863,
+          "Work Item Type": "Task",
+          "Title": "CR_174929 >> Execution",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:31:57.17Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 197864,
+          "state": "Design"
+        },
+        {
+          "id": 197865,
+          "state": "Design"
+        },
+        {
+          "id": 197866,
+          "state": "Design"
+        },
+        {
+          "id": 197867,
+          "state": "Design"
+        },
+        {
+          "id": 197868,
+          "state": "Design"
+        },
+        {
+          "id": 197869,
+          "state": "Design"
+        },
+        {
+          "id": 197870,
+          "state": "Design"
+        },
+        {
+          "id": 197871,
+          "state": "Design"
+        },
+        {
+          "id": 197872,
+          "state": "Design"
+        },
+        {
+          "id": 197873,
+          "state": "Design"
+        },
+        {
+          "id": 197874,
+          "state": "Design"
+        },
+        {
+          "id": 197875,
+          "state": "Design"
+        },
+        {
+          "id": 197876,
+          "state": "Design"
+        },
+        {
+          "id": 197877,
+          "state": "Design"
+        },
+        {
+          "id": 197878,
+          "state": "Design"
+        },
+        {
+          "id": 197879,
+          "state": "Design"
+        },
+        {
+          "id": 197880,
+          "state": "Design"
+        },
+        {
+          "id": 197881,
+          "state": "Design"
+        },
+        {
+          "id": 197882,
+          "state": "Design"
+        },
+        {
+          "id": 197883,
+          "state": "Design"
+        },
+        {
+          "id": 197884,
+          "state": "Design"
+        },
+        {
+          "id": 197885,
+          "state": "Design"
+        },
+        {
+          "id": 197886,
+          "state": "Design"
+        },
+        {
+          "id": 197887,
+          "state": "Design"
+        },
+        {
+          "id": 197888,
+          "state": "Design"
+        },
+        {
+          "id": 197889,
+          "state": "Design"
+        },
+        {
+          "id": 197890,
+          "state": "Design"
+        }
+      ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-11-16T12:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
+        "testEnd": "2026-11-25T09:00:00.000Z",
+        "finalEnd": "2026-11-25T09:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
@@ -17105,12 +17318,13 @@
       "area": "Front and Financial",
       "priority": 3,
       "tags": [
-        "Waiting for business"
+        "PMD",
+        " Waiting for business"
       ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T13:59:13.727Z",
+      "changedDate": "2026-11-09T15:14:26.653Z",
       "tasks": [
         {
           "ID": 194635,
@@ -21125,7 +21339,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T08:19:12.123Z",
+      "changedDate": "2026-11-09T15:33:46.350Z",
       "tasks": [
         {
           "ID": 196834,
@@ -21448,15 +21662,190 @@
           "State": "Active",
           "Changed Date": "2026-11-08T13:27:20.63Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197891,
+          "Work Item Type": "Task",
+          "Title": "CR_183446 >> Preparation",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:34:59.877Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197892,
+          "Work Item Type": "Task",
+          "Title": "CR_183446 >> Execution",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:34:55.297Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 197893,
+          "state": "Design"
+        },
+        {
+          "id": 197894,
+          "state": "Design"
+        },
+        {
+          "id": 197895,
+          "state": "Design"
+        },
+        {
+          "id": 197896,
+          "state": "Design"
+        },
+        {
+          "id": 197897,
+          "state": "Design"
+        },
+        {
+          "id": 197898,
+          "state": "Design"
+        },
+        {
+          "id": 197899,
+          "state": "Design"
+        },
+        {
+          "id": 197900,
+          "state": "Design"
+        },
+        {
+          "id": 197901,
+          "state": "Design"
+        },
+        {
+          "id": 197902,
+          "state": "Design"
+        },
+        {
+          "id": 197903,
+          "state": "Design"
+        },
+        {
+          "id": 197904,
+          "state": "Design"
+        },
+        {
+          "id": 197905,
+          "state": "Design"
+        },
+        {
+          "id": 197906,
+          "state": "Design"
+        },
+        {
+          "id": 197907,
+          "state": "Design"
+        },
+        {
+          "id": 197908,
+          "state": "Design"
+        },
+        {
+          "id": 197909,
+          "state": "Design"
+        },
+        {
+          "id": 197910,
+          "state": "Design"
+        },
+        {
+          "id": 197911,
+          "state": "Design"
+        },
+        {
+          "id": 197912,
+          "state": "Design"
+        },
+        {
+          "id": 197913,
+          "state": "Design"
+        },
+        {
+          "id": 197914,
+          "state": "Design"
+        },
+        {
+          "id": 197915,
+          "state": "Design"
+        },
+        {
+          "id": 197916,
+          "state": "Design"
+        },
+        {
+          "id": 197917,
+          "state": "Design"
+        },
+        {
+          "id": 197918,
+          "state": "Design"
+        },
+        {
+          "id": 197919,
+          "state": "Design"
+        },
+        {
+          "id": 197920,
+          "state": "Design"
+        },
+        {
+          "id": 197921,
+          "state": "Design"
+        },
+        {
+          "id": 197922,
+          "state": "Design"
+        },
+        {
+          "id": 197923,
+          "state": "Design"
+        },
+        {
+          "id": 197924,
+          "state": "Design"
+        },
+        {
+          "id": 197925,
+          "state": "Design"
+        },
+        {
+          "id": 197926,
+          "state": "Design"
+        },
+        {
+          "id": 197927,
+          "state": "Design"
+        },
+        {
+          "id": 197928,
+          "state": "Design"
+        }
+      ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-12-06T09:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
+        "testEnd": "2026-12-07T07:00:00.000Z",
+        "finalEnd": "2026-12-07T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
@@ -21910,15 +22299,16 @@
           "ID": 197735,
           "Work Item Type": "Bug",
           "Title": "sys. permits Adding an accreditation with a name that already exists",
-          "Assigned To": "mohamed.abdelghany",
+          "Assigned To": "Karim El-Saeed",
           "Activity": "",
-          "Original Estimation": 0,
+          "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T15:58:00.523Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-09T12:53:09.697Z",
+          "State": "Active",
+          "Changed Date": "2026-11-09T15:58:00.523Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -22278,7 +22668,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T12:49:58.580Z",
+      "changedDate": "2026-11-09T15:36:58.190Z",
       "tasks": [
         {
           "ID": 197201,
@@ -22584,15 +22974,190 @@
           "State": "Active",
           "Changed Date": "2026-11-08T17:44:25.773Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197930,
+          "Work Item Type": "Task",
+          "Title": "CR_183468 >> Preparation",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:37:50.097Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197931,
+          "Work Item Type": "Task",
+          "Title": "CR_183468 >> Execution",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:38:09.8Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 197932,
+          "state": "Design"
+        },
+        {
+          "id": 197933,
+          "state": "Design"
+        },
+        {
+          "id": 197934,
+          "state": "Design"
+        },
+        {
+          "id": 197935,
+          "state": "Design"
+        },
+        {
+          "id": 197936,
+          "state": "Design"
+        },
+        {
+          "id": 197937,
+          "state": "Design"
+        },
+        {
+          "id": 197938,
+          "state": "Design"
+        },
+        {
+          "id": 197939,
+          "state": "Design"
+        },
+        {
+          "id": 197940,
+          "state": "Design"
+        },
+        {
+          "id": 197941,
+          "state": "Design"
+        },
+        {
+          "id": 197942,
+          "state": "Design"
+        },
+        {
+          "id": 197943,
+          "state": "Design"
+        },
+        {
+          "id": 197944,
+          "state": "Design"
+        },
+        {
+          "id": 197945,
+          "state": "Design"
+        },
+        {
+          "id": 197946,
+          "state": "Design"
+        },
+        {
+          "id": 197947,
+          "state": "Design"
+        },
+        {
+          "id": 197948,
+          "state": "Design"
+        },
+        {
+          "id": 197949,
+          "state": "Design"
+        },
+        {
+          "id": 197950,
+          "state": "Design"
+        },
+        {
+          "id": 197951,
+          "state": "Design"
+        },
+        {
+          "id": 197952,
+          "state": "Design"
+        },
+        {
+          "id": 197953,
+          "state": "Design"
+        },
+        {
+          "id": 197954,
+          "state": "Design"
+        },
+        {
+          "id": 197955,
+          "state": "Design"
+        },
+        {
+          "id": 197956,
+          "state": "Design"
+        },
+        {
+          "id": 197957,
+          "state": "Design"
+        },
+        {
+          "id": 197958,
+          "state": "Design"
+        },
+        {
+          "id": 197959,
+          "state": "Design"
+        },
+        {
+          "id": 197960,
+          "state": "Design"
+        },
+        {
+          "id": 197961,
+          "state": "Design"
+        },
+        {
+          "id": 197962,
+          "state": "Design"
+        },
+        {
+          "id": 197963,
+          "state": "Design"
+        },
+        {
+          "id": 197964,
+          "state": "Design"
+        },
+        {
+          "id": 197965,
+          "state": "Design"
+        },
+        {
+          "id": 197966,
+          "state": "Design"
+        },
+        {
+          "id": 197967,
+          "state": "Design"
+        }
+      ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-12-09T12:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
+        "testEnd": "2026-12-10T07:00:00.000Z",
+        "finalEnd": "2026-12-10T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
@@ -23865,14 +24430,14 @@
       "type": "User Story",
       "state": "Resolved",
       "assignedTo": "Samir Mohamed",
-      "tester": "Unassigned",
+      "tester": "Mohamed Abd-Elalim",
       "area": "Registration",
       "priority": 6,
       "tags": [],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T13:06:34.020Z",
+      "changedDate": "2026-11-09T15:41:27.277Z",
       "tasks": [
         {
           "ID": 197667,
@@ -23924,15 +24489,146 @@
           "State": "To Be Reviewed",
           "Changed Date": "2026-11-09T11:44:28.693Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197969,
+          "Work Item Type": "Task",
+          "Title": "CR_184264 >> Preparation",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:42:40.01Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197995,
+          "Work Item Type": "Task",
+          "Title": "CR_184264 >> Execution",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:43:06.63Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 197970,
+          "state": "Design"
+        },
+        {
+          "id": 197971,
+          "state": "Design"
+        },
+        {
+          "id": 197972,
+          "state": "Design"
+        },
+        {
+          "id": 197973,
+          "state": "Design"
+        },
+        {
+          "id": 197974,
+          "state": "Design"
+        },
+        {
+          "id": 197975,
+          "state": "Design"
+        },
+        {
+          "id": 197976,
+          "state": "Design"
+        },
+        {
+          "id": 197977,
+          "state": "Design"
+        },
+        {
+          "id": 197978,
+          "state": "Design"
+        },
+        {
+          "id": 197979,
+          "state": "Design"
+        },
+        {
+          "id": 197980,
+          "state": "Design"
+        },
+        {
+          "id": 197981,
+          "state": "Design"
+        },
+        {
+          "id": 197982,
+          "state": "Design"
+        },
+        {
+          "id": 197983,
+          "state": "Design"
+        },
+        {
+          "id": 197984,
+          "state": "Design"
+        },
+        {
+          "id": 197985,
+          "state": "Design"
+        },
+        {
+          "id": 197986,
+          "state": "Design"
+        },
+        {
+          "id": 197987,
+          "state": "Design"
+        },
+        {
+          "id": 197988,
+          "state": "Design"
+        },
+        {
+          "id": 197989,
+          "state": "Design"
+        },
+        {
+          "id": 197990,
+          "state": "Design"
+        },
+        {
+          "id": 197991,
+          "state": "Design"
+        },
+        {
+          "id": 197992,
+          "state": "Design"
+        },
+        {
+          "id": 197993,
+          "state": "Design"
+        },
+        {
+          "id": 197994,
+          "state": "Design"
+        }
+      ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-12-09T12:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
+        "testEnd": "2026-12-10T07:00:00.000Z",
+        "finalEnd": "2026-12-10T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
@@ -24235,7 +24931,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T12:50:05.257Z",
+      "changedDate": "2026-11-09T15:45:15.400Z",
       "tasks": [
         {
           "ID": 197323,
@@ -24495,15 +25191,190 @@
           "State": "Active",
           "Changed Date": "2026-11-08T18:01:55.737Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197998,
+          "Work Item Type": "Task",
+          "Title": "CR_181728 >> Preparation",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:46:31.067Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 198035,
+          "Work Item Type": "Task",
+          "Title": "CR_181728 >> Execution",
+          "Assigned To": "Mohamed Abd-Elalim",
+          "Activity": "Testing",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:46:57.793Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
-      "testCases": [],
+      "testCases": [
+        {
+          "id": 197999,
+          "state": "Design"
+        },
+        {
+          "id": 198000,
+          "state": "Design"
+        },
+        {
+          "id": 198001,
+          "state": "Design"
+        },
+        {
+          "id": 198002,
+          "state": "Design"
+        },
+        {
+          "id": 198003,
+          "state": "Design"
+        },
+        {
+          "id": 198004,
+          "state": "Design"
+        },
+        {
+          "id": 198005,
+          "state": "Design"
+        },
+        {
+          "id": 198006,
+          "state": "Design"
+        },
+        {
+          "id": 198007,
+          "state": "Design"
+        },
+        {
+          "id": 198008,
+          "state": "Design"
+        },
+        {
+          "id": 198009,
+          "state": "Design"
+        },
+        {
+          "id": 198010,
+          "state": "Design"
+        },
+        {
+          "id": 198011,
+          "state": "Design"
+        },
+        {
+          "id": 198012,
+          "state": "Design"
+        },
+        {
+          "id": 198013,
+          "state": "Design"
+        },
+        {
+          "id": 198014,
+          "state": "Design"
+        },
+        {
+          "id": 198015,
+          "state": "Design"
+        },
+        {
+          "id": 198016,
+          "state": "Design"
+        },
+        {
+          "id": 198017,
+          "state": "Design"
+        },
+        {
+          "id": 198018,
+          "state": "Design"
+        },
+        {
+          "id": 198019,
+          "state": "Design"
+        },
+        {
+          "id": 198020,
+          "state": "Design"
+        },
+        {
+          "id": 198021,
+          "state": "Design"
+        },
+        {
+          "id": 198022,
+          "state": "Design"
+        },
+        {
+          "id": 198023,
+          "state": "Design"
+        },
+        {
+          "id": 198024,
+          "state": "Design"
+        },
+        {
+          "id": 198025,
+          "state": "Design"
+        },
+        {
+          "id": 198026,
+          "state": "Design"
+        },
+        {
+          "id": 198027,
+          "state": "Design"
+        },
+        {
+          "id": 198028,
+          "state": "Design"
+        },
+        {
+          "id": 198029,
+          "state": "Design"
+        },
+        {
+          "id": 198030,
+          "state": "Design"
+        },
+        {
+          "id": 198031,
+          "state": "Design"
+        },
+        {
+          "id": 198032,
+          "state": "Design"
+        },
+        {
+          "id": 198033,
+          "state": "Design"
+        },
+        {
+          "id": 198034,
+          "state": "Design"
+        }
+      ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-11-30T07:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
+        "testEnd": "2026-12-10T07:00:00.000Z",
+        "finalEnd": "2026-12-10T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
@@ -24794,13 +25665,28 @@
           "Tags": "liquibase; v4.5.0",
           "Changed Date": "2026-11-09T13:38:05.097Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 198036,
+          "Work Item Type": "Task",
+          "Title": "FD0013 | Delete VitalSigns.aspx and its related data",
+          "Assigned To": "Mahmoud Essam",
+          "Activity": "Development",
+          "Original Estimation": 7,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T15:52:39.97Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-12-07T11:00:00.000Z",
+        "devEnd": "2026-12-08T14:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -26213,7 +27099,7 @@
       "id": 169782,
       "title": "Internal CR - Doctor Income Analysis screen -  update the old Revamp screens with the new design system",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "Adel Salah",
       "tester": "Abdelrahman Salman",
       "area": "Front and Financial",
@@ -26222,7 +27108,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-04T08:21:41.697Z",
+      "changedDate": "2026-11-09T15:46:14.637Z",
       "tasks": [
         {
           "ID": 194845,
@@ -26522,29 +27408,31 @@
           "Activity": "",
           "Original Estimation": 2,
           "TimeSheet_DevActualTime": 1.75,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.25,
           "Activated Date": "2026-11-03T16:43:43.747Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
           "Resolved Date": "2026-11-05T09:14:30.197Z",
           "State": "Resolved",
-          "Changed Date": "2026-11-08T18:49:26.713Z",
+          "Changed Date": "2026-11-09T14:54:37.46Z",
           "Customer": "Internal CR_2000"
         },
         {
           "ID": 196404,
           "Work Item Type": "Bug",
           "Title": "the selected row dose not be retrieved only in Doctor Income Analysis Report",
-          "Assigned To": "Karim El-Saeed",
+          "Assigned To": "Abdelrahman Salman",
           "Activity": "",
           "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0.75,
+          "TimeSheet_DevActualTime": 3.75,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-11-09T13:31:22.767Z",
           "Iteration Path": "LDM\\Front Team\\2026\\Front-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-11-09T13:33:05.077Z",
+          "Resolved Date": "2026-11-09T15:46:04.52Z",
+          "State": "Resolved",
+          "Tags": "no changes made; Old Behavior",
+          "Changed Date": "2026-11-09T15:46:04.52Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -28204,12 +29092,13 @@
       "priority": 100,
       "tags": [
         "Administration",
-        " DesignSystem"
+        " DesignSystem",
+        " PMD"
       ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T12:48:46.173Z",
+      "changedDate": "2026-11-09T15:13:06.743Z",
       "tasks": [
         {
           "ID": 196659,
@@ -31418,7 +32307,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-08T13:33:45.430Z",
+      "changedDate": "2026-11-09T15:21:34.940Z",
       "tasks": [
         {
           "ID": 169708,
@@ -32356,7 +33245,7 @@
           "Iteration Path": "Home Visit\\2025\\home_visit January 5-19",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-11-09T14:45:37.623Z",
+          "Changed Date": "2026-11-09T15:33:32.267Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -35202,7 +36091,7 @@
       "id": 183093,
       "title": "Accurate Lab - Collect Mobile Application",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "eslam anwar",
       "tester": "Amr Soliman",
       "area": "MobileApp",
@@ -35211,7 +36100,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Accurate Lab_17",
-      "changedDate": "2026-11-08T09:22:16.063Z",
+      "changedDate": "2026-11-09T15:54:27.890Z",
       "tasks": [
         {
           "ID": 195213,
@@ -35388,16 +36277,17 @@
           "ID": 197221,
           "Work Item Type": "Bug",
           "Title": "The selected or current day number is hidden (blue text on blue background)",
-          "Assigned To": "eslam anwar",
+          "Assigned To": "Amr Soliman",
           "Activity": "",
           "Original Estimation": 2,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 1,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-11-08T11:54:28.94Z",
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-11-08T11:54:34.137Z",
+          "Resolved Date": "2026-11-09T16:00:46.07Z",
+          "State": "Resolved",
+          "Changed Date": "2026-11-09T16:00:46.07Z",
           "Customer": "Accurate Lab_17"
         },
         {
@@ -44907,16 +45797,18 @@
           "ID": 196146,
           "Work Item Type": "Bug",
           "Title": "General - Registers - Quality Objectives (228) and Feedback (264) load all rows at once instead of paging by 50 like the other registers (follow-up of 195043)",
-          "Assigned To": "Mohammed Hashem",
+          "Assigned To": "Salah Ahmed",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 0.75,
+          "TimeSheet_DevActualTime": 0.75,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T15:56:01.713Z",
           "Iteration Path": "SaaS",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
+          "Resolved Date": "2026-11-09T15:56:01.713Z",
+          "State": "Resolved",
           "Tags": "Exploratory; QMS; Regression CR",
-          "Changed Date": "2026-11-09T13:37:00.64Z",
+          "Changed Date": "2026-11-09T15:56:01.713Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -44959,32 +45851,37 @@
           "ID": 196848,
           "Work Item Type": "Bug",
           "Title": "[Enhancement] Administration - Reference Data - Typing a new Category in Add Value silently creates a new category with no warning (follow-up of 195066)",
-          "Assigned To": "Mohammed Hashem",
+          "Assigned To": "Salah Ahmed",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 0.75,
+          "TimeSheet_DevActualTime": 0.75,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T15:56:10.497Z",
           "Iteration Path": "SaaS",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
+          "Resolved Date": "2026-11-09T15:56:10.497Z",
+          "State": "Resolved",
           "Tags": "Exploratory; QMS; Regression CR",
-          "Changed Date": "2026-11-09T13:37:00.64Z"
+          "Changed Date": "2026-11-09T15:56:10.497Z",
+          "Customer": "Internal CR_2000"
         },
         {
           "ID": 196849,
           "Work Item Type": "Bug",
           "Title": "[Enhancement] General - New record is not highlighted or opened after \"Record created successfully.\" (follow-up of 195062)",
-          "Assigned To": "Sherif Ezzat",
+          "Assigned To": "Salah Ahmed",
           "Activity": "",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.75,
           "TimeSheet_TestingActualTime": 0,
           "Activated Date": "2026-11-09T12:19:45.257Z",
           "Iteration Path": "SaaS",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-11-09T15:27:22.773Z",
+          "State": "Resolved",
           "Tags": "Exploratory; QMS; Regression CR",
-          "Changed Date": "2026-11-09T12:37:58.937Z"
+          "Changed Date": "2026-11-09T15:27:22.773Z",
+          "Customer": "Internal CR_2000"
         },
         {
           "ID": 196957,
@@ -45042,37 +45939,41 @@
           "ID": 197120,
           "Work Item Type": "Bug",
           "Title": "Organization & Reference Data Department Page – Missing Created Date and UI Improvements",
-          "Assigned To": "Mohammed Hashem",
+          "Assigned To": "Saddam Raees",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 0.75,
+          "TimeSheet_DevActualTime": 0.75,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T15:56:19.523Z",
           "Iteration Path": "SaaS",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-09T13:37:00.64Z",
+          "Resolved Date": "2026-11-09T15:56:19.523Z",
+          "State": "Resolved",
+          "Changed Date": "2026-11-09T15:56:19.523Z",
           "Customer": "Internal CR_2000"
         },
         {
           "ID": 197121,
           "Work Item Type": "Bug",
           "Title": "Test Catalog – Missing Created Date and Validation Message Improvements",
-          "Assigned To": "Mohammed Hashem",
+          "Assigned To": "Saddam Raees",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 0.75,
+          "TimeSheet_DevActualTime": 0.75,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T15:56:27.96Z",
           "Iteration Path": "SaaS",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-09T13:37:00.64Z",
+          "Resolved Date": "2026-11-09T15:56:27.96Z",
+          "State": "Resolved",
+          "Changed Date": "2026-11-09T15:56:27.96Z",
           "Customer": "Internal CR_2000"
         },
         {
           "ID": 197313,
           "Work Item Type": "Bug",
           "Title": "General - Concurrency - Only Measurement Uncertainty budgets are protected; NC, Complaints, Risks, Changes, Documents, Equipment, Suppliers, Audits and Objectives still allow lost updates (follow-up of 195812)",
-          "Assigned To": "Sherif Ezzat",
+          "Assigned To": "Salah Ahmed",
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0.5,
@@ -45080,9 +45981,10 @@
           "Activated Date": "2026-11-09T12:20:30.94Z",
           "Iteration Path": "SaaS",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
+          "Resolved Date": "2026-11-09T15:27:45.287Z",
+          "State": "Resolved",
           "Tags": "Exploratory; QMS; Regression CR",
-          "Changed Date": "2026-11-09T12:42:13.25Z",
+          "Changed Date": "2026-11-09T15:27:45.287Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -47821,16 +48723,18 @@
       "id": 192906,
       "title": "Neuro_Hosp Stage | Post-Restore Staging Database Configuration – Fix Sequences, Apply Grants and Transaction Data Cleanup",
       "type": "Support log",
-      "state": "Resolved",
+      "state": "On-Hold",
       "assignedTo": "Mohamed Abd-Elalim",
       "tester": "Unassigned",
       "area": "Front and Financial",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "wating server connection"
+      ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Neuro Hospital_0021",
-      "changedDate": "2026-11-01T18:15:15.103Z",
+      "changedDate": "2026-11-09T15:26:02.537Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -48332,11 +49236,13 @@
       "tester": "Bassant Raafat",
       "area": "Home Visit",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T12:03:03.530Z",
+      "changedDate": "2026-11-09T15:11:41.520Z",
       "tasks": [
         {
           "ID": 192656,
@@ -48598,38 +49504,6 @@
       "customTags": [],
       "iterationPath": "LDM\\Candidate CRs",
       "devActualTime": 4,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
-      "id": 194329,
-      "title": "[API] ALfa EG #General API :Failed to load ContractFees when add Registration",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hassan Hussein",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "Egypt",
-      "customer": "Alfa Lab Egypt_424",
-      "changedDate": "2026-11-01T13:02:50.790Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0.5,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
@@ -50039,7 +50913,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Hafar Al Batin - King Khalid Military City Hospital (KKMCH)_373",
-      "changedDate": "2026-11-09T12:21:28.107Z",
+      "changedDate": "2026-11-09T15:10:55.337Z",
       "tasks": [
         {
           "ID": 196150,
@@ -50214,13 +51088,15 @@
           "Title": "issue in design in groping by reports",
           "Assigned To": "Mohamed Hany",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T15:06:50.627Z",
           "Iteration Path": "LDM",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-09T12:21:18.75Z"
+          "State": "Active",
+          "Changed Date": "2026-11-09T15:10:55.337Z",
+          "Customer": "Hafar Al Batin - King Khalid Military City Hospital (KKMCH)_373"
         }
       ],
       "testCases": [
@@ -51153,38 +52029,6 @@
       "pullRequests": []
     },
     {
-      "id": 196977,
-      "title": "Move Sl196200& CR 196190 from borg stage to production",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hebatullah Mohamed",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Al Borg KSA_530",
-      "changedDate": "2026-11-08T16:04:46.397Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 6.5,
-      "testActualTime": 3,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
       "id": 196986,
       "title": "Internal CR/Technical  - Unify Resource File For French",
       "type": "User Story",
@@ -51211,38 +52055,6 @@
       "customTags": [],
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "devActualTime": 0,
-      "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
-      "id": 197321,
-      "title": "[API] Wateen Add Reservation: Patient NO not saved from Reservation Req",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Hassan Hussein",
-      "tester": "Unassigned",
-      "area": "LDM Integration",
-      "priority": 999,
-      "tags": [],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Wateen Lab_325",
-      "changedDate": "2026-11-09T13:39:15.917Z",
-      "tasks": [],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
-        "devEnd": "TBD",
-        "testEnd": "---",
-        "finalEnd": "---"
-      },
-      "customTags": [],
-      "iterationPath": "LDM\\Candidate CRs",
-      "devActualTime": 0.5,
       "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
@@ -51287,16 +52099,19 @@
       "id": 197619,
       "title": "#51097_ Saja lab >> import Enhanced Data & Wareed Matched data into Saja lab DB",
       "type": "Support log",
-      "state": "Active",
+      "state": "On-Hold",
       "assignedTo": "Ahmed Attia",
       "tester": "Unassigned",
       "area": "Internal lab",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "On- Hold",
+        " Wait tester"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Saja Lab_576",
-      "changedDate": "2026-11-09T10:58:24.640Z",
+      "changedDate": "2026-11-09T15:54:50.633Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -51449,7 +52264,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Mozmen Labs_1494",
-      "changedDate": "2026-11-09T13:02:58.913Z",
+      "changedDate": "2026-11-09T15:31:54.877Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -51504,8 +52319,8 @@
       "id": 197850,
       "title": "local 2021 | need to add to object table (Batch registration - new batch registration) screen",
       "type": "Support log",
-      "state": "Active",
-      "assignedTo": "Ahmed Attia",
+      "state": "Resolved",
+      "assignedTo": "Mohamed Abd-Elalim",
       "tester": "Unassigned",
       "area": "Registration",
       "priority": 999,
@@ -51513,7 +52328,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T14:44:56.553Z",
+      "changedDate": "2026-11-09T14:51:08.380Z",
       "tasks": [
         {
           "ID": 197618,
@@ -51538,12 +52353,44 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-09T08:22:02.990Z",
+        "devEnd": "2026-12-10T07:00:00.000Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
       "customTags": [],
       "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "devActualTime": 0.5,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 197851,
+      "title": "Ekthar _ Need to modify method of Sms provider",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Ahmed Gamal",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Ekthar Lab_276",
+      "changedDate": "2026-11-09T15:58:49.403Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": false,
@@ -90257,14 +91104,6 @@
       "parentId": null,
       "title": "[API] Acculab #DAWI: Error when add registration leads to not generate Accession NO"
     },
-    "194329": {
-      "id": "194329",
-      "type": "Support log",
-      "area": "Integration",
-      "iterationPath": "LDM\\Candidate CRs",
-      "parentId": null,
-      "title": "[API] ALfa EG #General API :Failed to load ContractFees when add Registration"
-    },
     "194331": {
       "id": "194331",
       "type": "Task",
@@ -101785,14 +102624,6 @@
       "parentId": null,
       "title": "014.\tVerify the (N° FINESS) label displays the (Facility ID) for the registration branch."
     },
-    "196977": {
-      "id": "196977",
-      "type": "Support log",
-      "area": "Integration",
-      "iterationPath": "LDM\\Candidate CRs",
-      "parentId": null,
-      "title": "Move Sl196200& CR 196190 from borg stage to production"
-    },
     "196978": {
       "id": "196978",
       "type": "Test Case",
@@ -104176,14 +105007,6 @@
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
       "parentId": null,
       "title": "057.\tVerify the (Valeurs de référence) label is not displayed if the test doesn’t have a reference range in clinical group report."
-    },
-    "197321": {
-      "id": "197321",
-      "type": "Support log",
-      "area": "Integration",
-      "iterationPath": "LDM\\Candidate CRs",
-      "parentId": null,
-      "title": "[API] Wateen Add Reservation: Patient NO not saved from Reservation Req"
     },
     "197322": {
       "id": "197322",
@@ -107577,6 +108400,14 @@
       "parentId": null,
       "title": "local 2021 | need to add to object table (Batch registration - new batch registration) screen"
     },
+    "197851": {
+      "id": "197851",
+      "type": "Support log",
+      "area": "Internal lab",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "Ekthar _ Need to modify method of Sms provider"
+    },
     "197852": {
       "id": "197852",
       "type": "Test Case",
@@ -107584,6 +108415,1454 @@
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
       "parentId": null,
       "title": "039.\tCheck the title of clinical group report is displayed as (Clinical group report name)."
+    },
+    "197854": {
+      "id": "197854",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "040.\tVerify the tests have the same test header are grouped by test header in clinical group report."
+    },
+    "197855": {
+      "id": "197855",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "041.\tVerify the tests have the same test header and are nested service they are grouped by (Parent service name) in clinical group report."
+    },
+    "197856": {
+      "id": "197856",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "042.\tVerify the (Test Name) label displays the (Test report name) in clinical group report."
+    },
+    "197857": {
+      "id": "197857",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "043.\tVerify the (Methodology) label is displayed successfully displaying the methodology of the test in clinical group report."
+    },
+    "197858": {
+      "id": "197858",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "044.\tVerify the (Methodology) label is not displayed when the test doesn’t have methodology in clinical group report."
+    },
+    "197859": {
+      "id": "197859",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "045.\tVerify the test comment is displayed below the test without label in clinical group report."
+    },
+    "197860": {
+      "id": "197860",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174161 >> Preparation"
+    },
+    "197861": {
+      "id": "197861",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174161 >> Execution"
+    },
+    "197862": {
+      "id": "197862",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929 >> Preparation"
+    },
+    "197863": {
+      "id": "197863",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929 >> Execution"
+    },
+    "197864": {
+      "id": "197864",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Verify Optional Field with Regex Allows Blank Submission"
+    },
+    "197865": {
+      "id": "197865",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_State Transition: Prevent Navigation from Step 1 to Step 2 on Regex Failure"
+    },
+    "197866": {
+      "id": "197866",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Role Permission: Unauthorized User Access Denied for Registration Screen"
+    },
+    "197867": {
+      "id": "197867",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Verify Regex Validation Trigger on Field Exit (Blur)"
+    },
+    "197868": {
+      "id": "197868",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Verify Negative Regex Validation and Navigation Restriction"
+    },
+    "197869": {
+      "id": "197869",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Verify Positive Regex Validation for Mobile Field"
+    },
+    "197870": {
+      "id": "197870",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Registration - Cancel/Reversal: State Preservation on Screen Exit"
+    },
+    "197871": {
+      "id": "197871",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Verify Mandatory Field with Regex Cannot be Left Blank"
+    },
+    "197872": {
+      "id": "197872",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Verify Field Visibility for Supported Regex Fields"
+    },
+    "197873": {
+      "id": "197873",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Registration - Negative: Blank Mandatory Regex Field Error Specification"
+    },
+    "197874": {
+      "id": "197874",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Optional Field: Regex Validation for Non-Blank Input"
+    },
+    "197875": {
+      "id": "197875",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Registration - Usability: Field Highlighting and Visual Indicators"
+    },
+    "197876": {
+      "id": "197876",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Regex Validation: Field Coverage for Patient Ref. No."
+    },
+    "197877": {
+      "id": "197877",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Registration - Negative: Special Characters (Arabic) in Numeric-only Regex Field"
+    },
+    "197878": {
+      "id": "197878",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Role Permission: Registration User Access to Regex Validation Screen"
+    },
+    "197879": {
+      "id": "197879",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Verify Access to Patient Registration Personal Data Screen"
+    },
+    "197880": {
+      "id": "197880",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Verify Re-validation when Field Value is Modified"
+    },
+    "197881": {
+      "id": "197881",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Verify Audit Trail for Regex Configuration Changes"
+    },
+    "197882": {
+      "id": "197882",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Mandatory Field: Regex Validation for Blank Input"
+    },
+    "197883": {
+      "id": "197883",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Registration - Upstream/Downstream: Data Integrity after Regex Validation"
+    },
+    "197884": {
+      "id": "197884",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Validation Trigger: Regex Check on Field Blur (Exit)"
+    },
+    "197885": {
+      "id": "197885",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Registration - Audit: Record Changes to Regex Configuration"
+    },
+    "197886": {
+      "id": "197886",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Validation Trigger: Re-validation on Field Value Modification"
+    },
+    "197887": {
+      "id": "197887",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Audit: Recording Changes to Regex Configuration"
+    },
+    "197888": {
+      "id": "197888",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Registration - Negative: Attempt SQL Injection and XSS in Regex-validated Fields"
+    },
+    "197889": {
+      "id": "197889",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_UI Feedback: Validation Message and Highlight for Invalid Pattern"
+    },
+    "197890": {
+      "id": "197890",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_174929_Registration - Security: Direct URL Access without Privileges"
+    },
+    "197891": {
+      "id": "197891",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446 >> Preparation"
+    },
+    "197892": {
+      "id": "197892",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446 >> Execution"
+    },
+    "197893": {
+      "id": "197893",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Uniqueness Validation - Create Patient Class with Duplicate Name"
+    },
+    "197894": {
+      "id": "197894",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Prevent Deletion of Patient Class with Related Data"
+    },
+    "197895": {
+      "id": "197895",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Delete Used Patient Class - Business Rule Block"
+    },
+    "197896": {
+      "id": "197896",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Authorized Role - Access Patient Class Screen"
+    },
+    "197897": {
+      "id": "197897",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Security - Verify unauthorized access via direct URL redirection"
+    },
+    "197898": {
+      "id": "197898",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Cancel Patient Class Operation - Grid Return"
+    },
+    "197899": {
+      "id": "197899",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Patient Class Name Uniqueness - Duplicate Entry"
+    },
+    "197900": {
+      "id": "197900",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Edit Patient Class - Update Success"
+    },
+    "197901": {
+      "id": "197901",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Usability - Verify mandatory Class Name field is marked with asterisk"
+    },
+    "197902": {
+      "id": "197902",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Edit Existing Patient Class and Verify Persistence"
+    },
+    "197903": {
+      "id": "197903",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Mandatory Field Validation - Save Patient Class Without Name"
+    },
+    "197904": {
+      "id": "197904",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Unauthorized Role - Access Denied to Patient Class Screen"
+    },
+    "197905": {
+      "id": "197905",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Patient Class Grid Search - Immediate Filtering"
+    },
+    "197906": {
+      "id": "197906",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Mandatory Fields Validation - Empty Class Name"
+    },
+    "197907": {
+      "id": "197907",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Patient Class Grid Display - Layout and Actions"
+    },
+    "197908": {
+      "id": "197908",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Cancel Patient Class Operation without Saving Changes"
+    },
+    "197909": {
+      "id": "197909",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Validation - Verify handling of special characters and SQL injection attempts in Class Name"
+    },
+    "197910": {
+      "id": "197910",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Usability - Verify delete confirmation dialog message text"
+    },
+    "197911": {
+      "id": "197911",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Patient Class Grid Sorting - Alphabetical A-Z"
+    },
+    "197912": {
+      "id": "197912",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Downstream - Verify new Patient Class is available in dependent screens (Registration/Reporting)"
+    },
+    "197913": {
+      "id": "197913",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Create New Patient Class with Valid Data and Verify Code Generation"
+    },
+    "197914": {
+      "id": "197914",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Verify Patient Class Screen Access via Administration Path"
+    },
+    "197915": {
+      "id": "197915",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Verify Fields Visibility and Default State in 'Add New Patient Class' Mode"
+    },
+    "197916": {
+      "id": "197916",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Delete Unused Patient Class - Confirm Deletion"
+    },
+    "197917": {
+      "id": "197917",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Performance - Verify grid responsiveness with large datasets"
+    },
+    "197918": {
+      "id": "197918",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Verify Patient Class Grid Column Content and Alignment"
+    },
+    "197919": {
+      "id": "197919",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Security - Verify 'Code' field is disabled in Add/Edit mode"
+    },
+    "197920": {
+      "id": "197920",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Auditing Validation - Create/Edit/Delete Logging"
+    },
+    "197921": {
+      "id": "197921",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Add New Patient Class - Valid State Transition"
+    },
+    "197922": {
+      "id": "197922",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Verify Delete Confirmation Warning and Cancellation"
+    },
+    "197923": {
+      "id": "197923",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Delete Patient Class Confirmation - Reject Deletion"
+    },
+    "197924": {
+      "id": "197924",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Audit - Verify edit action is logged with changed values"
+    },
+    "197925": {
+      "id": "197925",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Negative - Verify validation message when Class Name is empty"
+    },
+    "197926": {
+      "id": "197926",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Audit - Verify create action is logged with user and timestamp"
+    },
+    "197927": {
+      "id": "197927",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Audit - Verify delete action is logged in audit trail"
+    },
+    "197928": {
+      "id": "197928",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183446_Cancel - Verify original data is preserved after cancelling edit"
+    },
+    "197930": {
+      "id": "197930",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468 >> Preparation"
+    },
+    "197931": {
+      "id": "197931",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468 >> Execution"
+    },
+    "197932": {
+      "id": "197932",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Verify Field Visibility and Default State on Add Diagnosis Screen"
+    },
+    "197933": {
+      "id": "197933",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Mandatory Fields Validation - Missing Diagnosis Name"
+    },
+    "197934": {
+      "id": "197934",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Mandatory Fields Validation - Missing ICD Code"
+    },
+    "197935": {
+      "id": "197935",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Edit Existing Diagnosis Persistence"
+    },
+    "197936": {
+      "id": "197936",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Business Rule: Diagnosis Name Uniqueness"
+    },
+    "197937": {
+      "id": "197937",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Delete Unused Diagnosis Record"
+    },
+    "197938": {
+      "id": "197938",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Negative - Prevention of SQL Injection and Scripting in text fields"
+    },
+    "197939": {
+      "id": "197939",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Edit Diagnosis - State Transition and Persistence"
+    },
+    "197940": {
+      "id": "197940",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Diagnosis Screen Access - Authorized Role"
+    },
+    "197941": {
+      "id": "197941",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Audit - Verify audit trail for Diagnosis Deletion"
+    },
+    "197942": {
+      "id": "197942",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Usability - Destructive action confirmation"
+    },
+    "197943": {
+      "id": "197943",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Cancel - Verify original data integrity when Edit is cancelled"
+    },
+    "197944": {
+      "id": "197944",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Security - Direct URL access without authentication"
+    },
+    "197945": {
+      "id": "197945",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Delete Diagnosis - Confirmation Prompt (No)"
+    },
+    "197946": {
+      "id": "197946",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Audit - Verify audit trail for Diagnosis Creation"
+    },
+    "197947": {
+      "id": "197947",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Diagnosis Screen Access Path Verification"
+    },
+    "197948": {
+      "id": "197948",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Performance - Grid load time for massive record set"
+    },
+    "197949": {
+      "id": "197949",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Negative - Duplicate Diagnosis Name validation"
+    },
+    "197950": {
+      "id": "197950",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Business Rule: Prevent Deletion of Used Diagnosis"
+    },
+    "197951": {
+      "id": "197951",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Audit - Verify audit trail for Diagnosis Modification"
+    },
+    "197952": {
+      "id": "197952",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Cancel Diagnosis Operation - State Transition"
+    },
+    "197953": {
+      "id": "197953",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Usability - Mandatory field visual indicator verification"
+    },
+    "197954": {
+      "id": "197954",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Delete Diagnosis - Unused Record (Success)"
+    },
+    "197955": {
+      "id": "197955",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Performance - Search/Filter efficiency with large dataset"
+    },
+    "197956": {
+      "id": "197956",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Diagnosis Grid - Dynamic Search Functionality"
+    },
+    "197957": {
+      "id": "197957",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Negative - Validate specific error messages for empty mandatory fields"
+    },
+    "197958": {
+      "id": "197958",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Security - Role-based access control verification"
+    },
+    "197959": {
+      "id": "197959",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Add New Diagnosis - Positive Persistence"
+    },
+    "197960": {
+      "id": "197960",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Add New Diagnosis - Duplicate Name Validation"
+    },
+    "197961": {
+      "id": "197961",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Add New Diagnosis - Mandatory Fields Validation"
+    },
+    "197962": {
+      "id": "197962",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Diagnosis Screen Access - Unauthorized Role"
+    },
+    "197963": {
+      "id": "197963",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Cancel Add/Edit Operation"
+    },
+    "197964": {
+      "id": "197964",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Delete Diagnosis - Used Record (Failure)"
+    },
+    "197965": {
+      "id": "197965",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Create New Diagnosis with Valid Data"
+    },
+    "197966": {
+      "id": "197966",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Grid Search and Immediate Filtering Functionality"
+    },
+    "197967": {
+      "id": "197967",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_183468_Diagnosis Grid - Sorting Logic"
+    },
+    "197968": {
+      "id": "197968",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "046.\tCheck the corrected result is displayed as (Result corrected date & old value) successfully if “Show amended results” is checked in clinical group report."
+    },
+    "197969": {
+      "id": "197969",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264 >> Preparation"
+    },
+    "197970": {
+      "id": "197970",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Diagnosis List - Verify UI columns and Remove icon for selected Diagnosis"
+    },
+    "197971": {
+      "id": "197971",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Screen Access - Verify access to Dynamic Registration Add/Edit Mode"
+    },
+    "197972": {
+      "id": "197972",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Verify Unauthorized User Access Denied for Dynamic Registration"
+    },
+    "197973": {
+      "id": "197973",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Verify State Transition: Successful Diagnosis Selection and Addition"
+    },
+    "197974": {
+      "id": "197974",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Verify State Transition: Remove Selected Diagnosis from Registration"
+    },
+    "197975": {
+      "id": "197975",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Verify Services Step Remains Empty After Adding Diagnosis"
+    },
+    "197976": {
+      "id": "197976",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Business Rule - Verify manual removal of selected Diagnosis"
+    },
+    "197977": {
+      "id": "197977",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Validation - Error Message for missing required fields"
+    },
+    "197978": {
+      "id": "197978",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Usability: Verification of specific error message format for missing fields"
+    },
+    "197979": {
+      "id": "197979",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Security: Access Dynamic Registration screen without required privileges"
+    },
+    "197980": {
+      "id": "197980",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Business Rule - Verify Diagnosis does not automatically trigger Services"
+    },
+    "197981": {
+      "id": "197981",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Verify Display of Selected Diagnosis Restricted to Remove Icon"
+    },
+    "197982": {
+      "id": "197982",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Verify Authorized User Access to Dynamic Registration Screen"
+    },
+    "197983": {
+      "id": "197983",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Verify Missing Required Field Exception in Diagnosis Selection"
+    },
+    "197984": {
+      "id": "197984",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Validation: Mandatory Diagnosis field check upon clicking 'Add'"
+    },
+    "197985": {
+      "id": "197985",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Business Rule - Verify Manual Service Selection independence"
+    },
+    "197986": {
+      "id": "197986",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Validation: Search Diagnosis using special characters and SQL injection attempts"
+    },
+    "197987": {
+      "id": "197987",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Performance: Search and load time for Diagnosis list with large dataset"
+    },
+    "197988": {
+      "id": "197988",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Cancel/Reversal: Verification of data state when canceling diagnosis removal"
+    },
+    "197989": {
+      "id": "197989",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Audit Trail: Verification of log entry for adding/removing Diagnosis in Dynamic Registration"
+    },
+    "197990": {
+      "id": "197990",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Verify Registration Services Step Persistence for Manual Selections Only"
+    },
+    "197991": {
+      "id": "197991",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Usability: Destructive action confirmation for Diagnosis removal"
+    },
+    "197992": {
+      "id": "197992",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Security: Direct URL access to Dynamic Registration Add/Edit Mode without authentication"
+    },
+    "197993": {
+      "id": "197993",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Verify Manual Service Selection Independence from Diagnosis"
+    },
+    "197994": {
+      "id": "197994",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264_Integration: Upstream check - Verify services linked to Diagnosis in Setup do NOT appear in Registration"
+    },
+    "197995": {
+      "id": "197995",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_184264 >> Execution"
+    },
+    "197998": {
+      "id": "197998",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728 >> Preparation"
+    },
+    "197999": {
+      "id": "197999",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify successful creation of a new Shift with autogenerated code"
+    },
+    "198000": {
+      "id": "198000",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify multi-selection functionality for Branches field"
+    },
+    "198001": {
+      "id": "198001",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify business rule: At least one day of the week must be selected"
+    },
+    "198002": {
+      "id": "198002",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify restriction on deleting Shifts with related data"
+    },
+    "198003": {
+      "id": "198003",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Validation for Empty Day Selection"
+    },
+    "198004": {
+      "id": "198004",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_State Transition: Successful Deletion of Unused Shift"
+    },
+    "198005": {
+      "id": "198005",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify data persistence when editing an existing Shift"
+    },
+    "198006": {
+      "id": "198006",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify business rule: Shift Name must be unique"
+    },
+    "198007": {
+      "id": "198007",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Authorized Access to Shifts Setup Screen"
+    },
+    "198008": {
+      "id": "198008",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Unauthorized Access Denied for Shifts Setup Screen"
+    },
+    "198009": {
+      "id": "198009",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify grid functionality: Sorting and Searching"
+    },
+    "198010": {
+      "id": "198010",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify access to the Shifts Setup screen through the defined administration path"
+    },
+    "198011": {
+      "id": "198011",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Shift Name Uniqueness Enforcement"
+    },
+    "198012": {
+      "id": "198012",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_State Transition: Successful 'Add New Shift' Workflow"
+    },
+    "198013": {
+      "id": "198013",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify mandatory field validation: Shift Name"
+    },
+    "198014": {
+      "id": "198014",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Validation - Invalid Time Format in Hour Fields"
+    },
+    "198015": {
+      "id": "198015",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Cancel Action - Mid-action preservation of data on Edit"
+    },
+    "198016": {
+      "id": "198016",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Security - Injection and Special Character Handling in Shift Name"
+    },
+    "198017": {
+      "id": "198017",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Security - Direct URL Access without Login"
+    },
+    "198018": {
+      "id": "198018",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verification of Multi-Selection for Branches"
+    },
+    "198019": {
+      "id": "198019",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Audit Trail - Verify log entry upon deleting a shift"
+    },
+    "198020": {
+      "id": "198020",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify delete confirmation message behavior"
+    },
+    "198021": {
+      "id": "198021",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Performance - Grid loading and filtering with large dataset"
+    },
+    "198022": {
+      "id": "198022",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Validation - Attempt to save shift with empty mandatory 'Name' field"
+    },
+    "198023": {
+      "id": "198023",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Usability - Mandatory field indicators and UI confirmation"
+    },
+    "198024": {
+      "id": "198024",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Validation - Shift Name Uniqueness Constraint"
+    },
+    "198025": {
+      "id": "198025",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_State Transition: Cancel Delete Shift Operation"
+    },
+    "198026": {
+      "id": "198026",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_State Transition: Navigation Back to Grid"
+    },
+    "198027": {
+      "id": "198027",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify auditing for Shift creation"
+    },
+    "198028": {
+      "id": "198028",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Mandatory Fields Validation Logic"
+    },
+    "198029": {
+      "id": "198029",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Audit Trail - Verify log entry creation upon adding a new shift"
+    },
+    "198030": {
+      "id": "198030",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Grid Display and Behavior Verification"
+    },
+    "198031": {
+      "id": "198031",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_State Transition: Edit Shift Workflow"
+    },
+    "198032": {
+      "id": "198032",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Verify pagination options and navigation in Shifts grid"
+    },
+    "198033": {
+      "id": "198033",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Validation - Attempt to save shift without selecting any 'Days of the week'"
+    },
+    "198034": {
+      "id": "198034",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728_Terminal State: Blocked Deletion of Used Shift"
+    },
+    "198035": {
+      "id": "198035",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": null,
+      "title": "CR_181728 >> Execution"
+    },
+    "198036": {
+      "id": "198036",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "183463",
+      "title": "FD0013 | Delete VitalSigns.aspx and its related data"
+    },
+    "198037": {
+      "id": "198037",
+      "type": "Bug",
+      "area": "",
+      "iterationPath": "MobileApp\\2026\\AppLink-November 1-30",
+      "parentId": "196576",
+      "title": "Super Admin – Edit Client – Mobile App Information section style does not match Super Admin design and CR wireframe"
     }
   },
   "workItemHistory": {
