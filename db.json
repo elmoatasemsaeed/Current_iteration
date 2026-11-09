@@ -4590,7 +4590,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Neuro Hospital_0021",
-      "changedDate": "2026-11-08T22:49:31.687Z",
+      "changedDate": "2026-11-09T10:32:14.350Z",
       "tasks": [
         {
           "ID": 191495,
@@ -4820,15 +4820,16 @@
           "ID": 192446,
           "Work Item Type": "Task",
           "Title": "Review task for Preparation activity",
-          "Assigned To": "Yasmine Fouad",
+          "Assigned To": "Bothyna Mostafa",
           "Activity": "Testing",
-          "Original Estimation": 0,
+          "Original Estimation": 0.3,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T09:47:24.857Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-01T06:46:27.967Z",
+          "State": "Active",
+          "Changed Date": "2026-11-09T09:47:24.857Z",
           "Customer": "Neuro Hospital_0021"
         },
         {
@@ -5585,14 +5586,21 @@
         },
         {
           "id": 197622,
-          "state": "Inprogress"
+          "state": "Pass"
         },
         {
           "id": 197642,
           "state": "Pass"
         }
       ],
-      "reviews": [],
+      "reviews": [
+        {
+          "id": 197664,
+          "title": "Review preparation >> missing test cases",
+          "state": "New",
+          "assignedTo": "Bothyna Mostafa"
+        }
+      ],
       "calc": {
         "devEnd": "2026-10-18T07:00:00.000Z",
         "testEnd": "2026-10-19T06:00:00.000Z",
@@ -8792,7 +8800,7 @@
       "id": 191883,
       "title": "Notification Module - Add New Provider [BHSMS_Bahrin]",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "Mohamed Hany",
       "tester": "Mohamed Ragab",
       "area": "Internal lab",
@@ -8801,7 +8809,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-11-08T13:16:49.853Z",
+      "changedDate": "2026-11-09T11:10:43.703Z",
       "tasks": [
         {
           "ID": 195934,
@@ -8941,15 +8949,17 @@
           "ID": 197010,
           "Work Item Type": "Bug",
           "Title": "The System Fails to Move Messages from the Queue",
-          "Assigned To": "Mohamed Hany",
+          "Assigned To": "Mohamed Ragab",
           "Activity": "",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0.5,
           "TimeSheet_TestingActualTime": 0.5,
+          "Activated Date": "2026-11-09T11:07:59.703Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-05T14:57:28.77Z",
+          "Resolved Date": "2026-11-09T11:10:35.373Z",
+          "State": "Resolved",
+          "Changed Date": "2026-11-09T11:10:35.373Z",
           "Customer": "Al Borg KSA_530"
         }
       ],
@@ -8987,7 +8997,7 @@
       "calc": {
         "devEnd": "2026-11-03T13:00:00.000Z",
         "testEnd": "2026-11-05T10:00:00.000Z",
-        "finalEnd": "2026-11-05T10:00:00.000Z"
+        "finalEnd": "2026-11-09T13:07:59.703Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
@@ -10308,9 +10318,9 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-11T12:00:00.000Z",
-        "testEnd": "2026-11-12T07:00:00.000Z",
-        "finalEnd": "2026-11-12T07:00:00.000Z"
+        "devEnd": "2026-11-17T12:00:00.000Z",
+        "testEnd": "2026-11-18T07:00:00.000Z",
+        "finalEnd": "2026-11-18T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
@@ -10830,7 +10840,7 @@
           "Assigned To Tester": "Unassigned",
           "State": "Active",
           "Tags": "liquibase; V.4.5.0; Wait .Net review",
-          "Changed Date": "2026-11-09T08:43:38.193Z",
+          "Changed Date": "2026-11-09T11:08:40.93Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -11282,6 +11292,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": 197548,
+      "title": "Al Borg UAE - KSA Integration - Update to Set received orders with sample status (collected) instead of Ordered",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Ahmed Tarek",
+      "tester": "Unassigned",
+      "area": "LDM Integration",
+      "priority": 1,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Borg KSA_530",
+      "changedDate": "2026-11-09T09:04:34.853Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Candidate CRs",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
     },
     {
       "id": 155124,
@@ -12505,11 +12547,13 @@
       "tester": "Mohamed Abdelhady",
       "area": "Internal lab",
       "priority": 2,
-      "tags": [],
+      "tags": [
+        "waiting new business"
+      ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Dr Mohamed Khedr Lab_0382",
-      "changedDate": "2026-11-04T10:11:00.803Z",
+      "changedDate": "2026-11-09T09:27:17.773Z",
       "tasks": [
         {
           "ID": 187986,
@@ -13816,13 +13860,45 @@
         {
           "id": 196536,
           "state": "Design"
+        },
+        {
+          "id": 197652,
+          "state": "Design"
+        },
+        {
+          "id": 197655,
+          "state": "Design"
+        },
+        {
+          "id": 197657,
+          "state": "Design"
+        },
+        {
+          "id": 197658,
+          "state": "Design"
+        },
+        {
+          "id": 197659,
+          "state": "Design"
+        },
+        {
+          "id": 197661,
+          "state": "Design"
+        },
+        {
+          "id": 197662,
+          "state": "Design"
+        },
+        {
+          "id": 197663,
+          "state": "Design"
         }
       ],
       "reviews": [],
       "calc": {
         "devEnd": "2026-10-29T11:00:00.000Z",
-        "testEnd": "2026-11-12T08:00:00.000Z",
-        "finalEnd": "2026-11-12T08:00:00.000Z"
+        "testEnd": "2026-11-18T08:00:00.000Z",
+        "finalEnd": "2026-11-18T08:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
@@ -16291,8 +16367,8 @@
       ],
       "calc": {
         "devEnd": "2026-11-09T07:00:00.000Z",
-        "testEnd": "2026-11-16T10:00:00.000Z",
-        "finalEnd": "2026-11-16T10:00:00.000Z"
+        "testEnd": "2026-11-22T10:00:00.000Z",
+        "finalEnd": "2026-11-22T10:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
@@ -19506,8 +19582,8 @@
       ],
       "calc": {
         "devEnd": "2026-11-01T11:00:00.000Z",
-        "testEnd": "2026-11-19T08:00:00.000Z",
-        "finalEnd": "2026-11-19T08:00:00.000Z"
+        "testEnd": "2026-11-25T08:00:00.000Z",
+        "finalEnd": "2026-11-25T08:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
@@ -21224,7 +21300,7 @@
       "testCases": [
         {
           "id": 197131,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197132,
@@ -21232,7 +21308,7 @@
         },
         {
           "id": 197133,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197134,
@@ -21244,15 +21320,15 @@
         },
         {
           "id": 197136,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197137,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197138,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197139,
@@ -21272,11 +21348,11 @@
         },
         {
           "id": 197143,
-          "state": "Design"
+          "state": "Inprogress"
         },
         {
           "id": 197144,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197145,
@@ -21296,27 +21372,27 @@
         },
         {
           "id": 197149,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197150,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197151,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197152,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197153,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197154,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197155,
@@ -21324,15 +21400,15 @@
         },
         {
           "id": 197156,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197157,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197158,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197159,
@@ -21340,11 +21416,11 @@
         },
         {
           "id": 197160,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197161,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197162,
@@ -21352,7 +21428,7 @@
         },
         {
           "id": 197163,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197164,
@@ -21360,11 +21436,11 @@
         },
         {
           "id": 197165,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197166,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197167,
@@ -21372,7 +21448,7 @@
         },
         {
           "id": 197168,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197169,
@@ -21380,7 +21456,7 @@
         },
         {
           "id": 197170,
-          "state": "Design"
+          "state": "Fail"
         },
         {
           "id": 197171,
@@ -21388,15 +21464,15 @@
         },
         {
           "id": 197172,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197173,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197174,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197175,
@@ -21404,19 +21480,19 @@
         },
         {
           "id": 197176,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197177,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197178,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197179,
-          "state": "Design"
+          "state": "Fail"
         },
         {
           "id": 197180,
@@ -21432,7 +21508,7 @@
         },
         {
           "id": 197183,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197184,
@@ -21440,7 +21516,7 @@
         },
         {
           "id": 197185,
-          "state": "Design"
+          "state": "Pass"
         },
         {
           "id": 197186,
@@ -23129,6 +23205,89 @@
       ]
     },
     {
+      "id": 184264,
+      "title": "Internal CR - Impact of Removing Services from Diagnosis Setup",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Samir Mohamed",
+      "tester": "Unassigned",
+      "area": "Registration",
+      "priority": 6,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Internal NT",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-11-09T10:36:11.340Z",
+      "tasks": [
+        {
+          "ID": 197667,
+          "Work Item Type": "Task",
+          "Title": "FD0013 | Remove diagnosis services and Tests column from diagnosis panel",
+          "Assigned To": "Samir Mohamed",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T10:29:56.087Z",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-11-09T10:33:12.003Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-11-09T10:36:11.34Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197668,
+          "Work Item Type": "Task",
+          "Title": "FD0012 | Remove diagnosis-service checks from Services step",
+          "Assigned To": "Samir Mohamed",
+          "Activity": "Development",
+          "Original Estimation": 0.75,
+          "TimeSheet_DevActualTime": 0.25,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T10:29:44.027Z",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-11-09T10:32:33.09Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-11-09T10:36:11.34Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197669,
+          "Work Item Type": "Task",
+          "Title": "BD005 | Remove unused getDiagnosisTestList API",
+          "Assigned To": "Samir Mohamed",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0.25,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T10:29:23.643Z",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-11-09T10:31:52.937Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-11-09T10:36:11.34Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "devEnd": "2026-12-09T13:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
       "id": 189315,
       "title": "Update API [Add New Patient] [/NT/Patient/AddNewPatient] to add loyalty opening balance",
       "type": "User Story",
@@ -23384,7 +23543,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-09T08:19:08.300Z",
+      "changedDate": "2026-11-09T09:05:55.303Z",
       "tasks": [
         {
           "ID": 197323,
@@ -24385,12 +24544,12 @@
           "Assigned To": "Ola Gamal",
           "Activity": "Development",
           "Original Estimation": 5,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-04T07:00:18.307Z",
+          "Changed Date": "2026-11-09T10:40:24.607Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -24399,13 +24558,13 @@
           "Title": "BD009 | Flag loyalty discount on After_Payment_Discount trigger (Save discount)",
           "Assigned To": "Ola Gamal",
           "Activity": "Development",
-          "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0.25,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-04T07:00:48.273Z",
+          "Changed Date": "2026-11-09T10:40:25.88Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -24415,12 +24574,12 @@
           "Assigned To": "Ola Gamal",
           "Activity": "Development",
           "Original Estimation": 1,
-          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_DevActualTime": 0.25,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "LDM\\Candidate CRs",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-04T07:01:37.523Z",
+          "Changed Date": "2026-11-09T10:40:25.453Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -27620,6 +27779,354 @@
       ]
     },
     {
+      "id": 196691,
+      "title": "Revamp Manage Regions Screen",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Fatma Fayed",
+      "tester": "Unassigned",
+      "area": "Registration",
+      "priority": 100,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Internal NT",
+      "customer": "Internal CR_2000",
+      "changedDate": "2026-11-09T11:05:58.333Z",
+      "tasks": [
+        {
+          "ID": 197623,
+          "Work Item Type": "Task",
+          "Title": "BD001 | Get Regions grid data with Code (filter, sort, paging)",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T11:05:58.333Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197624,
+          "Work Item Type": "Task",
+          "Title": "BD002 | Create GetRegions grid API",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:15:38.617Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197625,
+          "Work Item Type": "Task",
+          "Title": "BD006 | Create CreateRegion API (DB-generated Code)",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 1.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:37:24.01Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197626,
+          "Work Item Type": "Task",
+          "Title": "BD009 | Create UpdateRegion API (names only, Id and Code kept)",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:15:38.617Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197627,
+          "Work Item Type": "Task",
+          "Title": "BD009 | Create DeleteRegion API (referenced Region blocked)",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:37:24.01Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197628,
+          "Work Item Type": "Task",
+          "Title": "BD008 | Validate Region names (required, 200 max, duplicates)",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:15:38.617Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197629,
+          "Work Item Type": "Task",
+          "Title": "BD008 | Check Add/Update/Delete Region privileges on the server",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 1.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:15:38.617Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197630,
+          "Work Item Type": "Task",
+          "Title": "BD006 | Log Region setup auditing on Add/Update/Delete",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 1.75,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:15:38.617Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197631,
+          "Work Item Type": "Task",
+          "Title": "FD009 | Add Regions screen, route and grid (Code, Arabic, English, Actions)",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:15:38.617Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197632,
+          "Work Item Type": "Task",
+          "Title": "FD010 | Load Regions grid from GetRegions API",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 2.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:15:38.617Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197633,
+          "Work Item Type": "Task",
+          "Title": "FD009 | Add Add/Edit Region dialog (read-only Code, two names)",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:15:38.617Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197634,
+          "Work Item Type": "Task",
+          "Title": "FD002 | Validate Region names (required, 200 max)",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 1.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:15:38.617Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197635,
+          "Work Item Type": "Task",
+          "Title": "FD010 | Save Region through Create/Update APIs and map alerts",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 2.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:37:24.01Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197636,
+          "Work Item Type": "Task",
+          "Title": "FD009 | Add Delete Region confirmation dialog",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:37:24.01Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197637,
+          "Work Item Type": "Task",
+          "Title": "FD010 | Delete Region through DeleteRegion API and map alerts",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 2.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:37:24.01Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197638,
+          "Work Item Type": "Task",
+          "Title": "FD004 | Show Add/Edit/Delete by privileges 394/395/397",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:37:24.01Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197639,
+          "Work Item Type": "Task",
+          "Title": "FD010 | Reset Region cache after Add/Edit/Delete",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 2.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:37:24.01Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197640,
+          "Work Item Type": "Task",
+          "Title": "FD009 | Add Regions screen and message resources",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 0.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T10:15:38.617Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197641,
+          "Work Item Type": "Task",
+          "Title": "DB_Modification | Region Code column, Codes for old Regions, Regions audit module and OBJECT 389 revamp",
+          "Assigned To": "Ahmed Farag",
+          "Activity": "DB Modification",
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T11:03:39.903Z",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-11-09T11:03:39.903Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197644,
+          "Work Item Type": "Task",
+          "Title": "BD016 | Review On US 196691",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 2.5,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T08:54:12.563Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197645,
+          "Work Item Type": "Task",
+          "Title": "FD011 | Review On US 196691",
+          "Assigned To": "Fatma Fayed",
+          "Activity": "Development",
+          "Original Estimation": 1,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-09T08:54:13.11Z",
+          "Customer": "Internal CR_2000"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "devEnd": "2026-11-17T14:00:00.000Z",
+        "testEnd": "Waiting for Data",
+        "finalEnd": null
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
       "id": 87308,
       "title": "EBGH _Erfan hos _ assign all doctors to all (payers, Branches) @ stage 7 production",
       "type": "Support log",
@@ -29885,6 +30392,38 @@
       "iterationPath": "Home Visit\\2026\\home_visit February 16-2",
       "devActualTime": 0.33,
       "testActualTime": 3.5,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 165076,
+      "title": "IBO Medical Center - Oracle LDM - Webresults v4",
+      "type": "User Story",
+      "state": "Resolved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Web Results",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "IBO Medical Center_1500000",
+      "changedDate": "2026-11-09T10:22:12.410Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "Web Results",
+      "devActualTime": 0,
+      "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -32390,6 +32929,38 @@
       "pullRequests": []
     },
     {
+      "id": 177235,
+      "title": "Alshamel Labs - Webresults: Copy  Design from Oracle LDM to Dot Net",
+      "type": "User Story",
+      "state": "Resolved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Web Results",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Al Shamel Lab_624",
+      "changedDate": "2026-11-09T10:22:24.197Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "Web Results",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
       "id": 180975,
       "title": "Adafca : UAH production servers adjustments (#45439)",
       "type": "Support log",
@@ -32417,6 +32988,38 @@
       "iterationPath": "Client Custom Portals",
       "devActualTime": 7.5,
       "testActualTime": 19.35,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 181469,
+      "title": "Unit Egypt Lab - Oracle LDM - Webresults v4",
+      "type": "User Story",
+      "state": "Resolved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Web Results",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Unit Egypt Lab_0011",
+      "changedDate": "2026-11-09T10:22:35.067Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "Web Results",
+      "devActualTime": 0,
+      "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -32553,7 +33156,7 @@
       "id": 183092,
       "title": "Accurate Lab - Connect Mobile Application",
       "type": "User Story",
-      "state": "Active - With Bugs",
+      "state": "Resolved",
       "assignedTo": "eslam anwar",
       "tester": "Amr Soliman",
       "area": "MobileApp",
@@ -32562,7 +33165,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Accurate Lab_17",
-      "changedDate": "2026-11-05T11:35:24.550Z",
+      "changedDate": "2026-11-09T09:20:51.840Z",
       "tasks": [
         {
           "ID": 190475,
@@ -33809,28 +34412,30 @@
           "Title": "(Enhancement) Collect_Collected Batches_Day navigation (Previous day / Next day) is not shown with the search, so batches can only be searched by text",
           "Assigned To": "eslam anwar",
           "Activity": "",
-          "Original Estimation": 0.5,
+          "Original Estimation": 3,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-08T09:34:26.163Z",
+          "Changed Date": "2026-11-09T10:16:11.717Z",
           "Customer": "Accurate Lab_17"
         },
         {
           "ID": 197351,
           "Work Item Type": "Bug",
           "Title": "(Enhancement) Collect_Collected Batches_Search field placeholder only says “Search” and does not tell the user what to search by",
-          "Assigned To": "eslam anwar",
+          "Assigned To": "Amr Soliman",
           "Activity": "",
-          "Original Estimation": 0.2,
-          "TimeSheet_DevActualTime": 0,
+          "Original Estimation": 2,
+          "TimeSheet_DevActualTime": 2,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T10:07:26.05Z",
           "Iteration Path": "MobileApp",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-08T12:45:49.6Z",
+          "Resolved Date": "2026-11-09T10:08:16.853Z",
+          "State": "Resolved",
+          "Changed Date": "2026-11-09T10:08:16.853Z",
           "Customer": "Accurate Lab_17"
         }
       ],
@@ -37188,6 +37793,38 @@
       "pullRequests": []
     },
     {
+      "id": 187836,
+      "title": "Saja Lab - Webresults: Modify the design of the login screen and upgrade to .Net version",
+      "type": "User Story",
+      "state": "Resolved",
+      "assignedTo": "Unassigned",
+      "tester": "Unassigned",
+      "area": "Web Results",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Saja Lab_576",
+      "changedDate": "2026-11-09T10:21:58.907Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "Web Results",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
       "id": 187922,
       "title": "Stage Release: Publish Medical Service Info for Shalaby Connect & Barcode Feature for Shalaby Collect",
       "type": "Support log",
@@ -37378,6 +38015,38 @@
       "iterationPath": "LDM",
       "devActualTime": 0,
       "testActualTime": 1.5,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 188484,
+      "title": "Eden - Web LDM - Webresults",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Sherif Ezzat",
+      "tester": "Unassigned",
+      "area": "Web Results",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Eden Lab_445",
+      "changedDate": "2026-11-09T10:23:55.110Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "Web Results",
+      "devActualTime": 2.75,
+      "testActualTime": 0,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -38380,6 +39049,38 @@
       "pullRequests": []
     },
     {
+      "id": 191769,
+      "title": "Medi Lab - Oracle LDM: Update webresult design, Login types",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Rehab El-Shwadfy",
+      "tester": "Unassigned",
+      "area": "Web Results",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Iraq",
+      "customer": "Medix Lab_0057",
+      "changedDate": "2026-11-09T10:19:07.263Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "Web Results",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
       "id": 191905,
       "title": "Cairo scan live >> Report >> Test report >>Registered Tests Count Report when user press print appear alert message",
       "type": "Support log",
@@ -38482,15 +39183,17 @@
           "ID": 195210,
           "Work Item Type": "Bug",
           "Title": "Error trying to login into results",
-          "Assigned To": "Abdullah Mohamed",
+          "Assigned To": "El-Hussein Mohamed",
           "Activity": "",
-          "Original Estimation": 0,
+          "Original Estimation": 5,
           "TimeSheet_DevActualTime": 7,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.15,
+          "Activated Date": "2026-11-09T11:02:23.117Z",
           "Iteration Path": "Web Results",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-07T22:48:03.997Z",
+          "Resolved Date": "2026-11-09T11:02:23.117Z",
+          "State": "Closed",
+          "Changed Date": "2026-11-09T11:02:26.843Z",
           "Customer": "Internal CR_2000"
         },
         {
@@ -38499,43 +39202,64 @@
           "Title": "Error trying to login into Client admin",
           "Assigned To": "Abdullah Mohamed",
           "Activity": "",
-          "Original Estimation": 0,
+          "Original Estimation": 5,
           "TimeSheet_DevActualTime": 7,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.25,
+          "Activated Date": "2026-11-09T11:02:12.663Z",
           "Iteration Path": "Web Results",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-07T22:45:35.907Z",
+          "Resolved Date": "2026-11-09T11:02:12.663Z",
+          "State": "Closed",
+          "Changed Date": "2026-11-09T11:02:12.663Z",
           "Customer": "Internal CR_2000"
         },
         {
           "ID": 195723,
           "Work Item Type": "Bug",
           "Title": "super admin - error tying to create a dot net client",
-          "Assigned To": "Abdullah Mohamed",
+          "Assigned To": "El-Hussein Mohamed",
           "Activity": "",
-          "Original Estimation": 0,
+          "Original Estimation": 5,
           "TimeSheet_DevActualTime": 7,
-          "TimeSheet_TestingActualTime": 0,
+          "TimeSheet_TestingActualTime": 0.15,
+          "Activated Date": "2026-11-09T11:03:28.28Z",
           "Iteration Path": "Web Results",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
-          "Changed Date": "2026-11-07T22:45:33.517Z",
+          "Resolved Date": "2026-11-09T11:03:28.28Z",
+          "State": "Closed",
+          "Changed Date": "2026-11-09T11:03:28.28Z",
           "Customer": "Internal CR_2000"
         },
         {
           "ID": 195724,
           "Work Item Type": "Bug",
           "Title": "super admin - error tying to create a new integration",
+          "Assigned To": "El-Hussein Mohamed",
+          "Activity": "",
+          "Original Estimation": 5,
+          "TimeSheet_DevActualTime": 7,
+          "TimeSheet_TestingActualTime": 0.15,
+          "Activated Date": "2026-11-09T11:03:38.913Z",
+          "Iteration Path": "Web Results",
+          "Assigned To Tester": "Unassigned",
+          "Resolved Date": "2026-11-09T11:03:38.913Z",
+          "State": "Closed",
+          "Changed Date": "2026-11-09T11:03:38.913Z",
+          "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 197677,
+          "Work Item Type": "Bug",
+          "Title": "Webresult dot net client - View button not working",
           "Assigned To": "Abdullah Mohamed",
           "Activity": "",
           "Original Estimation": 0,
-          "TimeSheet_DevActualTime": 7,
+          "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
           "Iteration Path": "Web Results",
           "Assigned To Tester": "Unassigned",
           "State": "New",
-          "Changed Date": "2026-11-07T22:45:34.2Z",
+          "Changed Date": "2026-11-09T10:58:48.723Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -39798,7 +40522,7 @@
       "title": "QMS: Regression CR",
       "type": "User Story",
       "state": "Active - With Bugs",
-      "assignedTo": "Mohamed Ahmed",
+      "assignedTo": "Mohammed Hashem",
       "tester": "Unassigned",
       "area": "SaaS",
       "priority": 999,
@@ -39965,7 +40689,7 @@
           "ID": 191946,
           "Work Item Type": "Bug",
           "Title": "Access Reviews Page Is Read-Only – Unable to Edit or Make Changes",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 1.42,
@@ -40001,7 +40725,7 @@
           "ID": 191958,
           "Work Item Type": "Bug",
           "Title": "User Creation – Validation Issues",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 2.5,
           "TimeSheet_DevActualTime": 2.5,
@@ -40037,7 +40761,7 @@
           "ID": 192288,
           "Work Item Type": "Bug",
           "Title": "Administration_  User Couldn't Reactive  Branches & Department",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 1.75,
           "TimeSheet_DevActualTime": 1.75,
@@ -40088,7 +40812,7 @@
           "ID": 192609,
           "Work Item Type": "Bug",
           "Title": "Reload make user logged out",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0.83,
@@ -40124,7 +40848,7 @@
           "ID": 192617,
           "Work Item Type": "Bug",
           "Title": "Error When Creating Incidents & Occurrences and Raise NC",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0.75,
           "TimeSheet_DevActualTime": 0.75,
@@ -40197,7 +40921,7 @@
           "ID": 192651,
           "Work Item Type": "Bug",
           "Title": "Audit Programme – Functionality Issue",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0.58,
           "TimeSheet_DevActualTime": 0.58,
@@ -40214,7 +40938,7 @@
           "ID": 192655,
           "Work Item Type": "Bug",
           "Title": "Emergency Change – Error While Processing Request",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0.75,
           "TimeSheet_DevActualTime": 0.75,
@@ -40229,7 +40953,7 @@
           "ID": 192660,
           "Work Item Type": "Bug",
           "Title": "PEOPLE & COMPETENCE - Competency- Trainee name display ID",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 1.42,
           "TimeSheet_DevActualTime": 1.42,
@@ -40263,7 +40987,7 @@
           "ID": 192674,
           "Work Item Type": "Bug",
           "Title": "PEOPLE & COMPETENCE - Competency- Assessments display ID",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 1.5,
           "TimeSheet_DevActualTime": 1.5,
@@ -40280,7 +41004,7 @@
           "ID": 192796,
           "Work Item Type": "Bug",
           "Title": "Document issue in",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 1.58,
           "TimeSheet_DevActualTime": 1.58,
@@ -40799,7 +41523,7 @@
           "ID": 194996,
           "Work Item Type": "Bug",
           "Title": "Overview - My Tasks - Edit and Delete actions are missing for previously created records",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0.5,
           "TimeSheet_DevActualTime": 0.5,
@@ -42327,7 +43051,7 @@
           "ID": 195371,
           "Work Item Type": "Bug",
           "Title": "Validation Error When Assigning Competency",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42396,7 +43120,7 @@
           "ID": 195589,
           "Work Item Type": "Bug",
           "Title": "Administration - Notification Rules - E-mail dispatches still fail with \"No email transport configured\" and failed dispatches cannot be retried (follow-up of 195028)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42501,7 +43225,7 @@
           "ID": 195708,
           "Work Item Type": "Bug",
           "Title": "Resources - Supplier Quality - A supplier can be approved with no evaluation and no certificate, and even after a failing evaluation (10 %)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42570,7 +43294,7 @@
           "ID": 195712,
           "Work Item Type": "Bug",
           "Title": "Quality & Improvement - Change Control - A post-implementation review of \"Not effective\" ends the change with no follow-up (no NC, rollback or new change)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42603,7 +43327,7 @@
           "ID": 195714,
           "Work Item Type": "Bug",
           "Title": "People & Competence - Training - \"Mark complete\" closes a training with no evidence, no trainer sign-off and no effectiveness check",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42618,7 +43342,7 @@
           "ID": 195715,
           "Work Item Type": "Bug",
           "Title": "Quality & Improvement - Change Control - Status \"Closed\" comes before the post-implementation review; 14 changes are Closed with no verification",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42633,7 +43357,7 @@
           "ID": 195716,
           "Work Item Type": "Bug",
           "Title": "Quality & Improvement - Management Reviews - Workflow has only Scheduled -> Closed; ISO 17025 §8.9.2 inputs are not pre-listed or tracked as the manual says",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42684,7 +43408,7 @@
           "ID": 195719,
           "Work Item Type": "Bug",
           "Title": "Analytical Quality - Sigma Metrics - When bias is larger than TEa the sigma is silently shown as 0.0 with no message",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42753,7 +43477,7 @@
           "ID": 195733,
           "Work Item Type": "Bug",
           "Title": "Administration - Access Reviews - A review only records a yes/no and a free-text conclusion; no account or role is actually recertified",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42768,7 +43492,7 @@
           "ID": 195734,
           "Work Item Type": "Bug",
           "Title": "Analytical Quality - Method Validation - A study is \"Satisfactory\" with only 2 replicates (one without a reference value) and a free-text protocol \"AAA\"",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42801,7 +43525,7 @@
           "ID": 195736,
           "Work Item Type": "Bug",
           "Title": "Analytical Quality - Instrument Comparability - Instruments are declared \"comparable\" from a single paired sample",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42869,7 +43593,7 @@
           "ID": 195740,
           "Work Item Type": "Bug",
           "Title": "General - Branch scoping - Records without a branch are visible to every user, including users limited to one branch",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42884,7 +43608,7 @@
           "ID": 195799,
           "Work Item Type": "Bug",
           "Title": "Administration - Users - Deactivating a user leaves their open responsibilities in place (e.g. lead auditor of a scheduled audit) with no warning or reassignment",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42935,7 +43659,7 @@
           "ID": 195802,
           "Work Item Type": "Bug",
           "Title": "Administration - Compliance Ledger - Audit Trail tab shows only the latest 200 entries; older entries cannot be browsed (no paging or date filter)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42950,7 +43674,7 @@
           "ID": 195803,
           "Work Item Type": "Bug",
           "Title": "Administration - Notification Rules - Management Review invitations (MRV_SCHEDULED) are sent but have no rule, so they cannot be configured or switched off",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -42965,7 +43689,7 @@
           "ID": 195804,
           "Work Item Type": "Bug",
           "Title": "General - Arabic UI - Compliance Ledger event names, dates and lists of values stay in English (e.g. \"User Scope Changed\", \"Nov 1, 2026, 11:47:08 AM\", \"Reagents & Kits\")",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0.5,
           "TimeSheet_DevActualTime": 1,
@@ -43018,7 +43742,7 @@
           "ID": 195813,
           "Work Item Type": "Bug",
           "Title": "Quality & Improvement - NC & CAPA - Effectiveness can be confirmed and the NC closed one minute after verification, with no waiting period or evidence",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43033,7 +43757,7 @@
           "ID": 195818,
           "Work Item Type": "Bug",
           "Title": "Security - Data Scope - Department Head with no branch/department assigned sees records of all branches and departments (scope fails open)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43155,7 +43879,7 @@
           "ID": 196146,
           "Work Item Type": "Bug",
           "Title": "General - Registers - Quality Objectives (228) and Feedback (264) load all rows at once instead of paging by 50 like the other registers (follow-up of 195043)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43207,7 +43931,7 @@
           "ID": 196848,
           "Work Item Type": "Bug",
           "Title": "[Enhancement] Administration - Reference Data - Typing a new Category in Add Value silently creates a new category with no warning (follow-up of 195066)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43222,7 +43946,7 @@
           "ID": 196849,
           "Work Item Type": "Bug",
           "Title": "[Enhancement] General - New record is not highlighted or opened after \"Record created successfully.\" (follow-up of 195062)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43255,7 +43979,7 @@
           "ID": 197116,
           "Work Item Type": "Bug",
           "Title": "General - Export PDF / Excel - Page exports still print any rows the browser sends; a forged record is exported (follow-up of 195732)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43289,7 +44013,7 @@
           "ID": 197120,
           "Work Item Type": "Bug",
           "Title": "Organization & Reference Data Department Page – Missing Created Date and UI Improvements",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43304,7 +44028,7 @@
           "ID": 197121,
           "Work Item Type": "Bug",
           "Title": "Test Catalog – Missing Created Date and Validation Message Improvements",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43319,7 +44043,7 @@
           "ID": 197313,
           "Work Item Type": "Bug",
           "Title": "General - Concurrency - Only Measurement Uncertainty budgets are protected; NC, Complaints, Risks, Changes, Documents, Equipment, Suppliers, Audits and Objectives still allow lost updates (follow-up of 195812)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43334,7 +44058,7 @@
           "ID": 197483,
           "Work Item Type": "Bug",
           "Title": "Analytical Quality - Method Comparison - A study with 10-19 pairs (below the recommended 20) is signed off with only a warning, no justification asked (follow-up of 195710)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43367,7 +44091,7 @@
           "ID": 197485,
           "Work Item Type": "Bug",
           "Title": "Analytical Quality - PT Annual Plan - Unfulfilled cycles are not justified or carried to the next plan when a plan is closed (follow-up of 195801)",
-          "Assigned To": "Mohamed Ahmed",
+          "Assigned To": "Mohammed Hashem",
           "Activity": "",
           "Original Estimation": 0,
           "TimeSheet_DevActualTime": 0,
@@ -43467,14 +44191,15 @@
           "Title": "General - Arabic/French UI - New Measurement Uncertainty audit events (Uncertainty Component Added / Removed, Uncertainty Budget Calculated) are shown in English (follow-up of 197493)",
           "Assigned To": "Sherif Ezzat",
           "Activity": "",
-          "Original Estimation": 0,
+          "Original Estimation": 1,
           "TimeSheet_DevActualTime": 0,
           "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-09T11:08:22.083Z",
           "Iteration Path": "SaaS",
           "Assigned To Tester": "Unassigned",
-          "State": "New",
+          "State": "Active",
           "Tags": "QMS; Regression CR",
-          "Changed Date": "2026-11-09T07:12:23.63Z",
+          "Changed Date": "2026-11-09T11:08:22.083Z",
           "Customer": "Internal CR_2000"
         }
       ],
@@ -47930,6 +48655,70 @@
       "pullRequests": []
     },
     {
+      "id": 195990,
+      "title": "Insta Lab - Oracle LDM - Webresults",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Rehab El-Shwadfy",
+      "tester": "Unassigned",
+      "area": "Web Results",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Insta Lab_0045",
+      "changedDate": "2026-11-09T10:23:21.153Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "Web Results",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 195996,
+      "title": "Al Fayrouz Labs - Web LDM - Webresults",
+      "type": "User Story",
+      "state": "Active",
+      "assignedTo": "Rehab El-Shwadfy",
+      "tester": "Unassigned",
+      "area": "Web Results",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Al Fayrouz Lab_0069",
+      "changedDate": "2026-11-09T10:23:51.150Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "Web Results",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
       "id": 195997,
       "title": "EBGH production #Cobas  > use ORC.9 for Review date",
       "type": "Support log",
@@ -48094,8 +48883,9 @@
           "Activated Date": "2026-11-04T18:14:07.677Z",
           "Iteration Path": "Integration",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-11-04T18:16:31.883Z",
+          "Resolved Date": "2026-11-09T09:31:15.48Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-11-09T09:31:15.48Z",
           "Customer": "Ahl Masr Hospital (AMH)_575"
         },
         {
@@ -48110,8 +48900,9 @@
           "Activated Date": "2026-11-05T14:11:43.647Z",
           "Iteration Path": "Integration",
           "Assigned To Tester": "Unassigned",
-          "State": "Active",
-          "Changed Date": "2026-11-05T14:12:26.207Z",
+          "Resolved Date": "2026-11-09T09:31:09.51Z",
+          "State": "To Be Reviewed",
+          "Changed Date": "2026-11-09T09:31:09.51Z",
           "Customer": "Ahl Masr Hospital (AMH)_575"
         }
       ],
@@ -48119,7 +48910,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-08T08:00:00.000Z",
+        "devEnd": "2026-11-05T12:54:37.473Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -48358,9 +49149,9 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-12T11:00:00.000Z",
-        "testEnd": "2026-11-17T07:00:00.000Z",
-        "finalEnd": "2026-11-17T07:00:00.000Z"
+        "devEnd": "2026-11-18T11:00:00.000Z",
+        "testEnd": "2026-11-23T07:00:00.000Z",
+        "finalEnd": "2026-11-23T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
@@ -48528,7 +49319,7 @@
       "testCases": [],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-08T08:00:00.000Z",
+        "devEnd": "2026-11-05T12:54:37.473Z",
         "testEnd": "Waiting for Data",
         "finalEnd": null
       },
@@ -49243,7 +50034,7 @@
       "id": 196788,
       "title": "Alameda >> Server error when enlarge attachments (#52270)",
       "type": "Support log",
-      "state": "On-Hold",
+      "state": "Active",
       "assignedTo": "Ammar Allam",
       "tester": "Unassigned",
       "area": "Registration",
@@ -49256,7 +50047,7 @@
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Alameda_0062",
-      "changedDate": "2026-11-08T20:59:29.120Z",
+      "changedDate": "2026-11-09T10:34:29.977Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -49369,58 +50160,6 @@
       "iterationPath": "LDM",
       "devActualTime": 2,
       "testActualTime": 0,
-      "isBacklog": false,
-      "linkedProjectId": null,
-      "pullRequests": []
-    },
-    {
-      "id": 197020,
-      "title": "al shamel >> we need to publish SL 196151 - 196334 on production",
-      "type": "Support log",
-      "state": "Resolved",
-      "assignedTo": "Bassem Ayman",
-      "tester": "Unassigned",
-      "area": "Front and Financial",
-      "priority": 999,
-      "tags": [
-        "backup path: D:\\LDM_Release2026\\Backups\\07-11-2026\\new",
-        " V1.0_AlShamel_22_7_2026_SL_197020",
-        " waiting downtime to publish"
-      ],
-      "expectedRelease": null,
-      "branch": "KSA",
-      "customer": "Al Shamel Lab_624",
-      "changedDate": "2026-11-09T08:24:42.777Z",
-      "tasks": [
-        {
-          "ID": 197534,
-          "Work Item Type": "Task",
-          "Title": "SL 197020 | Review Pr",
-          "Assigned To": "Fatma Fayed",
-          "Activity": "Development",
-          "Original Estimation": 0.25,
-          "TimeSheet_DevActualTime": 0.17,
-          "TimeSheet_TestingActualTime": 0,
-          "Activated Date": "2026-11-08T17:26:00.3Z",
-          "Iteration Path": "LDM",
-          "Assigned To Tester": "Unassigned",
-          "State": "Closed",
-          "Changed Date": "2026-11-08T17:28:01.857Z",
-          "Customer": "Al Shamel Lab_624"
-        }
-      ],
-      "bugs": [],
-      "testCases": [],
-      "reviews": [],
-      "calc": {
-        "devEnd": "2026-11-09T08:00:00.000Z",
-        "testEnd": "Waiting for Data",
-        "finalEnd": null
-      },
-      "customTags": [],
-      "iterationPath": "LDM",
-      "devActualTime": 1.17,
-      "testActualTime": 1,
       "isBacklog": false,
       "linkedProjectId": null,
       "pullRequests": []
@@ -49569,7 +50308,7 @@
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Saja Lab_576",
-      "changedDate": "2026-11-09T08:40:45.830Z",
+      "changedDate": "2026-11-09T10:58:24.640Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -49582,6 +50321,38 @@
       },
       "customTags": [],
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
+      "id": 197646,
+      "title": "al shamel >> Random Automatic Logout on Revamp Pages",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Ahmed Gamal",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Shamel Lab_624",
+      "changedDate": "2026-11-09T09:40:53.780Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
       "devActualTime": 0,
       "testActualTime": 0,
       "isBacklog": false,
@@ -78815,6 +79586,14 @@
       "parentId": "189631",
       "title": "rename \"chemist\" to \"collector\" all over the app"
     },
+    "191769": {
+      "id": "191769",
+      "type": "User Story",
+      "area": "",
+      "iterationPath": "Web Results",
+      "parentId": null,
+      "title": "Medi Lab - Oracle LDM: Update webresult design, Login types"
+    },
     "191771": {
       "id": "191771",
       "type": "Task",
@@ -79261,7 +80040,7 @@
       "area": "",
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
       "parentId": null,
-      "title": "006.\tCheck that patient report can printed from (print test result)."
+      "title": "006.\tCheck that patient report can printed from (Search)."
     },
     "192115": {
       "id": "192115",
@@ -94375,6 +95154,14 @@
       "parentId": "195935",
       "title": "DB: Publish tasks to Mozmen stage"
     },
+    "195990": {
+      "id": "195990",
+      "type": "User Story",
+      "area": "",
+      "iterationPath": "Web Results",
+      "parentId": null,
+      "title": "Insta Lab - Oracle LDM - Webresults"
+    },
     "195993": {
       "id": "195993",
       "type": "Test Case",
@@ -94398,6 +95185,14 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "CR_188171_E2E: Doctor specialty column appears next to doctor with specialty and empty for doctor without specialty in View Report"
+    },
+    "195996": {
+      "id": "195996",
+      "type": "User Story",
+      "area": "",
+      "iterationPath": "Web Results",
+      "parentId": null,
+      "title": "Al Fayrouz Labs - Web LDM - Webresults"
     },
     "195997": {
       "id": "195997",
@@ -100143,14 +100938,6 @@
       "parentId": "165465",
       "title": "FrontEnd: Handle displayed 'requestedTime or visitTimeSlot' in grid"
     },
-    "197020": {
-      "id": "197020",
-      "type": "Support log",
-      "area": "Front and Financial",
-      "iterationPath": "LDM",
-      "parentId": null,
-      "title": "al shamel >> we need to publish SL 196151 - 196334 on production"
-    },
     "197021": {
       "id": "197021",
       "type": "Test Case",
@@ -103639,14 +104426,6 @@
       "parentId": "195208",
       "title": "Refactor on the CR"
     },
-    "197534": {
-      "id": "197534",
-      "type": "Task",
-      "area": "",
-      "iterationPath": "LDM",
-      "parentId": "197020",
-      "title": "SL 197020 | Review Pr"
-    },
     "197537": {
       "id": "197537",
       "type": "Bug",
@@ -104271,6 +105050,158 @@
       "parentId": null,
       "title": "039.\tCheck the displaying of general comment in clinical group report. \"Safari\""
     },
+    "197623": {
+      "id": "197623",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "BD001 | Get Regions grid data with Code (filter, sort, paging)"
+    },
+    "197624": {
+      "id": "197624",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "BD002 | Create GetRegions grid API"
+    },
+    "197625": {
+      "id": "197625",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "BD006 | Create CreateRegion API (DB-generated Code)"
+    },
+    "197626": {
+      "id": "197626",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "BD009 | Create UpdateRegion API (names only, Id and Code kept)"
+    },
+    "197627": {
+      "id": "197627",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "BD009 | Create DeleteRegion API (referenced Region blocked)"
+    },
+    "197628": {
+      "id": "197628",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "BD008 | Validate Region names (required, 200 max, duplicates)"
+    },
+    "197629": {
+      "id": "197629",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "BD008 | Check Add/Update/Delete Region privileges on the server"
+    },
+    "197630": {
+      "id": "197630",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "BD006 | Log Region setup auditing on Add/Update/Delete"
+    },
+    "197631": {
+      "id": "197631",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD009 | Add Regions screen, route and grid (Code, Arabic, English, Actions)"
+    },
+    "197632": {
+      "id": "197632",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD010 | Load Regions grid from GetRegions API"
+    },
+    "197633": {
+      "id": "197633",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD009 | Add Add/Edit Region dialog (read-only Code, two names)"
+    },
+    "197634": {
+      "id": "197634",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD002 | Validate Region names (required, 200 max)"
+    },
+    "197635": {
+      "id": "197635",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD010 | Save Region through Create/Update APIs and map alerts"
+    },
+    "197636": {
+      "id": "197636",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD009 | Add Delete Region confirmation dialog"
+    },
+    "197637": {
+      "id": "197637",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD010 | Delete Region through DeleteRegion API and map alerts"
+    },
+    "197638": {
+      "id": "197638",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD004 | Show Add/Edit/Delete by privileges 394/395/397"
+    },
+    "197639": {
+      "id": "197639",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD010 | Reset Region cache after Add/Edit/Delete"
+    },
+    "197640": {
+      "id": "197640",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD009 | Add Regions screen and message resources"
+    },
+    "197641": {
+      "id": "197641",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "DB_Modification | Region Code column, Codes for old Regions, Regions audit module and OBJECT 389 revamp"
+    },
     "197642": {
       "id": "197642",
       "type": "Test Case",
@@ -104286,6 +105217,134 @@
       "iterationPath": "LDM\\Front Team\\2026\\Front-November 1-22",
       "parentId": null,
       "title": "deleting an accreditation that is already used"
+    },
+    "197644": {
+      "id": "197644",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "BD016 | Review On US 196691"
+    },
+    "197645": {
+      "id": "197645",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "196691",
+      "title": "FD011 | Review On US 196691"
+    },
+    "197646": {
+      "id": "197646",
+      "type": "Support log",
+      "area": "Internal lab",
+      "iterationPath": "LDM",
+      "parentId": null,
+      "title": "al shamel >> Random Automatic Logout on Revamp Pages"
+    },
+    "197652": {
+      "id": "197652",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "013.\tVerify the (Patient name) label displays the entered patient name."
+    },
+    "197655": {
+      "id": "197655",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "014.\tVerify the (Patient No.) label displays the created patient number."
+    },
+    "197657": {
+      "id": "197657",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "015.\tVerify the (Accession No.) label displays the created accession number."
+    },
+    "197658": {
+      "id": "197658",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "016.\tVerify the (Gender) label displays the entered patient’s gender."
+    },
+    "197659": {
+      "id": "197659",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "017.\tVerify the (Age) label displays the entered Patient’s age as (Years, Months, Days)."
+    },
+    "197661": {
+      "id": "197661",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "018.\tVerify the (Age) label doesn’t display (Years) if the patient’s age is entered as (Years=0)."
+    },
+    "197662": {
+      "id": "197662",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "019.\tVerify the (Age) label doesn’t display (Months) if the patient’s age is entered as (Months=0)."
+    },
+    "197663": {
+      "id": "197663",
+      "type": "Test Case",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "020.\tVerify the (Age) label doesn’t display (Days) if the patient’s age is entered as (Days=0)."
+    },
+    "197664": {
+      "id": "197664",
+      "type": "Review",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "Review preparation >> missing test cases"
+    },
+    "197667": {
+      "id": "197667",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "184264",
+      "title": "FD0013 | Remove diagnosis services and Tests column from diagnosis panel"
+    },
+    "197668": {
+      "id": "197668",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "184264",
+      "title": "FD0012 | Remove diagnosis-service checks from Services step"
+    },
+    "197669": {
+      "id": "197669",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "184264",
+      "title": "BD005 | Remove unused getDiagnosisTestList API"
+    },
+    "197677": {
+      "id": "197677",
+      "type": "Bug",
+      "area": "",
+      "iterationPath": "Web Results",
+      "parentId": null,
+      "title": "Webresult dot net client - View button not working"
     }
   },
   "workItemHistory": {
