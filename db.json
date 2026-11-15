@@ -2437,11 +2437,13 @@
       "tester": "Esraa Abdelrahman",
       "area": "Internal lab",
       "priority": 1,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Neuro Hospital_0021",
-      "changedDate": "2026-11-12T15:48:14.580Z",
+      "changedDate": "2026-11-15T08:11:31.023Z",
       "tasks": [
         {
           "ID": 191495,
@@ -5534,11 +5536,13 @@
       "tester": "Esraa Abdelrahman",
       "area": "Internal lab",
       "priority": 1,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Shamel Lab_624",
-      "changedDate": "2026-11-15T08:09:26.360Z",
+      "changedDate": "2026-11-15T08:14:53.450Z",
       "tasks": [
         {
           "ID": 191511,
@@ -9289,11 +9293,13 @@
       "tester": "MOHAMED SAYED",
       "area": "LDM Integration",
       "priority": 1,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-11-12T18:22:50.383Z",
+      "changedDate": "2026-11-15T08:17:54.337Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -14919,11 +14925,13 @@
       "tester": "MOHAMED SAYED",
       "area": "LDM Integration",
       "priority": 2,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Borg KSA_530",
-      "changedDate": "2026-11-12T18:24:41.937Z",
+      "changedDate": "2026-11-15T08:18:19.537Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -20157,6 +20165,22 @@
           "State": "To Be Reviewed",
           "Changed Date": "2026-11-12T14:21:00.96Z",
           "Customer": "Internal CR_2000"
+        },
+        {
+          "ID": 198768,
+          "Work Item Type": "Task",
+          "Title": "BD005 | Remove the DIAGNOSISSERVICE table usage (legacy registration, reservations, Integration, Revamp delete, Outreach)",
+          "Assigned To": "Samir Mohamed",
+          "Activity": "Development",
+          "Original Estimation": 2.25,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Activated Date": "2026-11-15T08:22:50.19Z",
+          "Iteration Path": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "Active",
+          "Changed Date": "2026-11-15T08:22:50.19Z",
+          "Customer": "Internal CR_2000"
         }
       ],
       "bugs": [],
@@ -20264,9 +20288,9 @@
       ],
       "reviews": [],
       "calc": {
-        "devEnd": "2026-11-26T14:00:00.000Z",
-        "testEnd": "2026-11-29T07:00:00.000Z",
-        "finalEnd": "2026-11-29T07:00:00.000Z"
+        "devEnd": "2026-11-29T10:00:00.000Z",
+        "testEnd": "2026-11-30T07:00:00.000Z",
+        "finalEnd": "2026-11-30T07:00:00.000Z"
       },
       "customTags": [],
       "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
@@ -45757,12 +45781,12 @@
           "Activity": "Testing",
           "Original Estimation": 0.15,
           "TimeSheet_DevActualTime": 0,
-          "TimeSheet_TestingActualTime": 0.5,
+          "TimeSheet_TestingActualTime": 0.75,
           "Activated Date": "2026-11-11T15:15:05.237Z",
           "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
           "Assigned To Tester": "Unassigned",
           "State": "Active",
-          "Changed Date": "2026-11-11T16:37:09.627Z",
+          "Changed Date": "2026-11-15T08:11:37.62Z",
           "Customer": "Hafar Al Batin - King Khalid Military City Hospital (KKMCH)_373"
         },
         {
@@ -50428,7 +50452,23 @@
       "customer": "Al Hasa Health Cluster_12",
       "changedDate": "2026-11-15T07:43:39.853Z",
       "tasks": [],
-      "bugs": [],
+      "bugs": [
+        {
+          "ID": 198770,
+          "Work Item Type": "Bug",
+          "Title": "#Al Hasaa Stage: All report crashed",
+          "Assigned To": "Mohamed Salah-Eddin",
+          "Activity": "",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-15T08:23:02.823Z",
+          "Customer": "Al Hasa Health Cluster_12"
+        }
+      ],
       "testCases": [],
       "reviews": [],
       "calc": {
@@ -51175,6 +51215,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": 198766,
+      "title": "al Shamel > Error Occurred When Cancelling All Registration Services",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Moamen SalahElDeen",
+      "tester": "Unassigned",
+      "area": "Registration",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "KSA",
+      "customer": "Al Shamel Lab_624",
+      "changedDate": "2026-11-15T08:16:30.540Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
     }
   ],
   "customTags": [
@@ -105936,6 +106008,30 @@
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
       "parentId": null,
       "title": "065.\tCheck the 2nd title is displayed as (Print alone service report name) in CBC report."
+    },
+    "198766": {
+      "id": "198766",
+      "type": "Support log",
+      "area": "Registration",
+      "iterationPath": "LDM",
+      "parentId": null,
+      "title": "al Shamel > Error Occurred When Cancelling All Registration Services"
+    },
+    "198768": {
+      "id": "198768",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\Registration Team\\2026\\Registration-November 1-22",
+      "parentId": "184264",
+      "title": "BD005 | Remove the DIAGNOSISSERVICE table usage (legacy registration, reservations, Integration, Revamp delete, Outreach)"
+    },
+    "198770": {
+      "id": "198770",
+      "type": "Bug",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
+      "parentId": null,
+      "title": "#Al Hasaa Stage: All report crashed"
     }
   },
   "workItemHistory": {
