@@ -7072,11 +7072,13 @@
       "tester": "Esraa Abdelrahman",
       "area": "Internal lab",
       "priority": 1,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "Ethiopia",
       "customer": "Al-Shifa hospital Djibouti_0008",
-      "changedDate": "2026-11-18T10:37:51.753Z",
+      "changedDate": "2026-11-18T10:57:37.047Z",
       "tasks": [
         {
           "ID": 196294,
@@ -12396,11 +12398,13 @@
       "tester": "Mohamed Abdelhady",
       "area": "Internal lab",
       "priority": 2,
-      "tags": [],
+      "tags": [
+        "PMD"
+      ],
       "expectedRelease": null,
       "branch": "Egypt",
       "customer": "Dr Mohamed Khedr Lab_0382",
-      "changedDate": "2026-11-18T07:22:06.170Z",
+      "changedDate": "2026-11-18T10:57:19.510Z",
       "tasks": [
         {
           "ID": 187986,
@@ -27505,7 +27509,7 @@
       "expectedRelease": null,
       "branch": "Internal NT",
       "customer": "Internal CR_2000",
-      "changedDate": "2026-11-18T10:50:27.240Z",
+      "changedDate": "2026-11-18T10:56:11.077Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -54371,19 +54375,19 @@
       "id": 199699,
       "title": "farabi _ issue suring formula for test has V letter",
       "type": "Support log",
-      "state": "Active",
+      "state": "On-Hold",
       "assignedTo": "mohamed.abdelghany",
       "tester": "Unassigned",
       "area": "Internal lab",
       "priority": 999,
       "tags": [
         "stage & production",
-        " waiting implementation"
+        " waiting publish"
       ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Al Farabi Lab KSA_283",
-      "changedDate": "2026-11-18T10:41:14.220Z",
+      "changedDate": "2026-11-18T10:52:34.530Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -54599,6 +54603,40 @@
       "pullRequests": []
     },
     {
+      "id": 199856,
+      "title": "Nile lab >> the system do not display the numeric tab at the culture report at special case",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "Ammar Allam",
+      "tester": "Unassigned",
+      "area": "Internal lab",
+      "priority": 999,
+      "tags": [
+        "solved at stage & per production"
+      ],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Nile Lab_1111111",
+      "changedDate": "2026-11-18T10:53:39.430Z",
+      "tasks": [],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
+    },
+    {
       "id": 199859,
       "title": "EBGH >> TAT data for 2026 >> EXport data for month ( 1 To 8 and 10 )",
       "type": "Support log",
@@ -54634,16 +54672,18 @@
       "id": 199877,
       "title": "Warred >> Publish live  CR 197315",
       "type": "Support log",
-      "state": "Active",
+      "state": "On-Hold",
       "assignedTo": "mohamed.abdelghany",
       "tester": "Unassigned",
       "area": "Internal lab",
       "priority": 999,
-      "tags": [],
+      "tags": [
+        "waiting publish"
+      ],
       "expectedRelease": null,
       "branch": "KSA",
       "customer": "Wareed Lab_294",
-      "changedDate": "2026-11-18T09:10:56.230Z",
+      "changedDate": "2026-11-18T10:52:54.370Z",
       "tasks": [],
       "bugs": [],
       "testCases": [],
@@ -54694,6 +54734,54 @@
           ]
         }
       ]
+    },
+    {
+      "id": 199882,
+      "title": "Metra lab >> we neeed to publish SL (198413 - 196541) ON production",
+      "type": "Support log",
+      "state": "Active",
+      "assignedTo": "mohamed.abdelghany",
+      "tester": "Unassigned",
+      "area": "Front and Financial",
+      "priority": 999,
+      "tags": [],
+      "expectedRelease": null,
+      "branch": "Egypt",
+      "customer": "Metra Labs_468",
+      "changedDate": "2026-11-18T10:54:51.197Z",
+      "tasks": [
+        {
+          "ID": 199896,
+          "Work Item Type": "Task",
+          "Title": "DB Modification | Publish Tasks 188024, 191414, and 194408 to Metra Production",
+          "Assigned To": "mohamed.abdelghany",
+          "Activity": "DB Modification",
+          "Original Estimation": 0,
+          "TimeSheet_DevActualTime": 0,
+          "TimeSheet_TestingActualTime": 0,
+          "Iteration Path": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+          "Assigned To Tester": "Unassigned",
+          "State": "New",
+          "Changed Date": "2026-11-18T11:02:41.247Z",
+          "Customer": "Metra Labs_468"
+        }
+      ],
+      "bugs": [],
+      "testCases": [],
+      "reviews": [],
+      "calc": {
+        "error": "بانتظار تفعيل التاسكات (No Activated Tasks)",
+        "devEnd": "TBD",
+        "testEnd": "---",
+        "finalEnd": "---"
+      },
+      "customTags": [],
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "devActualTime": 0,
+      "testActualTime": 0,
+      "isBacklog": false,
+      "linkedProjectId": null,
+      "pullRequests": []
     }
   ],
   "customTags": [
@@ -111379,6 +111467,14 @@
       "parentId": "138784",
       "title": "Fix CR 138784 Bugs"
     },
+    "199856": {
+      "id": "199856",
+      "type": "Support log",
+      "area": "Internal lab",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "parentId": null,
+      "title": "Nile lab >> the system do not display the numeric tab at the culture report at special case"
+    },
     "199858": {
       "id": "199858",
       "type": "User Story",
@@ -111563,6 +111659,14 @@
       "parentId": null,
       "title": "In Auditing Screen, Issue displays in Payer Name"
     },
+    "199882": {
+      "id": "199882",
+      "type": "Support log",
+      "area": "Front and Financial",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "parentId": null,
+      "title": "Metra lab >> we neeed to publish SL (198413 - 196541) ON production"
+    },
     "199885": {
       "id": "199885",
       "type": "Bug",
@@ -111594,6 +111698,14 @@
       "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-November 1-22",
       "parentId": null,
       "title": "LDM did not log the comment sent from CDS"
+    },
+    "199896": {
+      "id": "199896",
+      "type": "Task",
+      "area": "",
+      "iterationPath": "LDM\\InternalLab Team\\2026\\InternalLab-October 4-24",
+      "parentId": "199882",
+      "title": "DB Modification | Publish Tasks 188024, 191414, and 194408 to Metra Production"
     }
   },
   "workItemHistory": {
