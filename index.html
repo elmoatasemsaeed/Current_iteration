@@ -469,10 +469,10 @@
                         <div id="active-filters" class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                             <div class="relative flex-grow min-w-[250px]">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
-                                <input type="text" id="search-input" oninput="ui.debouncedRenderActiveCards()" placeholder="Search by ID, Title, or Employee..." class="form-input pl-10">
+                                <input type="text" id="search-input" onkeyup="ui.renderActiveCards()" placeholder="Search by ID, Title, or Employee..." class="form-input pl-10">
                             </div>
                             <div class="relative">
-                                <input type="text" id="tag-search-input" oninput="ui.debouncedRenderActiveCards()" placeholder="Filter by tags..." class="form-input w-full sm:w-48">
+                                <input type="text" id="tag-search-input" oninput="ui.renderActiveCards()" placeholder="Filter by tags..." class="form-input w-full sm:w-48">
                             </div>
                         </div>
                     </div>
@@ -486,7 +486,7 @@
                     <h2 class="font-bold text-google-green text-2xl">Ready To Deliver (Tested)</h2>
                     <div class="relative w-full md:w-80">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
-                        <input type="text" id="search-delivery-input" oninput="ui.debouncedRenderDelivery()" placeholder="Search by ID, Title, or Recipient..." class="form-input pl-10 border-google-green">
+                        <input type="text" id="search-delivery-input" onkeyup="ui.renderDelivery()" placeholder="Search by ID, Title, or Recipient..." class="form-input pl-10 border-google-green">
                     </div>
                 </div>
                 <div id="delivery-grid" class="grid grid-cols-1 md:grid-cols-4 gap-4"></div>
@@ -623,8 +623,8 @@
                     <button onclick="areaCommentManager.openCommentsPopup()" class="btn btn-outline text-indigo-600 border-indigo-300 hover:bg-indigo-50">
                         <span>💬</span> تعليقات المنطقة
                     </button>
-                    <input type="text" id="kanban-search-input" oninput="ui.debouncedRenderKanban()" placeholder="Search ID, Title, Employee..." class="form-input form-input-sm w-full sm:w-48">
-                    <input type="text" id="kanban-tag-search-input" oninput="ui.debouncedRenderKanban()" placeholder="Search Tags..." class="form-input form-input-sm w-full sm:w-40">
+                    <input type="text" id="kanban-search-input" oninput="ui.renderKanban()" placeholder="Search ID, Title, Employee..." class="form-input form-input-sm w-full sm:w-48">
+                    <input type="text" id="kanban-tag-search-input" oninput="ui.renderKanban()" placeholder="Search Tags..." class="form-input form-input-sm w-full sm:w-40">
                 </div>
 
                 <div id="kanban-container" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 min-h-[600px]"></div>
@@ -716,13 +716,7 @@
         </div>
     </div>
 
-    <!-- ====== Modular JavaScript ====== -->
-    <script src="js/config.js"></script>
-    <script src="js/state.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/azure.js"></script>
-    <script src="js/managers.js"></script>
-    <script src="js/ui-components.js"></script>
-    <script src="js/ui.js"></script>
+    <!-- ====== JavaScript (unchanged, kept as is) ====== -->
+    <script src="app.js"></script>
 </body>
 </html>
