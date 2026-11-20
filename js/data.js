@@ -73,27 +73,39 @@ const auth = {
         loginBtn.disabled = true;
 
         try {
-            const fileUrl = `https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`;
-            const [response, metaRes] = await Promise.all([
-                fetch(fileUrl, {
-                    headers: {
-                        'Authorization': `token ${t}`,
-                        'Accept': 'application/vnd.github.v3.raw'
-                    }
-                }),
-                fetch(fileUrl, {
-                    headers: { 'Authorization': `token ${t}` }
-                })
-            ]);
+            const cacheBust = Date.now();
+            const rawUrl = `https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}?t=${cacheBust}`;
+            const response = await fetch(rawUrl, {
+                cache: 'no-store',
+                headers: {
+                    'Authorization': `token ${t}`,
+                    'Accept': 'application/vnd.github.v3.raw'
+                }
+            });
 
             if (response.ok) {
-                const [remoteDb, metaData] = await Promise.all([response.json(), metaRes.json()]);
-                const userMatch = (remoteDb.users || []).find(user => user.username === u && user.password === p);
+                const remoteDb = await response.json();
+                if (!remoteDb || typeof remoteDb !== 'object' || !Array.isArray(remoteDb.users)) {
+                    throw new Error('استجابة غير صالحة من GitHub: لم يتم استلام بيانات db.json بشكل صحيح.');
+                }
+                const userMatch = remoteDb.users.find(user => user.username === u && user.password === p);
                 if (userMatch) {
                     db = ensureDbDefaults(remoteDb);
-                    db.sha = metaData.sha;
+
+                    const convertDates = (story) => {
+                        if (story.expectedRelease) story.expectedRelease = new Date(story.expectedRelease);
+                        if (story.changedDate) story.changedDate = new Date(story.changedDate);
+                        return story;
+                    };
+                    if (db.currentStories && db.currentStories.length > 0) {
+                        db.currentStories = db.currentStories.map(convertDates);
+                    }
+                    if (db.backlogStories && db.backlogStories.length > 0) {
+                        db.backlogStories = db.backlogStories.map(convertDates);
+                    }
 
                     migrateStandupComments();
+                    pruneStandupComments();
                     indexes.rebuildAll();
 
                     sessionStorage.setItem('gh_token', t);
@@ -126,8 +138,12 @@ const auth = {
             const settingsNav = document.querySelector("button[onclick*='settings']");
             if (settingsNav) settingsNav.style.display = 'none';
         }
+        if (db.currentStories && db.currentStories.length > 0) {
+            dataProcessor.calculateTimelines(db.currentStories);
+        } else {
+            ui.renderAll();
+        }
         ui.switchTab('dashboard');
-        dataProcessor.sync();
     },
 
     logout() {
@@ -148,6 +164,10 @@ const dataProcessor = {
     async _saveToGitHubInternal() {
         const token = sessionStorage.getItem('gh_token');
         if (!token) throw new Error('GitHub token missing');
+
+        if (!Array.isArray(db.users) || db.users.length === 0) {
+            throw new Error('رفض الحفظ: قائمة المستخدمين فاضية (حماية من مسح بيانات المستخدمين).');
+        }
 
         const hasContent =
             (db.currentStories?.length || 0) +
@@ -208,23 +228,21 @@ const dataProcessor = {
     async sync() {
         const token = sessionStorage.getItem('gh_token');
         try {
-            const fileUrl = `https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`;
-            const [response, metaRes] = await Promise.all([
-                fetch(fileUrl, {
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3.raw'
-                    }
-                }),
-                fetch(fileUrl, {
-                    headers: { 'Authorization': `token ${token}` }
-                })
-            ]);
+            const rawUrl = `https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}?t=${Date.now()}`;
+            const response = await fetch(rawUrl, {
+                cache: 'no-store',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3.raw'
+                }
+            });
 
             if (response.ok) {
-                const [remoteDb, metaData] = await Promise.all([response.json(), metaRes.json()]);
+                const remoteDb = await response.json();
+                if (!remoteDb || typeof remoteDb !== 'object' || !Array.isArray(remoteDb.users)) {
+                    throw new Error('استجابة غير صالحة من GitHub: لم يتم استلام بيانات db.json بشكل صحيح.');
+                }
                 db = ensureDbDefaults(remoteDb);
-                db.sha = metaData.sha;
 
                 const convertDates = (story) => {
                     if (story.expectedRelease) story.expectedRelease = new Date(story.expectedRelease);
