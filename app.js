@@ -298,10 +298,8 @@ function createStoryCard(story, options = {}) {
 
         const totalBugs = story.bugs ? story.bugs.length : 0;
         const completedBugs = story.bugs ? story.bugs.filter(b => ['Closed', 'Resolved', 'Cancel'].includes(b['State'])).length : 0;
-        const totalBugEffort = story.bugs ? story.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-        const completedBugEffort = story.bugs ? story.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-        const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
-        const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
+        const devEstDisplay = Number(devEst.toFixed(2));
+        const testEstDisplay = Number(testEst.toFixed(2));
 
         const testCases = story.testCases || [];
         const totalTC = testCases.length;
@@ -327,19 +325,10 @@ function createStoryCard(story, options = {}) {
                     </div>
                     <div class="text-slate-700 truncate font-medium mt-0.5">${escapeHtml(story.assignedTo)}</div>
                     <div class="flex justify-between items-center mt-1">
-                        <span class="text-blue-500 font-bold">${devEst}h</span>
+                        <span class="text-blue-500 font-bold">${devEstDisplay}h</span>
                         <span class="text-red-500 text-[10px] font-bold">🐞${completedBugs}/${totalBugs}</span>
                     </div>
                     <div class="text-[9px] text-gray-500 font-bold mt-1">Tasks: <span class="text-slate-700">${completedDevTasks}/${totalDevTasks}</span></div>
-                    ${totalBugs > 0 && totalBugEffort > 0 ? `
-                    <div class="mt-1">
-                        <div class="flex justify-between items-center text-[9px] text-gray-500">
-                            <span class="font-bold">Bug Effort:</span>
-                            <span class="font-mono">${remainingBugEffort.toFixed(1)}/${totalBugEffort.toFixed(1)}h</span>
-                            <span class="font-bold ${remainingBugEffort === 0 ? 'text-google-green' : 'text-amber-600'}">${bugProgressPercent}%</span>
-                        </div>
-                    </div>
-                    ` : ''}
                     <div class="text-[9px] text-gray-500 mt-1">Start: <span class="font-medium">${escapeHtml(devStartDisplay)}</span></div>
                 </div>
                 <div class="text-[11px] border-l pl-2">
@@ -349,7 +338,7 @@ function createStoryCard(story, options = {}) {
                     </div>
                     <div class="text-slate-700 truncate font-medium mt-0.5">${escapeHtml(story.tester)}</div>
                     <div class="flex justify-between items-center mt-1">
-                        <span class="text-green-500 font-bold">${testEst}h</span>
+                        <span class="text-green-500 font-bold">${testEstDisplay}h</span>
                         <span class="text-indigo-500 text-[10px] font-bold">📋${completedTC}/${totalTC}</span>
                     </div>
                     <div class="text-[9px] text-gray-500 mt-1">Start: <span class="font-medium">${escapeHtml(testStartDisplay)}</span></div>
