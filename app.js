@@ -145,23 +145,6 @@ function renderTagDropdown(storyId, selectedTags = []) {
     `;
 }
 
-function renderProjectSelect(story) {
-    const projectOptions = db.projects.filter(p => p.status !== 'closed').map(p => 
-        `<option value="${escapeHtml(p.id)}" ${story.linkedProjectId === p.id ? 'selected' : ''}>${escapeHtml(p.name)}</option>`
-    ).join('');
-    if (!projectOptions) return '';
-    return `
-        <div class="mt-2 flex items-center gap-2 border-t border-dashed border-gray-200 pt-2">
-            <span class="text-[10px] font-bold text-gray-400">📁 Project:</span>
-            <select onchange="projectManager.linkStoryToProject('${story.id}', this.value)" class="form-input form-input-sm flex-1">
-                <option value="">None</option>
-                ${projectOptions}
-            </select>
-            ${story.linkedProjectId ? `<button onclick="projectManager.unlinkStoryFromProject('${story.id}')" class="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>` : ''}
-        </div>
-    `;
-}
-
 function renderComments(story) {
     const comments = getStandupComments(story.id);
     if (!comments.length) return '';
@@ -185,7 +168,6 @@ function renderComments(story) {
 function createStoryCard(story, options = {}) {
     const {
         mode = 'regular',
-        showProjectSelect = true,
         showTagDropdown = true,
         showCommentsButton = true,
         customClass = '',
@@ -219,7 +201,6 @@ function createStoryCard(story, options = {}) {
         statusHtml = `<span class="status-badge ${statusClass}">${escapeHtml(state)}</span>`;
     }
 
-    let projectSelectHtml = showProjectSelect && !isBacklog ? renderProjectSelect(story) : '';
     let tagDropdownHtml = showTagDropdown ? renderTagDropdown(story.id, story.customTags || []) : '';
     let commentsHtml = showCommentsButton && !isBacklog ?
         `<button onclick="ui.openCommentsModal('${story.id}')" class="btn btn-outline text-indigo-600 border-indigo-300 hover:bg-indigo-50 text-xs py-1 px-2">💬 <span class="font-bold">${commentsCount}</span></button>` : '';
@@ -304,7 +285,6 @@ function createStoryCard(story, options = {}) {
                 ${commentsHtml}
             </div>
             <div onclick="ui.openStoryModal('${story.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-google-blue transition">${escapeHtml(story.title)}</div>
-            ${projectSelectHtml}
             ${extraFields}
         </div>
     `;
@@ -318,7 +298,6 @@ const archiver = {
         const logsToArchive = db.deliveryLogs.filter(log => log.timestamp < TenDaysAgo);
         const logsToKeep = db.deliveryLogs.filter(log => log.timestamp >= TenDaysAgo);
         if (logsToArchive.length === 0) {
-            this.archiveClosedProjects();
             return;
         }
         try {
@@ -339,18 +318,6 @@ const archiver = {
             console.log(`${logsToArchive.length} records moved to archive.`);
         } catch (error) {
             console.error("Archive process failed:", error);
-        }
-        this.archiveClosedProjects();
-    },
-    async archiveClosedProjects() {
-        const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-        const closedProjects = db.projects.filter(p => p.status === 'closed' && new Date(p.closeDate).getTime() < sevenDaysAgo);
-        if (closedProjects.length > 0) {
-            db.archivedProjects = db.archivedProjects || [];
-            db.archivedProjects.push(...closedProjects);
-            db.projects = db.projects.filter(p => !closedProjects.includes(p));
-            await dataProcessor.saveToGitHub();
-            console.log(`${closedProjects.length} projects archived.`);
         }
     },
     async saveFileToGitHub(path, data) {
@@ -1002,215 +969,6 @@ const areaCommentManager = {
 };
 
 // =================================================================
-// PROJECT MANAGER
-// =================================================================
-const projectManager = {
-    generateId() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-    },
-    addProject() {
-        const name = document.getElementById('project-name').value.trim();
-        const team = document.getElementById('project-team').value.trim();
-        const dueDate = document.getElementById('project-due-date').value;
-        if (!name || !team || !dueDate) return alert('Please fill all fields');
-        const newProject = {
-            id: this.generateId(),
-            name,
-            team,
-            dueDate,
-            status: 'active',
-            holdReason: '',
-            holdEndDate: '',
-            closeDate: '',
-            tasks: [],
-            linkedStoryIds: []
-        };
-        executeWithSave(
-            () => { db.projects.push(newProject); },
-            'تم إضافة المشروع بنجاح',
-            'فشل إضافة المشروع',
-            () => { ui.renderAll(); ui.renderProjectsTab(); ui.renderSettings(); }
-        );
-    },
-    deleteProject(projectId) {
-        if (!confirm('Are you sure you want to delete this project?')) return;
-        executeWithSave(
-            () => {
-                db.projects = db.projects.filter(p => p.id !== projectId);
-                db.currentStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
-                db.backlogStories.forEach(s => { if (s.linkedProjectId === projectId) delete s.linkedProjectId; });
-            },
-            'تم حذف المشروع',
-            'فشل حذف المشروع',
-            () => { ui.renderAll(); ui.renderProjectsTab(); ui.renderSettings(); }
-        );
-    },
-    updateProjectDueDate(projectId, newDate) {
-        const project = this.getProjectById(projectId);
-        if (!project) return;
-        if (!newDate) return ui.showToast('الرجاء إدخال تاريخ صحيح', 'error');
-        executeWithSave(
-            () => { project.dueDate = newDate; },
-            'تم تحديث تاريخ المشروع',
-            'فشل تحديث التاريخ',
-            () => { ui.renderProjectsTab(); ui.openProjectDetails(projectId); }
-        );
-    },
-    updateTaskDueDate(projectId, taskId, newDate) {
-        const project = this.getProjectById(projectId);
-        if (!project) return;
-        const task = project.tasks.find(t => t.id === taskId);
-        if (!task) return;
-        if (!newDate) return ui.showToast('الرجاء إدخال تاريخ صحيح', 'error');
-        executeWithSave(
-            () => { task.dueDate = newDate; },
-            'تم تحديث تاريخ المهمة',
-            'فشل تحديث التاريخ',
-            () => { ui.renderProjectsTab(); ui.openProjectDetails(projectId); }
-        );
-    },
-    getProjectById(id) {
-        return db.projects.find(p => p.id === id);
-    },
-    linkStoryToProject(storyId, projectId) {
-        let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
-        if (!story) story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
-        if (!story) return;
-        if (story.linkedProjectId) {
-            const oldProject = this.getProjectById(story.linkedProjectId);
-            if (oldProject) {
-                oldProject.linkedStoryIds = oldProject.linkedStoryIds.filter(id => id != storyId);
-            }
-        }
-        story.linkedProjectId = projectId;
-        const project = this.getProjectById(projectId);
-        if (project && !project.linkedStoryIds.includes(storyId.toString())) {
-            project.linkedStoryIds.push(storyId.toString());
-        }
-        executeWithSave(
-            () => {},
-            'تم ربط القصة بالمشروع',
-            'فشل الربط',
-            () => ui.renderAll()
-        );
-    },
-    unlinkStoryFromProject(storyId) {
-        let story = db.currentStories.find(s => (s.id || s.ID) == storyId);
-        if (!story) story = db.backlogStories.find(s => (s.id || s.ID) == storyId);
-        if (!story || !story.linkedProjectId) return;
-        const project = this.getProjectById(story.linkedProjectId);
-        if (project) {
-            project.linkedStoryIds = project.linkedStoryIds.filter(id => id != storyId);
-        }
-        delete story.linkedProjectId;
-        executeWithSave(
-            () => {},
-            'تم فك الربط',
-            'فشل فك الربط',
-            () => ui.renderAll()
-        );
-    },
-    holdProject(projectId) {
-        const reason = prompt('Enter reason for holding the project:');
-        if (reason === null) return;
-        const endDate = prompt('Expected end date of hold (YYYY-MM-DD):');
-        if (endDate === null) return;
-        const project = this.getProjectById(projectId);
-        if (!project) return;
-        executeWithSave(
-            () => {
-                project.status = 'hold';
-                project.holdReason = reason;
-                project.holdEndDate = endDate;
-            },
-            'تم وضع المشروع على Hold',
-            'فشل وضع المشروع على Hold',
-            () => { ui.renderAll(); ui.renderProjectsTab(); }
-        );
-    },
-    closeProject(projectId) {
-        if (!confirm('Are you sure you want to close this project? It will be archived after 7 days.')) return;
-        const project = this.getProjectById(projectId);
-        if (!project) return;
-        executeWithSave(
-            () => {
-                project.status = 'closed';
-                project.closeDate = new Date().toISOString().split('T')[0];
-            },
-            'تم إغلاق المشروع',
-            'فشل إغلاق المشروع',
-            () => { ui.renderAll(); ui.renderProjectsTab(); }
-        );
-    },
-    addTask(projectId, title, dueDate) {
-        if (!title || !dueDate) return ui.showToast('Please fill task title and due date', 'error');
-        const project = this.getProjectById(projectId);
-        if (!project) return;
-        const newTask = {
-            id: this.generateId(),
-            title,
-            dueDate,
-            status: 'todo',
-            comments: []
-        };
-        executeWithSave(
-            () => { project.tasks.push(newTask); },
-            'تم إضافة المهمة',
-            'فشل إضافة المهمة',
-            () => ui.renderProjectDetailsModal(projectId)
-        );
-    },
-    deleteTask(projectId, taskId) {
-        if (!confirm('Delete this task?')) return;
-        const project = this.getProjectById(projectId);
-        if (!project) return;
-        executeWithSave(
-            () => { project.tasks = project.tasks.filter(t => t.id !== taskId); },
-            'تم حذف المهمة',
-            'فشل حذف المهمة',
-            () => ui.renderProjectDetailsModal(projectId)
-        );
-    },
-    updateTaskStatus(projectId, taskId, newStatus) {
-        const project = this.getProjectById(projectId);
-        if (!project) return;
-        const task = project.tasks.find(t => t.id === taskId);
-        if (!task) return;
-        executeWithSave(
-            () => { task.status = newStatus; },
-            'تم تحديث حالة المهمة',
-            'فشل تحديث الحالة',
-            () => ui.renderProjectDetailsModal(projectId)
-        );
-    },
-    addTaskComment(projectId, taskId, commentText) {
-        if (!commentText.trim()) return;
-        const project = this.getProjectById(projectId);
-        if (!project) return;
-        const task = project.tasks.find(t => t.id === taskId);
-        if (!task) return;
-        executeWithSave(
-            () => { task.comments.push({ text: commentText.trim(), timestamp: new Date().toLocaleString('ar-EG', { hour12: false }) }); },
-            'تم إضافة التعليق',
-            'فشل إضافة التعليق',
-            () => ui.renderProjectDetailsModal(projectId)
-        );
-    },
-    deleteTaskComment(projectId, taskId, commentIndex) {
-        if (!confirm('Delete this comment?')) return;
-        const project = this.getProjectById(projectId);
-        if (!project) return;
-        const task = project.tasks.find(t => t.id === taskId);
-        if (!task) return;
-        executeWithSave(
-            () => { task.comments.splice(commentIndex, 1); },
-            'تم حذف التعليق',
-            'فشل حذف التعليق',
-            () => ui.renderProjectDetailsModal(projectId)
-        );
-    }
-};
-
 // =================================================================
 // TIMELINE MANAGER — Story Timeline (State History + PRs + Bug phases)
 // =================================================================
@@ -1542,7 +1300,6 @@ const ui = {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
         this.renderAll();
-        if (tabId === 'projects') this.renderProjectsTab();
     },
     renderAll() {
         this.renderDashboard();
@@ -1564,7 +1321,6 @@ const ui = {
             case 'tab-kanban': this.renderKanban(); break;
             case 'tab-auditor': this.renderAuditorChecklist(); break;
             case 'tab-support-kanban': this.renderSupportKanban(); break;
-            case 'tab-projects': this.renderProjectsTab(); break;
             case 'tab-pull-requests': this.renderPullRequestsTab(); break;
             default: break;
         }
@@ -2551,7 +2307,6 @@ const ui = {
                 const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
 
                 const tagDropdownHtml = renderTagDropdown(s.id, s.customTags || []);
-                const projectSelectHtml = renderProjectSelect(s);
                 const commentsHtml = renderComments(s);
                 const commentsCount = getStandupComments(s.id).length;
 
@@ -2584,7 +2339,6 @@ const ui = {
                             ${tagDropdownHtml}
                         </div>
                         <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${escapeHtml(s.title)}</h3>
-                        ${projectSelectHtml}
                         <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
@@ -2736,7 +2490,7 @@ const ui = {
                         <span class="bg-purple-200 text-purple-800 text-xs px-2 py-0.5 rounded-full">${filteredBacklog.length}</span>
                     </div>
                     <div class="space-y-3 overflow-y-auto">
-                        ${filteredBacklog.map(s => createStoryCard(s, { mode: 'backlog', showProjectSelect: true, showTagDropdown: true, showCommentsButton: false })).join('')}
+                        ${filteredBacklog.map(s => createStoryCard(s, { mode: 'backlog', showTagDropdown: true, showCommentsButton: false })).join('')}
                         ${filteredBacklog.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">No backlog items</div>' : ''}
                     </div>
                 </div>
@@ -2750,7 +2504,7 @@ const ui = {
                         <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${storiesInState.length}</span>
                     </div>
                     <div class="space-y-3 overflow-y-auto">
-                        ${storiesInState.map(s => createStoryCard(s, { mode: 'regular', showProjectSelect: true, showTagDropdown: true })).join('')}
+                        ${storiesInState.map(s => createStoryCard(s, { mode: 'regular', showTagDropdown: true })).join('')}
                         ${storiesInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
                     </div>
                 </div>
@@ -2789,7 +2543,7 @@ const ui = {
                         <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${logsInState.length}</span>
                     </div>
                     <div class="space-y-3 overflow-y-auto">
-                        ${logsInState.map(s => createStoryCard(s, { mode: 'support', showProjectSelect: false, showTagDropdown: true, showCommentsButton: true })).join('')}
+                        ${logsInState.map(s => createStoryCard(s, { mode: 'support', showTagDropdown: true, showCommentsButton: true })).join('')}
                         ${logsInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
                     </div>
                 </div>
@@ -3817,20 +3571,6 @@ showCustomerModal(encodedCustomer) {
             `).join('');
         }
         tagManager.renderTagsSettings();
-
-        const projectsList = document.getElementById('projects-list');
-        if (projectsList) {
-            projectsList.innerHTML = db.projects.map(p => `
-                <div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
-                    <div>
-                        <span class="font-bold text-slate-700">${escapeHtml(p.name)}</span>
-                        <span class="text-xs ml-2 px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-google-green-light text-google-green' : p.status === 'hold' ? 'bg-google-yellow-light text-amber-600' : 'bg-gray-200 text-gray-500'}">${escapeHtml(p.status)}</span>
-                        <span class="text-xs text-gray-400 ml-2">Team: ${escapeHtml(p.team)}</span>
-                    </div>
-                    <button onclick="projectManager.deleteProject('${p.id}')" class="text-google-red hover:text-red-700 font-bold text-xl">&times;</button>
-                </div>
-            `).join('');
-        }
     },
     renderAuditorChecklist() {
     const tbody = document.getElementById('auditor-table-body');
@@ -3915,252 +3655,6 @@ showCustomerModal(encodedCustomer) {
         if (reviews.length > 0) reviewsValid = reviews.every(r => ['Closed', 'Resolved'].includes(r.state));
         if (reviewsValid) passedCount++;
         return { passedCount, totalCount, priority: priorityValid, iterationPath: iterationPathValid, devTasks: devTasksValid, testTasks: testTasksValid, testCasesPass: testCasesValid, bugsClosed: bugsValid, reviewsClosed: reviewsValid };
-    },
-    renderProjectsTab() {
-        const container = document.getElementById('projects-container');
-        const countSpan = document.getElementById('projects-count');
-        if (!container) return;
-        const activeProjects = db.projects.filter(p => p.status !== 'closed');
-        const closedProjects = db.projects.filter(p => p.status === 'closed');
-        const allProjects = [...activeProjects, ...closedProjects];
-        countSpan.textContent = `${allProjects.length} projects (${activeProjects.length} active)`;
-
-        if (allProjects.length === 0) {
-            container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No projects created yet. Go to Settings to add one.</div>`;
-            return;
-        }
-
-        const projectsHtml = allProjects.map(p => {
-            const statusClass = p.status === 'active' ? 'border-google-green bg-google-green-light' :
-                                p.status === 'hold' ? 'border-google-yellow bg-google-yellow-light' : 'border-gray-400 bg-gray-100';
-            const statusText = p.status === 'active' ? '🟢 Active' :
-                               p.status === 'hold' ? '🟡 On Hold' : '🔴 Closed';
-            const storyCount = p.linkedStoryIds ? p.linkedStoryIds.length : 0;
-            const taskCount = p.tasks ? p.tasks.length : 0;
-            return `
-                <div onclick="ui.openProjectDetails('${p.id}')" class="card p-5 border-l-4 ${statusClass} hover:border-google-blue cursor-pointer">
-                    <div class="flex justify-between items-start">
-                        <h3 class="text-xl font-bold text-slate-800">${escapeHtml(p.name)}</h3>
-                        <span class="text-xs font-bold px-2 py-1 rounded-full ${p.status === 'active' ? 'bg-google-green text-white' : p.status === 'hold' ? 'bg-google-yellow text-slate-800' : 'bg-gray-300 text-gray-700'}">${escapeHtml(statusText)}</span>
-                    </div>
-                    <div class="mt-2 text-sm text-slate-600"><span class="font-bold">Team:</span> ${escapeHtml(p.team)}</div>
-                    <div class="text-sm text-slate-600"><span class="font-bold">Due Date:</span> ${escapeHtml(p.dueDate)}</div>
-                    <div class="mt-3 flex gap-3 text-xs text-gray-500">
-                        <span>📚 Stories: ${storyCount}</span>
-                        <span>📋 Tasks: ${taskCount}</span>
-                    </div>
-                    ${p.status === 'hold' ? `<div class="mt-2 text-xs text-amber-700 bg-google-yellow-light p-2 rounded">⏸ Hold: ${escapeHtml(p.holdReason)} (until ${escapeHtml(p.holdEndDate)})</div>` : ''}
-                    ${p.status === 'closed' ? `<div class="mt-2 text-xs text-gray-500">🗓 Closed on: ${escapeHtml(p.closeDate)}</div>` : ''}
-                </div>
-            `;
-        }).join('');
-
-        const sidebarHtml = this.renderTaskDueDateSidebar();
-
-        container.innerHTML = `
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2">
-                    <div class="grid grid-cols-1 gap-4">
-                        ${projectsHtml}
-                    </div>
-                </div>
-                <div class="lg:col-span-1">
-                    ${sidebarHtml}
-                </div>
-            </div>
-        `;
-    },
-    renderTaskDueDateSidebar() {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-
-        const allTasks = [];
-        db.projects.forEach(project => {
-            (project.tasks || []).forEach(task => {
-                if (task.dueDate && task.status !== 'done') {
-                    const due = new Date(task.dueDate);
-                    due.setHours(0, 0, 0, 0);
-                    allTasks.push({
-                        projectName: project.name,
-                        projectId: project.id,
-                        task: task,
-                        dueDate: due
-                    });
-                }
-            });
-        });
-
-        const overdue = allTasks.filter(t => t.dueDate < today);
-        const todayTasks = allTasks.filter(t => t.dueDate.getTime() === today.getTime());
-        const tomorrowTasks = allTasks.filter(t => t.dueDate.getTime() === tomorrow.getTime());
-
-        const renderTaskList = (tasks) => {
-            if (tasks.length === 0) return `<div class="text-xs text-gray-400 italic">No tasks</div>`;
-            return tasks.map(t => `
-                <div class="text-xs bg-white p-2 rounded border border-gray-100 mb-1 shadow-sm hover:shadow transition cursor-pointer" 
-                     onclick="ui.openProjectDetails('${t.projectId}')">
-                    <div class="font-bold text-slate-700 truncate" title="${escapeHtml(t.task.title)}">${escapeHtml(t.task.title)}</div>
-                    <div class="text-[10px] text-gray-500">📁 ${escapeHtml(t.projectName)}</div>
-                    <div class="text-[10px] text-gray-400">📅 ${escapeHtml(t.task.dueDate)}</div>
-                </div>
-            `).join('');
-        };
-
-        return `
-            <div class="card p-4 sticky top-4">
-                <h3 class="font-bold text-slate-700 text-lg mb-3 flex items-center gap-2">⏰ Tasks by Due Date</h3>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex items-center gap-2 text-google-red font-bold text-sm border-b border-google-red/30 pb-1">
-                            <span>🔴</span> Overdue (${overdue.length})
-                        </div>
-                        <div class="mt-2 space-y-1">${renderTaskList(overdue)}</div>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2 text-amber-600 font-bold text-sm border-b border-amber-200 pb-1">
-                            <span>🟡</span> Today (${todayTasks.length})
-                        </div>
-                        <div class="mt-2 space-y-1">${renderTaskList(todayTasks)}</div>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2 text-google-blue font-bold text-sm border-b border-google-blue/30 pb-1">
-                            <span>🔵</span> Tomorrow (${tomorrowTasks.length})
-                        </div>
-                        <div class="mt-2 space-y-1">${renderTaskList(tomorrowTasks)}</div>
-                    </div>
-                </div>
-            </div>
-        `;
-    },
-    openProjectDetails(projectId) {
-        const project = projectManager.getProjectById(projectId);
-        if (!project) return;
-
-        const modal = document.getElementById('story-modal');
-        const title = document.getElementById('modal-title');
-        const body = document.getElementById('modal-body');
-        title.innerText = `📁 ${project.name}`;
-
-        let linkedStoriesHtml = '';
-        const allStories = [...currentData.filter(s => !isBacklogStory(s) && isRegularStory(s)), ...db.backlogStories];
-        const linkedStories = allStories.filter(s => s.linkedProjectId === project.id);
-        if (linkedStories.length > 0) {
-            linkedStoriesHtml = `
-                <div class="space-y-2">
-                    <h4 class="font-bold text-google-blue text-sm border-b pb-1">📚 Linked Stories (${linkedStories.length})</h4>
-                    ${linkedStories.map(s => `
-                        <div class="flex justify-between items-center bg-google-blue-light p-2 rounded border border-google-blue/30">
-                            <span onclick="ui.openStoryModal('${s.id}')" class="text-sm cursor-pointer hover:underline">#${s.id} - ${escapeHtml(s.title)}</span>
-                            <span class="text-xs bg-google-blue text-white px-2 py-0.5 rounded">${isBacklogStory(s) ? 'Backlog' : escapeHtml(s.state)}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        } else {
-            linkedStoriesHtml = `<div class="text-gray-400 text-sm italic">No stories linked to this project.</div>`;
-        }
-
-        const projectDueHtml = `
-            <div class="flex items-center gap-2 mt-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
-                <span class="text-sm font-bold text-gray-600">📅 Due Date:</span>
-                <input type="date" id="project-due-edit-${project.id}" value="${escapeHtml(project.dueDate || '')}" 
-                       class="form-input form-input-sm flex-1">
-                <button onclick="projectManager.updateProjectDueDate('${project.id}', document.getElementById('project-due-edit-${project.id}').value)" 
-                        class="btn btn-primary text-sm">تحديث</button>
-            </div>
-        `;
-
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const tasksHtmlWithEdit = (project.tasks || []).map(t => {
-            const isDueTodayOrPast = t.dueDate ? new Date(t.dueDate) <= today : false;
-            const dueClass = isDueTodayOrPast ? 'bg-google-red-light border-google-red/30 text-google-red' : '';
-            return `
-                <div class="bg-white border rounded p-3 shadow-sm ${dueClass}">
-                    <div class="flex justify-between items-center flex-wrap gap-2">
-                        <span class="font-medium text-slate-700">${escapeHtml(t.title)}</span>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-xs font-bold px-2 py-0.5 rounded ${t.status === 'done' ? 'bg-google-green-light text-google-green' : t.status === 'active' ? 'bg-google-blue-light text-google-blue' : 'bg-gray-200 text-gray-600'}">${escapeHtml(t.status)}</span>
-                            <div class="flex items-center gap-1">
-                                <input type="date" id="task-due-${t.id}" value="${escapeHtml(t.dueDate || '')}" class="form-input form-input-sm w-28">
-                                <button onclick="projectManager.updateTaskDueDate('${project.id}','${t.id}', document.getElementById('task-due-${t.id}').value)" 
-                                        class="text-[10px] bg-purple-500 text-white px-2 py-0.5 rounded">تحديث</button>
-                            </div>
-                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','todo')" class="text-[10px] bg-gray-100 hover:bg-gray-200 px-1.5 py-0.5 rounded">To Do</button>
-                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','active')" class="text-[10px] bg-google-blue-light hover:bg-google-blue/20 px-1.5 py-0.5 rounded">Active</button>
-                            <button onclick="projectManager.updateTaskStatus('${project.id}','${t.id}','done')" class="text-[10px] bg-google-green-light hover:bg-google-green/20 px-1.5 py-0.5 rounded">Done</button>
-                            <button onclick="projectManager.deleteTask('${project.id}','${t.id}')" class="text-google-red hover:text-red-700 text-sm font-bold">×</button>
-                        </div>
-                    </div>
-                    ${isDueTodayOrPast ? `<div class="text-xs text-google-red font-bold mt-1">⚠️ مستحق اليوم أو مضى عليه</div>` : ''}
-                    <div class="text-xs text-gray-400">Due: ${escapeHtml(t.dueDate || 'غير محدد')}</div>
-                    <div class="mt-2 space-y-1">
-                        ${(t.comments || []).map((c, idx) => `
-                            <div class="flex justify-between items-start bg-gray-50 p-1.5 rounded border border-gray-100">
-                                <span class="text-sm">${escapeHtml(c.text)}</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[9px] text-gray-400">${escapeHtml(c.timestamp)}</span>
-                                    <button onclick="projectManager.deleteTaskComment('${project.id}','${t.id}',${idx})" class="text-google-red hover:text-red-600 text-xs">✕</button>
-                                </div>
-                            </div>
-                        `).join('')}
-                        <div class="flex gap-1 mt-1">
-                            <input type="text" id="comment-input-${t.id}" placeholder="Add comment..." class="form-input form-input-sm flex-1">
-                            <button onclick="projectManager.addTaskComment('${project.id}','${t.id}', document.getElementById('comment-input-${t.id}').value); document.getElementById('comment-input-${t.id}').value='';" class="bg-purple-600 text-white px-2 py-1 rounded text-xs">Add</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        let controlsHtml = '';
-        if (project.status === 'active') {
-            controlsHtml = `
-                <div class="flex gap-3 mt-4">
-                    <button onclick="projectManager.holdProject('${project.id}')" class="btn btn-warning">⏸ Hold</button>
-                    <button onclick="projectManager.closeProject('${project.id}')" class="btn btn-danger">🔒 Close</button>
-                </div>
-            `;
-        } else if (project.status === 'hold') {
-            controlsHtml = `
-                <div class="flex gap-3 mt-4">
-                    <button onclick="projectManager.closeProject('${project.id}')" class="btn btn-danger">🔒 Close</button>
-                    <span class="text-sm text-amber-700 bg-google-yellow-light p-2 rounded">⏸ On Hold until ${escapeHtml(project.holdEndDate)}</span>
-                </div>
-            `;
-        } else {
-            controlsHtml = `<div class="mt-4 text-sm text-gray-500 bg-gray-100 p-2 rounded">This project is closed since ${escapeHtml(project.closeDate)}</div>`;
-        }
-
-        body.innerHTML = `
-            <div class="space-y-4">
-                <div class="grid grid-cols-2 gap-2 text-sm bg-slate-50 p-4 rounded-xl">
-                    <div><span class="font-bold">Team:</span> ${escapeHtml(project.team)}</div>
-                    <div><span class="font-bold">Status:</span> ${escapeHtml(project.status)}</div>
-                    ${project.status === 'hold' ? `<div><span class="font-bold">Hold Reason:</span> ${escapeHtml(project.holdReason)}</div>` : ''}
-                    ${project.status === 'closed' ? `<div><span class="font-bold">Closed:</span> ${escapeHtml(project.closeDate)}</div>` : ''}
-                </div>
-                ${projectDueHtml}
-                ${controlsHtml}
-                <div class="border-t pt-4">${linkedStoriesHtml}</div>
-                <div class="border-t pt-4">
-                    <h4 class="font-bold text-purple-700 text-sm border-b pb-1">📋 Project Tasks</h4>
-                    <div class="space-y-2 mt-2">${tasksHtmlWithEdit || '<div class="text-gray-400 text-sm italic">No tasks added yet.</div>'}</div>
-                   <div class="mt-3 flex gap-2">
-    <input type="text" id="new-task-title-${project.id}" placeholder="Task title..." class="form-input flex-1 min-w-0">
-    <input type="date" id="new-task-due-${project.id}" class="form-input w-32 flex-shrink-0">
-    <button onclick="projectManager.addTask('${project.id}', document.getElementById('new-task-title-${project.id}').value, document.getElementById('new-task-due-${project.id}').value); document.getElementById('new-task-title-${project.id}').value=''; document.getElementById('new-task-due-${project.id}').value='';" class="btn btn-primary whitespace-nowrap">Add Task</button>
-</div>
-                </div>
-            </div>
-        `;
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    },
-    renderProjectDetailsModal: function(projectId) {
-        this.openProjectDetails(projectId);
     }
 };
 
