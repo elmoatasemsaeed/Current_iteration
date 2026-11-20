@@ -231,7 +231,7 @@ function createStoryCard(story, options = {}) {
     // ----- التحقق من صحة Iteration Path -----
     const iterationPathValid = !!(story.iterationPath && /[\d\/]/.test(story.iterationPath));
     const iterationPathIndicator = (!isBacklog && !isSupport)
-        ? `<span class="text-[10px] font-bold ${iterationPathValid ? 'text-green-600' : 'text-red-600'} ml-2 inline-flex items-center gap-1 min-w-0 max-w-[240px]" title="${escapeHtml(story.iterationPath || 'N/A')}">
+        ? `<span class="text-[10px] font-bold ${iterationPathValid ? 'text-green-600' : 'text-red-600'} ml-1 inline-flex items-center gap-1 min-w-0 flex-1" title="${escapeHtml(story.iterationPath || 'N/A')}">
                 ${iterationPathValid ? '✅' : '❌'}
                 <span class="truncate">IP: ${escapeHtml(story.iterationPath || 'N/A')}</span>
            </span>`
@@ -250,7 +250,7 @@ function createStoryCard(story, options = {}) {
 
     let tagDropdownHtml = showTagDropdown ? renderTagDropdown(story.id, story.customTags || []) : '';
     let commentsHtml = showCommentsButton && !isBacklog ?
-        `<button onclick="ui.openCommentsModal('${story.id}')" class="btn btn-outline text-indigo-600 border-indigo-300 hover:bg-indigo-50 text-xs py-1 px-2">💬 <span class="font-bold">${commentsCount}</span></button>` : '';
+        `<button onclick="ui.openCommentsModal('${story.id}')" class="btn btn-outline text-indigo-600 border-indigo-300 hover:bg-indigo-50 text-[11px] py-0.5 px-1.5 leading-tight">💬 <span class="font-bold">${commentsCount}</span></button>` : '';
 
     let extraFields = '';
     if (isBacklog) {
@@ -355,38 +355,42 @@ function createStoryCard(story, options = {}) {
     }
 
     const activeDays = (!isBacklog && !isSupport) ? getStoryActiveDays(story) : { days: 0, startDate: null, colorClass: '' };
-    const topRightBadges = (releaseDate || activeDays.days > 0) ? `
-        <div class="flex items-center justify-end gap-1.5 mb-2 flex-wrap">
-            ${activeDays.days > 0 ? `
-                <span title="Active since: ${activeDays.startDate ? activeDays.startDate.toLocaleDateString('en-GB') : 'N/A'}"
-                      class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black text-slate-800 shadow-sm ${activeDays.colorClass}">
-                    ⏱ ${activeDays.days}d
-                </span>
-            ` : ''}
-            ${releaseDate ? `<span class="bg-purple-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">📅 ${escapeHtml(releaseDate)}</span>` : ''}
+    const showTopBar = (!isBacklog && !isSupport) || releaseDate || commentsHtml;
+    const topBarHtml = showTopBar ? `
+        <div class="flex items-center justify-between gap-1.5 mb-1.5">
+            <div class="flex items-center gap-1">
+                ${(!isBacklog && !isSupport) ? `<span class="px-1.5 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${escapeHtml(story.priority || 999)}</span>` : ''}
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                ${activeDays.days > 0 ? `
+                    <span title="Active since: ${activeDays.startDate ? activeDays.startDate.toLocaleDateString('en-GB') : 'N/A'}"
+                          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black text-slate-800 shadow-sm ${activeDays.colorClass}">
+                        ⏱ ${activeDays.days}d
+                    </span>
+                ` : ''}
+                ${releaseDate ? `<span class="bg-purple-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">📅 ${escapeHtml(releaseDate)}</span>` : ''}
+                ${commentsHtml}
+            </div>
         </div>
     ` : '';
-    const priorityBadge = (!isBacklog && !isSupport) ? `
-        <div class="flex items-center gap-1.5 mb-1.5">
-            <span class="px-1.5 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${escapeHtml(story.priority || 999)}</span>
+
+    const tagsRowHtml = (tags.length > 0 || tagDropdownHtml) ? `
+        <div class="flex flex-wrap items-center gap-1 mb-1.5">
+            ${tags.map(tag => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(story.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${escapeHtml(tag.trim())}</span>`).join('')}
+            ${tagDropdownHtml}
         </div>
     ` : '';
 
     const borderClass = isBacklog ? 'border-purple-200' : (isSupport ? 'border-gray-200' : 'border-gray-100');
     return `
         <div class="card relative p-3 ${borderClass} hover:border-google-blue ${customClass}">
-            ${topRightBadges}
-            ${priorityBadge}
-            ${tags.length > 0 ? `<div class="flex flex-wrap gap-1 mb-2">${tags.map(tag => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter ${(story.customTags || []).includes(tag) ? 'bg-purple-200 text-purple-700 border border-purple-300' : 'bg-slate-100 text-slate-500 border border-slate-200'}">${escapeHtml(tag.trim())}</span>`).join('')}</div>` : ''}
-            ${tagDropdownHtml}
-            <div class="flex justify-between items-center mb-2 gap-2">
-                <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-google-blue cursor-pointer hover:underline flex items-center gap-0.5 min-w-0 flex-1">
-                    #${story.id} 🔍
-                    ${iterationPathIndicator}
-                </div>
-                ${commentsHtml}
+            ${topBarHtml}
+            ${tagsRowHtml}
+            <div onclick="ui.openStoryModal('${story.id}')" class="text-[10px] font-bold text-google-blue cursor-pointer hover:underline flex items-center gap-1 min-w-0 mb-1.5">
+                #${story.id}
+                ${iterationPathIndicator}
             </div>
-            <div onclick="ui.openStoryModal('${story.id}')" class="text-sm font-semibold text-slate-800 mb-3 line-clamp-2 cursor-pointer hover:text-google-blue transition">${escapeHtml(story.title)}</div>
+            <div onclick="ui.openStoryModal('${story.id}')" class="text-sm font-semibold text-slate-800 mb-2 line-clamp-2 cursor-pointer hover:text-google-blue transition">${escapeHtml(story.title)}</div>
             ${extraFields}
         </div>
     `;
