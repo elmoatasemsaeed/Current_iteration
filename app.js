@@ -1309,7 +1309,6 @@ const ui = {
             case 'tab-inactive-stories': this.renderInactiveStories(); break;
             case 'tab-kanban': this.renderKanban(); break;
             case 'tab-auditor': this.renderAuditorChecklist(); break;
-            case 'tab-support-kanban': this.renderSupportKanban(); break;
             case 'tab-pull-requests': this.renderPullRequestsTab(); break;
             default: break;
         }
@@ -2520,44 +2519,6 @@ const ui = {
             `;
         }).join('');
         html += `</div>`;
-        container.innerHTML = html;
-    },
-    renderSupportKanban() {
-        const container = document.getElementById('support-kanban-container');
-        const filterSelect = document.getElementById('support-kanban-ba-filter');
-        const supportLogs = currentData.filter(s => s.type === 'Support log');
-        if (supportLogs.length === 0) {
-            container.innerHTML = `<div class="text-center py-20 text-gray-400 col-span-full">No Support logs found.</div>`;
-            return;
-        }
-        const areas = [...new Set(supportLogs.map(s => s.area || "General"))].sort();
-        const currentSelected = filterSelect.value;
-        filterSelect.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${escapeHtml(a)}" ${a === currentSelected ? 'selected' : ''}>${escapeHtml(a)}</option>`).join('');
-        const selectedArea = filterSelect.value;
-        let filteredLogs = supportLogs;
-        if (selectedArea !== 'all') filteredLogs = filteredLogs.filter(s => (s.area || "General") === selectedArea);
-        const allStates = [...new Set(filteredLogs.map(s => s.state))].sort();
-        const preferredOrder = ['Active', 'Resolved', 'Closed', 'On-Hold', 'Reactive', 'Rejected'];
-        const orderedStates = preferredOrder.filter(st => allStates.includes(st));
-        const remainingStates = allStates.filter(st => !preferredOrder.includes(st)).sort();
-        const finalStates = [...orderedStates, ...remainingStates];
-
-        let html = '';
-        finalStates.forEach(state => {
-            const logsInState = filteredLogs.filter(s => s.state === state);
-            html += `
-                <div class="kanban-column">
-                    <div class="kanban-column-header">
-                        <span>${escapeHtml(state)}</span>
-                        <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${logsInState.length}</span>
-                    </div>
-                    <div class="space-y-3 overflow-y-auto">
-                        ${logsInState.map(s => createStoryCard(s, { mode: 'support', showTagDropdown: true, showCommentsButton: true })).join('')}
-                        ${logsInState.length === 0 ? '<div class="text-center py-10 text-gray-300 text-sm italic">Empty column</div>' : ''}
-                    </div>
-                </div>
-            `;
-        });
         container.innerHTML = html;
     },
     generateWeeklyReport() {
