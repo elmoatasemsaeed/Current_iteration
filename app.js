@@ -283,6 +283,12 @@ function createStoryCard(story, options = {}) {
 
         const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(Boolean).sort();
         const devStartDisplay = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]).toLocaleDateString('en-GB') : 'TBD';
+        let devResolveDate = 'N/A';
+        const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
+        if (resolvedDevTasks.length > 0) {
+            const latestTask = resolvedDevTasks.slice().sort((a, b) => new Date(b['Changed Date']) - new Date(a['Changed Date']))[0];
+            devResolveDate = new Date(latestTask['Changed Date']).toLocaleDateString('en-GB');
+        }
 
         const execTask = (story.tasks || []).find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
         const testStartDisplay = (execTask && execTask['Activated Date']) ? new Date(execTask['Activated Date']).toLocaleDateString('en-GB') : 'Waiting';
@@ -342,6 +348,7 @@ function createStoryCard(story, options = {}) {
                         <span class="text-indigo-500 text-[10px] font-bold">📋${completedTC}/${totalTC}</span>
                     </div>
                     <div class="text-[9px] text-gray-500 mt-1">Start: <span class="font-medium">${escapeHtml(testStartDisplay)}</span></div>
+                    <div class="text-[9px] text-google-green font-bold mt-1">Resolved: ${escapeHtml(devResolveDate)}</div>
                 </div>
             </div>
             <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-200 text-[10px]">
