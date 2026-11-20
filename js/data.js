@@ -1,5 +1,5 @@
 /**
- * Auth, Archiver & Data Processor (GitHub Sync + CSV + Timeline Calculation)
+ * Auth, Archiver & Data Proce ssor (GitHub Sync + CSV + Timeline Calculation)
  */
 const archiver = {
     async runArchive() {
