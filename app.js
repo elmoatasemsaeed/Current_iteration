@@ -1583,19 +1583,39 @@ const ui = {
             const prTitle = (pr.title || '').trim();
             const prRepo  = (pr.repository || '').trim();
 
-            if (/^(SL|Support\s*Log)(?:\b|_)/i.test(prTitle)) {
-                area = 'Support Log';
-            }
-            else if (/^integration(?:\b|_|\/|-)/i.test(prTitle)) {
-                area = 'LDM Integration';
-            }
-            else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
-                area = prRepo;
-            }
-            else if (pr.linkedStoryId) {
-                const resolvedArea = resolveAreaFromId(pr.linkedStoryId);
+            // 1) الأولوية القصوى: الربط الفعلي بالـ Work Items على Azure
+            const azureIds = Array.isArray(pr.linkedWorkItemIds) ? pr.linkedWorkItemIds : [];
+            for (const wid of azureIds) {
+                const resolvedArea = resolveAreaFromId(wid);
                 if (resolvedArea) {
                     area = resolvedArea;
+                    break;
+                }
+            }
+
+            // 2) حل ثانوي: الـ IDs المستخرجة من العنوان / الـ Branch أو linkedStoryId القديم
+            if (area === 'Unlinked') {
+                const fallbackIds = [
+                    ...(Array.isArray(pr.fallbackWorkItemIds) ? pr.fallbackWorkItemIds : []),
+                    ...(pr.linkedStoryId ? [pr.linkedStoryId] : [])
+                ];
+                for (const wid of fallbackIds) {
+                    const resolvedArea = resolveAreaFromId(wid);
+                    if (resolvedArea) {
+                        area = resolvedArea;
+                        break;
+                    }
+                }
+            }
+
+            // 3) حل ثانوي أخير: قواعد العنوان ثم اسم الـ Repository
+            if (area === 'Unlinked') {
+                if (/^(SL|Support\s*Log)(?:\b|_)/i.test(prTitle)) {
+                    area = 'Support Log';
+                } else if (/^integration(?:\b|_|\/|-)/i.test(prTitle)) {
+                    area = 'LDM Integration';
+                } else if (prRepo && prRepo.toUpperCase() !== 'LDM') {
+                    area = prRepo;
                 }
             }
 
@@ -3902,7 +3922,10 @@ const azureDevOps = {
                 db.pullRequests = prs;
                 prCount = prs.length;
 
-                // ربط PRs بالقصص عبر linkedStoryId
+                // استكمال تفاصيل الـ Work Items المربوطة بالـ PRs (بما فيها المغلقة أو من Sprints سابقة)
+                await this.enrichWorkItemsMapForPRs(authHeader, prs);
+
+                // ربط PRs بالقصص عبر الربط الفعلي أولاً ثم الثانوي
                 this.linkPullRequestsToStories();
 
                 // حفظ مرة أخرى لضمان تضمين PRs داخل db.json
@@ -3929,106 +3952,326 @@ const azureDevOps = {
     },
 
     // ============ Pull Requests Fetcher ============
-    async fetchPullRequests(authHeader) {
-    const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests?searchCriteria.status=all&$top=500&$expand=WorkItems&api-version=7.1`;
-    const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
-
-    if (!res.ok) {
-        throw new Error(`فشل جلب الـ Pull Requests (${res.status} ${res.statusText}).`);
-    }
-    const data = await res.json();
-    if (!data || !Array.isArray(data.value)) {
-        console.warn('⚠️ Azure لم يُرجع أي Pull Requests.');
-        return [];
-    }
-
-    console.log(`✅ تم استلام ${data.value.length} Pull Request من Azure.`);
-
-    return data.value.map(pr => {
-        const creationDate = pr.creationDate ? new Date(pr.creationDate) : null;
-        const closedDate = (pr.closedDate && !pr.closedDate.toString().startsWith('9999')) 
-    ? new Date(pr.closedDate) 
-    : null;
-        let cycleTimeHours = null;
-        if (pr.status === 'completed' && creationDate && closedDate) {
-            cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
-        }
-
-        // ✅ NEW: نحتفظ بكل الـ Work Item Refs عشان نقدر نعمل parent resolution
-        const linkedWorkItemIds = (pr.workItemRefs || []).map(w => w.id.toString());
-        let linkedStoryId = linkedWorkItemIds.length > 0 ? linkedWorkItemIds[0] : null;
-
-        // Fallback لو الـ API مارجعش WorkItems
-        if (!linkedStoryId) {
-            const titleMatch = (pr.title || '').match(/#?(\d{4,6})/);
-            linkedStoryId = titleMatch ? titleMatch[1] : null;
-        }
-
-        return {
-            id: pr.pullRequestId,
-            title: pr.title || '',
-            status: pr.status || 'unknown',
-            createdBy: pr.createdBy?.displayName || 'Unknown',
-            repository: pr.repository?.name || 'N/A',
-            creationDate: creationDate ? creationDate.toISOString() : null,
-            closedDate: closedDate ? closedDate.toISOString() : null,
-            cycleTimeHours: cycleTimeHours,
-            linkedStoryId: linkedStoryId,
-            linkedWorkItemIds: linkedWorkItemIds,
-            sourceRefName: pr.sourceRefName || '',
-            targetRefName: pr.targetRefName || '',
-            reviewers: (pr.reviewers || []).map(r => ({
-                name: r.displayName || 'Unknown',
-                vote: r.vote != null ? r.vote : 0
-            }))
+    extractFallbackWorkItemIds(title, sourceRefName) {
+        const ids = [];
+        const addId = (val) => {
+            if (!val) return;
+            const s = val.toString();
+            const num = parseInt(s, 10);
+            // استبعاد أرقام السنوات الشائعة (2020 - 2035)
+            if (num >= 2020 && num <= 2035) return;
+            if (!ids.includes(s)) ids.push(s);
         };
-    });
-},
 
-linkPullRequestsToStories() {
-    const allStories = [...(db.currentStories || []), ...(db.backlogStories || [])];
-    const storyIdSet = new Map();
-    allStories.forEach(s => storyIdSet.set(s.id.toString(), s));
+        const titleStr = String(title || '');
+        const branchStr = String(sourceRefName || '').replace(/^refs\/heads\//i, '');
 
-    const findStoryForPR = (pr) => {
-        // 1) Direct match
-        if (pr.linkedStoryId && storyIdSet.has(pr.linkedStoryId.toString())) {
-            return storyIdSet.get(pr.linkedStoryId.toString());
+        // 1) أرقام مسبوقة بـ # في العنوان (مثل #12345)
+        for (const m of titleStr.matchAll(/#(\d{3,7})\b/g)) {
+            addId(m[1]);
         }
 
-        // 2) Resolve via workItemsMap (parent chain)
-        const ids = pr.linkedWorkItemIds || (pr.linkedStoryId ? [pr.linkedStoryId] : []);
-        for (const wid of ids) {
-            let current = db.workItemsMap?.[wid];
-            let depth = 0;
-            while (current && depth < 5) {
-                if (storyIdSet.has(current.id.toString())) {
-                    return storyIdSet.get(current.id.toString());
-                }
-                if (current.parentId && db.workItemsMap?.[current.parentId]) {
-                    current = db.workItemsMap[current.parentId];
-                } else {
-                    break;
-                }
-                depth++;
+        // 2) أرقام في اسم الـ Branch (مثل feature/12345-fix أو US-12345)
+        for (const m of branchStr.matchAll(/(?:^|[\/_\-#]|(?:US|WI|BUG|TASK)[-_]?)(\d{4,7})(?=$|[\/_\-\s])/gi)) {
+            addId(m[1]);
+        }
+
+        // 3) أرقام مستقلة في العنوان كحل أخير
+        if (ids.length === 0) {
+            for (const m of titleStr.matchAll(/\b(\d{4,7})\b/g)) {
+                addId(m[1]);
             }
         }
-        return null;
-    };
 
-    // Reset
-    allStories.forEach(story => { story.pullRequests = []; });
+        return ids;
+    },
 
-    (db.pullRequests || []).forEach(pr => {
-        const story = findStoryForPR(pr);
-        if (story) {
-            if (!story.pullRequests) story.pullRequests = [];
-            story.pullRequests.push(pr);
+    async fetchPRWorkItemRefs(authHeader, repoId, prId) {
+        if (!repoId || !prId) return [];
+        const wiUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/repositories/${encodeURIComponent(repoId)}/pullRequests/${prId}/workitems?api-version=7.1`;
+        try {
+            const res = await fetchWithTimeout(wiUrl, { headers: { 'Authorization': authHeader } });
+            if (!res.ok) return [];
+            const data = await res.json();
+            return Array.isArray(data?.value) ? data.value.map(w => w.id.toString()) : [];
+        } catch {
+            return [];
         }
-    });
+    },
 
-    console.log(`✅ Linked ${db.pullRequests.length} PRs to stories.`);
-},
+    async fetchPullRequests(authHeader) {
+        const baseUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests`;
+        const res = await fetchWithTimeout(`${baseUrl}?searchCriteria.status=all&$top=500&$expand=WorkItems&api-version=7.1`, {
+            headers: { 'Authorization': authHeader }
+        });
+
+        if (!res.ok) {
+            throw new Error(`فشل جلب الـ Pull Requests (${res.status} ${res.statusText}).`);
+        }
+        const data = await res.json();
+        let rawPRs = Array.isArray(data?.value) ? data.value : [];
+
+        // إذا وصلنا لحد 500، نجلب الـ Active PRs بشكل مستقل لضمان عدم سقوط أي PR مفتوحة
+        if (rawPRs.length >= 500) {
+            try {
+                const activeRes = await fetchWithTimeout(`${baseUrl}?searchCriteria.status=active&$top=500&$expand=WorkItems&api-version=7.1`, {
+                    headers: { 'Authorization': authHeader }
+                });
+                if (activeRes.ok) {
+                    const activeData = await activeRes.json();
+                    const activePRs = Array.isArray(activeData?.value) ? activeData.value : [];
+                    const seen = new Set(rawPRs.map(p => p.pullRequestId));
+                    activePRs.forEach(p => { if (!seen.has(p.pullRequestId)) rawPRs.push(p); });
+                }
+            } catch (e) {
+                console.warn('⚠️ تعذر جلب الـ Active PRs الإضافية:', e);
+            }
+        }
+
+        if (rawPRs.length === 0) {
+            console.warn('⚠️ Azure لم يُرجع أي Pull Requests.');
+            return [];
+        }
+
+        console.log(`✅ تم استلام ${rawPRs.length} Pull Request من Azure.`);
+
+        // الاحتفاظ بالربط السابق إن وُجد للـ PRs المغلقة لتجنب استدعاءات API زائدة
+        const prevPRMap = new Map((db.pullRequests || []).map(p => [p.id, p]));
+        const fourteenDaysAgo = Date.now() - (14 * 24 * 60 * 60 * 1000);
+
+        // جلب WorkItems الحقيقية من Azure للـ PRs التي لم ترجع workItemRefs من الـ list endpoint
+        // (الأولوية للـ Active والحديثة خلال 14 يوماً)
+        const prsNeedingWorkItems = rawPRs.filter(pr => {
+            const hasRefs = Array.isArray(pr.workItemRefs) && pr.workItemRefs.length > 0;
+            if (hasRefs) return false;
+            const prev = prevPRMap.get(pr.pullRequestId);
+            if (pr.status !== 'active' && prev && Array.isArray(prev.linkedWorkItemIds) && prev.linkedWorkItemIds.length > 0) {
+                return false;
+            }
+            const createdMs = pr.creationDate ? new Date(pr.creationDate).getTime() : 0;
+            return pr.status === 'active' || createdMs >= fourteenDaysAgo;
+        });
+
+        const fetchedRefsMap = new Map();
+        const batchSize = 10;
+        for (let i = 0; i < prsNeedingWorkItems.length; i += batchSize) {
+            const batch = prsNeedingWorkItems.slice(i, i + batchSize);
+            const results = await Promise.all(
+                batch.map(pr => this.fetchPRWorkItemRefs(authHeader, pr.repository?.id, pr.pullRequestId)
+                    .then(ids => ({ prId: pr.pullRequestId, ids })))
+            );
+            results.forEach(r => {
+                if (r.ids.length > 0) fetchedRefsMap.set(r.prId, r.ids);
+            });
+        }
+
+        return rawPRs.map(pr => {
+            const creationDate = pr.creationDate ? new Date(pr.creationDate) : null;
+            const closedDate = (pr.closedDate && !pr.closedDate.toString().startsWith('9999'))
+                ? new Date(pr.closedDate)
+                : null;
+            let cycleTimeHours = null;
+            if (pr.status === 'completed' && creationDate && closedDate) {
+                cycleTimeHours = (closedDate.getTime() - creationDate.getTime()) / (1000 * 60 * 60);
+            }
+
+            // 1) الأولوية القصوى: الربط الفعلي على Azure
+            let linkedWorkItemIds = (pr.workItemRefs || []).map(w => w.id.toString());
+            if (linkedWorkItemIds.length === 0 && fetchedRefsMap.has(pr.pullRequestId)) {
+                linkedWorkItemIds = fetchedRefsMap.get(pr.pullRequestId);
+            }
+            if (linkedWorkItemIds.length === 0) {
+                const prev = prevPRMap.get(pr.pullRequestId);
+                if (prev && Array.isArray(prev.linkedWorkItemIds) && prev.linkedWorkItemIds.length > 0 && prev.linkSource === 'azure') {
+                    linkedWorkItemIds = prev.linkedWorkItemIds;
+                }
+            }
+
+            // 2) حل ثانوي فقط عند عدم وجود ربط فعلي على Azure: العنوان ثم الـ Branch
+            const fallbackWorkItemIds = linkedWorkItemIds.length === 0
+                ? this.extractFallbackWorkItemIds(pr.title, pr.sourceRefName)
+                : [];
+
+            const linkedStoryId = linkedWorkItemIds[0] || fallbackWorkItemIds[0] || null;
+            const linkSource = linkedWorkItemIds.length > 0
+                ? 'azure'
+                : (fallbackWorkItemIds.length > 0 ? 'fallback' : 'none');
+
+            return {
+                id: pr.pullRequestId,
+                title: pr.title || '',
+                status: pr.status || 'unknown',
+                createdBy: pr.createdBy?.displayName || 'Unknown',
+                repository: pr.repository?.name || 'N/A',
+                creationDate: creationDate ? creationDate.toISOString() : null,
+                closedDate: closedDate ? closedDate.toISOString() : null,
+                cycleTimeHours: cycleTimeHours,
+                linkedStoryId: linkedStoryId,
+                linkedWorkItemIds: linkedWorkItemIds,
+                fallbackWorkItemIds: fallbackWorkItemIds,
+                linkSource: linkSource,
+                sourceRefName: pr.sourceRefName || '',
+                targetRefName: pr.targetRefName || '',
+                reviewers: (pr.reviewers || []).map(r => ({
+                    name: r.displayName || 'Unknown',
+                    vote: r.vote != null ? r.vote : 0
+                }))
+            };
+        });
+    },
+
+    async enrichWorkItemsMapForPRs(authHeader, prs) {
+        if (!db.workItemsMap) db.workItemsMap = {};
+        const fields = "System.Id,System.WorkItemType,System.Title,System.State,System.IterationPath,System.Parent,MyCompany.MyProcess.BusinessArea";
+
+        const fetchMissingIds = async (ids) => {
+            const missing = [...new Set(ids.map(id => id.toString()))]
+                .filter(id => /^\d+$/.test(id) && !db.workItemsMap[id]);
+            if (missing.length === 0) return [];
+
+            const newlyFetchedParents = [];
+            const chunkSize = 200;
+            for (let i = 0; i < missing.length; i += chunkSize) {
+                const chunk = missing.slice(i, i + chunkSize);
+                const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/workitems?ids=${chunk.join(',')}&fields=${encodeURIComponent(fields)}&errorPolicy=Omit&api-version=7.1`;
+                try {
+                    const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
+                    if (!res.ok) continue;
+                    const data = await res.json();
+                    (data?.value || []).forEach(d => {
+                        if (!d || !d.id) return;
+                        const f = d.fields || {};
+                        const parentId = f["System.Parent"] ? f["System.Parent"].toString() : null;
+                        db.workItemsMap[d.id] = {
+                            id: d.id.toString(),
+                            type: f["System.WorkItemType"] || "",
+                            area: f["MyCompany.MyProcess.BusinessArea"] || "",
+                            iterationPath: f["System.IterationPath"] || "",
+                            parentId: parentId,
+                            title: f["System.Title"] || ""
+                        };
+                        if (parentId && !db.workItemsMap[parentId]) {
+                            newlyFetchedParents.push(parentId);
+                        }
+                    });
+                } catch (e) {
+                    console.warn('⚠️ تعذر جلب تفاصيل بعض Work Items للـ PRs:', e);
+                }
+            }
+            return newlyFetchedParents;
+        };
+
+        const allPRWorkItemIds = [];
+        (prs || []).forEach(pr => {
+            (pr.linkedWorkItemIds || []).forEach(id => allPRWorkItemIds.push(id));
+            (pr.fallbackWorkItemIds || []).forEach(id => allPRWorkItemIds.push(id));
+            if (pr.linkedStoryId) allPRWorkItemIds.push(pr.linkedStoryId);
+        });
+
+        // Hop 1: جلب الـ Work Items المربوطة بالـ PRs
+        const parentIds = await fetchMissingIds(allPRWorkItemIds);
+        // Hop 2: جلب الـ Parent (مثل User Story / Feature) لو كان ناقصاً أيضاً
+        if (parentIds.length > 0) {
+            await fetchMissingIds(parentIds);
+        }
+    },
+
+    linkPullRequestsToStories() {
+        const allStories = [...(db.currentStories || []), ...(db.backlogStories || [])];
+        const storyIdSet = new Map();
+        const childToStory = new Map();
+
+        allStories.forEach(s => {
+            if (!s || s.id == null) return;
+            storyIdSet.set(s.id.toString(), s);
+            s.pullRequests = [];
+            const indexChild = (child) => {
+                const cid = child?.ID ?? child?.id ?? child?.Id;
+                if (cid != null) childToStory.set(cid.toString(), s);
+            };
+            (s.tasks || []).forEach(indexChild);
+            (s.bugs || []).forEach(indexChild);
+            (s.testCases || []).forEach(indexChild);
+            (s.reviews || []).forEach(indexChild);
+        });
+
+        const findStoriesByIds = (ids) => {
+            const matched = [];
+            const seenStories = new Set();
+            const addStory = (story) => {
+                if (story && !seenStories.has(story.id.toString())) {
+                    seenStories.add(story.id.toString());
+                    matched.push(story);
+                }
+            };
+
+            for (const rawId of ids) {
+                if (!rawId) continue;
+                const wid = rawId.toString();
+
+                if (storyIdSet.has(wid)) {
+                    addStory(storyIdSet.get(wid));
+                    continue;
+                }
+                if (childToStory.has(wid)) {
+                    addStory(childToStory.get(wid));
+                    continue;
+                }
+
+                // تتبع سلسلة الـ Parent عبر workItemsMap
+                let current = db.workItemsMap?.[wid];
+                const visited = new Set([wid]);
+                let depth = 0;
+                while (current && depth < 5) {
+                    const cid = current.id?.toString();
+                    if (cid && storyIdSet.has(cid)) {
+                        addStory(storyIdSet.get(cid));
+                        break;
+                    }
+                    if (cid && childToStory.has(cid)) {
+                        addStory(childToStory.get(cid));
+                        break;
+                    }
+                    const pid = current.parentId?.toString();
+                    if (pid && !visited.has(pid) && db.workItemsMap?.[pid]) {
+                        visited.add(pid);
+                        current = db.workItemsMap[pid];
+                    } else {
+                        break;
+                    }
+                    depth++;
+                }
+            }
+            return matched;
+        };
+
+        let linkedPRCount = 0;
+        (db.pullRequests || []).forEach(pr => {
+            // الأولوية للربط الفعلي على Azure، ثم الحل الثانوي (العنوان / الـ Branch)
+            const azureIds = Array.isArray(pr.linkedWorkItemIds) ? pr.linkedWorkItemIds : [];
+            let stories = azureIds.length > 0 ? findStoriesByIds(azureIds) : [];
+
+            if (stories.length === 0) {
+                const fallbackIds = [
+                    ...(Array.isArray(pr.fallbackWorkItemIds) ? pr.fallbackWorkItemIds : []),
+                    ...(pr.linkedStoryId ? [pr.linkedStoryId] : [])
+                ];
+                stories = findStoriesByIds(fallbackIds);
+            }
+
+            if (stories.length > 0) {
+                linkedPRCount++;
+                stories.forEach(story => {
+                    if (!story.pullRequests) story.pullRequests = [];
+                    if (!story.pullRequests.some(existing => existing.id === pr.id)) {
+                        story.pullRequests.push(pr);
+                    }
+                });
+            }
+        });
+
+        console.log(`✅ Linked ${linkedPRCount}/${(db.pullRequests || []).length} PRs to stories.`);
+    },
     buildRowsFromRelations(relations, detailsMap) {
         const rows = [];
         relations.forEach(rel => {
