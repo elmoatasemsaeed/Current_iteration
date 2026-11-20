@@ -269,10 +269,9 @@ function createStoryCard(story, options = {}) {
             <div class="text-[10px] text-gray-400 mt-2 border-t border-gray-100 pt-1">Area: ${escapeHtml(story.area || "General")} | Updated: ${story.changedDate ? new Date(story.changedDate).toLocaleDateString('en-GB') : 'N/A'}</div>
         `;
     } else {
-        // regular mode (Kanban) — يحتفظ بكل بيانات الكانبان الحالية + بيانات Active Workstreams (بدون الإجازات)
+        // regular mode (Kanban) — يحتفظ بكل بيانات الكانبان الحالية + بيانات Active Workstreams المطلوبة (بدون الإجازات وبدون Target Delivery/Resolved)
         const now = new Date();
         const calc = story.calc || {};
-        const isLate = calc.finalEnd instanceof Date && now > calc.finalEnd;
 
         const devTasks = (story.tasks || []).filter(t => ["Development", "DB Modification"].includes(t['Activity']));
         const devEst = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
@@ -281,16 +280,9 @@ function createStoryCard(story, options = {}) {
         const nonTestTasks = (story.tasks || []).filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
         const totalDevTasks = nonTestTasks.length;
         const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed', 'Resolved'].includes(t['State'])).length;
-        const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
 
         const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(Boolean).sort();
         const devStartDisplay = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]).toLocaleDateString('en-GB') : 'TBD';
-        let devResolveDate = 'N/A';
-        const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
-        if (resolvedDevTasks.length > 0) {
-            const latestTask = resolvedDevTasks.slice().sort((a, b) => new Date(b['Changed Date']) - new Date(a['Changed Date']))[0];
-            devResolveDate = new Date(latestTask['Changed Date']).toLocaleDateString('en-GB');
-        }
 
         const execTask = (story.tasks || []).find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
         const testStartDisplay = (execTask && execTask['Activated Date']) ? new Date(execTask['Activated Date']).toLocaleDateString('en-GB') : 'Waiting';
@@ -314,7 +306,6 @@ function createStoryCard(story, options = {}) {
         const testCases = story.testCases || [];
         const totalTC = testCases.length;
         const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
-        const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
 
         const totalEst = devEst + testEst;
         const bugEstimate = 0.15 * totalEst;
@@ -326,8 +317,6 @@ function createStoryCard(story, options = {}) {
             if (actualBugEffort <= bugEstimate) bugColor = 'text-google-green';
             else bugColor = 'text-google-red';
         }
-
-        const targetDelivery = calc.finalEnd instanceof Date ? calc.finalEnd.toLocaleDateString('en-GB') : 'Waiting';
 
         extraFields = `
             <div class="grid grid-cols-2 gap-2 border-t pt-2">
@@ -341,15 +330,7 @@ function createStoryCard(story, options = {}) {
                         <span class="text-blue-500 font-bold">${devEst}h</span>
                         <span class="text-red-500 text-[10px] font-bold">🐞${completedBugs}/${totalBugs}</span>
                     </div>
-                    <div class="mt-1.5">
-                        <div class="flex justify-between items-center text-[9px] mb-0.5">
-                            <span class="text-gray-400 font-bold">Tasks: ${completedDevTasks}/${totalDevTasks}</span>
-                            <span class="text-google-blue font-bold">${devProgressPercent}%</span>
-                        </div>
-                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                            <div class="h-full" style="width: ${devProgressPercent}%; background-color: #3b82f6;"></div>
-                        </div>
-                    </div>
+                    <div class="text-[9px] text-gray-500 font-bold mt-1">Tasks: <span class="text-slate-700">${completedDevTasks}/${totalDevTasks}</span></div>
                     ${totalBugs > 0 && totalBugEffort > 0 ? `
                     <div class="mt-1">
                         <div class="flex justify-between items-center text-[9px] text-gray-500">
@@ -360,7 +341,6 @@ function createStoryCard(story, options = {}) {
                     </div>
                     ` : ''}
                     <div class="text-[9px] text-gray-500 mt-1">Start: <span class="font-medium">${escapeHtml(devStartDisplay)}</span></div>
-                    <div class="text-[9px] text-google-green font-bold">Resolved: ${escapeHtml(devResolveDate)}</div>
                 </div>
                 <div class="text-[11px] border-l pl-2">
                     <div class="flex items-center gap-1.5">
@@ -372,15 +352,6 @@ function createStoryCard(story, options = {}) {
                         <span class="text-green-500 font-bold">${testEst}h</span>
                         <span class="text-indigo-500 text-[10px] font-bold">📋${completedTC}/${totalTC}</span>
                     </div>
-                    <div class="mt-1.5">
-                        <div class="flex justify-between items-center text-[9px] mb-0.5">
-                            <span class="text-gray-400 font-bold">TCs: ${completedTC}/${totalTC}</span>
-                            <span class="text-google-blue font-bold">${progressPercent}%</span>
-                        </div>
-                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                            <div class="h-full" style="width: ${progressPercent}%; background-color: #3b82f6;"></div>
-                        </div>
-                    </div>
                     <div class="text-[9px] text-gray-500 mt-1">Start: <span class="font-medium">${escapeHtml(testStartDisplay)}</span></div>
                 </div>
             </div>
@@ -391,18 +362,10 @@ function createStoryCard(story, options = {}) {
                 <span class="font-mono">${actualBugEffort.toFixed(1)}h</span>
                 <span class="font-bold ${bugColor}">${bugEstimate > 0 ? ((actualBugEffort / bugEstimate) * 100).toFixed(0) : 0}%</span>
             </div>
-            <div class="${isLate ? 'bg-google-red-light' : 'bg-slate-50'} mt-2 -mx-3 -mb-3 px-3 py-2 flex justify-between items-center border-t border-gray-100 rounded-b-xl">
-                <div class="flex items-center gap-1.5">
-                    <span class="text-[9px] uppercase font-bold text-gray-400">Target Delivery:</span>
-                    <span class="text-xs font-bold ${isLate ? 'text-google-red' : 'text-slate-700'}">${escapeHtml(targetDelivery)}</span>
-                </div>
-                <span class="text-sm">${isLate ? '⚠️' : '🗓️'}</span>
-            </div>
         `;
     }
 
     const activeDays = (!isBacklog && !isSupport) ? getStoryActiveDays(story) : { days: 0, startDate: null, colorClass: '' };
-    const isRegularLate = (!isBacklog && !isSupport && story.calc?.finalEnd instanceof Date && new Date() > story.calc.finalEnd);
     const topRightBadges = (releaseDate || activeDays.days > 0) ? `
         <div class="flex items-center justify-end gap-1.5 mb-2 flex-wrap">
             ${activeDays.days > 0 ? `
@@ -417,7 +380,6 @@ function createStoryCard(story, options = {}) {
     const priorityBadge = (!isBacklog && !isSupport) ? `
         <div class="flex items-center gap-1.5 mb-1.5">
             <span class="px-1.5 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${escapeHtml(story.priority || 999)}</span>
-            ${isRegularLate ? `<span class="px-1.5 py-0.5 rounded bg-google-red-light text-google-red text-[10px] font-bold">Overdue ⚠️</span>` : ''}
         </div>
     ` : '';
 
@@ -1446,7 +1408,6 @@ const ui = {
     },
     renderAll() {
         this.renderDashboard();
-        this.renderActiveCards();
         this.renderDelivery();
         this.renderSettings();
         this.renderWorkload();
@@ -2361,224 +2322,6 @@ const ui = {
             this.showStaffModal(title, list, false);
         }
     },
-    renderActiveCards() {
-    const container = document.getElementById('active-cards-container');
-    const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || "";
-    const tagSearchTerm = document.getElementById('tag-search-input')?.value.toLowerCase() || "";
-    const nonBacklog = currentData.filter(s => !isBacklogStory(s) && isRegularStory(s));
-    const activeStories = nonBacklog.filter(s => {
-        const isNotFinished = s.state !== 'Tested' && s.state !== 'Closed';
-        const matchesSearch =
-            s.title.toLowerCase().includes(searchTerm) ||
-            s.id.toString().includes(searchTerm) ||
-            s.tester.toLowerCase().includes(searchTerm) ||
-            s.assignedTo.toLowerCase().includes(searchTerm) ||
-            (s.area && s.area.toLowerCase().includes(searchTerm));
-        const matchesTags = tagSearchTerm === "" || (s.customTags && s.customTags.some(tag => tag.toLowerCase().includes(tagSearchTerm)));
-        return isNotFinished && matchesSearch && matchesTags;
-    });
-
-    if (activeStories.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">${searchTerm ? 'لا توجد نتائج تطابق بحثك.' : 'No active stories found.'}</div>`;
-        return;
-    }
-
-    const groupedStories = activeStories.reduce((groups, story) => {
-        const area = story.area || "General";
-        if (!groups[area]) groups[area] = [];
-        groups[area].push(story);
-        return groups;
-    }, {});
-
-    container.innerHTML = Object.keys(groupedStories).map(area => {
-        const storiesInArea = groupedStories[area].sort((a, b) => {
-            if (a.priority !== b.priority) return a.priority - b.priority;
-            const isALate = a.calc.finalEnd instanceof Date && new Date() > a.calc.finalEnd;
-            const isBLate = b.calc.finalEnd instanceof Date && new Date() > b.calc.finalEnd;
-            return isBLate - isALate;
-        });
-
-        return `
-            <div class="col-span-full mt-8 mb-4">
-                <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-google-blue rounded-full"></span>
-                    ${escapeHtml(area)} 
-                    <span class="text-sm font-normal text-gray-400">(${storiesInArea.length})</span>
-                </h2>
-            </div>
-            ${storiesInArea.map(s => {
-                const now = new Date();
-                const isLate = s.calc.finalEnd instanceof Date && now > s.calc.finalEnd;
-                const hasError = s.calc.error;
-                const devTasks = s.tasks.filter(t => ["Development", "DB Modification"].includes(t['Activity']));
-                const totalDevEffort = devTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                const activeDaysInfo = getStoryActiveDays(s);
-                const activeDaysCount = activeDaysInfo.days;
-                const activeDaysColor = activeDaysInfo.colorClass;
-                const devActivatedDates = devTasks.map(t => t['Activated Date']).filter(d => d).sort();
-
-                const devVacDaysNow = devActivatedDates.length > 0 ? dateEngine.countVacationDaysUntilNow(devActivatedDates[0], s.assignedTo) : 0;
-                let devStartDisplay = devActivatedDates.length > 0 ? new Date(devActivatedDates[0]).toLocaleDateString('en-GB') : "TBD";
-                let devResolveDate = "N/A";
-                const resolvedDevTasks = devTasks.filter(t => ['Closed', 'Resolved', 'To Be Reviewed'].includes(t['State']) && t['Changed Date']);
-                if (resolvedDevTasks.length > 0) {
-                    const latestTask = resolvedDevTasks.sort((a, b) => new Date(b['Changed Date']) - new Date(a['Changed Date']))[0];
-                    devResolveDate = new Date(latestTask['Changed Date']).toLocaleDateString('en-GB');
-                }
-
-                const testTasks = s.tasks.filter(t => t['Activity'] === 'Testing');
-                const totalTestEffort = testTasks.reduce((acc, t) => acc + parseFloat(t['Original Estimation'] || 0), 0);
-                let testStartDisplay = "Waiting";
-                const execTask = s.tasks.find(t => t['Title'] && t['Title'].toLowerCase().includes('execution'));
-                const testVacDaysNow = (execTask && execTask['Activated Date']) ? dateEngine.countVacationDaysUntilNow(execTask['Activated Date'], s.tester) : 0;
-                if (execTask && execTask['Activated Date']) testStartDisplay = new Date(execTask['Activated Date']).toLocaleDateString('en-GB');
-
-                const isDevLate = s.calc.devEnd instanceof Date && now > s.calc.devEnd && (s.state !== 'Resolved' && s.state !== 'Tested' && s.state !== 'Closed');
-                const devLightColor = (s.state === 'Resolved' || s.state === 'Tested' || s.state === 'Closed') ? 'bg-google-green shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isDevLate ? 'bg-google-red animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
-                const isTestLate = s.calc.testEnd instanceof Date && now > s.calc.testEnd && (s.state !== 'Tested' && s.state !== 'Closed');
-                const testLightColor = (s.state === 'Tested' || s.state === 'Closed') ? 'bg-google-green shadow-[0_0_8px_rgba(34,197,94,0.6)]' : (isTestLate ? 'bg-google-red animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-gray-300');
-
-                const nonTestTasks = s.tasks.filter(t => t['Activity'] !== 'Testing' && t['Activity'] !== 'Preparation');
-                const totalDevTasks = nonTestTasks.length;
-                const completedDevTasks = nonTestTasks.filter(t => ['Closed', 'To Be Reviewed', 'Resolved'].includes(t['State'])).length;
-                const devProgressPercent = totalDevTasks > 0 ? Math.round((completedDevTasks / totalDevTasks) * 100) : 0;
-
-                const totalBugs = s.bugs ? s.bugs.length : 0;
-                const completedBugs = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).length : 0;
-                const totalBugEffort = s.bugs ? s.bugs.reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-                const completedBugEffort = s.bugs ? s.bugs.filter(b => ['Closed', 'Resolved'].includes(b['State'])).reduce((acc, b) => acc + parseFloat(b['Original Estimation'] || 0), 0) : 0;
-                const remainingBugEffort = Math.max(0, totalBugEffort - completedBugEffort);
-                const bugProgressPercent = totalBugEffort > 0 ? Math.round((completedBugEffort / totalBugEffort) * 100) : 0;
-
-                const testCases = s.testCases || [];
-                const totalTC = testCases.length;
-                const completedTC = testCases.filter(tc => ['Pass', 'Fail', 'Not Applicable'].includes(tc.state)).length;
-                const progressPercent = totalTC > 0 ? Math.round((completedTC / totalTC) * 100) : 0;
-
-                let statusColor = isLate ? "status-delayed" : (hasError ? "bg-amber-100 text-amber-700" : "status-active");
-                const statusText = isLate ? `Overdue ⚠️ (${s.state})` : s.state;
-
-                const tagDropdownHtml = renderTagDropdown(s.id, s.customTags || []);
-                const commentsHtml = renderComments(s);
-                const commentsCount = getStandupComments(s.id).length;
-
-                return `
-                <div class="card relative p-5 border-gray-100 hover:border-google-blue transition-all overflow-visible mb-4">
-                    ${activeDaysCount > 0 ? `
-<div class="absolute top-0 right-0 mt-8 mr-4 flex flex-col items-center justify-center ${activeDaysColor} text-slate-800 w-14 h-14 rounded-xl shadow-lg transform rotate-3 z-10 transition-colors duration-500">
-    <span class="text-xl font-black leading-none">${activeDaysCount}</span>
-    <span class="text-[8px] uppercase font-bold">Days</span>
-</div>
-` : ''}
-                    <div class="flex-1">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex gap-2">
-                                <span class="status-badge ${statusColor}">${escapeHtml(statusText)}</span>
-                                <span class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-600">P${escapeHtml(s.priority || 999)}</span>
-                            </div>
-                            <span onclick="ui.openStoryModal('${s.id}')" class="text-xs font-mono text-gray-400 cursor-pointer hover:text-google-blue">#${s.id} 🔍</span>
-                        </div>
-                        <div class="flex flex-wrap gap-1 mt-2 mb-3">
-                            ${s.tags.map(t => `<span class="px-2 py-0.5 bg-google-red-light text-google-red border border-google-red/30 rounded text-[10px] font-semibold">${escapeHtml(t)}</span>`).join('')}
-                        </div>
-                        <div class="flex flex-wrap items-center gap-1.5 mb-4 border-b border-dashed border-gray-100 pb-3 overflow-visible">
-                            ${(s.customTags || []).map(tag => `
-                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 border border-purple-200 rounded-md text-[10px] font-bold">
-                                    ${escapeHtml(tag)}
-                                    <button onclick="tagManager.toggleTagInStory('${s.id}', '${encodeURIComponent(tag)}')" class="hover:text-purple-900 font-black ml-1">×</button>
-                                </span>
-                            `).join('')}
-                            ${tagDropdownHtml}
-                        </div>
-                        <h3 onclick="ui.openStoryModal('${s.id}')" class="text-lg font-bold text-slate-800 mb-1 leading-tight cursor-pointer">${escapeHtml(s.title)}</h3>
-                        <div class="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 mt-4">
-                            <div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <div class="w-2.5 h-2.5 rounded-full ${devLightColor}"></div>
-                                    <p class="text-[10px] uppercase text-gray-400 font-bold">Development</p>
-                                </div>
-                                <div class="flex flex-col gap-0.5">
-                                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🛠</span> ${escapeHtml(s.assignedTo)}
-                                    </p>
-                                    <div class="ml-8 mt-1">
-                                        <div class="flex justify-between items-center mb-0.5">
-                                            <span class="text-[9px] text-gray-400 font-bold">Tasks: ${completedDevTasks}/${totalDevTasks}</span>
-                                            <span class="text-[9px] text-google-blue font-bold">${devProgressPercent}%</span>
-                                        </div>
-                                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
-                                            <div class="h-full" style="width: ${devProgressPercent}%; background-color: #3b82f6;"></div>
-                                        </div>
-                                        ${totalBugs > 0 ? `
-                                        <div class="mb-1">
-                                            <div class="flex justify-between items-center mb-0.5">
-                                                <span class="text-[9px] text-gray-400 font-bold">Bugs: ${completedBugs}/${totalBugs}</span>
-                                                <span class="text-[9px] text-google-red font-bold">${bugProgressPercent}%</span>
-                                            </div>
-                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                                                <div class="h-full" style="width: ${bugProgressPercent}%; background-color: #ef4444;"></div>
-                                            </div>
-                                            ${totalBugEffort > 0 ? `
-                                            <div class="flex justify-between items-center mt-1 text-[10px] text-gray-500">
-                                                <span class="font-bold">Bug Effort:</span>
-                                                <span class="font-mono">${remainingBugEffort.toFixed(1)}/${totalBugEffort.toFixed(1)}h</span>
-                                                <span class="text-xs font-bold ${remainingBugEffort === 0 ? 'text-google-green' : 'text-amber-600'}">${bugProgressPercent}%</span>
-                                            </div>
-                                            ` : ''}
-                                        </div>
-                                        ` : ''}
-                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${escapeHtml(devStartDisplay)}</p>
-                                        ${devVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${devVacDaysNow} Days</p>` : ''}
-                                        <p class="text-[10px] text-google-green font-bold">Resolved: ${escapeHtml(devResolveDate)}</p>
-                                        <p class="text-[10px] text-google-blue font-bold">Est: ${totalDevEffort}h</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <div class="w-2.5 h-2.5 rounded-full ${testLightColor}"></div>
-                                    <p class="text-[10px] uppercase text-gray-400 font-bold">Testing</p>
-                                </div>
-                                <div class="flex flex-col gap-0.5">
-                                    <p class="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">🔍</span> ${escapeHtml(s.tester)}
-                                    </p>
-                                    <div class="ml-8 mt-1">
-                                        <div class="flex justify-between items-center mb-0.5">
-                                            <span class="text-[9px] text-gray-400 font-bold">TCs: ${completedTC}/${totalTC}</span>
-                                            <span class="text-[9px] text-google-blue font-bold">${progressPercent}%</span>
-                                        </div>
-                                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden mb-1">
-                                            <div class="h-full" style="width: ${progressPercent}%; background-color: #3b82f6;"></div>
-                                        </div>
-                                        <p class="text-[10px] text-gray-500 mt-1 font-medium">Start: ${escapeHtml(testStartDisplay)}</p>
-                                        ${testVacDaysNow > 0 ? `<p class="text-[10px] text-orange-600 font-bold">🏖 Vac (Now): ${testVacDaysNow} Days</p>` : ''}
-                                        <p class="text-[10px] text-google-blue font-bold">Est QA: ${totalTestEffort}h</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-2 pt-4 border-t border-gray-50 bg-slate-50/30 -mx-5 px-5">
-                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2 block">Standup Updates</label>
-                            <div class="flex gap-2 mb-3">
-                                <input type="text" placeholder="Add comment and press Enter..." class="form-input form-input-sm flex-1" onkeypress="if(event.key === 'Enter') { commentManager.updateComment('${s.id}', this.value); this.value=''; }">
-                            </div>
-                            ${commentsHtml || '<p class="text-[10px] text-gray-400 italic py-1">No updates recorded yet.</p>'}
-                        </div>
-                    </div>
-                    <div class="${isLate ? 'bg-google-red-light' : 'bg-slate-50'} p-4 flex justify-between items-center border-t border-gray-100 -mx-5 -mb-5 rounded-b-xl">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] uppercase font-bold text-gray-400">Target Delivery</span>
-                            <span class="text-sm font-bold ${isLate ? 'text-google-red' : 'text-slate-700'}">${s.calc.finalEnd instanceof Date ? s.calc.finalEnd.toLocaleDateString('en-GB') : 'Waiting'}</span>
-                        </div>
-                        <span class="text-xl">${isLate ? '⚠️' : '🗓️'}</span>
-                    </div>
-                </div>
-                `;
-            }).join('')}
-        `;
-    }).join('');
-},
     renderKanban() {
         const container = document.getElementById('kanban-container');
         const filterSelect = document.getElementById('kanban-ba-filter');
@@ -3869,7 +3612,7 @@ const commentManager = {
             timestamp: Date.now()
         });
         dataProcessor.saveToGitHub();
-        ui.renderActiveCards();
+        ui.renderAll();
     }
 };
 
