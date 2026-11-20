@@ -1,5 +1,5 @@
 /**
- * Auth, Archiver & Data Proce ssor (GitHub Sync + CSV + Timeline Calculation)
+ * Auth, Archiver & Data Processor (GitHub Sync + CSV + Timeline Calculation)
  */
 const archiver = {
     async runArchive() {
@@ -9,22 +9,27 @@ const archiver = {
 
         const logsToKeep = db.deliveryLogs.filter(log => log.timestamp >= thresholdMs);
         const token = sessionStorage.getItem('gh_token') || localStorage.getItem('gh_token');
+        if (!token) return;
 
         try {
             let archiveData = [];
-            try {
-                const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.ARCHIVE_PATH}`, {
-                    headers: { 'Authorization': `token ${token}` }
-                });
-                if (response.ok) {
-                    const file = await response.json();
-                    archiveData = JSON.parse(decodeURIComponent(escape(atob(file.content))));
+            let existingSha = "";
+            const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.ARCHIVE_PATH}?t=${Date.now()}`, {
+                cache: 'no-store',
+                headers: { 'Authorization': `token ${token}` }
+            });
+            if (response.ok) {
+                const file = await response.json();
+                existingSha = file.sha || "";
+                if (file.content) {
+                    archiveData = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\s/g, '')))));
                 }
-            } catch (e) {
-                console.log("Archive file not found, creating new one.");
+            } else if (response.status !== 404) {
+                throw new Error(`Failed to fetch archive (${response.status})`);
             }
+
             archiveData = [...archiveData, ...logsToArchive];
-            await this.saveFileToGitHub(CONFIG.ARCHIVE_PATH, archiveData, token);
+            await this.saveFileToGitHub(CONFIG.ARCHIVE_PATH, archiveData, token, existingSha);
             db.deliveryLogs = logsToKeep;
             indexes.rebuildDeliveryLogs();
             await dataProcessor.saveToGitHub();
@@ -34,26 +39,34 @@ const archiver = {
         }
     },
 
-    async saveFileToGitHub(path, data, token) {
+    async saveFileToGitHub(path, data, token, knownSha = "") {
         const authToken = token || sessionStorage.getItem('gh_token') || localStorage.getItem('gh_token');
         const url = `https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${path}`;
-        let sha = "";
-        const res = await fetch(url, { headers: { 'Authorization': `token ${authToken}` } });
-        if (res.ok) {
-            const file = await res.json();
-            sha = file.sha;
+        let sha = knownSha;
+        if (!sha) {
+            const res = await fetch(`${url}?t=${Date.now()}`, {
+                cache: 'no-store',
+                headers: { 'Authorization': `token ${authToken}` }
+            });
+            if (res.ok) {
+                const file = await res.json();
+                sha = file.sha || "";
+            }
         }
         const jsonString = JSON.stringify(data, null, 2);
         const content = btoa(unescape(encodeURIComponent(jsonString)));
-        await fetch(url, {
+        const putRes = await fetch(url, {
             method: 'PUT',
-            headers: { 'Authorization': `token ${authToken}` },
+            headers: { 'Authorization': `token ${authToken}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 message: `Archive delivery logs [${new Date().toLocaleDateString()}]`,
                 content: content,
-                sha: sha || undefined
+                ...(sha ? { sha } : {})
             })
         });
+        if (!putRes.ok) {
+            throw new Error(`Archive save failed: ${putRes.status}`);
+        }
     }
 };
 
