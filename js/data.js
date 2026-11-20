@@ -72,10 +72,10 @@ const archiver = {
 
 const auth = {
     async handleLogin() {
-        const u = document.getElementById('username').value;
+        const u = document.getElementById('username').value.trim();
         const p = document.getElementById('password').value;
-        const t = document.getElementById('gh-token').value;
-        const azPat = document.getElementById('az-pat').value;
+        const t = document.getElementById('gh-token').value.trim();
+        const azPat = document.getElementById('az-pat').value.trim();
         const rem = document.getElementById('remember-me').checked;
         if (!u || !p || !t || !azPat) return alert("برجاء ملء جميع البيانات بما في ذلك Azure PAT");
 
@@ -215,7 +215,10 @@ const dataProcessor = {
 
         const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
             method: 'PUT',
-            headers: { 'Authorization': `token ${token}` },
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
                 message: `Update db.json [${new Date().toLocaleString()}]`,
                 content: content,
@@ -224,7 +227,10 @@ const dataProcessor = {
         });
 
         if (!response.ok) {
-            const error = await response.json();
+            const error = await response.json().catch(() => ({}));
+            if (response.status === 401) {
+                throw new Error('GitHub Token غير صالح أو منتهي الصلاحية (401 Bad credentials). برجاء تسجيل الخروج وإدخال Token جديد بصلاحية repo.');
+            }
             if (response.status === 409) {
                 console.warn('Conflict detected, retrying...');
                 return this._saveToGitHubInternal();
