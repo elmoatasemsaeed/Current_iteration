@@ -546,7 +546,7 @@ const dataProcessor = {
         this._savePromise = this._saveToGitHubInternal().finally(() => { this._savePromise = null; });
         return this._savePromise;
     },
-    async _saveToGitHubInternal() {
+    async _saveToGitHubInternal(forceFetchSha = false) {
     const token = sessionStorage.getItem('gh_token');
     if (!token) throw new Error('GitHub token missing');
 
@@ -560,24 +560,27 @@ const dataProcessor = {
         throw new Error('رفض الحفظ: قاعدة البيانات فاضية تماماً (حماية من المسح).');
     }
 
-    const timestamp = Date.now();
-    const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}?t=${timestamp}`, {
-        headers: { 'Authorization': `token ${token}` }
-    });
+    let latestSha = db.sha;
+    if (!latestSha || forceFetchSha) {
+        const timestamp = Date.now();
+        const metaRes = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}?t=${timestamp}`, {
+            headers: { 'Authorization': `token ${token}` }
+        });
 
-    if (!metaRes.ok) {
-        if (metaRes.status === 404) {
-            throw new Error('الملف غير موجود على GitHub. لا يمكن الحفظ بدون SHA.');
+        if (!metaRes.ok) {
+            if (metaRes.status === 404) {
+                throw new Error('الملف غير موجود على GitHub. لا يمكن الحفظ بدون SHA.');
+            }
+            throw new Error(`Failed to get metadata: ${metaRes.status} ${metaRes.statusText}`);
         }
-        throw new Error(`Failed to get metadata: ${metaRes.status} ${metaRes.statusText}`);
-    }
 
-    const metaData = await metaRes.json();
-    const latestSha = metaData.sha;
+        const metaData = await metaRes.json();
+        latestSha = metaData.sha;
+    }
 
     const dataToSave = { ...db };
     delete dataToSave.sha;
-    const jsonString = JSON.stringify(dataToSave, null, 2);
+    const jsonString = JSON.stringify(dataToSave);
     const content = btoa(unescape(encodeURIComponent(jsonString)));
 
     const response = await fetch(`https://api.github.com/repos/${CONFIG.REPO_NAME}/contents/${CONFIG.FILE_PATH}`, {
@@ -592,9 +595,9 @@ const dataProcessor = {
 
     if (!response.ok) {
         const error = await response.json();
-        if (response.status === 409) {
-            console.warn('Conflict detected, retrying...');
-            return this._saveToGitHubInternal();
+        if (response.status === 409 && !forceFetchSha) {
+            console.warn('Conflict detected, retrying with fresh SHA...');
+            return this._saveToGitHubInternal(true);
         }
         throw new Error(error.message || `Save failed: ${response.status}`);
     }
@@ -681,7 +684,7 @@ const dataProcessor = {
             ui.hideLoader();
         }
     },
-    async processRows(rows) {
+    async processRows(rows, { skipSave = false } = {}) {
     // ✅ Guard 1: منع التنفيذ لو الصفوف فاضية
     if (!Array.isArray(rows) || rows.length === 0) {
         console.warn('⚠️ processRows: لم يتم استلام أي صفوف. تم إلغاء العملية لحماية البيانات.');
@@ -689,6 +692,7 @@ const dataProcessor = {
         return;
     }
 
+    const existingStoriesMap = new Map((db.currentStories || []).map(s => [String(s.id), s]));
     const newStories = [];
     let currentStory = null;
     rows.forEach(row => {
@@ -727,7 +731,7 @@ const dataProcessor = {
                 isBacklog: false,
                 pullRequests: []
             };
-            const existingStory = db.currentStories.find(s => s.id == currentStory.id);
+            const existingStory = existingStoriesMap.get(String(currentStory.id));
             if (existingStory) {
                 if (existingStory.customTags) currentStory.customTags = existingStory.customTags;
                 if (existingStory.pullRequests) currentStory.pullRequests = existingStory.pullRequests;
@@ -763,9 +767,11 @@ const dataProcessor = {
     db.currentStories = newStories;
 
     pruneStandupComments();
-    await this.saveToGitHub();
+    if (!skipSave) {
+        await this.saveToGitHub();
+    }
 },
-    async processBacklogRows(rows) {
+    async processBacklogRows(rows, { skipSave = false, skipRender = false } = {}) {
     // ✅ Guard 1: منع التنفيذ لو الصفوف فاضية
     if (!Array.isArray(rows) || rows.length === 0) {
         console.warn('⚠️ processBacklogRows: لم يتم استلام أي صفوف. تم تخطي تحديث الـ Backlog.');
@@ -812,8 +818,9 @@ const dataProcessor = {
     }
 
     // حافظ على customTags وpullRequests الموجودة من قبل
+    const existingBacklogMap = new Map((db.backlogStories || []).map(s => [String(s.id), s]));
     backlogStories.forEach(story => {
-        const existing = (db.backlogStories || []).find(s => s.id == story.id);
+        const existing = existingBacklogMap.get(String(story.id));
         if (existing) {
             if (existing.customTags) story.customTags = existing.customTags;
             if (existing.pullRequests) story.pullRequests = existing.pullRequests;
@@ -823,9 +830,13 @@ const dataProcessor = {
     db.backlogStories = backlogStories;
 
     pruneStandupComments();
-    await this.saveToGitHub();
-    console.log(`Saved ${backlogStories.length} backlog stories`);
-    ui.renderAll();
+    if (!skipSave) {
+        await this.saveToGitHub();
+        console.log(`Saved ${backlogStories.length} backlog stories`);
+    }
+    if (!skipRender) {
+        ui.renderAll();
+    }
 },
     calculateTimelines(stories) {
         stories.sort((a, b) => (a.priority || 999) - (b.priority || 999));
@@ -3636,6 +3647,19 @@ async function fetchWithTimeout(url, options = {}) {
         throw error;
     }
 };
+const runWithConcurrency = async (items, concurrency, worker) => {
+    const results = new Array(items.length);
+    let nextIndex = 0;
+    const workerCount = Math.min(Math.max(1, concurrency), items.length);
+    await Promise.all(Array.from({ length: workerCount }, async () => {
+        while (nextIndex < items.length) {
+            const idx = nextIndex++;
+            results[idx] = await worker(items[idx], idx);
+        }
+    }));
+    return results;
+};
+
 const azureDevOps = {
     async sync() {
         const pat = sessionStorage.getItem('az_pat');
@@ -3656,11 +3680,25 @@ const azureDevOps = {
         try {
             const authHeader = 'Basic ' + btoa(':' + pat);
 
-            // ============ Main Query ============
+            // ============ Main Query + Backlog Query + PRs List (بالتوازي) ============
             const mainQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.QUERY_ID}?api-version=6.0`;
-            const mainRes = await fetchWithTimeout(mainQueryUrl, {
+            const mainQueryPromise = fetchWithTimeout(mainQueryUrl, {
                 headers: { 'Authorization': authHeader }
             });
+
+            const backlogQueryPromise = AZURE_CONFIG.BACKLOG_QUERY_ID
+                ? fetchWithTimeout(`https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`, {
+                    headers: { 'Authorization': authHeader }
+                })
+                : Promise.resolve(null);
+
+            // نبدأ جلب الـ PRs بالتوازي لأنه مستقل عن الـ WIQL queries
+            const prPromise = this.fetchPullRequests(authHeader).then(
+                prs => ({ ok: true, prs }),
+                error => ({ ok: false, error })
+            );
+
+            const [mainRes, backlogRes] = await Promise.all([mainQueryPromise, backlogQueryPromise]);
 
             if (!mainRes.ok) {
                 throw new Error(`فشل الاتصال بـ Azure Main Query (${mainRes.status} ${mainRes.statusText}). تم إلغاء العملية لحماية البيانات.`);
@@ -3674,12 +3712,7 @@ const azureDevOps = {
 
             // ============ Backlog Query ============
             let backlogIds = [];
-            if (AZURE_CONFIG.BACKLOG_QUERY_ID) {
-                const backlogQueryUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/wiql/${AZURE_CONFIG.BACKLOG_QUERY_ID}?api-version=6.0`;
-                const backlogRes = await fetchWithTimeout(backlogQueryUrl, {
-                    headers: { 'Authorization': authHeader }
-                });
-
+            if (backlogRes) {
                 if (!backlogRes.ok) {
                     throw new Error(`فشل الاتصال بـ Azure Backlog Query (${backlogRes.status}). تم إلغاء العملية.`);
                 }
@@ -3701,16 +3734,20 @@ const azureDevOps = {
                 throw new Error("Azure رجّع 0 عناصر. تم إلغاء المزامنة لحماية البيانات الحالية.");
             }
 
-            // ============ Batch Fetch ============
+            // ============ Parallel Batch Fetch ============
             const chunkSize = 200;
-            let allDetails = [];
+            const chunks = [];
             for (let i = 0; i < allIds.length; i += chunkSize) {
-                const chunk = allIds.slice(i, i + chunkSize);
-                const batchUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
+                chunks.push(allIds.slice(i, i + chunkSize));
+            }
+            const batchUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/_apis/wit/workitemsbatch?api-version=6.0`;
+            const requiredFields = this.getRequiredFields();
+
+            const batchResults = await runWithConcurrency(chunks, 6, async (chunk, idx) => {
                 const batchRes = await fetchWithTimeout(batchUrl, {
                     method: 'POST',
                     headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ids: chunk, fields: this.getRequiredFields() })
+                    body: JSON.stringify({ ids: chunk, fields: requiredFields })
                 });
 
                 if (!batchRes.ok) {
@@ -3720,9 +3757,11 @@ const azureDevOps = {
                 if (batchData.errorCode || !batchData.value) {
                     throw new Error(`Azure Batch رجع خطأ: ${batchData.message || 'Invalid response'}`);
                 }
-                allDetails = allDetails.concat(batchData.value);
-                console.log(`✅ Batch ${Math.floor(i / chunkSize) + 1}: ${batchData.value.length} items loaded`);
-            }
+                console.log(`✅ Batch ${idx + 1}/${chunks.length}: ${batchData.value.length} items loaded`);
+                return batchData.value;
+            });
+
+            const allDetails = batchResults.flat();
 
             if (allDetails.length === 0) {
                 throw new Error("لم يتم استلام أي تفاصيل من Azure. تم إلغاء المزامنة.");
@@ -3742,7 +3781,7 @@ const azureDevOps = {
                 };
             });
 
-            // ============ بناء الصفوف ============
+            // ============ بناء الصفوف (بدون حفظ متكرر) ============
             const detailsMap = new Map(allDetails.map(d => [d.id, d.fields]));
             const mainRows = this.buildRowsFromRelations(mainRelations, detailsMap);
 
@@ -3750,14 +3789,15 @@ const azureDevOps = {
                 throw new Error("mainRows فاضية. تم إلغاء المزامنة لحماية البيانات.");
             }
 
-            await dataProcessor.processRows(mainRows);
+            await dataProcessor.processRows(mainRows, { skipSave: true });
 
             // Backlog (اختياري)
             if (backlogIds.length > 0) {
-                const backlogDetails = allDetails.filter(d => backlogIds.includes(d.id));
+                const backlogIdSet = new Set(backlogIds);
+                const backlogDetails = allDetails.filter(d => backlogIdSet.has(d.id));
                 const backlogRows = this.buildBacklogRows(backlogDetails);
                 if (backlogRows.length > 0) {
-                    await dataProcessor.processBacklogRows(backlogRows);
+                    await dataProcessor.processBacklogRows(backlogRows, { skipSave: true, skipRender: true });
                 } else {
                     console.warn('⚠️ backlogRows فاضية - تم تخطي تحديث الـ backlog.');
                 }
@@ -3765,24 +3805,31 @@ const azureDevOps = {
 
             // ============ Pull Requests (اختياري — لا يوقف المزامنة الأساسية) ============
             let prCount = 0;
-            try {
-                const prs = await this.fetchPullRequests(authHeader);
-                db.pullRequests = prs;
-                prCount = prs.length;
+            const prResult = await prPromise;
+            if (prResult.ok) {
+                try {
+                    const prs = prResult.prs;
+                    db.pullRequests = prs;
+                    prCount = prs.length;
 
-                // استكمال تفاصيل الـ Work Items المربوطة بالـ PRs (بما فيها المغلقة أو من Sprints سابقة)
-                await this.enrichWorkItemsMapForPRs(authHeader, prs);
+                    // استكمال تفاصيل الـ Work Items المربوطة بالـ PRs (بما فيها المغلقة أو من Sprints سابقة)
+                    await this.enrichWorkItemsMapForPRs(authHeader, prs);
 
-                // ربط PRs بالقصص عبر الربط الفعلي أولاً ثم الثانوي
-                this.linkPullRequestsToStories();
-
-                // حفظ مرة أخرى لضمان تضمين PRs داخل db.json
-                await dataProcessor.saveToGitHub();
-                console.log(`✅ تم ربط ${prCount} PR بالقصص وحفظها.`);
-            } catch (prError) {
-                console.warn('⚠️ فشل تحميل الـ Pull Requests (المزامنة الأساسية تمت بنجاح):', prError);
-                ui.showToast("⚠️ المزامنة تمت، لكن فشل جلب الـ Pull Requests: " + prError.message, "error");
+                    // ربط PRs بالقصص عبر الربط الفعلي أولاً ثم الثانوي
+                    this.linkPullRequestsToStories();
+                    console.log(`✅ تم ربط ${prCount} PR بالقصص.`);
+                } catch (prError) {
+                    console.warn('⚠️ فشل ربط الـ Pull Requests (المزامنة الأساسية تمت بنجاح):', prError);
+                    ui.showToast("⚠️ المزامنة تمت، لكن فشل ربط الـ Pull Requests: " + prError.message, "error");
+                }
+            } else {
+                console.warn('⚠️ فشل تحميل الـ Pull Requests (المزامنة الأساسية تمت بنجاح):', prResult.error);
+                ui.showToast("⚠️ المزامنة تمت، لكن فشل جلب الـ Pull Requests: " + prResult.error.message, "error");
             }
+
+            // حفظ مرة واحدة فقط في النهاية بعد اكتمال القصص والـ Backlog والـ PRs
+            await dataProcessor.saveToGitHub();
+            ui.renderAll();
 
             ui.showToast(`✅ تمت المزامنة بنجاح! (${prCount} PR محدّث)`, "success");
 
@@ -3849,9 +3896,17 @@ const azureDevOps = {
 
     async fetchPullRequests(authHeader) {
         const baseUrl = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/git/pullrequests`;
-        const res = await fetchWithTimeout(`${baseUrl}?searchCriteria.status=all&$top=500&$expand=WorkItems&api-version=7.1`, {
-            headers: { 'Authorization': authHeader }
-        });
+        const [res, activeRes] = await Promise.all([
+            fetchWithTimeout(`${baseUrl}?searchCriteria.status=all&$top=500&$expand=WorkItems&api-version=7.1`, {
+                headers: { 'Authorization': authHeader }
+            }),
+            fetchWithTimeout(`${baseUrl}?searchCriteria.status=active&$top=500&$expand=WorkItems&api-version=7.1`, {
+                headers: { 'Authorization': authHeader }
+            }).catch(e => {
+                console.warn('⚠️ تعذر جلب الـ Active PRs الإضافية:', e);
+                return null;
+            })
+        ]);
 
         if (!res.ok) {
             throw new Error(`فشل جلب الـ Pull Requests (${res.status} ${res.statusText}).`);
@@ -3859,20 +3914,15 @@ const azureDevOps = {
         const data = await res.json();
         let rawPRs = Array.isArray(data?.value) ? data.value : [];
 
-        // إذا وصلنا لحد 500، نجلب الـ Active PRs بشكل مستقل لضمان عدم سقوط أي PR مفتوحة
-        if (rawPRs.length >= 500) {
+        // دمج أي Active PRs غير موجودة في أول 500
+        if (activeRes && activeRes.ok) {
             try {
-                const activeRes = await fetchWithTimeout(`${baseUrl}?searchCriteria.status=active&$top=500&$expand=WorkItems&api-version=7.1`, {
-                    headers: { 'Authorization': authHeader }
-                });
-                if (activeRes.ok) {
-                    const activeData = await activeRes.json();
-                    const activePRs = Array.isArray(activeData?.value) ? activeData.value : [];
-                    const seen = new Set(rawPRs.map(p => p.pullRequestId));
-                    activePRs.forEach(p => { if (!seen.has(p.pullRequestId)) rawPRs.push(p); });
-                }
+                const activeData = await activeRes.json();
+                const activePRs = Array.isArray(activeData?.value) ? activeData.value : [];
+                const seen = new Set(rawPRs.map(p => p.pullRequestId));
+                activePRs.forEach(p => { if (!seen.has(p.pullRequestId)) rawPRs.push(p); });
             } catch (e) {
-                console.warn('⚠️ تعذر جلب الـ Active PRs الإضافية:', e);
+                console.warn('⚠️ تعذر تحليل الـ Active PRs الإضافية:', e);
             }
         }
 
@@ -3901,17 +3951,10 @@ const azureDevOps = {
         });
 
         const fetchedRefsMap = new Map();
-        const batchSize = 10;
-        for (let i = 0; i < prsNeedingWorkItems.length; i += batchSize) {
-            const batch = prsNeedingWorkItems.slice(i, i + batchSize);
-            const results = await Promise.all(
-                batch.map(pr => this.fetchPRWorkItemRefs(authHeader, pr.repository?.id, pr.pullRequestId)
-                    .then(ids => ({ prId: pr.pullRequestId, ids })))
-            );
-            results.forEach(r => {
-                if (r.ids.length > 0) fetchedRefsMap.set(r.prId, r.ids);
-            });
-        }
+        await runWithConcurrency(prsNeedingWorkItems, 12, async (pr) => {
+            const ids = await this.fetchPRWorkItemRefs(authHeader, pr.repository?.id, pr.pullRequestId);
+            if (ids.length > 0) fetchedRefsMap.set(pr.pullRequestId, ids);
+        });
 
         return rawPRs.map(pr => {
             const creationDate = pr.creationDate ? new Date(pr.creationDate) : null;
@@ -3979,12 +4022,15 @@ const azureDevOps = {
 
             const newlyFetchedParents = [];
             const chunkSize = 200;
+            const chunks = [];
             for (let i = 0; i < missing.length; i += chunkSize) {
-                const chunk = missing.slice(i, i + chunkSize);
+                chunks.push(missing.slice(i, i + chunkSize));
+            }
+            await runWithConcurrency(chunks, 5, async (chunk) => {
                 const url = `https://dev.azure.com/${AZURE_CONFIG.ORG}/${AZURE_CONFIG.PROJECT}/_apis/wit/workitems?ids=${chunk.join(',')}&fields=${encodeURIComponent(fields)}&errorPolicy=Omit&api-version=7.1`;
                 try {
                     const res = await fetchWithTimeout(url, { headers: { 'Authorization': authHeader } });
-                    if (!res.ok) continue;
+                    if (!res.ok) return;
                     const data = await res.json();
                     (data?.value || []).forEach(d => {
                         if (!d || !d.id) return;
@@ -4005,7 +4051,7 @@ const azureDevOps = {
                 } catch (e) {
                     console.warn('⚠️ تعذر جلب تفاصيل بعض Work Items للـ PRs:', e);
                 }
-            }
+            });
             return newlyFetchedParents;
         };
 
